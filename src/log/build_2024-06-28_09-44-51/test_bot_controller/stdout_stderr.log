@@ -1,0 +1,35 @@
+running egg_info
+creating ../build/test_bot_controller/test_bot_controller.egg-info
+writing ../build/test_bot_controller/test_bot_controller.egg-info/PKG-INFO
+writing dependency_links to ../build/test_bot_controller/test_bot_controller.egg-info/dependency_links.txt
+writing entry points to ../build/test_bot_controller/test_bot_controller.egg-info/entry_points.txt
+writing requirements to ../build/test_bot_controller/test_bot_controller.egg-info/requires.txt
+writing top-level names to ../build/test_bot_controller/test_bot_controller.egg-info/top_level.txt
+writing manifest file '../build/test_bot_controller/test_bot_controller.egg-info/SOURCES.txt'
+reading manifest file '../build/test_bot_controller/test_bot_controller.egg-info/SOURCES.txt'
+writing manifest file '../build/test_bot_controller/test_bot_controller.egg-info/SOURCES.txt'
+running build
+running build_py
+creating /home/elmeripk/robots/src/build/test_bot_controller/build
+creating /home/elmeripk/robots/src/build/test_bot_controller/build/lib
+creating /home/elmeripk/robots/src/build/test_bot_controller/build/lib/test_bot_controller
+copying test_bot_controller/__init__.py -> /home/elmeripk/robots/src/build/test_bot_controller/build/lib/test_bot_controller
+copying test_bot_controller/test_node.py -> /home/elmeripk/robots/src/build/test_bot_controller/build/lib/test_bot_controller
+running install
+running install_lib
+creating /home/elmeripk/robots/src/install/test_bot_controller/lib/python3.12/site-packages/test_bot_controller
+copying /home/elmeripk/robots/src/build/test_bot_controller/build/lib/test_bot_controller/__init__.py -> /home/elmeripk/robots/src/install/test_bot_controller/lib/python3.12/site-packages/test_bot_controller
+copying /home/elmeripk/robots/src/build/test_bot_controller/build/lib/test_bot_controller/test_node.py -> /home/elmeripk/robots/src/install/test_bot_controller/lib/python3.12/site-packages/test_bot_controller
+byte-compiling /home/elmeripk/robots/src/install/test_bot_controller/lib/python3.12/site-packages/test_bot_controller/__init__.py to __init__.cpython-312.pyc
+byte-compiling /home/elmeripk/robots/src/install/test_bot_controller/lib/python3.12/site-packages/test_bot_controller/test_node.py to test_node.cpython-312.pyc
+running install_data
+creating /home/elmeripk/robots/src/install/test_bot_controller/share/ament_index
+creating /home/elmeripk/robots/src/install/test_bot_controller/share/ament_index/resource_index
+creating /home/elmeripk/robots/src/install/test_bot_controller/share/ament_index/resource_index/packages
+copying resource/test_bot_controller -> /home/elmeripk/robots/src/install/test_bot_controller/share/ament_index/resource_index/packages
+copying package.xml -> /home/elmeripk/robots/src/install/test_bot_controller/share/test_bot_controller
+running install_egg_info
+Copying ../build/test_bot_controller/test_bot_controller.egg-info to /home/elmeripk/robots/src/install/test_bot_controller/lib/python3.12/site-packages/test_bot_controller-0.0.0-py3.12.egg-info
+running install_scripts
+Installing test_node script to /home/elmeripk/robots/src/install/test_bot_controller/lib/test_bot_controller
+writing list of installed files to '/home/elmeripk/robots/src/build/test_bot_controller/install.log'

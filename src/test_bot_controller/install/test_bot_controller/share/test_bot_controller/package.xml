@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>test_bot_controller</name>
+  <version>0.0.0</version>
+  <description>TODO: Package description</description>
+  <maintainer email="elmeripk@todo.todo">elmeripk</maintainer>
+  <license>TODO: License declaration</license>
+  
+  <!--Not needed if not using ros control?-->
+  <!--
+    <exec_depend>controller_manager</exec_depend>
+-->
+  <exec_depend>ros_gz</exec_depend>
+  <exec_depend>ros_gz_bridge</exec_depend>
+  <exec_depend>ros_gz_sim</exec_depend>
+  <exec_depend>ros_gz_image</exec_depend>
+  <exec_depend>trajectory_msgs</exec_depend>
+   <!--<exec_depend>xacro</exec_depend> -->
+   <!-- Not needed?-->
+
+
+  <depend>rclpy</depend>
+  <depend>joint_state_publisher</depend>
+  <depend>joint_state_publisher_gui</depend>
+  <depend>robot_state_publisher</depend>
+  <depend>rviz</depend>
+
+
+  <test_depend>ament_copyright</test_depend>
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
+  <test_depend>python3-pytest</test_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>
