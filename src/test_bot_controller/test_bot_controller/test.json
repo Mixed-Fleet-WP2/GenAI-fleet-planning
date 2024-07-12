@@ -1,0 +1,14 @@
+[
+    {"cmd": "rotate",
+     "args": [30]
+    },
+    {"cmd": "rotate",
+     "args": [160]
+    },
+    {"cmd": "rotate",
+     "args": [-20]
+    },
+    {"cmd": "move",
+     "args": [20,1]
+    }
+]
