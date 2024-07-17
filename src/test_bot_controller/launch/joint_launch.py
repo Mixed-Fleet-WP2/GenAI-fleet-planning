@@ -169,8 +169,13 @@ def generate_launch_description():
     launch_arguments={'gz_args': '-g -v4 '}.items(),
     condition=IfCondition(PythonExpression([use_simulator, ' and not ', headless])))
   
+  robot_description_content = ""
   # Subscribe to the joint states of the robot, and publish the 3D pose of each link.
-  robot_description_content = ParameterValue(Command(['xacro ', urdf_model]), value_type=str)
+  try:
+    robot_description_content = ParameterValue(Command(['xacro ', urdf_model]), value_type=str)
+  except:
+    exit()
+
   urdf = os.path.join(pkg_root,default_urdf_model_path)
   with open(urdf, 'r') as infp:
     robot_description_raw = infp.read()

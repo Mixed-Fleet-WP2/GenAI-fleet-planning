@@ -19,9 +19,9 @@ class ForkControlNode(Node):
     def send_lift_command(self):
         msg = Float64()
         if(self.fork_down):
-            msg.data = 0.5
+            msg.data = 2.0
         else:
-            msg.data = -0.025
+            msg.data = 0.7
         self.fork_down = not self.fork_down
         self.fork_controller.publish(msg)
 

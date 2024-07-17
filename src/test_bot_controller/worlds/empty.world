@@ -18,7 +18,7 @@
       filename="gz-sim-scene-broadcaster-system"
       name="gz::sim::systems::SceneBroadcaster">
     </plugin>
- 
+
     <!-- To add realistic gravity, do: 0.0 0.0 -9.8, otherwise do 0.0 0.0 0.0 -->
     <gravity>0.0 0.0 -9.8</gravity>
      
@@ -36,10 +36,10 @@
       </uri>
     </include>
 
-    <model name="my_model">
-      <pose>5 0 0.5 0 0 0</pose>
-      <static>true</static>
-      <link name="link">
+    <model name="cube">
+      <pose>-2 2 0.5 0 0 0</pose>
+      <!--<static>true</static>-->
+        <link name="link"> 
         <inertial>
           <mass>1.0</mass>
           <inertia> <!-- inertias are tricky to compute -->
@@ -55,14 +55,14 @@
         <collision name="collision">
           <geometry>
             <box>
-              <size>1 1 1</size>
+              <size>0.2 0.2 0.2</size>
             </box>
           </geometry>
         </collision>
         <visual name="visual">
           <geometry>
             <box>
-              <size>1 1 1</size>
+              <size>0.2 0.2 0.2</size>
             </box>
           </geometry>
         </visual>
