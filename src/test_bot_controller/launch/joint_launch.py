@@ -201,6 +201,13 @@ def generate_launch_description():
     #arguments=['-d', rviz_config_file])
   )
 
+  set_world_frame =  Node(
+            package='tf2_ros',
+            executable='static_transform_publisher',
+            name='world_to_base_link',
+            arguments=['0', '0', '0', '0', '0', '0', 'world', 'base_link'],
+        )
+
   
   #SPAWNING
   # Spawn the robot to gazebo sim through subscribing to the topic publishing the urdf file
@@ -268,6 +275,7 @@ def generate_launch_description():
   ld.add_action(start_gazebo_client_cmd)
   ld.add_action(start_robot_state_publisher_cmd)
   #ld.add_action(start_rviz_cmd)
+  #ld.add_action(set_world_frame)
    
   ld.add_action(start_gazebo_ros_spawner_cmd)
   ld.add_action(start_gazebo_ros_bridge_cmd)

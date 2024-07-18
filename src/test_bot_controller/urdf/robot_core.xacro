@@ -39,6 +39,8 @@
         <parent link="base_link"/>
         <child link="chassis"/>
         <origin xyz="0 0 0.125"/>
+        <axis xyz="0 0 1"/>
+        <limit effort="110" lower="0" upper="0.6" velocity="0.5"/>
     </joint>
 
     <link name="chassis">
@@ -62,7 +64,7 @@
 
     <link name="track_1">
         <visual>
-            <origin xyz="0 0 ${track_length/2 - base_height/2}" rpy="${pi/2} 0 ${pi/2}"/>
+            <origin xyz="0 0 0.09" rpy="${pi/2} 0 ${pi/2}"/>
             <geometry>
                 <box size="${track_width} ${track_length} ${track_depth}"/>
             </geometry>
@@ -79,10 +81,12 @@
         </xacro:inertial_box>
     </link>
 
-    <joint name="track1_joint" type="fixed">
+    <joint name="track1_joint" type="prismatic">
         <parent link="chassis"/>
         <child link="track_1"/>
         <origin xyz="${base_width/2 + track_depth/2} ${base_width/2 - track_width} 0" rpy="0 0 0 " />
+        <axis xyz="0 0 1"/>
+        <limit effort="110" lower="0" upper="0.6" velocity="0.5"/>
     </joint>
 
     <link name="track_2">
@@ -104,29 +108,31 @@
         </xacro:inertial_box>
     </link>
     
-    <joint name="track2_joint" type="fixed">
+    <joint name="track2_joint" type="prismatic">
         <parent link="chassis"/>
         <child link="track_2"/>
         <origin xyz="${base_width/2 + track_depth/2} -${base_width/2 - track_width} 0" rpy="0 0 0" />
+        <axis xyz="0 0 1"/>
+        <limit effort="110" lower="0" upper="0.6" velocity="0.5"/>
     </joint>
 
 
     <link name="fork_plate">
         <visual>
-            <origin xyz="${track_depth/2} 0.1 0" rpy="0 ${pi/2} 0"/>
+            <origin xyz="0.0 0 0" rpy="0 0 0"/>
             <geometry>
-                <box size="0.1 0.25 ${track_depth}"/>
+                <box size="0.5 0.25 0.02"/>
             </geometry>
             <material name="blue"/>
         </visual>
         <collision>
-            <origin xyz="${track_depth/2} 0.1 0" rpy="0 ${pi/2} 0"/>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
-                <box size="0.1 0.25 ${track_depth}"/>
+                <box size="0.5 0.25 0.2"/>
             </geometry>
         </collision>
-        <xacro:inertial_box mass="10" x="0.1" y="0.25" z="${track_depth}">
-            <origin xyz="${track_depth/2} 0.1 0" rpy="0 ${pi/2} 0"/>
+        <xacro:inertial_box mass="10" x="0" y="0" z="0">
+            <origin xyz="0.2 0.1 0" rpy="0 0 0"/>
         </xacro:inertial_box>
     </link>
     
@@ -134,7 +140,7 @@
         <parent link="track_2"/>
         <child link="fork_plate"/>
         <!--Offset the joint position by the track depth amount-->
-        <origin xyz="${track_depth/2} 0 -0.025" rpy="0 0 0" />
+        <origin xyz="0.3 0 0" rpy="0 0 0" />
         <axis xyz="0 0 1"/>
         <limit effort="110" lower="0" upper="0.6" velocity="0.5"/>
     </joint>
