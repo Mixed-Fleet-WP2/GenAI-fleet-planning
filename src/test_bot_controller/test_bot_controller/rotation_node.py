@@ -162,10 +162,10 @@ class RotationNode(Node):
             self.move_timer.cancel()
             self.move_timer = None
             
-            x,y = self.get_frame_pos_as_global()
+            x,y = self.get_frame_pos_as_global(0.16, -0.10, 0.15, 0.1)
             #Movement to target is complete, pick up the target
             FORK_LENGTH / 2 + CUBE_WIDTH/2
-            #self.move_object_to_point('cube',)
+            self.move_object_to_point('cube',x,y,0.2, self.current_quaternion_x, self.current_quaternion_y, self.current_quaternion_z, self.current_quaternion_w)
       
         else:
             #Multiplying by a small value results in slower linear movement
