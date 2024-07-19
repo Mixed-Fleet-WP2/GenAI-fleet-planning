@@ -12,7 +12,7 @@
       filename="gz-sim-user-commands-system"
       name="gz::sim::systems::UserCommands">
     </plugin>
-     
+
     <!-- Plugin for broadcasting scene updates -->
     <plugin
       filename="gz-sim-scene-broadcaster-system"

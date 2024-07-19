@@ -3,7 +3,7 @@ from rclpy.node import Node
 from nav_msgs.msg import Odometry
 from geometry_msgs.msg import Twist
 from std_msgs.msg import Float64
-from geometry_msgs.msg import Point
+from geometry_msgs.msg import Point, PoseArray
 from functools import partial
 import math
 import numpy as np
@@ -11,6 +11,14 @@ from collections import deque
 import threading
 import subprocess
 import tf2_ros as tf
+
+#Specifies at which index in the pose
+#array received from gazebo the cube is located
+
+CUBE_POS_ARR_INDEX = 1
+CUBE_WIDTH = 0.2
+FORK_LENGTH = 0.5
+
 
 class RotationNode(Node):
     def __init__(self):
@@ -25,6 +33,12 @@ class RotationNode(Node):
         self.create_subscription(Odometry, "/model/forklift/odometry", self.__get_odom, 10)
         self.create_subscription(Float64, "/rotate", partial(self.handle_command, topic_name="/rotate"), 10)
         self.create_subscription(Point, "/move", partial(self.handle_command, topic_name='/move'), 10)
+        self.subscription = self.create_subscription(
+            PoseArray,
+            'object_poses',  # Replace with your actual topic name
+            self.pose_array_callback,
+            10
+        )
         self.movement_controller = self.create_publisher(Twist, "/cmd_vel", 10)
         
         self.current_yaw = None
@@ -57,6 +71,12 @@ class RotationNode(Node):
         t4 = +1.0 - 2.0 * (y * y + z * z)
         return math.atan2(t3, t4)
 
+    def pose_array_callback(self, msg):
+        # Example: Extract the first pose from the PoseArray
+        self.cube_pose_x = msg.poses[10].position.x
+        self.cube_pose_y = msg.poses[10].position.y
+        self.get_logger().info(str(self.cube_pose_x))
+        self.get_logger().info(str(self.cube_pose_y))
     def handle_cmds(self):
         if self.command_queue and self.odom_received and not self.action_in_progress:
             cmd = self.command_queue.popleft()
@@ -90,8 +110,8 @@ class RotationNode(Node):
         # Set an offset from the target by moving the real target away to the opposite direction of the vector,
         # this is again quite a stupid solution but prevents the forklift from crashing into the object
         # it tries to pick up
-        self.target_x = goal_x - 0.5 * direction_vector_x_component
-        self.target_y = goal_y - 0.5 * direction_vector_y_component 
+        self.target_x = goal_x #- 0.5 * direction_vector_x_component
+        self.target_y = goal_y #- 0.5 * direction_vector_y_component 
         
         #Calculate how big the x, y and yaw differences are between the current
         #position of the forklift and the target
@@ -102,37 +122,12 @@ class RotationNode(Node):
         # Calculate the target angle (relative to the world) that we must achieve
         self.target_angle = self.current_yaw + (self.angle_diff_to_target - self.current_yaw)
 
-
     """
-    Moves an object off_set_distance away from the forlifts body origon.
-    This is utilised to pick up i.e. teleport the container/cube onto
-    the forklift's fork and also to set the carried object down
-    in fron of the forklift. "Stupid" solution for now until
-    a way to get the fork's absolute position is found so the
-    cube can be directly teleported on it.
+    Teleports an object to a given position in the world. Utilised
+    by drop and pick_up functions.
     """
-    def move_object_relative_to_forklift_origon(self, off_set_distance):
+    def move_object_to_point(self, object, x,y,z, orient_x, orient_y, orient_z, orient_w):
 
-        #The current position of the forklift, gotten from odometry
-        obj_pos_x = self.current_x
-        obj_pos_y = self.current_y
-        yaw = self.current_yaw
-
-        #Calculate the components of the direction vector pointing
-        #to the front of the forklift, courtesy of ChatGPT
-        offset_x = off_set_distance * math.cos(yaw)
-        offset_y = off_set_distance * math.sin(yaw)
-
-        #This value doesn't really matter as the gravity in the simulation
-        #pulls the object back down when teleporting, but should
-        #be higher than the z-index of the surface we are trying to teleport
-        #onto
-        offset_z = 0.3
-
-        move_pos_x = obj_pos_x + offset_x
-        move_pos_y = obj_pos_y + offset_y
-        move_pos_z = offset_z
-        
         cmd = [
             "gz", "service",
             "-s", "/world/default/set_pose",
@@ -140,9 +135,9 @@ class RotationNode(Node):
             "--reptype", "gz.msgs.Boolean",
             "--timeout", "300",
             "--req", (
-                f'name: "cube", position: {{x: {obj_pos_x + 0.46}, y: {obj_pos_y - 0.1}, z: {0.3}}}, '
-                f'orientation: {{x: {self.current_quaternion_x}, y: {self.current_quaternion_y}, '
-                f'z: {self.current_quaternion_z}, w: {self.current_quaternion_w}}}'
+                f'name: "{object}", position: {{x: {x}, y: {y}, z: {z}}}, '
+                f'orientation: {{x: {orient_x}, y: {orient_y}, '
+                f'z: {orient_z}, w: {orient_w}}}'
                 )
             ]
 
@@ -157,7 +152,7 @@ class RotationNode(Node):
 
         error_x = self.target_x - self.current_x
         error_y = self.target_y - self.current_y
-        distance_error = math.hypot(error_x, error_y)
+        distance_error = math.hypot(error_x, error_y) 
         msg = Twist()
         if distance_error < 0.08:
             msg.linear.x = 0.0
@@ -167,13 +162,61 @@ class RotationNode(Node):
             self.move_timer.cancel()
             self.move_timer = None
             
+            x,y = self.get_frame_pos_as_global()
             #Movement to target is complete, pick up the target
-            self.move_object_relative_to_forklift_origon(0.5)
+            FORK_LENGTH / 2 + CUBE_WIDTH/2
+            #self.move_object_to_point('cube',)
       
         else:
             #Multiplying by a small value results in slower linear movement
             msg.linear.x = self.kp_movement * distance_error
             self.movement_controller.publish(msg)
+
+    """
+    offset_x: How much the returned x-coordinate should be offset to the
+    x-direction (in the forklift's coordinate frame, not global) i.e. forward when looking towards the front
+    offset_y: How much the returned y-coordinate should be offset to the
+    y-direction (in the forklift's coordinate frame, not global) i.e. left when looking towards the front
+    """
+
+    def get_frame_pos_as_global(self, frame_local_pos_x, frame_local_pos_y, offset_x = 0, offset_y = 0):
+
+        forklift_origin_global_x = self.current_x
+        forklift_origin_global_y = self.current_y
+        forklift_rotation_angle =  self.current_yaw
+        frame_local_position = np.array([frame_local_pos_x + offset_x, frame_local_pos_y + offset_y])
+
+        #Transformation matrix to rotate the forlift's coordinate axis to the same
+        #position as global axis
+        rotation_matrix = np.array([
+            [np.cos(forklift_rotation_angle), -np.sin(forklift_rotation_angle)],
+            [np.sin(forklift_rotation_angle), np.cos(forklift_rotation_angle)]
+        ])
+
+        rotated_local_position = rotation_matrix.dot(frame_local_position)
+
+        frame_global_pos_x = rotated_local_position[0] + forklift_origin_global_x
+        frame_global_pos_y = rotated_local_position[1] + forklift_origin_global_y
+
+        return frame_global_pos_x, frame_global_pos_y
+
+    def pick_up_object(self, object):
+
+        pass
+        x,y = self.get_frame_pos_as_global()
+
+
+    """
+    def drop_object(self, object='cube'):
+        
+
+        offset_x = self.FORK_LENGTH / 2 + self.CUBE_WIDTH/2
+
+        object_global_x,object_global_y = self.get_frame_pos_as_global(0.36, 0, offset_x )
+    """
+
+
+
 
 
     def __get_odom(self, msg):
@@ -187,7 +230,11 @@ class RotationNode(Node):
         self.current_quaternion_w = orientation_q.w
         yaw = self.__euler_from_quaternion(orientation_q.x, orientation_q.y, orientation_q.z, orientation_q.w)
         self.current_yaw = round(yaw, 2)
+        #if not self.odom_received:
+            #self.move_object_relative_to_forklift_origon(0.1)
         self.odom_received = True
+
+        
 
     def rotate(self):
         error = self.target_angle - self.current_yaw
