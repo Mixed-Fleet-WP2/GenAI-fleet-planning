@@ -1,6 +1,6 @@
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import Float64
+from std_msgs.msg import Float64, Empty
 from geometry_msgs.msg import Point
 import json
 import time
@@ -11,6 +11,7 @@ class Forklift(Node):
     def __init__(self):
         super().__init__('forklift_robot')
         self.publisher = self.create_publisher(Point, '/move', 50)
+        self.pick_publisher = self.create_publisher(Empty, '/pick', 50)
         self.json_commands = collections.deque()
         self.timer = None
 
@@ -28,6 +29,10 @@ class Forklift(Node):
         self.publisher.publish(msg)
         
         self.get_logger().info(f'Point: {x}, {y}')
+    
+    def pick_up(self):
+        msg = Empty()
+        self.pick_publisher.publish(msg)
 
 
     def load_json_commands(self):
@@ -42,20 +47,20 @@ class Forklift(Node):
 
     def execute_commands(self):
         if not self.json_commands:
-            self.get_logger().info("No commands to execute at this time")
+            self.get_logger().info("Done")
             self.timer.cancel()
             return
 
         func_call, args = self.json_commands.popleft()
-        if func_call == "rotate":
-            self.get_logger().info("Rotate command")
-            angle = float(args[0])
-            self.rotate(angle)
-        elif func_call == "move":
+        if func_call == "move":
             self.get_logger().info("Move command")
+            self.get_logger().info(str(args[0]))
             x = float(args[0])
             y = float(args[1])
             self.move(x, y)
+        elif func_call == "pick_up":
+            self.get_logger().info("pickup command")
+            self.pick_up()
 
     def start_execution(self):
         self.load_json_commands()

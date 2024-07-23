@@ -1,5 +1,8 @@
 [
     {"cmd": "move",
      "args": [-2,2]
+    },
+    {"cmd": "pick_up",
+     "args": []
     }
 ]

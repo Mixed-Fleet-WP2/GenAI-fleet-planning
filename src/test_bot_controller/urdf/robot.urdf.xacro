@@ -13,7 +13,7 @@
             <right_joint>right_wheel_joint</right_joint>
             <right_joint>right_wheel_back_joint</right_joint>
             <wheel_separation>0.3</wheel_separation>
-            <wheel_radius>0.05</wheel_radius>
+            <wheel_radius>0.07</wheel_radius>
             <odom_publish_frequency>1</odom_publish_frequency>
             <topic>cmd_vel</topic>
             <odom_topic>pos</odom_topic>

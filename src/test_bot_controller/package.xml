@@ -14,10 +14,10 @@
   <exec_depend>ros_gz</exec_depend>
   <exec_depend>ros_gz_bridge</exec_depend>
   <exec_depend>ros_gz_sim</exec_depend>
-  <exec_depend>ros_gz_image</exec_depend>
-  <exec_depend>trajectory_msgs</exec_depend>
+  <!-- <exec_depend>ros_gz_image</exec_depend> -->
+  <!-- <exec_depend>trajectory_msgs</exec_depend> -->
    <exec_depend>xacro</exec_depend>
-   <!-- Not needed?-->
+  <exec_depend>movement_interface</exec_depend>
 
   <depend>rclpy</depend>
   <depend>joint_state_publisher</depend>
