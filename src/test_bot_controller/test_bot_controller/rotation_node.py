@@ -73,10 +73,11 @@ class RotationNode(Node):
 
     def pose_array_callback(self, msg):
         # Example: Extract the first pose from the PoseArray
-        self.cube_pose_x = msg.poses[10].position.x
-        self.cube_pose_y = msg.poses[10].position.y
-        self.get_logger().info(str(self.cube_pose_x))
-        self.get_logger().info(str(self.cube_pose_y))
+        #self.cube_pose_x = msg.poses[10].position.x
+        #self.cube_pose_y = msg.poses[10].position.y
+        #self.get_logger().info(str(self.cube_pose_x))
+        #self.get_logger().info(str(self.cube_pose_y))
+        pass
     def handle_cmds(self):
         if self.command_queue and self.odom_received and not self.action_in_progress:
             cmd = self.command_queue.popleft()
@@ -154,7 +155,7 @@ class RotationNode(Node):
         error_y = self.target_y - self.current_y
         distance_error = math.hypot(error_x, error_y) 
         msg = Twist()
-        if distance_error < 0.08:
+        if distance_error < 0.1:
             msg.linear.x = 0.0
             self.movement_controller.publish(msg)
             self.get_logger().info(f"Move complete, current location: ({self.current_x}, {self.current_y})")
@@ -162,7 +163,7 @@ class RotationNode(Node):
             self.move_timer.cancel()
             self.move_timer = None
             
-            x,y = self.get_frame_pos_as_global(0.16, -0.10, 0.15, 0.1)
+            x,y = self.get_frame_pos_as_global(0.38, 0, 0.15, 0)
             #Movement to target is complete, pick up the target
             FORK_LENGTH / 2 + CUBE_WIDTH/2
             self.move_object_to_point('cube',x,y,0.2, self.current_quaternion_x, self.current_quaternion_y, self.current_quaternion_z, self.current_quaternion_w)

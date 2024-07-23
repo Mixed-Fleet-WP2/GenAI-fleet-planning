@@ -18,6 +18,10 @@
       filename="gz-sim-scene-broadcaster-system"
       name="gz::sim::systems::SceneBroadcaster">
     </plugin>
+    
+    <plugin filename="gz-sim-contact-system"
+        name="gz::sim::systems::Contact">
+    </plugin>
 
     <!-- To add realistic gravity, do: 0.0 0.0 -9.8, otherwise do 0.0 0.0 0.0 -->
     <gravity>0.0 0.0 -9.8</gravity>
@@ -37,9 +41,17 @@
     </include>
 
     <model name="cube">
+
+      <plugin filename="gz-sim-touchplugin-system"
+        name="gz::sim::systems::TouchPlugin">
+    <target>chassis</target>
+    <namespace>cube</namespace>
+    <time>0.001</time>
+    <enabled>true</enabled>
+</plugin>
       <pose>-2 2 0.5 0 0 0</pose>
       <!--<static>true</static>-->
-        <link name="link"> 
+        <link name="link">
         <inertial>
           <mass>1.0</mass>
           <inertia> <!-- inertias are tricky to compute -->
@@ -66,6 +78,13 @@
             </box>
           </geometry>
         </visual>
+
+        <sensor name='sensor_contact' type='contact'>
+    <contact>
+        <collision>collision</collision>
+    </contact>
+</sensor>
+
       </link>
     </model>
      
