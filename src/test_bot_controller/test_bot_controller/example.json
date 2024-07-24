@@ -4,11 +4,5 @@
     },
     {"cmd": "pick_up",
      "args": []
-    },
-    {"cmd": "move",
-     "args": [0,0]
-    },
-    {"cmd": "move",
-     "args": [5,4]
     }
 ]

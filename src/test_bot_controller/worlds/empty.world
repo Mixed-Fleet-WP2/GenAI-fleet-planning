@@ -26,13 +26,13 @@
     <!-- To add realistic gravity, do: 0.0 0.0 -9.8, otherwise do 0.0 0.0 0.0 -->
     <gravity>0.0 0.0 -9.8</gravity>
      
-    <!--
+
     <include>
       <uri>
         https://fuel.gazebosim.org/1.0/OpenRobotics/models/Sun
       </uri>
     </include>
-    -->
+  
  
     <!-- Include a model of the Ground Plane from an external URI -->
     <include>
