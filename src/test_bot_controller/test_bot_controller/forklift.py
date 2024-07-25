@@ -1,0 +1,78 @@
+
+from rclpy.node import Node
+
+
+import collections
+from movement_interface.srv import MovementSuccess, Pickup, Drop
+import threading
+
+class Forklift(Node):
+
+    def __init__(self):
+        super().__init__('forklift_robot')
+        self.move_cli = self.create_client(MovementSuccess, 'move')
+        self.pick_up_cli = self.create_client(Pickup, 'pick_up')  
+        self.drop_cli = self.create_client(Drop, 'drop')
+        self.json_commands = collections.deque()
+        self.move_req = MovementSuccess.Request()
+        self.pick_up_req = Pickup.Request()
+        self.drop_req = Drop.Request()
+
+        while not self.move_cli.wait_for_service(timeout_sec=1.0) and not self.pick_up_cli.wait_for_service(timeout_sec=1.0):
+            self.get_logger().info('Services not available yet')
+
+    def move(self, x, y):
+        self.move_req.x = x
+        self.move_req.y = y
+        return self.move_cli.call(self.move_req)
+
+    def pick_up(self, object):
+        self.pick_up_req.object = object
+        return self.pick_up_cli.call(self.pick_up_req)
+
+    def drop(self, object):
+        self.drop_req.object = object
+        return self.drop_cli.call(self.drop_req)
+
+    def execute_commands(self, commands):
+
+        while commands:
+            func_call, args = commands.popleft()
+            
+            if func_call == "move":
+                self.get_logger().info("Move")
+                x = int(args[0])
+                y = int(args[1])
+
+                response = self.move(x, y)
+                was_success = bool(response.success)
+
+                if not was_success:
+                    raise Exception("Movement was not successful")
+
+            elif func_call == "pick_up":
+                self.get_logger().info("Pick up")
+                object = args[0]
+                response = self.pick_up(object)
+                was_success = bool(response.success)
+
+                if not was_success:
+                    raise Exception("Picking up the object was not successful")
+            elif func_call == "drop":
+                self.get_logger().info("Drop")
+                object = args[0]
+                response = self.drop(object)
+                was_success = bool(response.success)
+
+                if not was_success:
+                    raise Exception("Dropping the object was not successful")
+
+        self.get_logger().info("All commands executed")
+    
+    def start_execution(self, commands):
+
+        #Executing this makes gui unresponsive but saves one thread
+        self.execute_commands(commands)
+
+        #exec_thread = threading.Thread(target=self.execute_commands, args=(commands,))
+        #exec_thread.start()

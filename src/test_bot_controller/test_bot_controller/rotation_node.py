@@ -9,7 +9,7 @@ import math
 import numpy as np
 from collections import deque
 import subprocess
-from movement_interface.srv import MovementSuccess, Pickup
+from movement_interface.srv import MovementSuccess, Pickup, Drop
 import threading
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.callback_groups import ReentrantCallbackGroup
@@ -33,7 +33,7 @@ class RotationNode(Node):
         super().__init__("rotation_node")
 
         self.target_angle = 0
-        self.kp = 0.5  # Proportional gain
+        self.kp = 0.7  # Proportional gain
         self.kp_movement = 0.2
         self.target_x = 0.0
         self.target_y = 0.0
@@ -44,6 +44,7 @@ class RotationNode(Node):
 
         self.srv = self.create_service(MovementSuccess, "move", self.move_forklift_to_point, callback_group=self.service_cb_group)  # CHANGE
         self.pickup_srv = self.create_service(Pickup, "pick_up", self.pick_up, callback_group=self.service_cb_group)  # CHANGE
+        self.drop_srv = self.create_service(Drop, "drop", self.drop, callback_group=self.service_cb_group)
         self.subscription = self.create_subscription(
             PoseArray,
             'object_poses',  # Replace with your actual topic name
@@ -79,9 +80,16 @@ class RotationNode(Node):
         return response
 
     def pick_up(self, request, response):
-        self.pick_up_object('cube')
+        object = request.object
+        self.pick_up_object(object)
         response.success = True
         return response
+    
+    def drop(self, request, response):
+        object = request.object
+        self.drop_object(object)
+        response.success = True
+        return response    
 
     def __euler_from_quaternion(self, x, y, z, w):
         t3 = +2.0 * (w * z + x * y)
@@ -211,7 +219,7 @@ class RotationNode(Node):
             return True
         return False
 
-    def drop_object(self, object='cube'):
+    def drop_object(self, object):
         # Get the coordinates of a point right in front of the forklift, relative to the global frame
         x, y = self.get_frame_pos_as_global(FORK_PLATE_JOINT_ORIGIN_X, FORK_PLATE_JOINT_ORIGIN_Y,
                                             FORK_LENGTH + CUBE_WIDTH / 2, LEFT_FORK_VISUAL_ORIGIN_Y - 0.05)
@@ -231,6 +239,18 @@ class RotationNode(Node):
         self.current_yaw = round(yaw, 2)
         self.odom_received = True
 
+    def euler_to_quaternion(self, yaw):
+        quaternion = np.zeros(4)
+        quaternion[3] = math.cos(yaw / 2)
+        quaternion[2] = math.sin(yaw / 2)
+        x = quaternion[0]
+        y = quaternion[1]
+        z = quaternion[2]
+        w = quaternion[3]
+
+        return x, y, z, w
+
+
     def rotate(self):
         while True:
             error = self.target_angle - self.current_yaw
@@ -241,6 +261,11 @@ class RotationNode(Node):
 
             msg = Twist()
             if abs(error) < 0.01:  # Smaller threshold for rotation completion
+                
+                #Make a small teleop command to make the forklift face exactly the target
+                x,y,z,w = self.euler_to_quaternion(self.target_angle)
+                self.move_object_to_point('forklift', self.current_x, self.current_y, self.current_z, x, y, z, w)
+            
                 msg.angular.z = 0.0
                 self.movement_controller.publish(msg)
                 self.get_logger().info(f"Rotation complete: {self.current_yaw:.2f} radians")

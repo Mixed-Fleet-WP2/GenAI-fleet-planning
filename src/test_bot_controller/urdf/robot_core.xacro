@@ -28,24 +28,22 @@
     <xacro:property name="base_width" value="0.3"/>
     
 
-    <link name="base_link">
+    <link name="base_footprint">
 
     </link>
 
 
-    <!-- CHASSIS LINK -->
+    <!-- base_link LINK -->
 
     
-    <joint name="chassis_joint" type="fixed">
-        <parent link="base_link"/>
-        <child link="chassis"/>
+    <joint name="base_link_joint" type="fixed">
+        <parent link="base_footprint"/>
+        <child link="base_link"/>
         <origin xyz="0 0 0.125"/>
-        <axis xyz="0 0 1"/>
-        <limit effort="110" lower="0" upper="0.6" velocity="0.5"/>
     </joint>
 
 
-    <link name="chassis">
+    <link name="base_link">
         <visual>
             <origin xyz="0 0 0.05"/>
             <geometry>
@@ -87,7 +85,7 @@
     </link>
     
     <joint name="fork_plate_joint" type="prismatic">
-        <parent link="chassis"/>
+        <parent link="base_link"/>
         <child link="fork_plate"/>
         <!--Offset the joint position by the track depth amount-->
         <origin xyz="0.375 0 0" rpy="0 0 0"/>
@@ -154,7 +152,7 @@
     <!-- LEFT WHEEL LINK -->
 
     <joint name="left_wheel_joint" type="continuous">
-        <parent link="chassis"/>
+        <parent link="base_link"/>
         <child link="left_wheel"/>
         <origin xyz="0.23 0.13 -0.075" rpy="0 0 0" />
         <axis xyz="0 1 0"/>
@@ -179,7 +177,7 @@
     </link>
 
     <joint name="left_wheel_back_joint" type="continuous">
-        <parent link="chassis"/>
+        <parent link="base_link"/>
         <child link="left_wheel_back"/>
         <origin xyz="-0.2 0.13 -0.075" rpy="0 0 0" />
         <axis xyz="0 1 0"/>
@@ -207,7 +205,7 @@
     <!-- RIGHT WHEEL LINK -->
 
     <joint name="right_wheel_joint" type="continuous">
-        <parent link="chassis"/>
+        <parent link="base_link"/>
         <child link="right_wheel"/>
         <origin xyz="0.23 -0.13 -0.075" rpy="0 0 0" />
         <axis xyz="0 1 0"/>
@@ -232,7 +230,7 @@
     </link>
 
     <joint name="right_wheel_back_joint" type="continuous">
-        <parent link="chassis"/>
+        <parent link="base_link"/>
         <child link="right_wheel_back"/>
         <origin xyz="-0.2 -0.13 -0.075" rpy="0 0 0" />
         <axis xyz="0 1 0"/>
