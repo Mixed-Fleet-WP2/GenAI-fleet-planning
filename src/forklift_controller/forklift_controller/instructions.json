@@ -1,0 +1,22 @@
+[
+    {
+        "cmd": "move",
+        "args": [-2, 2],
+        "reason": "The cube is located at coordinates (-2, 2), so I need to move to that position to pick it up."
+    },
+    {
+        "cmd": "pick_up",
+        "args": ["cube"],
+        "reason": "After moving to the cube's position, I will pick it up."
+    },
+    {
+        "cmd": "move",
+        "args": [0, 0],
+        "reason": "Now I will move to the storage area, which is located at coordinates (0, 0)."
+    },
+    {
+        "cmd": "drop",
+        "args": ["cube"],
+        "reason": "I will drop the cube in the storage area after reaching the designated location."
+    }
+]

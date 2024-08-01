@@ -1,7 +1,7 @@
 from setuptools import find_packages, setup
 from glob import glob
 
-package_name = 'test_bot_controller'
+package_name = 'forklift_controller'
 
 setup(
     name=package_name,
@@ -27,8 +27,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'fork_node = test_bot_controller.fork_node:main',
-            'rotation_node = test_bot_controller.rotation_node:main'
+            'fork_node = forklift_controller.fork_node:main',
+            'rotation_node = forklift_controller.rotation_node:main'
         ],
     },
 )

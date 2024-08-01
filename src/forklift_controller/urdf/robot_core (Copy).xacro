@@ -47,7 +47,7 @@
         <visual>
             <origin xyz="0 0 0"/>
             <geometry>
-                <mesh filename="$(find test_bot_controller)/meshes/body.dae" scale="0.0027 0.0027 0.0027"/>
+                <mesh filename="$(find forklift_controller)/meshes/body.dae" scale="0.0027 0.0027 0.0027"/>
                 <!-- <box size="0.3 ${base_width} ${base_height}"/> -->
             </geometry>
         </visual>
@@ -67,14 +67,14 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
-                <mesh filename="$(find test_bot_controller)/meshes/fork_plate.dae" scale="0.0027 0.0027 0.0027"/>
+                <mesh filename="$(find forklift_controller)/meshes/fork_plate.dae" scale="0.0027 0.0027 0.0027"/>
                 <!-- <box size="0.1 0.25 0.02"/> -->
             </geometry>
         </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
-                <mesh filename="$(find test_bot_controller)/meshes/fork_plate.dae" scale="0.0027 0.0027 0.0027"/>
+                <mesh filename="$(find forklift_controller)/meshes/fork_plate.dae" scale="0.0027 0.0027 0.0027"/>
             </geometry>
         </collision>
         <xacro:inertial_box mass="10" x="0" y="0" z="0">
@@ -95,13 +95,13 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 0 -${pi}"/>
             <geometry>
-                <mesh filename="$(find test_bot_controller)/meshes/fork.dae" scale="0.0027 0.0027 0.0027"/>
+                <mesh filename="$(find forklift_controller)/meshes/fork.dae" scale="0.0027 0.0027 0.0027"/>
             </geometry>
         </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 -${pi/2}"/>
             <geometry>
-                <mesh filename="$(find test_bot_controller)/meshes/fork.dae" scale="0.0027 0.0027 0.0027"/>
+                <mesh filename="$(find forklift_controller)/meshes/fork.dae" scale="0.0027 0.0027 0.0027"/>
             </geometry>
         </collision>
         <xacro:inertial_box mass="10" x="0" y="0" z="0">

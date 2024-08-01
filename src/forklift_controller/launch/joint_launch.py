@@ -17,7 +17,7 @@ def generate_launch_description():
  
   # Constants for paths to different files and folders
   #package_name_description = 'Lorem Ipsum'
-  package_name = 'test_bot_controller'
+  package_name = 'forklift_controller'
  
   default_robot_name = 'forklift'
   gazebo_launch_file_path = 'launch'

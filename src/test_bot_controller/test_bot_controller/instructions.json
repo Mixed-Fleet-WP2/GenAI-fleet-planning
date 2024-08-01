@@ -1,6 +1,0 @@
-[
-    {"cmd": "move", "args": [-2, 2]},
-    {"cmd": "pick_up", "args": ["cube"]},
-    {"cmd": "move", "args": [0, 0]},
-    {"cmd": "drop", "args": ["cube"]}
-]

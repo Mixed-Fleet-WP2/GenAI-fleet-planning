@@ -47,7 +47,7 @@
         <visual>
             <origin xyz="0 0 0.05"/>
             <geometry>
-                <mesh filename="$(find test_bot_controller)/meshes/body.dae" scale="0.0027 0.0027 0.0027"/>
+                <mesh filename="$(find forklift_controller)/meshes/body.dae" scale="0.0027 0.0027 0.0027"/>
                 <!-- <box size="0.3 ${base_width} ${base_height}"/> -->
             </geometry>
         </visual>
@@ -68,7 +68,7 @@
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
                 <!-- <box size="0.01 0.2 0.2"/> -->
-                <mesh filename="$(find test_bot_controller)/meshes/fork_plate.dae" scale="0.0027 0.0027 0.0027"/>
+                <mesh filename="$(find forklift_controller)/meshes/fork_plate.dae" scale="0.0027 0.0027 0.0027"/>
             </geometry>
         </visual>
         <collision>
@@ -162,7 +162,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
-                <mesh filename="$(find test_bot_controller)/meshes/front_wheel_right.dae" scale="0.002 0.002 0.002"/>
+                <mesh filename="$(find forklift_controller)/meshes/front_wheel_right.dae" scale="0.002 0.002 0.002"/>
             </geometry>
         </visual>
         <collision>
@@ -187,7 +187,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 0 ${pi}"/>
             <geometry>
-                <mesh filename="$(find test_bot_controller)/meshes/front_wheel_right.dae" scale="0.002 0.002 0.002"/>
+                <mesh filename="$(find forklift_controller)/meshes/front_wheel_right.dae" scale="0.002 0.002 0.002"/>
                 <!-- <cylinder radius="0.05" length="0.02"/> -->
             </geometry>
         </visual>
@@ -215,7 +215,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
-                <mesh filename="$(find test_bot_controller)/meshes/front_wheel_right.dae" scale="0.002 0.002 0.002"/>
+                <mesh filename="$(find forklift_controller)/meshes/front_wheel_right.dae" scale="0.002 0.002 0.002"/>
             </geometry>
         </visual>
         <collision>
@@ -239,7 +239,7 @@
     <link name="right_wheel_back">
         <visual>
             <geometry>
-                <mesh filename="$(find test_bot_controller)/meshes/front_wheel_right.dae" scale="0.002 0.002 0.002"/>
+                <mesh filename="$(find forklift_controller)/meshes/front_wheel_right.dae" scale="0.002 0.002 0.002"/>
             </geometry>
         </visual>
         <collision>

@@ -24,10 +24,12 @@ TASK_PROMPT = "\nYour tasks is: "
 FORMAT_INSTRUCTION = """You should return the proposed instructions in a form following this example:
                         [
                         {"cmd": "cmd_name",
-                        "args": [arg1, arg2]
+                        "args": [arg1, arg2],
+                        "reason": "Explain the reasoning behind the command here"
                         },
                         {"cmd": "cmd_name2",
-                        "args": []
+                        "args": [],
+                        "reason": "Explain the reasoning behind the command 2 here"
                         }
                         ...More commands
                     ]. 
@@ -35,7 +37,8 @@ FORMAT_INSTRUCTION = """You should return the proposed instructions in a form fo
                       If there are no arguments, leave the array empty.
                     You may only use the functions that were given to
                     you before in the returned JSON and nothing else. You may assume that the actions are always
-                    successful.\n.
+                    successful.\n. In addition to the commands, explain the reasoning behind the commands an include
+                    it in the JSON as string following the format specified before.
                     """
 
 class GUI:
@@ -43,9 +46,9 @@ class GUI:
 
         self.object_states = {"environment": [
                                 {"objects": ["cube"]},
-                                {"assets": ["storage_area"]},
+                                {"locations": ["storage_area"]},
                                 {"object_positions": [{"cube": (-2, 2)}]},
-                                {"asset_positions": [{"storage_area": (0, 0)}]}
+                                {"location_position s": [{"storage_area": (0, 0)}]}
                                 ]
                             }
 
