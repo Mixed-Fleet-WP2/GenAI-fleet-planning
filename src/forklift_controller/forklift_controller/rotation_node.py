@@ -1,16 +1,12 @@
 import rclpy
 from rclpy.node import Node
 from nav_msgs.msg import Odometry
-from geometry_msgs.msg import Twist
-from std_msgs.msg import Float64, Empty
-from geometry_msgs.msg import Point, PoseArray
-from functools import partial
+from geometry_msgs.msg import Twist,PoseArray
 import math
 import numpy as np
 from collections import deque
 import subprocess
 from movement_interface.srv import MovementSuccess, Pickup, Drop
-import threading
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.callback_groups import ReentrantCallbackGroup
 
@@ -40,14 +36,14 @@ class RotationNode(Node):
 
         self.subscription_cb_group = ReentrantCallbackGroup()
         self.service_cb_group = ReentrantCallbackGroup()
-        self.create_subscription(Odometry, "/model/forklift/odometry", self.__get_odom, 10, callback_group=self.subscription_cb_group)
+        self.create_subscription(Odometry, "/model/forklift/odometry", self.__get_odom, 10)
 
-        self.srv = self.create_service(MovementSuccess, "move", self.move_forklift_to_point, callback_group=self.service_cb_group)  # CHANGE
-        self.pickup_srv = self.create_service(Pickup, "pick_up", self.pick_up, callback_group=self.service_cb_group)  # CHANGE
+        self.srv = self.create_service(MovementSuccess, "move", self.move_forklift_to_point, callback_group=self.service_cb_group)
+        self.pickup_srv = self.create_service(Pickup, "pick_up", self.pick_up, callback_group=self.service_cb_group) 
         self.drop_srv = self.create_service(Drop, "drop", self.drop, callback_group=self.service_cb_group)
         self.subscription = self.create_subscription(
             PoseArray,
-            'object_poses',  # Replace with your actual topic name
+            'object_poses',  
             self.pose_array_callback,
             10
         )
@@ -97,7 +93,6 @@ class RotationNode(Node):
         return math.atan2(t3, t4)
 
     def pose_array_callback(self, msg):
-        # Example: Extract the first pose from the PoseArray
         self.cube_pose_x = msg.poses[CUBE_POSE_INDEX].position.x
         self.cube_pose_y = msg.poses[CUBE_POSE_INDEX].position.y
 
@@ -249,8 +244,7 @@ class RotationNode(Node):
         w = quaternion[3]
 
         return x, y, z, w
-
-
+    
     def rotate(self):
         while True:
             error = self.target_angle - self.current_yaw
@@ -274,12 +268,12 @@ class RotationNode(Node):
                 msg.angular.z = self.kp * error
                 self.movement_controller.publish(msg)
 
-
 def main(args=None):
     rclpy.init(args=args)
     node = RotationNode()
     # https://answers.ros.org/question/358343/rate-and-sleep-function-in-rclpy-library-for-ros2/
-    executor = MultiThreadedExecutor(num_threads=4)
+    #One is the default thread, another reserved for service callbacks
+    executor = MultiThreadedExecutor(num_threads=2)
     rclpy.spin(node, executor=executor)
 
     rclpy.shutdown()

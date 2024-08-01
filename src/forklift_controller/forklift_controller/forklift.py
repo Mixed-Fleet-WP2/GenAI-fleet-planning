@@ -1,7 +1,5 @@
 
 from rclpy.node import Node
-
-
 import collections
 from movement_interface.srv import MovementSuccess, Pickup, Drop
 import threading
@@ -17,10 +15,10 @@ class Forklift(Node):
         self.move_req = MovementSuccess.Request()
         self.pick_up_req = Pickup.Request()
         self.drop_req = Drop.Request()
-
+        
         while not self.move_cli.wait_for_service(timeout_sec=1.0) and not self.pick_up_cli.wait_for_service(timeout_sec=1.0):
             self.get_logger().info('Services not available yet')
-
+        
     def move(self, x, y):
         self.move_req.x = x
         self.move_req.y = y
@@ -72,7 +70,7 @@ class Forklift(Node):
     def start_execution(self, commands):
 
         #Executing this makes gui unresponsive but saves one thread
-        self.execute_commands(commands)
+        #self.execute_commands(commands)
 
-        #exec_thread = threading.Thread(target=self.execute_commands, args=(commands,))
-        #exec_thread.start()
+        exec_thread = threading.Thread(target=self.execute_commands, args=(commands,))
+        exec_thread.start()

@@ -4,7 +4,6 @@ import collections
 import threading
 import tkinter as tk
 from tkinter import messagebox
-#Setup inside a virtual environment
 import requests
 import os
 
@@ -57,16 +56,23 @@ class GUI:
         self.API_KEY = os.environ.get('OPEN_AI_KEY')
 
         self.prompt_label = tk.Label(root, text="Enter what you want the robot to do:")
-        self.prompt_label.pack()
+        self.prompt_label.grid(row=0, columnspan=4, pady=(10, 10))
 
-        self.prompt_text = tk.Text(root, width=50, height=10)
-        self.prompt_text.pack()
+        self.header_input = tk.Label(root, text="Input:")
+        self.header_input.grid(row=1, columnspan=2, column=0)
+
+        self.header_output = tk.Label(root, text="The produced plan:")
+        self.header_output.grid(row=1, columnspan=2, column=2)
+
+        self.prompt_text = tk.Text(root, width=50, height=20)
+        self.prompt_text.grid(row=2, columnspan=2)
+
+        self.response_area = tk.Text(root,width=50, height=20)
+        self.response_area.grid(sticky="N", column=2, row=2, columnspan=2)
+        self.response_area.configure(state="disabled")
 
         self.start_button = tk.Button(root, text="Create an initiate plan", command=self.get_ai_response)
-        self.start_button.pack()
-
-        response_label = tk.Label(root)
-        response_label.pack()
+        self.start_button.grid(row=3, columnspan=4, pady=(10, 10))
 
         self.json_commands = collections.deque()
     
@@ -76,9 +82,10 @@ class GUI:
         object_states_str = json.dumps(self.object_states)
 
         instructions = COMMON_PROMPT +  object_states_str + TASK_PROMPT + self.prompt_text.get("1.0", "end-1c") + "\n" + FORMAT_INSTRUCTION
-        print(instructions)
+        #print(instructions)
 
         api_key = self.API_KEY
+        print(api_key)
         headers = {
             "Authorization": f"Bearer {api_key}"
         }
@@ -110,8 +117,12 @@ class GUI:
             with open('instructions.json', 'w') as json_file:
                 #Write the response string to a json file
                 json_file.write(response)
+                #Write the output to gui
+                self.response_area.configure(state="normal")
+                self.response_area.insert("1.0", response)
+                self.response_area.configure(state="disable")
         except Exception as e:
-            print("Error writing json")
+            print("Error writing json",e)
 
         self.load_json_commands()
         self.start_execution()

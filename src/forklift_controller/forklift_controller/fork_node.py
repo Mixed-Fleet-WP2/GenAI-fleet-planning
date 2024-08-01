@@ -8,7 +8,6 @@ from std_msgs.msg import Float64
 
 class ForkControlNode(Node):
     
-
     def __init__(self):
         super().__init__("fork_control_node")
         self.fork_down = True
