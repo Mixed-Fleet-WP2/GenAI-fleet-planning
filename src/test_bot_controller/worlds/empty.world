@@ -48,7 +48,7 @@
     
     <model name="storage_platform">
       <pose>0 0 0.001 0 0 0</pose>
-      <!--<static>true</static>-->
+      <static>true</static>
         <link name="platform">
         <inertial>
           <mass>1.0</mass>
@@ -118,8 +118,6 @@
             </box>
           </geometry>
         </visual>
-</sensor>
-
       </link>
     </model>
      

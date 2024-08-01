@@ -1,2 +1,0 @@
-[console_scripts]
-test_node = test_bot_controller.test_node:main
