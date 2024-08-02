@@ -39,8 +39,8 @@ class Forklift(Node):
             
             if func_call == "move":
                 self.get_logger().info("Move")
-                x = int(args[0])
-                y = int(args[1])
+                x = float(args[0])
+                y = float(args[1])
 
                 response = self.move(x, y)
                 was_success = bool(response.success)

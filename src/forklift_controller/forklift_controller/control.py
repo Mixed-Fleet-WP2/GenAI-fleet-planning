@@ -3,32 +3,29 @@ import json
 import collections
 import threading
 import tkinter as tk
-from tkinter import messagebox
 import requests
 import os
+import re
 
 from forklift import Forklift
-
-
 
 COMMON_PROMPT = """You control a forklift robot that has access to following commands:
                 - pick_up(object): makes the forklift pick up an object specified as a string. Returns nothing
                 - move(x,y): makes the forklift move to the specified coordinates. Takes two integers, returns
-                - drop(object): makes the forklift drop an object in front of it, specified as a string. Returns nothing
-                nothing\n
+                - drop(object): makes the forklift drop an object in front of it, specified as a string. Returns nothing\n\n
                 """
 
-TASK_PROMPT = "\nYour tasks is: "
+TASK_PROMPT = "\n\nYour tasks is: "
 
 FORMAT_INSTRUCTION = """You should return the proposed instructions in a form following this example:
                         [
                         {"cmd": "cmd_name",
                         "args": [arg1, arg2],
-                        "reason": "Explain the reasoning behind the command here"
+                        "reason": "Explain the reasoning behind command here"
                         },
                         {"cmd": "cmd_name2",
                         "args": [],
-                        "reason": "Explain the reasoning behind the command 2 here"
+                        "reason": "Explain the reasoning behind command 2 here"
                         }
                         ...More commands
                     ]. 
@@ -36,8 +33,9 @@ FORMAT_INSTRUCTION = """You should return the proposed instructions in a form fo
                       If there are no arguments, leave the array empty.
                     You may only use the functions that were given to
                     you before in the returned JSON and nothing else. You may assume that the actions are always
-                    successful.\n. In addition to the commands, explain the reasoning behind the commands an include
-                    it in the JSON as string following the format specified before.
+                    successful. In addition to the commands, explain the reasoning behind the commands an include
+                    it in the JSON as string following the format specified before. Use only the functions
+                    you deem necessary.
                     """
 
 class GUI:
@@ -47,7 +45,7 @@ class GUI:
                                 {"objects": ["cube"]},
                                 {"locations": ["storage_area"]},
                                 {"object_positions": [{"cube": (-2, 2)}]},
-                                {"location_position s": [{"storage_area": (0, 0)}]}
+                                {"location_positions": [{"storage_area": (0, 0)}]}
                                 ]
                             }
 
@@ -56,23 +54,31 @@ class GUI:
         self.API_KEY = os.environ.get('OPEN_AI_KEY')
 
         self.prompt_label = tk.Label(root, text="Enter what you want the robot to do:")
-        self.prompt_label.grid(row=0, columnspan=4, pady=(10, 10))
+        self.prompt_label.grid(row=0, columnspan=6, pady=(10, 10))
 
         self.header_input = tk.Label(root, text="Input:")
         self.header_input.grid(row=1, columnspan=2, column=0)
 
+        self.header_prompt = tk.Label(root, text="Completed prompt:")
+        self.header_prompt.grid(row=1, columnspan=2, column=2)
+
         self.header_output = tk.Label(root, text="The produced plan:")
-        self.header_output.grid(row=1, columnspan=2, column=2)
+        self.header_output.grid(row=1, columnspan=2, column=4)
 
         self.prompt_text = tk.Text(root, width=50, height=20)
         self.prompt_text.grid(row=2, columnspan=2)
 
+        #Area for the completed prompt
+        self.prompt_area = tk.Text(root,width=50, height=20)
+        self.prompt_area.grid(sticky="N", column=2, row=2, columnspan=2)
+        self.prompt_area.configure(state="disabled")
+
         self.response_area = tk.Text(root,width=50, height=20)
-        self.response_area.grid(sticky="N", column=2, row=2, columnspan=2)
+        self.response_area.grid(sticky="N", column=4, row=2, columnspan=2)
         self.response_area.configure(state="disabled")
 
         self.start_button = tk.Button(root, text="Create an initiate plan", command=self.get_ai_response)
-        self.start_button.grid(row=3, columnspan=4, pady=(10, 10))
+        self.start_button.grid(row=3, columnspan=6, pady=(10, 10))
 
         self.json_commands = collections.deque()
     
@@ -80,12 +86,21 @@ class GUI:
 
         #Convert the object states to a string
         object_states_str = json.dumps(self.object_states)
-
-        instructions = COMMON_PROMPT +  object_states_str + TASK_PROMPT + self.prompt_text.get("1.0", "end-1c") + "\n" + FORMAT_INSTRUCTION
-        #print(instructions)
+        task = self.prompt_text.get("1.0", "end-1c")
+        instructions = COMMON_PROMPT +  object_states_str + TASK_PROMPT + task + "\n\n" + FORMAT_INSTRUCTION
+        
+        #Courtesy of ChatGPT
+        # Remove leading and trailing whitespace from each line
+        text = "\n".join(line.strip() for line in instructions.splitlines())
+        # Replace multiple spaces within lines with a single space
+        text = "\n".join(re.sub(r'\s+', ' ', line) for line in text.splitlines())
+        
+        self.prompt_area.configure(state="normal")
+        self.prompt_area.insert("1.0", text)
+        self.prompt_area.configure(state="disable")
 
         api_key = self.API_KEY
-        print(api_key)
+
         headers = {
             "Authorization": f"Bearer {api_key}"
         }
@@ -139,7 +154,6 @@ class GUI:
     
     def start_execution(self):
         self.node.start_execution(self.json_commands)
-
 
 def main(args=None):
     rclpy.init(args=args)

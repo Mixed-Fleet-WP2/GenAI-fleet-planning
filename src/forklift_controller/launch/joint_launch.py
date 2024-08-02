@@ -3,16 +3,14 @@
 # Description: Launch a robotic arm in Gazebo 
 import os
 from launch import LaunchDescription
-from launch.actions import AppendEnvironmentVariable, DeclareLaunchArgument, IncludeLaunchDescription
+from launch.actions import AppendEnvironmentVariable, DeclareLaunchArgument, IncludeLaunchDescription, ExecuteProcess
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import Command, LaunchConfiguration, PythonExpression
+from launch.substitutions import Command, LaunchConfiguration
 from launch_ros.actions import Node
 from launch_ros.parameter_descriptions import ParameterValue
 from launch_ros.substitutions import FindPackageShare
-from ament_index_python.packages import get_package_share_directory
 
- 
 def generate_launch_description():
  
   # Constants for paths to different files and folders
@@ -24,32 +22,27 @@ def generate_launch_description():
   ros_gz_bridge_config_file_path = 'config/ros_gz_bridge.yaml'
   urdf_file_path = 'urdf/robot.urdf.xacro'
   world_file_path = 'worlds/empty.world'
+  gui_script_path = 'gui/control.py'
   # Set the path to different files and folders.  
   pkg_ros_gz_sim = FindPackageShare(package='ros_gz_sim').find('ros_gz_sim')  
   pkg_root = FindPackageShare(package=package_name).find(package_name)
-
-  
 
   default_ros_gz_bridge_config_file_path = os.path.join(pkg_root, ros_gz_bridge_config_file_path) 
   default_urdf_model_path = os.path.join(pkg_root, urdf_file_path)
   gazebo_launch_file_path = os.path.join(pkg_root, gazebo_launch_file_path)   
   gazebo_models_path = os.path.join(pkg_root, gazebo_models_path)
   world_path = os.path.join(pkg_root, world_file_path)
-   
+  gui_path = os.path.join(pkg_root, gui_script_path)
 
-
+  launch_gui_cmd = ExecuteProcess(
+            cmd=['python3', gui_path],
+            output='screen'
+        )
   # Declare the launch arguments  
   declare_robot_name_cmd = DeclareLaunchArgument(
     name='robot_name',
     default_value=default_robot_name,
     description='The name for the robot')
- 
-  """
-  declare_rviz_config_file_cmd = DeclareLaunchArgument(
-    name='rviz_config_file',
-    default_value=default_rviz_config_path,
-    description='Full path to the RVIZ config file to use')
-  """
  
   declare_simulator_cmd = DeclareLaunchArgument(
     name='headless',
@@ -118,7 +111,6 @@ def generate_launch_description():
 
   #Create the variables for holding the values of given cmd line arguments
   
-  
   #LaunchConfiguration on objekti, joka saa launchin aikana
   #arvon, joka annettiin komentoriviltä esim. alla "headless" on komentoriviparametri
   # Launch configuration variables specific to simulation
@@ -150,7 +142,6 @@ def generate_launch_description():
     condition=IfCondition(use_simulator),
     launch_arguments={'gz_args': ['-r -s -v4 ', world], 'on_exit_shutdown': 'true'}.items())
  
- 
   # Start Gazebo client    
   start_gazebo_client_cmd = IncludeLaunchDescription(
     PythonLaunchDescriptionSource(
@@ -175,15 +166,13 @@ def generate_launch_description():
       'use_sim_time': use_sim_time, 
       'robot_description': robot_description_content}])
   
-
   # Launch RViz
   start_rviz_cmd = Node(
     condition=IfCondition(use_rviz),
     package='rviz2',
     executable='rviz2',
     name='rviz2',
-    output='screen',
-    #arguments=['-d', rviz_config_file])
+    output='screen'
   )
 
   # Spawn the robot to gazebo sim through subscribing to the topic publishing the urdf file
@@ -217,15 +206,17 @@ def generate_launch_description():
     executable="fork_node",
   )
 
-  start_rotation_control_cmd = Node(
+  start_primitive_control_cmd = Node(
     package=package_name,
-    executable="rotation_node"
+    executable="primitive_node" #Corresponds to a name in setup.py
   )
      
   # Create the launch description and populate
   ld = LaunchDescription()
+
+  ld.add_action(launch_gui_cmd)
   
-  ld.add_action(start_rotation_control_cmd)
+  ld.add_action(start_primitive_control_cmd)
   ld.add_action(start_fork_control_cmd)
   # Declare the launch options
   ld.add_action(declare_robot_name_cmd)

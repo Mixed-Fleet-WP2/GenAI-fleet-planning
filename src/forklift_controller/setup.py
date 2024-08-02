@@ -17,6 +17,10 @@ setup(
         ('share/' + package_name + '/worlds', ['worlds/empty.world']),
         ('share/'+package_name+'/config', ['config/ros_gz_bridge.yaml']),
         ('share/' + package_name + '/meshes/', glob('meshes/*')),
+        #In the future, move the forklift.py to the lib directory?
+        (('share/' + package_name + '/gui', ['forklift_controller/control.py'])),
+        (('share/' + package_name + '/gui', ['forklift_controller/forklift.py'])),
+        (('lib/' + package_name, ['forklift_controller/utils.py'])),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -28,7 +32,7 @@ setup(
     entry_points={
         'console_scripts': [
             'fork_node = forklift_controller.fork_node:main',
-            'rotation_node = forklift_controller.rotation_node:main'
+            'primitive_node = forklift_controller.primitive_node:main'
         ],
     },
 )

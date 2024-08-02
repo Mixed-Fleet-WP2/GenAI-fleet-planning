@@ -2,13 +2,15 @@ import rclpy
 from rclpy.node import Node
 from nav_msgs.msg import Odometry
 from geometry_msgs.msg import Twist,PoseArray
+from std_msgs.msg import Bool
 import math
 import numpy as np
 from collections import deque
-import subprocess
 from movement_interface.srv import MovementSuccess, Pickup, Drop
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.callback_groups import ReentrantCallbackGroup
+
+from utils import calculate_position_targets, move_object_to_point, reset_contact_sensor, euler_to_quaternion, euler_from_quaternion
 
 # Specifies at which index in the pose
 # array received from gazebo the cube is located
@@ -24,7 +26,7 @@ TELEPORT_HEIGHT = 0.2
 CUBE_POSE_INDEX = 1
 
 
-class RotationNode(Node):
+class PrimitiveNode(Node):
     def __init__(self):
         super().__init__("rotation_node")
 
@@ -37,6 +39,8 @@ class RotationNode(Node):
         self.subscription_cb_group = ReentrantCallbackGroup()
         self.service_cb_group = ReentrantCallbackGroup()
         self.create_subscription(Odometry, "/model/forklift/odometry", self.__get_odom, 10)
+        self.create_subscription(Bool, "/forklift/touched", self.__detect_contact, 10)
+
 
         self.srv = self.create_service(MovementSuccess, "move", self.move_forklift_to_point, callback_group=self.service_cb_group)
         self.pickup_srv = self.create_service(Pickup, "pick_up", self.pick_up, callback_group=self.service_cb_group) 
@@ -54,10 +58,7 @@ class RotationNode(Node):
         self.current_y = None
         self.current_z = None
         self.action_in_progress = False
-
-        self.angle_diff_to_target = 0.0
-        self.x_diff_to_target = 0.0
-        self.y_diff_to_target = 0.0
+        self.in_cube_contact = False
 
         self.current_quaternion_w = 0.0
         self.current_quaternion_x = 0.0
@@ -68,7 +69,9 @@ class RotationNode(Node):
 
     def move_forklift_to_point(self, request, response):
         self.action_in_progress = True
-        self.calculate_position_targets(request.x, request.y)
+        self.target_x = request.x
+        self.target_y = request.y
+        self.target_angle = calculate_position_targets(request.x, request.y, self.current_x, self.current_y, self.current_yaw)
         self.rotation_complete = False
         self.rotate()
         self.move()
@@ -87,66 +90,10 @@ class RotationNode(Node):
         response.success = True
         return response    
 
-    def __euler_from_quaternion(self, x, y, z, w):
-        t3 = +2.0 * (w * z + x * y)
-        t4 = +1.0 - 2.0 * (y * y + z * z)
-        return math.atan2(t3, t4)
-
     def pose_array_callback(self, msg):
         self.cube_pose_x = msg.poses[CUBE_POSE_INDEX].position.x
         self.cube_pose_y = msg.poses[CUBE_POSE_INDEX].position.y
-
-    def calculate_position_targets(self, goal_x, goal_y):
-        # Calculate the x and y components of the vector that starts from the forklift and ends at the target
-        direction_vector_x_component = goal_x - self.current_x
-        direction_vector_y_component = goal_y - self.current_y
-        # Calculate the length of the sum vector (direct vector leading to target)
-        distance = math.hypot(direction_vector_x_component, direction_vector_y_component)
-
-        # convert to the sum vector to unit vector
-        if distance > 0:
-            direction_vector_x_component /= distance
-            direction_vector_y_component /= distance
-
-        # Set an offset from the target by moving the real target away to the opposite direction of the vector,
-        # this is quite a stupid solution but prevents the forklift from crashing into the object
-        # it tries to pick up
-        self.target_x = goal_x #- 0.75 * direction_vector_x_component
-        self.target_y = goal_y #- 0.75 * direction_vector_y_component
-
-        # Calculate how big the x, y and yaw differences are between the current
-        # position of the forklift and the target
-        self.x_diff_to_target = self.target_x - self.current_x
-        self.y_diff_to_target = self.target_y - self.current_y
-        self.angle_diff_to_target = math.atan2(self.y_diff_to_target, self.x_diff_to_target)
-
-        # Calculate the target angle (relative to the world) that we must achieve
-        self.target_angle = self.current_yaw + (self.angle_diff_to_target - self.current_yaw)
-
-    """
-    Teleports an object to a given position in the world. Utilised
-    by drop and pick_up functions.
-    """
-    def move_object_to_point(self, object, x, y, z, orient_x, orient_y, orient_z, orient_w):
-
-        cmd = [
-            "gz", "service",
-            "-s", "/world/default/set_pose",
-            "--reqtype", "gz.msgs.Pose",
-            "--reptype", "gz.msgs.Boolean",
-            "--timeout", "300",
-            "--req", (
-                f'name: "{object}", position: {{x: {x}, y: {y}, z: {z}}}, '
-                f'orientation: {{x: {orient_x}, y: {orient_y}, '
-                f'z: {orient_z}, w: {orient_w}}}'
-            )
-        ]
-
-        try:
-            subprocess.run(cmd, capture_output=False, text=True, check=True)
-        except Exception as e:
-            self.get_logger().info(e)
-
+        
     def move(self):
 
         while True:
@@ -155,11 +102,12 @@ class RotationNode(Node):
             error_y = self.target_y - self.current_y
             distance_error = math.hypot(error_x, error_y)
             msg = Twist()
-            if distance_error < 0.2:
+            if distance_error < 0.2 or self.in_cube_contact:
                 msg.linear.x = 0.0
                 self.movement_controller.publish(msg)
                 self.get_logger().info(f"Move complete, current location: ({self.current_x}, {self.current_y})")
                 self.action_in_progress = False
+                self.in_cube_contact = False
                 return True
             else:
                 # Multiplying by a small value results in slower linear movement
@@ -205,7 +153,7 @@ class RotationNode(Node):
         fork_center_x, fork_center_y = self.get_frame_pos_as_global(FORK_PLATE_JOINT_ORIGIN_X, FORK_PLATE_JOINT_ORIGIN_Y,
                                                                     LEFT_FORK_VISUAL_ORIGIN_X, LEFT_FORK_VISUAL_ORIGIN_Y - 0.05)
         # Movement to target is complete, pick up the target
-        self.move_object_to_point('cube', fork_center_x, fork_center_y, TELEPORT_HEIGHT, self.current_quaternion_x,
+        move_object_to_point('cube', fork_center_x, fork_center_y, TELEPORT_HEIGHT, self.current_quaternion_x,
                                   self.current_quaternion_y, self.current_quaternion_z, self.current_quaternion_w)
 
         cube_x, cube_y = self.cube_pose_x, self.cube_pose_y
@@ -218,8 +166,10 @@ class RotationNode(Node):
         # Get the coordinates of a point right in front of the forklift, relative to the global frame
         x, y = self.get_frame_pos_as_global(FORK_PLATE_JOINT_ORIGIN_X, FORK_PLATE_JOINT_ORIGIN_Y,
                                             FORK_LENGTH + CUBE_WIDTH / 2, LEFT_FORK_VISUAL_ORIGIN_Y - 0.05)
-        self.move_object_to_point('cube', x, y, TELEPORT_HEIGHT, self.current_quaternion_x, self.current_quaternion_y,
+        move_object_to_point('cube', x, y, TELEPORT_HEIGHT, self.current_quaternion_x, self.current_quaternion_y,
                                   self.current_quaternion_z, self.current_quaternion_w)
+        self.in_cube_contact = False
+        reset_contact_sensor()
 
     def __get_odom(self, msg):
         orientation_q = msg.pose.pose.orientation
@@ -230,21 +180,13 @@ class RotationNode(Node):
         self.current_quaternion_y = orientation_q.y
         self.current_quaternion_z = orientation_q.z
         self.current_quaternion_w = orientation_q.w
-        yaw = self.__euler_from_quaternion(orientation_q.x, orientation_q.y, orientation_q.z, orientation_q.w)
+        yaw = euler_from_quaternion(orientation_q.x, orientation_q.y, orientation_q.z, orientation_q.w)
         self.current_yaw = round(yaw, 2)
         self.odom_received = True
-
-    def euler_to_quaternion(self, yaw):
-        quaternion = np.zeros(4)
-        quaternion[3] = math.cos(yaw / 2)
-        quaternion[2] = math.sin(yaw / 2)
-        x = quaternion[0]
-        y = quaternion[1]
-        z = quaternion[2]
-        w = quaternion[3]
-
-        return x, y, z, w
     
+    def __detect_contact(self, msg):
+        self.in_cube_contact = msg.data
+  
     def rotate(self):
         while True:
             error = self.target_angle - self.current_yaw
@@ -256,9 +198,9 @@ class RotationNode(Node):
             msg = Twist()
             if abs(error) < 0.01:  # Smaller threshold for rotation completion
                 
-                #Make a small teleop command to make the forklift face exactly the target
-                x,y,z,w = self.euler_to_quaternion(self.target_angle)
-                self.move_object_to_point('forklift', self.current_x, self.current_y, self.current_z, x, y, z, w)
+                #Make a small teleport command to make the forklift face exactly the target
+                x,y,z,w = euler_to_quaternion(self.target_angle)
+                move_object_to_point('forklift', self.current_x, self.current_y, self.current_z, x, y, z, w)
             
                 msg.angular.z = 0.0
                 self.movement_controller.publish(msg)
@@ -270,7 +212,7 @@ class RotationNode(Node):
 
 def main(args=None):
     rclpy.init(args=args)
-    node = RotationNode()
+    node = PrimitiveNode()
     # https://answers.ros.org/question/358343/rate-and-sleep-function-in-rclpy-library-for-ros2/
     #One is the default thread, another reserved for service callbacks
     executor = MultiThreadedExecutor(num_threads=2)

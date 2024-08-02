@@ -252,7 +252,24 @@
             <origin xyz="0 0 0" rpy="-${pi/2} 0 0"/>
         </xacro:inertial_cylinder>
     </link>
+    <gazebo>
 
-   
+    <plugin filename="gz-sim-touchplugin-system"
+                    name="gz::sim::systems::TouchPlugin">
+                <target>cube</target>
+                <time>0.001</time>
+                <namespace>forklift</namespace>
+                <enabled>true</enabled>
+            </plugin>
+    </gazebo>
+
+    <gazebo reference="fork_plate">
+            <sensor name='sensor_contact' type='contact'>
+                    <contact>
+                        <collision>fork_plate_fixed_joint_lump__fork_1_collision_1</collision>
+                        <topic>forklift/container_contact</topic>
+                    </contact>
+            </sensor>
+        </gazebo>
 
 </robot>
