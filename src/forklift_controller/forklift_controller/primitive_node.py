@@ -9,6 +9,7 @@ from collections import deque
 from movement_interface.srv import MovementSuccess, Pickup, Drop, CubePos
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.callback_groups import ReentrantCallbackGroup
+from tf2_msgs.msg import TFMessage
 
 from utils import calculate_position_targets, move_object_to_point, reset_contact_sensor, euler_to_quaternion, euler_from_quaternion
 
@@ -36,6 +37,9 @@ class PrimitiveNode(Node):
         self.target_x = 0.0
         self.target_y = 0.0
 
+        self.cube_pos_x = None
+        self.cube_pos_y = None
+
         self.subscription_cb_group = ReentrantCallbackGroup()
         self.service_cb_group = ReentrantCallbackGroup()
         self.create_subscription(Odometry, "/model/forklift/odometry", self.__get_odom, 10)
@@ -46,9 +50,9 @@ class PrimitiveNode(Node):
         self.pickup_srv = self.create_service(Pickup, "pick_up", self.pick_up, callback_group=self.service_cb_group) 
         self.drop_srv = self.create_service(Drop, "drop", self.drop, callback_group=self.service_cb_group)
         self.subscription = self.create_subscription(
-            PoseArray,
-            'object_poses',  
-            self.pose_array_callback,
+            TFMessage,
+            'cube_pose',  
+            self.cube_pose_callback,
             10
         )
         self.movement_controller = self.create_publisher(Twist, "/cmd_vel", 10)
@@ -68,8 +72,8 @@ class PrimitiveNode(Node):
         self.command_queue = deque()
 
     def send_cube_pos(self, request, response):
-        response.pos_vector[0] = -2.0
-        response.pos_vector[1] = 2.0
+        response.pos_vector[0] = self.cube_pos_x
+        response.pos_vector[1] = self.cube_pos_y
         return response
 
     def move_forklift_to_point(self, request, response):
@@ -95,9 +99,9 @@ class PrimitiveNode(Node):
         response.success = True
         return response    
 
-    def pose_array_callback(self, msg):
-        self.cube_pose_x = msg.poses[CUBE_POSE_INDEX].position.x
-        self.cube_pose_y = msg.poses[CUBE_POSE_INDEX].position.y
+    def cube_pose_callback(self, msg):
+        self.cube_pos_x = msg.transforms[1].transform.translation.x
+        self.cube_pos_y = msg.transforms[1].transform.translation.y
         
     def move(self):
 
@@ -161,7 +165,7 @@ class PrimitiveNode(Node):
         move_object_to_point('cube', fork_center_x, fork_center_y, TELEPORT_HEIGHT, self.current_quaternion_x,
                                   self.current_quaternion_y, self.current_quaternion_z, self.current_quaternion_w)
 
-        cube_x, cube_y = self.cube_pose_x, self.cube_pose_y
+        cube_x, cube_y = self.cube_pos_x, self.cube_pos_y
 
         if abs(fork_center_x - cube_x) < 0.5 and abs(fork_center_y - cube_y) < 0.5:
             return True

@@ -23,15 +23,14 @@
   gz_type_name: "gz.msgs.Twist"
   direction: ROS_TO_GZ
 
-- ros_topic_name: "object_poses"
-  gz_topic_name: "/world/default/pose/info"
-  ros_type_name: "geometry_msgs/msg/PoseArray"
-  gz_type_name: "gz.msgs.Pose_V"
-  direction: GZ_TO_ROS
-
 - ros_topic_name: "forklift/touched"
   gz_topic_name: "forklift/touched"
   ros_type_name: "std_msgs/msg/Bool"
   gz_type_name: "gz.msgs.Boolean"
   direction: GZ_TO_ROS
 
+- ros_topic_name: "cube_pose"
+  gz_topic_name: "/model/cube/pose"
+  ros_type_name: "tf2_msgs/msg/TFMessage"
+  gz_type_name: "gz.msgs.Pose_V"
+  direction: GZ_TO_ROS
