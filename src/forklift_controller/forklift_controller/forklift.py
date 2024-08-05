@@ -1,7 +1,7 @@
 
 from rclpy.node import Node
 import collections
-from movement_interface.srv import MovementSuccess, Pickup, Drop
+from movement_interface.srv import MovementSuccess, Pickup, Drop, CubePos
 import threading
 
 class Forklift(Node):
@@ -9,12 +9,14 @@ class Forklift(Node):
     def __init__(self):
         super().__init__('forklift_robot')
         self.move_cli = self.create_client(MovementSuccess, 'move')
+        self.cube_pos_cli = self.create_client(CubePos, 'cube_pos')
         self.pick_up_cli = self.create_client(Pickup, 'pick_up')  
         self.drop_cli = self.create_client(Drop, 'drop')
         self.json_commands = collections.deque()
         self.move_req = MovementSuccess.Request()
         self.pick_up_req = Pickup.Request()
         self.drop_req = Drop.Request()
+        self.cube_pos_req = CubePos.Request()
         
         while not self.move_cli.wait_for_service(timeout_sec=1.0) and not self.pick_up_cli.wait_for_service(timeout_sec=1.0):
             self.get_logger().info('Services not available yet')
@@ -31,6 +33,12 @@ class Forklift(Node):
     def drop(self, object):
         self.drop_req.object = object
         return self.drop_cli.call(self.drop_req)
+
+    def get_cube_pos(self):
+        res = self.cube_pos_cli.call(self.cube_pos_req)
+        x,y = res.pos_vector[0],res.pos_vector[1]
+        self.get_logger().info(str(x))
+        return x,y
 
     def execute_commands(self, commands):
 

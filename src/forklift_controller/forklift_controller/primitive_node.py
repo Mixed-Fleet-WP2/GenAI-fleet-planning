@@ -6,7 +6,7 @@ from std_msgs.msg import Bool
 import math
 import numpy as np
 from collections import deque
-from movement_interface.srv import MovementSuccess, Pickup, Drop
+from movement_interface.srv import MovementSuccess, Pickup, Drop, CubePos
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.callback_groups import ReentrantCallbackGroup
 
@@ -41,7 +41,7 @@ class PrimitiveNode(Node):
         self.create_subscription(Odometry, "/model/forklift/odometry", self.__get_odom, 10)
         self.create_subscription(Bool, "/forklift/touched", self.__detect_contact, 10)
 
-
+        self.cube_pos_service = self.create_service(CubePos, 'cube_pos', self.send_cube_pos, callback_group=self.service_cb_group)
         self.srv = self.create_service(MovementSuccess, "move", self.move_forklift_to_point, callback_group=self.service_cb_group)
         self.pickup_srv = self.create_service(Pickup, "pick_up", self.pick_up, callback_group=self.service_cb_group) 
         self.drop_srv = self.create_service(Drop, "drop", self.drop, callback_group=self.service_cb_group)
@@ -66,6 +66,11 @@ class PrimitiveNode(Node):
         self.current_quaternion_z = 0.0
         self.odom_received = False
         self.command_queue = deque()
+
+    def send_cube_pos(self, request, response):
+        response.pos_vector[0] = -2.0
+        response.pos_vector[1] = 2.0
+        return response
 
     def move_forklift_to_point(self, request, response):
         self.action_in_progress = True

@@ -83,7 +83,7 @@ class GUI:
         self.json_commands = collections.deque()
     
     def get_ai_response(self, model="gpt-4o-mini"):
-
+        self.node.get_cube_pos()
         #Convert the object states to a string
         object_states_str = json.dumps(self.object_states)
         task = self.prompt_text.get("1.0", "end-1c")
