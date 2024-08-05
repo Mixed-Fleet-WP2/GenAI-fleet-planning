@@ -6,7 +6,7 @@ import numpy as np
 Teleports an object to a given position in the world. Utilised
 by drop and pick_up functions.
 """
-def move_object_to_point(object, x, y, z, orient_x, orient_y, orient_z, orient_w):
+def move_object_to_point(object, x, y, z, orient_x=0, orient_y=0, orient_z=0, orient_w=0):
 
     cmd = [
         "gz", "service",

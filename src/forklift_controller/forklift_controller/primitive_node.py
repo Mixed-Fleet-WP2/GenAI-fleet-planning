@@ -24,11 +24,13 @@ LEFT_FORK_VISUAL_ORIGIN_X = 0.15
 LEFT_FORK_VISUAL_ORIGIN_Y = 0.05
 # The height at which drop the "picked up cube onto the fork, could be in the future be replaced with an odometry value"
 TELEPORT_HEIGHT = 0.2
-CUBE_POSE_INDEX = 1
 
 
 class PrimitiveNode(Node):
     def __init__(self):
+
+        move_object_to_point('cube', np.random.randint(3, 14), np.random.randint(3, 14), 0.5)
+
         super().__init__("rotation_node")
 
         self.target_angle = 0

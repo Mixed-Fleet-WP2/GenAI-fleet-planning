@@ -7,6 +7,10 @@ import threading
 class Forklift(Node):
 
     def __init__(self):
+
+        #Move a cube to a random position, should be maybe allocated
+        #to launch file in the future
+        
         super().__init__('forklift_robot')
         self.move_cli = self.create_client(MovementSuccess, 'move')
         self.cube_pos_cli = self.create_client(CubePos, 'cube_pos')

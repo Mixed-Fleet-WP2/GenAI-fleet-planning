@@ -41,13 +41,19 @@ FORMAT_INSTRUCTION = """You should return the proposed instructions in a form fo
 class GUI:
     def __init__(self, root, node):
 
-        self.object_states = {"environment": [
-                                {"objects": ["cube"]},
-                                {"locations": ["storage_area"]},
-                                {"object_positions": [{"cube": (-2, 2)}]},
-                                {"location_positions": [{"storage_area": (0, 0)}]}
-                                ]
+        self.object_states = {
+                            "environment": {
+                                "objects": ["cube"],
+                                "locations": ["storage_area"],
+                                "object_positions": {
+                                "cube": None
+                                },
+                                "location_positions": {
+                                "storage_area": (0, 0)
+                                }
                             }
+                        }
+
 
         self.root = root
         self.node = node
@@ -83,7 +89,10 @@ class GUI:
         self.json_commands = collections.deque()
     
     def get_ai_response(self, model="gpt-4o-mini"):
-        self.node.get_cube_pos()
+        
+        x,y = self.node.get_cube_pos()
+        self.object_states["environment"]["object_positions"]["cube"] = (x,y)
+       
         #Convert the object states to a string
         object_states_str = json.dumps(self.object_states)
         task = self.prompt_text.get("1.0", "end-1c")
