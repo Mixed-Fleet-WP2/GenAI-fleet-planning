@@ -38,14 +38,6 @@ def calculate_position_targets(goal_x:float, goal_y:float, entity_x:float, entit
             direction_vector_x_component /= distance
             direction_vector_y_component /= distance
 
-        # Set an offset from the target by moving the real target away to the opposite direction of the vector,
-        # this is quite a stupid solution but prevents the forklift from crashing into the object
-        # it tries to pick up
-        """
-        self.target_x = goal_x #- 0.75 * direction_vector_x_component
-        self.target_y = goal_y #- 0.75 * direction_vector_y_component
-        """
-
         # Calculate how big the x, y and yaw differences are between the current
         # position of the forklift and the target
         x_diff_to_target = goal_x - entity_x
@@ -88,3 +80,38 @@ def euler_from_quaternion(x, y, z, w):
     t3 = +2.0 * (w * z + x * y)
     t4 = +1.0 - 2.0 * (y * y + z * z)
     return math.atan2(t3, t4)
+
+"""
+Function to get the global position of a link's frame in the global coordinate system
+Primarily used to get the global position of the forklift's fork frame
+to teleport the cube to the correct position.
+
+frame_local_pos_x: the x-coordinate of the origin of a frame specified in terms of the base link's 
+coordinate system. In Gazebo one can see the this coordinate by inspecting the link (if the link
+is not fixed)
+frame_local_y: the y-coordinate of the origin of a frame specified in terms of the base link's 
+coordinate system. In Gazebo one can see the this coordinate by inspecting the link (if the link
+is not fixed)
+offset_x: How much the returned x-coordinate should be offset to the
+x-direction (in the forklift's coordinate frame, not global) i.e. forward when looking towards the front
+offset_y: How much the returned y-coordinate should be offset to the
+y-direction (in the forklift's coordinate frame, not global) i.e. left when looking towards the front
+"""
+
+def get_frame_pos_as_global(parent_x, parent_y, parent_yaw, frame_local_pos_x, frame_local_pos_y, offset_x=0, offset_y=0):
+
+    frame_local_position = np.array([frame_local_pos_x + offset_x, frame_local_pos_y + offset_y])
+
+    # Transformation matrix to rotate the forlift's coordinate axis to the same
+    # position as global axis
+    rotation_matrix = np.array([
+        [np.cos(parent_yaw), -np.sin(parent_yaw)],
+        [np.sin(parent_yaw), np.cos(parent_yaw)]
+    ])
+
+    rotated_local_position = rotation_matrix.dot(frame_local_position)
+
+    frame_global_pos_x = rotated_local_position[0] + parent_x
+    frame_global_pos_y = rotated_local_position[1] + parent_y
+
+    return frame_global_pos_x, frame_global_pos_y
