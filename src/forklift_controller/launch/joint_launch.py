@@ -34,15 +34,34 @@ def generate_launch_description():
   world_path = os.path.join(pkg_root, world_file_path)
   gui_path = os.path.join(pkg_root, gui_script_path)
 
-  launch_gui_cmd = ExecuteProcess(
-            cmd=['python3', gui_path],
-            output='screen'
-        )
+
   # Declare the launch arguments  
   declare_robot_name_cmd = DeclareLaunchArgument(
     name='robot_name',
     default_value=default_robot_name,
     description='The name for the robot')
+  
+  declare_language_model = DeclareLaunchArgument(
+    name = 'model',
+    default_value = 'gpt-4o-mini',
+    description = """The model name to be used as the action planner. The available models are (listed in the order of performance): \n
+        OPEN AI: 
+          gpt-4o #Good
+          gpt-4o-mini #As good as full 4o, cheapest of good
+          gpt-3.5-turbo
+        CLAUDE:
+          claude-3-haiku-2024030 #Similar performance to sonnet
+          claude-3-sonnet-20240229 #Doesn't produce sensible plans
+          claude-3-opus-20240229 #Good
+          claude-3-5-sonnet-20240620 #Servers overloaded, not tested
+        LLAMA:
+          llama3.1-405b #Good
+          llama3.1-70b #Good
+          llama3.1-8b #Produces unsensible plans (for example move to 0.0 without pick up)
+          llama3-70b #Good, more costly than gpt-4o-mini
+          llama3-8b #Produces unsensible similar to Sonnet
+      """
+  )
  
   declare_simulator_cmd = DeclareLaunchArgument(
     name='headless',
@@ -115,6 +134,7 @@ def generate_launch_description():
   #arvon, joka annettiin komentoriviltä esim. alla "headless" on komentoriviparametri
   # Launch configuration variables specific to simulation
   headless = LaunchConfiguration('headless')
+  ai_model = LaunchConfiguration('model')
   robot_name = LaunchConfiguration('robot_name')
   urdf_model = LaunchConfiguration('urdf_model')
   use_robot_state_pub = LaunchConfiguration('use_robot_state_pub')
@@ -210,12 +230,15 @@ def generate_launch_description():
     package=package_name,
     executable="primitive_node" #Corresponds to a name in setup.py
   )
+
+  launch_gui_cmd = ExecuteProcess(
+            cmd=['python3', gui_path, ai_model],
+            output='screen'
+  )
      
   # Create the launch description and populate
   ld = LaunchDescription()
 
-  ld.add_action(launch_gui_cmd)
-  
   ld.add_action(start_primitive_control_cmd)
   ld.add_action(start_fork_control_cmd)
   # Declare the launch options
@@ -244,5 +267,8 @@ def generate_launch_description():
  
   ld.add_action(start_gazebo_ros_spawner_cmd)
   ld.add_action(start_gazebo_ros_bridge_cmd)
+  ld.add_action(declare_language_model)
+
+  ld.add_action(launch_gui_cmd)
  
   return ld
