@@ -31,7 +31,7 @@ class PrimitiveNode(Node):
 
         move_object_to_point('cube', np.random.randint(3, 14), np.random.randint(3, 14), 0.5)
 
-        super().__init__("rotation_node")
+        super().__init__("primitive_node")
 
         self.target_angle = 0
         self.kp = 0.7  # Proportional gain
