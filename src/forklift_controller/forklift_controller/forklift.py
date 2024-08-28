@@ -26,8 +26,10 @@ class Forklift(Node):
             self.get_logger().info('Services not available yet')
         
     def move(self, x, y):
+        #Populate the request object
         self.move_req.x = x
         self.move_req.y = y
+        #Make a ROS2 service call
         return self.move_cli.call(self.move_req)
 
     def pick_up(self, object):
@@ -47,9 +49,9 @@ class Forklift(Node):
     def execute_commands(self, commands):
 
         while commands:
-            func_call, args = commands.popleft()
+            func_name, args = commands.popleft()
             
-            if func_call == "move":
+            if func_name == "move":
                 self.get_logger().info("Move")
                 x = float(args[0])
                 y = float(args[1])
@@ -58,9 +60,9 @@ class Forklift(Node):
                 was_success = bool(response.success)
 
                 if not was_success:
-                    raise Exception("Movement was not successful")
+                    raise Exception("Movement to point was not successful")
 
-            elif func_call == "pick_up":
+            elif func_name == "pick_up":
                 self.get_logger().info("Pick up")
                 object = args[0]
                 response = self.pick_up(object)
@@ -68,7 +70,8 @@ class Forklift(Node):
 
                 if not was_success:
                     raise Exception("Picking up the object was not successful")
-            elif func_call == "drop":
+                
+            elif func_name == "drop":
                 self.get_logger().info("Drop")
                 object = args[0]
                 response = self.drop(object)
@@ -76,7 +79,8 @@ class Forklift(Node):
 
                 if not was_success:
                     raise Exception("Dropping the object was not successful")
-
+        
+        #Inform that all commands were executed
         self.get_logger().info("All commands executed")
     
     def start_execution(self, commands):
