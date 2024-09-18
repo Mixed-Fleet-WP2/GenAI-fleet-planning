@@ -253,8 +253,8 @@
                     name="gz::sim::systems::TouchPlugin">
                 <target>cube</target>
                 <time>0.001</time>
-                <namespace>forklifto</namespace>
                 <enabled>true</enabled>
+                <namespace>$(arg robot_namespace)</namespace>
             </plugin>
     </gazebo>
 
@@ -262,7 +262,6 @@
             <sensor name='sensor_contact' type='contact'>
                     <contact>
                         <collision>fork_plate_fixed_joint_lump__fork_1_collision_1</collision>
-                        <topic>forklift/container_contact</topic>
                     </contact>
             </sensor>
         </gazebo>

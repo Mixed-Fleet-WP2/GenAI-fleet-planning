@@ -11,28 +11,8 @@
   gz_type_name: "gz.msgs.Double"
   direction: ROS_TO_GZ
 
-
-#- ros_topic_name: "/model/forklift/odometry"
-  #gz_topic_name: "/model/forklift/odometry"
-  #ros_type_name: "nav_msgs/msg/Odometry"
-  #gz_type_name: "gz.msgs.Odometry"
-  #direction: GZ_TO_ROS
-
-
-#- ros_topic_name: "cmd_vel/forklift_1"
- # gz_topic_name: "/model/forklift_1/cmd_vel" #This needs to be done programmitacally
-  #ros_type_name: "geometry_msgs/msg/Twist"
-  #gz_type_name: "gz.msgs.Twist"
-  #direction: ROS_TO_GZ
-
-#- ros_topic_name: "cmd_vel/forklift_2"
-  #gz_topic_name: "/model/forklift_2/cmd_vel"
-  #ros_type_name: "geometry_msgs/msg/Twist"
-  #gz_type_name: "gz.msgs.Twist"
-  #direction: ROS_TO_GZ
-
 - ros_topic_name: "forklift/touched"
-  gz_topic_name: "forklift/touched"
+  gz_topic_name: "cube/touched"
   ros_type_name: "std_msgs/msg/Bool"
   gz_type_name: "gz.msgs.Boolean"
   direction: GZ_TO_ROS

@@ -22,31 +22,31 @@ def gen_robot_list(number_of_robots):
 
     return robots 
 
+# Constants for paths to different files and folders
+#package_name_description = 'Lorem Ipsum'
+package_name = 'forklift_controller'
+default_robot_name = 'forklift'
+gazebo_launch_file_path = 'launch'
+gazebo_models_path = 'models'
+ros_gz_bridge_config_file_path = 'config/ros_gz_bridge.yaml'
+urdf_file_path = 'urdf/robot.urdf.xacro'
+world_file_path = 'worlds/empty.world'
+gui_script_path = 'gui/control.py'
+# Set the path to different files and folders.  
+pkg_ros_gz_sim = FindPackageShare(package='ros_gz_sim').find('ros_gz_sim')  
+pkg_root = FindPackageShare(package=package_name).find(package_name)
+
+default_ros_gz_bridge_config_file_path = os.path.join(pkg_root, ros_gz_bridge_config_file_path) 
+default_urdf_model_path = os.path.join(pkg_root, urdf_file_path)
+gazebo_launch_file_path = os.path.join(pkg_root, gazebo_launch_file_path)   
+gazebo_models_path = os.path.join(pkg_root, gazebo_models_path)
+world_path = os.path.join(pkg_root, world_file_path)
+gui_path = os.path.join(pkg_root, gui_script_path)
+
+
 
 def generate_launch_description():
  
-  # Constants for paths to different files and folders
-  #package_name_description = 'Lorem Ipsum'
-  package_name = 'forklift_controller'
-  default_robot_name = 'forklift'
-  gazebo_launch_file_path = 'launch'
-  gazebo_models_path = 'models'
-  ros_gz_bridge_config_file_path = 'config/ros_gz_bridge.yaml'
-  urdf_file_path = 'urdf/robot.urdf.xacro'
-  world_file_path = 'worlds/empty.world'
-  gui_script_path = 'gui/control.py'
-  # Set the path to different files and folders.  
-  pkg_ros_gz_sim = FindPackageShare(package='ros_gz_sim').find('ros_gz_sim')  
-  pkg_root = FindPackageShare(package=package_name).find(package_name)
-
-  default_ros_gz_bridge_config_file_path = os.path.join(pkg_root, ros_gz_bridge_config_file_path) 
-  default_urdf_model_path = os.path.join(pkg_root, urdf_file_path)
-  gazebo_launch_file_path = os.path.join(pkg_root, gazebo_launch_file_path)   
-  gazebo_models_path = os.path.join(pkg_root, gazebo_models_path)
-  world_path = os.path.join(pkg_root, world_file_path)
-  gui_path = os.path.join(pkg_root, gui_script_path)
-
-
   declare_robot_amount_cmd = DeclareLaunchArgument(
     name='robot_amount',
     default_value='2',
@@ -81,7 +81,7 @@ def generate_launch_description():
   
   declare_use_sim_time_cmd = DeclareLaunchArgument(
     name='use_sim_time',
-    default_value='false',
+    default_value='False',
     description='Use simulation (Gazebo) clock if true')
  
   declare_use_simulator_cmd = DeclareLaunchArgument(
@@ -165,23 +165,7 @@ def generate_launch_description():
     launch_arguments={'gz_args': '-g -v4 '}.items()
     )
   
-  robot_description_content = ""
-  # Subscribe to the joint states of the robot, and publish the 3D pose of each link.
-  try:
-    robot_description_content = ParameterValue(Command(['xacro ', urdf_model]), value_type=str)
-  except:
-    exit()
 
-  start_robot_state_publisher_cmd = Node(
-    condition=IfCondition(use_robot_state_pub),
-    package='robot_state_publisher',
-    executable='robot_state_publisher',
-    name='robot_state_publisher',
-    output='screen',
-    parameters=[{
-      'use_sim_time': use_sim_time, 
-      'robot_description': robot_description_content}])
-  
   # Launch RViz
   start_rviz_cmd = Node(
     condition=IfCondition(use_rviz),
@@ -238,7 +222,7 @@ def generate_launch_description():
   ld.add_action(set_env_vars_resources)
   ld.add_action(start_gazebo_server_cmd)
   ld.add_action(start_gazebo_client_cmd)
-  ld.add_action(start_robot_state_publisher_cmd)
+  #ld.add_action(start_robot_state_publisher_cmd)
   ld.add_action(start_rviz_cmd)
  
   #ld.add_action(start_gazebo_ros_spawner_cmd)
@@ -253,6 +237,9 @@ def generate_launch_description():
 def spawn_robot(context):
 
     amount_of_robots = LaunchConfiguration('robot_amount').perform(context)
+    urdf_model = LaunchConfiguration('urdf_model').perform(context)
+    use_robot_state_pub = LaunchConfiguration('use_robot_state_pub').perform(context)
+    use_sim_time = LaunchConfiguration('use_sim_time')
     
     # List to store actions
     actions = []
@@ -281,13 +268,43 @@ def spawn_robot(context):
         bridge_cmd_vel_action = Node(
           package='ros_gz_bridge',
           executable='parameter_bridge',
-          arguments=[f'/model/{robot_name}/cmd_vel@geometry_msgs/msg/Twist]gz.msgs.Twist'],
+          arguments=[f'{robot_name}/cmd_vel@geometry_msgs/msg/Twist]gz.msgs.Twist'],
         )
+
+        bridge_container_contact_action = Node(
+          package='ros_gz_bridge',
+          executable='parameter_bridge',
+          arguments=[f'/world/default/model/{robot_name}/link/fork_plate/sensor/sensor_contact/contact@std_msgs/msg/Bool[gz.msgs.Boolean'],
+          remappings=[(f'/world/default/model/{robot_name}/link/fork_plate/sensor/sensor_contact/contact', f'/{robot_name}/cube_contact')]
+        )
+
+        robot_description_content = ""
+          # Subscribe to the joint states of the robot, and publish the 3D pose of each link.
+        try:
+          robot_description_content = ParameterValue(
+          Command(['xacro ', urdf_model, ' robot_namespace:=',robot_name]),
+          value_type=str
+        )
+        except Exception as e:
+          print(e)
+          exit()
+
+        start_robot_state_publisher_cmd = Node(
+          condition=IfCondition(use_robot_state_pub),
+          package='robot_state_publisher',
+          executable='robot_state_publisher',
+          name='robot_state_publisher',
+          output='screen',
+          parameters=[{
+            'use_sim_time': use_sim_time, 
+            'robot_description': robot_description_content,
+            'frame_prefix': robot_name + "/"}])
+
 
         bridge_odometry_action = Node(
           package='ros_gz_bridge',
           executable='parameter_bridge',
-          arguments=[f'/model/{robot_name}/odometry@nav_msgs/msg/Odometry[gz.msgs.Odometry'],
+          arguments=[f'{robot_name}/odometry@nav_msgs/msg/Odometry[gz.msgs.Odometry'],
         )
 
         execution_node_action = Node(
@@ -296,7 +313,9 @@ def spawn_robot(context):
           arguments=[robot_name]
           )
 
+        actions.append(start_robot_state_publisher_cmd)
         actions.append(spawn_action)
+        actions.append(bridge_container_contact_action)
         actions.append(bridge_cmd_vel_action)
         actions.append(bridge_odometry_action)
         actions.append(execution_node_action)

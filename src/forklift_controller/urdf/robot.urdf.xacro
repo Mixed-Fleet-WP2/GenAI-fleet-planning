@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro"  name="forklift">
 
+    <xacro:arg name="robot_namespace" default=""/>
     <xacro:include filename="robot_core.xacro" />
     
     <gazebo>
@@ -23,6 +24,7 @@
         filename="gz-sim-odometry-publisher-system"
         name="gz::sim::systems::OdometryPublisher">
             <odom_frame>base_link</odom_frame>
+            <odom_topic>$robot_namespace/odometry</odom_topic>
         </plugin>
         
         <!--
