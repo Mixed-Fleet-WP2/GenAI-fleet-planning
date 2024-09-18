@@ -9,19 +9,6 @@ from launch_ros.parameter_descriptions import ParameterValue
 from launch_ros.substitutions import FindPackageShare
 
 
-def gen_robot_list(number_of_robots):
-    print("robot_name")
-    robots = []
-
-    for i in range(number_of_robots):
-        robot_name = "box_bot"+str(i)
-        print(robot_name)
-        x_pos = float(i)
-        robots.append({'name': robot_name, 'x_pose': x_pos, 'y_pose': 0.0, 'z_pose': 0.01})
-
-
-    return robots 
-
 # Constants for paths to different files and folders
 #package_name_description = 'Lorem Ipsum'
 package_name = 'forklift_controller'
@@ -238,7 +225,7 @@ def spawn_robot(context):
 
     amount_of_robots = LaunchConfiguration('robot_amount').perform(context)
     urdf_model = LaunchConfiguration('urdf_model').perform(context)
-    use_robot_state_pub = LaunchConfiguration('use_robot_state_pub').perform(context)
+    use_robot_state_pub = LaunchConfiguration('use_robot_state_pub')
     use_sim_time = LaunchConfiguration('use_sim_time')
     
     # List to store actions
@@ -274,8 +261,7 @@ def spawn_robot(context):
         bridge_container_contact_action = Node(
           package='ros_gz_bridge',
           executable='parameter_bridge',
-          arguments=[f'/world/default/model/{robot_name}/link/fork_plate/sensor/sensor_contact/contact@std_msgs/msg/Bool[gz.msgs.Boolean'],
-          remappings=[(f'/world/default/model/{robot_name}/link/fork_plate/sensor/sensor_contact/contact', f'/{robot_name}/cube_contact')]
+          arguments=[f'{robot_name}/touched@std_msgs/msg/Bool[gz.msgs.Boolean'],
         )
 
         robot_description_content = ""
@@ -293,12 +279,15 @@ def spawn_robot(context):
           condition=IfCondition(use_robot_state_pub),
           package='robot_state_publisher',
           executable='robot_state_publisher',
-          name='robot_state_publisher',
+          name=f'robot_state_publisher_{robot_name}',
           output='screen',
           parameters=[{
             'use_sim_time': use_sim_time, 
             'robot_description': robot_description_content,
-            'frame_prefix': robot_name + "/"}])
+            'frame_prefix': robot_name + "/"}],
+          remappings=[('/tf', f'/{robot_name}/tf'),
+                       ('/tf_static', f'/{robot_name}/tf_static')],
+            )
 
 
         bridge_odometry_action = Node(

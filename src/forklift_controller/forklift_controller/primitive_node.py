@@ -32,7 +32,7 @@ class PrimitiveNode(Node):
 
         move_object_to_point('cube', np.random.randint(3, 14), np.random.randint(3, 14), 0.5)
 
-        super().__init__("primitive_node")
+        super().__init__(f"{node_name}_backend")
 
         self.target_angle = 0
         self.kp = 0.7  # Proportional gain
@@ -45,20 +45,23 @@ class PrimitiveNode(Node):
 
         self.subscription_cb_group = ReentrantCallbackGroup()
         self.service_cb_group = ReentrantCallbackGroup()
-        self.create_subscription(Odometry, f"/model/{node_name}/odometry", self.__get_odom, 10)
-        self.create_subscription(Bool, "/forklift/touched", self.__detect_contact, 10)
+        self.create_subscription(Odometry, f"{node_name}/odometry", self.__get_odom, 10)
+        self.create_subscription(Bool, f"{node_name}/touched", self.__detect_contact, 10)
 
         self.cube_pos_service = self.create_service(CubePos, 'cube_pos', self.send_cube_pos, callback_group=self.service_cb_group)
         self.srv = self.create_service(MovementSuccess, f"{node_name}/move", self.move_forklift_to_point, callback_group=self.service_cb_group)
         self.pickup_srv = self.create_service(Pickup, f"{node_name}/pick_up", self.pick_up, callback_group=self.service_cb_group) 
         self.drop_srv = self.create_service(Drop, f"{node_name}/drop", self.drop, callback_group=self.service_cb_group)
+        self.get_logger().info(f"Primitive node {node_name} started")
+        
         self.subscription = self.create_subscription(
             TFMessage,
             'cube_pose',  
             self.cube_pose_callback,
             10
         )
-        self.movement_controller = self.create_publisher(Twist, f"model/{node_name}/cmd_vel", 10)
+        
+        self.movement_controller = self.create_publisher(Twist, f"{node_name}/cmd_vel", 10)
 
         self.current_yaw = None
         self.current_x = None
@@ -82,6 +85,13 @@ class PrimitiveNode(Node):
     def move_forklift_to_point(self, request, response):
         self.action_in_progress = True
         self.target_x = request.x
+
+        if request.x == None:
+            self.get_logger().info("No target x coordinate provided")
+            response.success = False
+            return response
+
+
         self.target_y = request.y
         self.target_angle = calculate_position_targets(request.x, request.y, self.current_x, self.current_y, self.current_yaw)
         self.rotation_complete = False

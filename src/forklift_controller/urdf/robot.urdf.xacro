@@ -18,13 +18,14 @@
             <wheel_radius>0.07</wheel_radius>
             <odom_publish_frequency>1</odom_publish_frequency>
             <odom_topic>pos</odom_topic>
+            <topic>$(arg robot_namespace)/cmd_vel</topic>
         </plugin>
 
         <plugin
         filename="gz-sim-odometry-publisher-system"
         name="gz::sim::systems::OdometryPublisher">
             <odom_frame>base_link</odom_frame>
-            <odom_topic>$robot_namespace/odometry</odom_topic>
+            <odom_topic>$(arg robot_namespace)/odometry</odom_topic>
         </plugin>
         
         <!--

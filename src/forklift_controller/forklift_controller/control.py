@@ -66,7 +66,7 @@ class GUI:
 
         
         self.json_commands = collections.deque()
-
+        self.command_lock = threading.Lock()
         self.nodes = nodes
 
         self.model = OPEN_AI_MODELS[0]
@@ -120,8 +120,8 @@ class GUI:
         is_claude = False
         model_name = self.model
 
-        node = self.nodes["forklift_1"]
-        x,y = node.get_cube_pos()
+        temp_node = self.nodes["forklift_1"]
+        x,y = temp_node.get_cube_pos()
         self.object_states["environment"]["object_positions"]["cube"] = (x,y)
        
         #Convert the object states to a string
@@ -223,46 +223,47 @@ class GUI:
             print("Error loading json",e)
     
     def start_execution(self):
-        
-        commands = self.json_commands
+        with self.command_lock:
+            commands = self.json_commands
 
-        while commands:
-            func_name, args = commands.popleft()
-            
-            node_name = args[0]
-            node = self.nodes[node_name]
-
-            if func_name == "move":
-                node.get_logger().info("Move")
+            while commands:
+                func_name, args = commands.popleft()
                 
-                x = float(args[1])
-                y = float(args[2])
+                node_name = args[0]
+                node = self.nodes[node_name]
+                node.get_logger().info(node_name)
 
-                response = node.move(x, y)
-                was_success = bool(response.success)
+                if func_name == "move":
+                    node.get_logger().info("Move")
+                    
+                    x = float(args[1])
+                    y = float(args[2])
 
-                if not was_success:
-                    raise Exception("Movement to point was not successful")
+                    response = node.move(x, y)
+                    was_success = bool(response.success)
 
-            elif func_name == "pick_up":
-                node.get_logger().info("Pick up")
-                object = args[1]
-                response = node.pick_up(object)
-                was_success = bool(response.success)
+                    if not was_success:
+                        raise Exception("Movement to point was not successful")
 
-                if not was_success:
-                    raise Exception("Picking up the object was not successful")
-                
-            elif func_name == "drop":
-                node.get_logger().info("Drop")
-                object = args[1]
-                response = node.drop(object)
-                was_success = bool(response.success)
+                elif func_name == "pick_up":
+                    node.get_logger().info("Pick up")
+                    object = args[1]
+                    response = node.pick_up(object)
+                    was_success = bool(response.success)
 
-                if not was_success:
-                    raise Exception("Dropping the object was not successful")
-                
-            node.get_logger().info("All commands executed")
+                    if not was_success:
+                        raise Exception("Picking up the object was not successful")
+                    
+                elif func_name == "drop":
+                    node.get_logger().info("Drop")
+                    object = args[1]
+                    response = node.drop(object)
+                    was_success = bool(response.success)
+
+                    if not was_success:
+                        raise Exception("Dropping the object was not successful")
+                    
+                node.get_logger().info("All commands executed")
 
 
 

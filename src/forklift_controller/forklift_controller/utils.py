@@ -28,6 +28,7 @@ def move_object_to_point(object, x, y, z, orient_x=0, orient_y=0, orient_z=0, or
 
 def calculate_position_targets(goal_x:float, goal_y:float, entity_x:float, entity_y:float, entity_yaw:float):
         # Calculate the x and y components of the vector that starts from the forklift and ends at the target
+        
         direction_vector_x_component = goal_x - entity_x
         direction_vector_y_component = goal_y - entity_y
         # Calculate the length of the sum vector (direct vector leading to target)
