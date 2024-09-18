@@ -1,15 +1,27 @@
-# Author: Addison Sears-Collins
-# Date: April 14, 2024
-# Description: Launch a robotic arm in Gazebo 
 import os
 from launch import LaunchDescription
-from launch.actions import AppendEnvironmentVariable, DeclareLaunchArgument, IncludeLaunchDescription, ExecuteProcess
+from launch.actions import AppendEnvironmentVariable, DeclareLaunchArgument, IncludeLaunchDescription, ExecuteProcess, OpaqueFunction
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import Command, LaunchConfiguration
 from launch_ros.actions import Node
 from launch_ros.parameter_descriptions import ParameterValue
 from launch_ros.substitutions import FindPackageShare
+
+
+def gen_robot_list(number_of_robots):
+    print("robot_name")
+    robots = []
+
+    for i in range(number_of_robots):
+        robot_name = "box_bot"+str(i)
+        print(robot_name)
+        x_pos = float(i)
+        robots.append({'name': robot_name, 'x_pose': x_pos, 'y_pose': 0.0, 'z_pose': 0.01})
+
+
+    return robots 
+
 
 def generate_launch_description():
  
@@ -35,34 +47,18 @@ def generate_launch_description():
   gui_path = os.path.join(pkg_root, gui_script_path)
 
 
+  declare_robot_amount_cmd = DeclareLaunchArgument(
+    name='robot_amount',
+    default_value='2',
+    description='The amount of robots to spawn')
+
   # Declare the launch arguments  
   declare_robot_name_cmd = DeclareLaunchArgument(
     name='robot_name',
     default_value=default_robot_name,
     description='The name for the robot')
   
-  declare_language_model = DeclareLaunchArgument(
-    name = 'model',
-    default_value = 'gpt-4o-mini',
-    description = """The model name to be used as the action planner. The available models are (listed in the order of performance): \n
-        OPEN AI: 
-          gpt-4o #Good
-          gpt-4o-mini #As good as full 4o, cheapest of good
-          gpt-3.5-turbo
-        CLAUDE:
-          claude-3-haiku-2024030 #Similar performance to sonnet
-          claude-3-sonnet-20240229 #Doesn't produce sensible plans
-          claude-3-opus-20240229 #Good
-          claude-3-5-sonnet-20240620 #Servers overloaded, not tested
-        LLAMA:
-          llama3.1-405b #Good
-          llama3.1-70b #Good
-          llama3.1-8b #Produces unsensible plans (for example move to 0.0 without pick up)
-          llama3-70b #Good, more costly than gpt-4o-mini
-          llama3-8b #Produces unsensible similar to Sonnet
-      """
-  )
- 
+
   declare_simulator_cmd = DeclareLaunchArgument(
     name='headless',
     default_value='False',
@@ -134,7 +130,6 @@ def generate_launch_description():
   #arvon, joka annettiin komentoriviltä esim. alla "headless" on komentoriviparametri
   # Launch configuration variables specific to simulation
   headless = LaunchConfiguration('headless')
-  ai_model = LaunchConfiguration('model')
   robot_name = LaunchConfiguration('robot_name')
   urdf_model = LaunchConfiguration('urdf_model')
   use_robot_state_pub = LaunchConfiguration('use_robot_state_pub')
@@ -150,6 +145,7 @@ def generate_launch_description():
   roll = LaunchConfiguration('roll')
   pitch = LaunchConfiguration('pitch')
   yaw = LaunchConfiguration('yaw')
+  amount_of_robots = LaunchConfiguration('robot_amount')
 
   set_env_vars_resources = AppendEnvironmentVariable(
     'GZ_SIM_RESOURCE_PATH',
@@ -195,22 +191,6 @@ def generate_launch_description():
     output='screen'
   )
 
-  # Spawn the robot to gazebo sim through subscribing to the topic publishing the urdf file
-  start_gazebo_ros_spawner_cmd = Node(
-    package='ros_gz_sim',
-    executable='create',
-    arguments=[
-      '-name', robot_name,
-      '-topic', "robot_description",
-      '-x', x,
-      '-y', y,
-      '-z', z,
-      '-R', roll,
-      '-P', pitch,
-      '-Y', yaw
-      ],
-    output='screen')  
-     
   # Bridge ROS topics and Gazebo messages for establishing communication
   start_gazebo_ros_bridge_cmd = Node(
     package='ros_gz_bridge',
@@ -226,22 +206,18 @@ def generate_launch_description():
     executable="fork_node",
   )
 
-  start_primitive_control_cmd = Node(
-    package=package_name,
-    executable="primitive_node" #Corresponds to a name in setup.py
-  )
 
   launch_gui_cmd = ExecuteProcess(
-            cmd=['python3', gui_path, ai_model],
+            cmd=['python3', gui_path],
             output='screen'
   )
      
-  # Create the launch description and populate
+  opfunc = OpaqueFunction(function = spawn_robot)
   ld = LaunchDescription()
 
-  ld.add_action(start_primitive_control_cmd)
   ld.add_action(start_fork_control_cmd)
   # Declare the launch options
+  ld.add_action(declare_robot_amount_cmd)
   ld.add_action(declare_robot_name_cmd)
   ld.add_action(declare_simulator_cmd)
   ld.add_action(declare_urdf_model_path_cmd)
@@ -265,10 +241,68 @@ def generate_launch_description():
   ld.add_action(start_robot_state_publisher_cmd)
   ld.add_action(start_rviz_cmd)
  
-  ld.add_action(start_gazebo_ros_spawner_cmd)
+  #ld.add_action(start_gazebo_ros_spawner_cmd)
   ld.add_action(start_gazebo_ros_bridge_cmd)
-  ld.add_action(declare_language_model)
 
   ld.add_action(launch_gui_cmd)
- 
+  ld.add_action(opfunc)
+
   return ld
+
+#https://robotics.stackexchange.com/questions/104340/getting-the-value-of-launchargument-inside-python-launch-file
+def spawn_robot(context):
+
+    amount_of_robots = LaunchConfiguration('robot_amount').perform(context)
+    
+    # List to store actions
+    actions = []
+
+    for i in range(int(amount_of_robots)):
+        robot_name = f"forklift_{i+1}"
+        x_pos = float(i)
+        print(f"Spawning {robot_name} at x position {x_pos}")
+
+        spawn_action = Node(
+          package='ros_gz_sim',
+          executable='create',
+          arguments=[
+            '-name', robot_name,
+            '-topic', "robot_description",
+            '-x', str(x_pos+1),
+            '-y', '0.0',
+            '-z', '0.01',
+            '-R', '0',
+            '-P', '0',
+            '-Y', '0'
+            ],
+          output='screen',
+          ) 
+        
+        bridge_cmd_vel_action = Node(
+          package='ros_gz_bridge',
+          executable='parameter_bridge',
+          arguments=[f'/model/{robot_name}/cmd_vel@geometry_msgs/msg/Twist]gz.msgs.Twist'],
+        )
+
+        bridge_odometry_action = Node(
+          package='ros_gz_bridge',
+          executable='parameter_bridge',
+          arguments=[f'/model/{robot_name}/odometry@nav_msgs/msg/Odometry[gz.msgs.Odometry'],
+        )
+
+        execution_node_action = Node(
+          package="forklift_controller",
+          executable="primitive_node", #Corresponds to a name in setup.py
+          arguments=[robot_name]
+          )
+
+        actions.append(spawn_action)
+        actions.append(bridge_cmd_vel_action)
+        actions.append(bridge_odometry_action)
+        actions.append(execution_node_action)
+    
+    return actions
+    
+
+
+

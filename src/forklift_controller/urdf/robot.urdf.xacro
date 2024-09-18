@@ -8,6 +8,7 @@
         <plugin
         filename="gz-sim-diff-drive-system"
         name="gz::sim::systems::DiffDrive">
+
             <left_joint>left_wheel_joint</left_joint>
             <left_joint>left_wheel_back_joint</left_joint>
             <right_joint>right_wheel_joint</right_joint>
@@ -15,7 +16,6 @@
             <wheel_separation>0.3</wheel_separation>
             <wheel_radius>0.07</wheel_radius>
             <odom_publish_frequency>1</odom_publish_frequency>
-            <topic>cmd_vel</topic>
             <odom_topic>pos</odom_topic>
         </plugin>
 
@@ -24,7 +24,8 @@
         name="gz::sim::systems::OdometryPublisher">
             <odom_frame>base_link</odom_frame>
         </plugin>
-
+        
+        <!--
         <plugin
             filename="gz-sim-pose-publisher-system"
             name="gz::sim::systems::PosePublisher">
@@ -33,6 +34,7 @@
             <publish_visual_pose>false</publish_visual_pose>
             <publish_nested_model_pose>true</publish_nested_model_pose>
         </plugin>
+        -->
         
 
       <plugin filename="gz-sim-joint-state-publisher-system" name="gz::sim::systems::JointStatePublisher">

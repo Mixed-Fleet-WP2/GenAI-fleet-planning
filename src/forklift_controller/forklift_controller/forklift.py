@@ -6,16 +6,16 @@ import threading
 
 class Forklift(Node):
 
-    def __init__(self):
+    def __init__(self, node_name):
 
         #Move a cube to a random position, should be maybe allocated
         #to launch file in the future
         
-        super().__init__('forklift_robot')
-        self.move_cli = self.create_client(MovementSuccess, 'move')
+        super().__init__(node_name)
+        self.move_cli = self.create_client(MovementSuccess, f'{node_name}/move')
         self.cube_pos_cli = self.create_client(CubePos, 'cube_pos')
-        self.pick_up_cli = self.create_client(Pickup, 'pick_up')  
-        self.drop_cli = self.create_client(Drop, 'drop')
+        self.pick_up_cli = self.create_client(Pickup, f'{node_name}/pick_up')  
+        self.drop_cli = self.create_client(Drop, f'{node_name}/drop')
         self.json_commands = collections.deque()
         self.move_req = MovementSuccess.Request()
         self.pick_up_req = Pickup.Request()
@@ -53,6 +53,7 @@ class Forklift(Node):
             
             if func_name == "move":
                 self.get_logger().info("Move")
+
                 x = float(args[0])
                 y = float(args[1])
 
@@ -83,10 +84,3 @@ class Forklift(Node):
         #Inform that all commands were executed
         self.get_logger().info("All commands executed")
     
-    def start_execution(self, commands):
-
-        #Executing this makes gui unresponsive but saves one thread
-        #self.execute_commands(commands)
-
-        exec_thread = threading.Thread(target=self.execute_commands, args=(commands,))
-        exec_thread.start()

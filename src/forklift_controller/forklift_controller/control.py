@@ -8,6 +8,8 @@ import os
 import re
 import sys
 
+from rclpy.executors import MultiThreadedExecutor
+
 from forklift import Forklift
 
 CLAUDE_MODELS = ["claude-3-sonnet-20240229", "claude-3-5-sonnet-20240620", "claude-3-opus-20240229", "claude-3-haiku-20240307"]
@@ -15,10 +17,10 @@ OPEN_AI_MODELS = ["gpt-4o-mini", "gpt-3.5-turbo", "gpt-4o"]
 LLAMA_MODELS = ["llama3.1-405b","llama3.1-70b","llama3.1-8b","llama3-70b","llama3-8b", "llama2-13b"]
 
 
-COMMON_PROMPT = """You control a forklift robot that has access to following commands:
-                - pick_up(object): makes the forklift pick up an object specified as a string. Returns nothing
-                - move(x,y): makes the forklift move to the specified coordinates. Takes two integers, returns
-                - drop(object): makes the forklift drop an object in front of it, specified as a string. Returns nothing\n\n
+COMMON_PROMPT = """You control a fleet of robots and have access to following commands:
+                - pick_up(robot, object): makes the robot specified by the argument pick up an object specified as a string. Returns nothing
+                - move(robot, x,y): makes the robot specified by the argument move to the specified coordinates. Takes two integers, returns
+                - drop(robot, object): makes the robot specified by the argument drop an object in front of it, specified as a string. Returns nothing\n\n
                 """
 
 TASK_PROMPT = "\n\nYour tasks is: {task}"
@@ -26,11 +28,11 @@ TASK_PROMPT = "\n\nYour tasks is: {task}"
 FORMAT_INSTRUCTION = """\n\nYou should return the proposed instructions in a form following this example:
                         [
                         {"cmd": "cmd_name",
-                        "args": [arg1, arg2],
+                        "args": [arg1, arg2, arg3],
                         "reason": "Explain the reasoning behind command here"
                         },
                         {"cmd": "cmd_name2",
-                        "args": [],
+                        "args": [arg1, arg2],
                         "reason": "Explain the reasoning behind command 2 here"
                         }
                         ...More commands
@@ -46,12 +48,13 @@ FORMAT_INSTRUCTION = """\n\nYou should return the proposed instructions in a for
                     """
 
 class GUI:
-    def __init__(self, root, node, model):
+    def __init__(self, root, nodes):
 
         self.object_states = {
                             "environment": {
                                 "objects": ["cube"],
                                 "locations": ["storage_area"],
+                                "robots":["forklift_1", "forklift_2"],
                                 "object_positions": {
                                 "cube": None
                                 },
@@ -64,9 +67,10 @@ class GUI:
         
         self.json_commands = collections.deque()
 
+        self.nodes = nodes
+
         self.model = OPEN_AI_MODELS[0]
         self.root = root
-        self.node = node
         self.OPEN_AI_API_KEY = os.environ.get('OPEN_AI_KEY')
         self.CLAUDE_API_KEY = os.environ.get('CLAUDE_KEY')
         self.LLAMA_API_KEY = os.environ.get('LLAMA_KEY')
@@ -115,9 +119,9 @@ class GUI:
         
         is_claude = False
         model_name = self.model
-        self.node.get_logger().info(model_name)
-        
-        x,y = self.node.get_cube_pos()
+
+        node = self.nodes["forklift_1"]
+        x,y = node.get_cube_pos()
         self.object_states["environment"]["object_positions"]["cube"] = (x,y)
        
         #Convert the object states to a string
@@ -158,7 +162,6 @@ class GUI:
             headers = {"Authorization": f"Bearer {api_key}", 'content-type': 'application/json'}
         else:
             err = f"Unsupported model {model_name}"
-            self.node.get_logger().info(err)
             return
         
         model = model_name
@@ -203,7 +206,11 @@ class GUI:
             print("Error writing json",e)
 
         self.load_json_commands()
-        self.start_execution()
+
+        #Start execution on separate thread, because otherwise GUI doesn't have time to update the view
+        execution_thread = threading.Thread(target=self.start_execution, daemon=True)
+        execution_thread.start()
+        execution_thread.join
 
     def load_json_commands(self):
         try:
@@ -216,21 +223,69 @@ class GUI:
             print("Error loading json",e)
     
     def start_execution(self):
-        self.node.start_execution(self.json_commands)
+        
+        commands = self.json_commands
+
+        while commands:
+            func_name, args = commands.popleft()
+            
+            node_name = args[0]
+            node = self.nodes[node_name]
+
+            if func_name == "move":
+                node.get_logger().info("Move")
+                
+                x = float(args[1])
+                y = float(args[2])
+
+                response = node.move(x, y)
+                was_success = bool(response.success)
+
+                if not was_success:
+                    raise Exception("Movement to point was not successful")
+
+            elif func_name == "pick_up":
+                node.get_logger().info("Pick up")
+                object = args[1]
+                response = node.pick_up(object)
+                was_success = bool(response.success)
+
+                if not was_success:
+                    raise Exception("Picking up the object was not successful")
+                
+            elif func_name == "drop":
+                node.get_logger().info("Drop")
+                object = args[1]
+                response = node.drop(object)
+                was_success = bool(response.success)
+
+                if not was_success:
+                    raise Exception("Dropping the object was not successful")
+                
+            node.get_logger().info("All commands executed")
+
+
 
 def main(args=None):
     
     rclpy.init(args=args)
-    node = Forklift()
-   
+    forklift = Forklift(node_name="forklift_1")
+    forklift_2 = Forklift(node_name="forklift_2")
+    
+    nodes = {"forklift_1": forklift, "forklift_2":forklift_2}
+
     root = tk.Tk()
-    app = GUI(root, node, None)
+    app = GUI(root, nodes)
+
+    executor = MultiThreadedExecutor()
+    executor.add_node(forklift)
+    executor.add_node(forklift_2)
     
     #Separate thread for the ROS2 node, so that the gui can run in the main thread
-    spin_thread = threading.Thread(target=rclpy.spin, args=(node,))
+    spin_thread = threading.Thread(target=executor.spin, daemon=True)
     spin_thread.start()
 
-    root.protocol("WM_DELETE_WINDOW", lambda: on_closing(root, node))
+    root.protocol("WM_DELETE_WINDOW", lambda: on_closing(root, forklift, forklift_2))
     root.mainloop()
 
 def on_closing(root, node):

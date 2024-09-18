@@ -253,7 +253,7 @@
                     name="gz::sim::systems::TouchPlugin">
                 <target>cube</target>
                 <time>0.001</time>
-                <namespace>forklift</namespace>
+                <namespace>forklifto</namespace>
                 <enabled>true</enabled>
             </plugin>
     </gazebo>

@@ -1,7 +1,7 @@
 import rclpy
 from rclpy.node import Node
 from nav_msgs.msg import Odometry
-from geometry_msgs.msg import Twist,PoseArray
+from geometry_msgs.msg import Twist
 from std_msgs.msg import Bool
 import math
 import numpy as np
@@ -10,6 +10,7 @@ from movement_interface.srv import MovementSuccess, Pickup, Drop, CubePos
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.callback_groups import ReentrantCallbackGroup
 from tf2_msgs.msg import TFMessage
+import sys
 
 from utils import calculate_position_targets, move_object_to_point, reset_contact_sensor, euler_to_quaternion, euler_from_quaternion
 
@@ -27,7 +28,7 @@ TELEPORT_HEIGHT = 0.2
 
 
 class PrimitiveNode(Node):
-    def __init__(self):
+    def __init__(self, node_name):
 
         move_object_to_point('cube', np.random.randint(3, 14), np.random.randint(3, 14), 0.5)
 
@@ -44,20 +45,20 @@ class PrimitiveNode(Node):
 
         self.subscription_cb_group = ReentrantCallbackGroup()
         self.service_cb_group = ReentrantCallbackGroup()
-        self.create_subscription(Odometry, "/model/forklift/odometry", self.__get_odom, 10)
+        self.create_subscription(Odometry, f"/model/{node_name}/odometry", self.__get_odom, 10)
         self.create_subscription(Bool, "/forklift/touched", self.__detect_contact, 10)
 
         self.cube_pos_service = self.create_service(CubePos, 'cube_pos', self.send_cube_pos, callback_group=self.service_cb_group)
-        self.srv = self.create_service(MovementSuccess, "move", self.move_forklift_to_point, callback_group=self.service_cb_group)
-        self.pickup_srv = self.create_service(Pickup, "pick_up", self.pick_up, callback_group=self.service_cb_group) 
-        self.drop_srv = self.create_service(Drop, "drop", self.drop, callback_group=self.service_cb_group)
+        self.srv = self.create_service(MovementSuccess, f"{node_name}/move", self.move_forklift_to_point, callback_group=self.service_cb_group)
+        self.pickup_srv = self.create_service(Pickup, f"{node_name}/pick_up", self.pick_up, callback_group=self.service_cb_group) 
+        self.drop_srv = self.create_service(Drop, f"{node_name}/drop", self.drop, callback_group=self.service_cb_group)
         self.subscription = self.create_subscription(
             TFMessage,
             'cube_pose',  
             self.cube_pose_callback,
             10
         )
-        self.movement_controller = self.create_publisher(Twist, "/cmd_vel", 10)
+        self.movement_controller = self.create_publisher(Twist, f"model/{node_name}/cmd_vel", 10)
 
         self.current_yaw = None
         self.current_x = None
@@ -223,7 +224,9 @@ class PrimitiveNode(Node):
 
 def main(args=None):
     rclpy.init(args=args)
-    node = PrimitiveNode()
+    node_name = sys.argv[1]
+
+    node = PrimitiveNode(node_name)
     # https://answers.ros.org/question/358343/rate-and-sleep-function-in-rclpy-library-for-ros2/
     #One is the default thread, another reserved for service callbacks
     executor = MultiThreadedExecutor(num_threads=2)
