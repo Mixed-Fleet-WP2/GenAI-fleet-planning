@@ -36,7 +36,7 @@ def generate_launch_description():
  
   declare_robot_amount_cmd = DeclareLaunchArgument(
     name='robot_amount',
-    default_value='2',
+    default_value='1',
     description='The amount of robots to spawn')
 
   # Declare the launch arguments  
@@ -178,11 +178,6 @@ def generate_launch_description():
   )
 
 
-  launch_gui_cmd = ExecuteProcess(
-            cmd=['python3', gui_path],
-            output='screen'
-  )
-     
   opfunc = OpaqueFunction(function = spawn_robot)
   ld = LaunchDescription()
 
@@ -215,99 +210,118 @@ def generate_launch_description():
   #ld.add_action(start_gazebo_ros_spawner_cmd)
   ld.add_action(start_gazebo_ros_bridge_cmd)
 
-  ld.add_action(launch_gui_cmd)
+  #ld.add_action(launch_gui_cmd)
   ld.add_action(opfunc)
 
   return ld
 
 #https://robotics.stackexchange.com/questions/104340/getting-the-value-of-launchargument-inside-python-launch-file
-def spawn_robot(context):
+def spawn_robot(context, *args, **kwargs):
 
     amount_of_robots = LaunchConfiguration('robot_amount').perform(context)
     urdf_model = LaunchConfiguration('urdf_model').perform(context)
     use_robot_state_pub = LaunchConfiguration('use_robot_state_pub')
     use_sim_time = LaunchConfiguration('use_sim_time')
-    
+
+    launch_gui_cmd = ExecuteProcess(
+          cmd=['python3', gui_path, amount_of_robots],
+          output='screen'
+        )
+  
     # List to store actions
     actions = []
 
     for i in range(int(amount_of_robots)):
-        robot_name = f"forklift_{i+1}"
-        x_pos = float(i)
-        print(f"Spawning {robot_name} at x position {x_pos}")
+      robot_name = f"forklift_{i+1}"
+      x_pos = float(i)
+      print(f"Spawning {robot_name} at x position {x_pos}")
 
-        spawn_action = Node(
-          package='ros_gz_sim',
-          executable='create',
-          arguments=[
-            '-name', robot_name,
-            '-topic', "robot_description",
-            '-x', str(x_pos+1),
-            '-y', '0.0',
-            '-z', '0.01',
-            '-R', '0',
-            '-P', '0',
-            '-Y', '0'
-            ],
-          output='screen',
-          ) 
-        
-        bridge_cmd_vel_action = Node(
-          package='ros_gz_bridge',
-          executable='parameter_bridge',
-          arguments=[f'{robot_name}/cmd_vel@geometry_msgs/msg/Twist]gz.msgs.Twist'],
-        )
+      spawn_action = Node(
+        package='ros_gz_sim',
+        executable='create',
+        arguments=[
+          '-name', robot_name,
+          '-topic', f"{robot_name}/robot_description",
+          '-x', str(x_pos+1),
+          '-y', '0.0',
+          '-z', '0.01',
+          '-R', '0',
+          '-P', '0',
+          '-Y', '0'
+          ],
+        output='screen',
+        ) 
+      
+      bridge_cmd_vel_action = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=[f'{robot_name}/cmd_vel@geometry_msgs/msg/Twist]gz.msgs.Twist'],
+      )
 
-        bridge_container_contact_action = Node(
-          package='ros_gz_bridge',
-          executable='parameter_bridge',
-          arguments=[f'{robot_name}/touched@std_msgs/msg/Bool[gz.msgs.Boolean'],
-        )
+      bridge_container_contact_action = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=[f'{robot_name}/touched@std_msgs/msg/Bool[gz.msgs.Boolean'],
+      )
 
-        robot_description_content = ""
-          # Subscribe to the joint states of the robot, and publish the 3D pose of each link.
-        try:
-          robot_description_content = ParameterValue(
-          Command(['xacro ', urdf_model, ' robot_namespace:=',robot_name]),
-          value_type=str
-        )
-        except Exception as e:
-          print(e)
-          exit()
-
-        start_robot_state_publisher_cmd = Node(
-          condition=IfCondition(use_robot_state_pub),
-          package='robot_state_publisher',
-          executable='robot_state_publisher',
-          name=f'robot_state_publisher_{robot_name}',
-          output='screen',
-          parameters=[{
-            'use_sim_time': use_sim_time, 
-            'robot_description': robot_description_content,
-            'frame_prefix': robot_name + "/"}],
-          remappings=[('/tf', f'/{robot_name}/tf'),
-                       ('/tf_static', f'/{robot_name}/tf_static')],
-            )
+      bridge_joint_states_action = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=[f'{robot_name}/joint_states@sensor_msgs/msg/JointState[gz.msgs.Model'],
+      )
 
 
-        bridge_odometry_action = Node(
-          package='ros_gz_bridge',
-          executable='parameter_bridge',
-          arguments=[f'{robot_name}/odometry@nav_msgs/msg/Odometry[gz.msgs.Odometry'],
-        )
+      robot_description_content = ""
+        # Subscribe to the joint states of the robot, and publish the 3D pose of each link.
+      try:
+        robot_description_content = ParameterValue(
+        Command(['xacro ', urdf_model, ' robot_namespace:=',robot_name]),
+        value_type=str
+      )
+      except Exception as e:
+        print(e)
+        exit()
 
-        execution_node_action = Node(
-          package="forklift_controller",
-          executable="primitive_node", #Corresponds to a name in setup.py
-          arguments=[robot_name]
+      start_robot_state_publisher_cmd = Node(
+        condition=IfCondition(use_robot_state_pub),
+        package='robot_state_publisher',
+        executable='robot_state_publisher',
+        name=f'robot_state_publisher_{robot_name}',
+        output='screen',
+        parameters=[{
+          'use_sim_time': use_sim_time, 
+          'robot_description': robot_description_content,
+          'frame_prefix': robot_name + "/"}],
+        remappings=[('/tf', f'/{robot_name}/tf'),
+                      ('/tf_static', f'/{robot_name}/tf_static'),
+                    ('/joint_states', f'/{robot_name}/joint_states'),
+                    ('/robot_description', f'/{robot_name}/robot_description')
+                      ]
           )
 
-        actions.append(start_robot_state_publisher_cmd)
-        actions.append(spawn_action)
-        actions.append(bridge_container_contact_action)
-        actions.append(bridge_cmd_vel_action)
-        actions.append(bridge_odometry_action)
-        actions.append(execution_node_action)
+
+      bridge_odometry_action = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=[f'{robot_name}/odometry@nav_msgs/msg/Odometry[gz.msgs.Odometry'],
+      )
+
+      execution_node_action = Node(
+        package="forklift_controller",
+        executable="primitive_node", #Corresponds to a name in setup.py
+        arguments=[robot_name]
+        )
+      
+      actions.append(bridge_joint_states_action)
+      actions.append(start_robot_state_publisher_cmd)
+      actions.append(spawn_action)
+      actions.append(bridge_container_contact_action)
+      actions.append(bridge_cmd_vel_action)
+      actions.append(bridge_odometry_action)
+      actions.append(execution_node_action)
+    
+    actions.append(launch_gui_cmd)
+        
     
     return actions
     

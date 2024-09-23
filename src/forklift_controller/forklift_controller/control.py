@@ -268,31 +268,43 @@ class GUI:
 
 
 def main(args=None):
+
+    amount_of_robots = int(sys.argv[1])
+
     
     rclpy.init(args=args)
-    forklift = Forklift(node_name="forklift_1")
-    forklift_2 = Forklift(node_name="forklift_2")
-    
-    nodes = {"forklift_1": forklift, "forklift_2":forklift_2}
+
+    executor = MultiThreadedExecutor()
+    nodes = {}
+
+    for i in range(0,amount_of_robots):
+        robot = Forklift(node_name=f'forklift_{i+1}')
+        nodes[f'forklift_{i+1}'] = robot
+        executor.add_node(robot)
+
 
     root = tk.Tk()
     app = GUI(root, nodes)
 
-    executor = MultiThreadedExecutor()
-    executor.add_node(forklift)
-    executor.add_node(forklift_2)
-    
     #Separate thread for the ROS2 node, so that the gui can run in the main thread
     spin_thread = threading.Thread(target=executor.spin, daemon=True)
     spin_thread.start()
 
-    root.protocol("WM_DELETE_WINDOW", lambda: on_closing(root, forklift, forklift_2))
+    root.protocol("WM_DELETE_WINDOW", lambda: on_closing(root, spin_thread, executor, nodes))
     root.mainloop()
 
-def on_closing(root, node):
 
-    node.destroy_node()
+def on_closing(root, spin_thread, executor, nodes):
+    # Stop executor's spinning thread
+    executor.shutdown()
+    spin_thread.join() 
+
+    # Destroy all forklifts
+    for node in nodes.values():
+        node.destroy_node()
+
     rclpy.shutdown()
+
     root.destroy()
 
 if __name__ == '__main__':
