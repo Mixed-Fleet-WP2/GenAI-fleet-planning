@@ -14,7 +14,7 @@ from launch_ros.substitutions import FindPackageShare
 package_name = 'forklift_controller'
 default_robot_name = 'forklift'
 gazebo_launch_file_path = 'launch'
-gazebo_models_path = 'models'
+#gazebo_models_path = 'models'
 ros_gz_bridge_config_file_path = 'config/ros_gz_bridge.yaml'
 urdf_file_path = 'urdf/robot.urdf.xacro'
 world_file_path = 'worlds/empty.world'
@@ -26,7 +26,7 @@ pkg_root = FindPackageShare(package=package_name).find(package_name)
 default_ros_gz_bridge_config_file_path = os.path.join(pkg_root, ros_gz_bridge_config_file_path) 
 default_urdf_model_path = os.path.join(pkg_root, urdf_file_path)
 gazebo_launch_file_path = os.path.join(pkg_root, gazebo_launch_file_path)   
-gazebo_models_path = os.path.join(pkg_root, gazebo_models_path)
+#gazebo_models_path = os.path.join(pkg_root, gazebo_models_path)
 world_path = os.path.join(pkg_root, world_file_path)
 gui_path = os.path.join(pkg_root, gui_script_path)
 
@@ -117,9 +117,6 @@ def generate_launch_description():
   #arvon, joka annettiin komentoriviltä esim. alla "headless" on komentoriviparametri
   # Launch configuration variables specific to simulation
   headless = LaunchConfiguration('headless')
-  robot_name = LaunchConfiguration('robot_name')
-  urdf_model = LaunchConfiguration('urdf_model')
-  use_robot_state_pub = LaunchConfiguration('use_robot_state_pub')
   use_sim_time = LaunchConfiguration('use_sim_time')
   use_simulator = LaunchConfiguration('use_simulator')
   world = LaunchConfiguration('world')
@@ -134,9 +131,11 @@ def generate_launch_description():
   yaw = LaunchConfiguration('yaw')
   amount_of_robots = LaunchConfiguration('robot_amount')
 
+  """
   set_env_vars_resources = AppendEnvironmentVariable(
     'GZ_SIM_RESOURCE_PATH',
     gazebo_models_path)
+  """
   
   # Start Gazebo server
   start_gazebo_server_cmd = IncludeLaunchDescription(
@@ -201,16 +200,11 @@ def generate_launch_description():
   ld.add_action(declare_yaw_cmd)  
  
   # Add any actions
-  ld.add_action(set_env_vars_resources)
+  #ld.add_action(set_env_vars_resources)
   ld.add_action(start_gazebo_server_cmd)
   ld.add_action(start_gazebo_client_cmd)
-  #ld.add_action(start_robot_state_publisher_cmd)
   ld.add_action(start_rviz_cmd)
- 
-  #ld.add_action(start_gazebo_ros_spawner_cmd)
   ld.add_action(start_gazebo_ros_bridge_cmd)
-
-  #ld.add_action(launch_gui_cmd)
   ld.add_action(opfunc)
 
   return ld
