@@ -13,6 +13,7 @@ setup(
         ('share/' + package_name, ['package.xml']),
         ('share/' + package_name + '/urdf', glob('urdf/*')),
         ('share/' + package_name + '/launch', ['launch/joint_launch.py']),
+        ('share/' + package_name + '/launch', ['launch/navigate_to_point_launch.py']),
         ('share/' + package_name + '/worlds', ['worlds/empty.world']),
         ('share/'+package_name+'/config', ['config/ros_gz_bridge.yaml']),
         ('share/' + package_name + '/meshes/', glob('meshes/*')),
