@@ -1,0 +1,637 @@
+[INFO] [launch]: All log files can be found below /home/elmeripk/.ros/log/2024-11-25-09-11-13-274144-macvm-16169
+[INFO] [launch]: Default logging verbosity is set to INFO
+SLAM LAUNCH
+GENERATING LAUNCH DESCRIPTION
+GENERATING LAUNCH DESCRIPTION
+[INFO] [example_nav_to_pose-12]: process started with pid [16208]
+[INFO] [xacro-1]: process started with pid [16187]
+[INFO] [parameter_bridge-2]: process started with pid [16188]
+[INFO] [ruby $(which gz) sim-3]: process started with pid [16189]
+[INFO] [ruby $(which gz) sim-4]: process started with pid [16190]
+[INFO] [create-5]: process started with pid [16194]
+[INFO] [robot_state_publisher-6]: process started with pid [16196]
+[INFO] [rviz2-7]: process started with pid [16197]
+[INFO] [component_container_isolated-8]: process started with pid [16198]
+[INFO] [map_saver_server-9]: process started with pid [16202]
+[INFO] [lifecycle_manager-10]: process started with pid [16204]
+[INFO] [sync_slam_toolbox_node-11]: process started with pid [16205]
+[robot_state_publisher-6] [WARN] [1732525874.173627129] [kdl_parser]: The root link base_link has an inertia specified in the URDF, but KDL does not support a root link with an inertia.  As a workaround, you can add an extra dummy link to your URDF.
+[robot_state_publisher-6] [INFO] [1732525874.173704504] [robot_state_publisher]: Robot initialized
+[lifecycle_manager-10] [INFO] [1732525874.224129814] [lifecycle_manager_slam]: Creating
+[create-5] [INFO] [1732525874.227778268] [ros_gz_sim]: Requesting list of world names.
+[lifecycle_manager-10] [INFO] [1732525874.240206377] [lifecycle_manager_slam]: [34m[1mCreating and initializing lifecycle service clients[0m[0m
+[sync_slam_toolbox_node-11] [INFO] [1732525874.241297542] [slam_toolbox]: Node using stack size 40000000
+[map_saver_server-9] [INFO] [1732525874.308381289] [map_saver]: 
+[map_saver_server-9] 	map_saver lifecycle node launched. 
+[map_saver_server-9] 	Waiting on external lifecycle transitions to activate
+[map_saver_server-9] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[map_saver_server-9] [INFO] [1732525874.308524748] [map_saver]: Creating
+[INFO] [xacro-1]: process has finished cleanly [pid 16187]
+[component_container_isolated-8] [INFO] [1732525874.335033713] [nav2_container]: Load Library: /opt/ros/jazzy/lib/libcontroller_server_core.so
+[component_container_isolated-8] [INFO] [1732525874.347105906] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_controller::ControllerServer>
+[component_container_isolated-8] [INFO] [1732525874.347146615] [nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_controller::ControllerServer>
+[lifecycle_manager-10] [INFO] [1732525874.365769299] [lifecycle_manager_slam]: [34m[1mStarting managed nodes bringup...[0m[0m
+[lifecycle_manager-10] [INFO] [1732525874.365807507] [lifecycle_manager_slam]: [34m[1mConfiguring map_saver[0m[0m
+[sync_slam_toolbox_node-11] [INFO] [1732525874.366987256] [slam_toolbox]: Configuring
+[sync_slam_toolbox_node-11] [INFO] [1732525874.426449346] [slam_toolbox]: Using solver plugin solver_plugins::CeresSolver
+[sync_slam_toolbox_node-11] [INFO] [1732525874.433088337] [slam_toolbox]: CeresSolver: Using SCHUR_JACOBI preconditioner.
+[component_container_isolated-8] [INFO] [1732525874.440841536] [controller_server]: 
+[component_container_isolated-8] 	controller_server lifecycle node launched. 
+[component_container_isolated-8] 	Waiting on external lifecycle transitions to activate
+[component_container_isolated-8] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[ruby $(which gz) sim-3] [1;33mWarning [Utils.cc:132][0m [/sdf/world[@name="default"]/grid:/home/elmeripk/forklift_sim/install/forklift_controller/share/forklift_controller/worlds/empty.world:L7]: XML Element[grid], child of element[world], not defined in SDF. Copying[grid] as children of [world].
+[component_container_isolated-8] [INFO] [1732525874.455782558] [controller_server]: Creating controller server
+[rviz2-7] MESA: error: ZINK: failed to choose pdev
+[rviz2-7] glx: failed to create drisw screen
+[component_container_isolated-8] [INFO] [1732525874.523700179] [local_costmap.local_costmap]: 
+[component_container_isolated-8] 	local_costmap lifecycle node launched. 
+[component_container_isolated-8] 	Waiting on external lifecycle transitions to activate
+[component_container_isolated-8] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[map_saver_server-9] [INFO] [1732525874.529893255] [map_saver]: Configuring
+[component_container_isolated-8] [INFO] [1732525874.534769498] [local_costmap.local_costmap]: Creating Costmap
+[INFO] [launch.user]: [LifecycleLaunch] Slamtoolbox node is activating.
+[sync_slam_toolbox_node-11] [INFO] [1732525874.552195059] [slam_toolbox]: Activating
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/controller_server' in container '/nav2_container'
+[component_container_isolated-8] [INFO] [1732525874.556048054] [nav2_container]: Load Library: /opt/ros/jazzy/lib/libsmoother_server_core.so
+[component_container_isolated-8] [INFO] [1732525874.560479965] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_smoother::SmootherServer>
+[component_container_isolated-8] [INFO] [1732525874.560520132] [nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_smoother::SmootherServer>
+[lifecycle_manager-10] [INFO] [1732525874.562596421] [lifecycle_manager_slam]: [34m[1mActivating map_saver[0m[0m
+[map_saver_server-9] [INFO] [1732525874.562778004] [map_saver]: Activating
+[map_saver_server-9] [INFO] [1732525874.562811212] [map_saver]: Creating bond (map_saver) to lifecycle manager.
+[ruby $(which gz) sim-3] [1;33mWarning [Utils.cc:132][0m [/sdf/world[@name="default"]/model[@name="cardboard_box"]/geometry:/home/elmeripk/forklift_sim/install/forklift_controller/share/forklift_controller/worlds/empty.world:L144]: XML Element[geometry], child of element[model], not defined in SDF. Copying[geometry] as children of [model].
+[component_container_isolated-8] [INFO] [1732525874.626959088] [smoother_server]: 
+[component_container_isolated-8] 	smoother_server lifecycle node launched. 
+[component_container_isolated-8] 	Waiting on external lifecycle transitions to activate
+[component_container_isolated-8] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[component_container_isolated-8] [INFO] [1732525874.630732167] [smoother_server]: Creating smoother server
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/smoother_server' in container '/nav2_container'
+[ruby $(which gz) sim-4] MESA: error: ZINK: failed to choose pdev
+[ruby $(which gz) sim-4] glx: failed to create drisw screen
+[component_container_isolated-8] [INFO] [1732525874.636762992] [nav2_container]: Load Library: /opt/ros/jazzy/lib/libplanner_server_core.so
+[component_container_isolated-8] [INFO] [1732525874.637705408] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_planner::PlannerServer>
+[component_container_isolated-8] [INFO] [1732525874.637720616] [nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_planner::PlannerServer>
+[rviz2-7] MESA: error: ZINK: failed to choose pdev
+[rviz2-7] glx: failed to create drisw screen
+[component_container_isolated-8] [INFO] [1732525874.661784793] [planner_server]: 
+[component_container_isolated-8] 	planner_server lifecycle node launched. 
+[component_container_isolated-8] 	Waiting on external lifecycle transitions to activate
+[component_container_isolated-8] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[component_container_isolated-8] [INFO] [1732525874.663031917] [planner_server]: Creating
+[lifecycle_manager-10] [INFO] [1732525874.676916274] [lifecycle_manager_slam]: Server map_saver connected with bond.
+[lifecycle_manager-10] [INFO] [1732525874.676947274] [lifecycle_manager_slam]: [34m[1mManaged nodes are active[0m[0m
+[lifecycle_manager-10] [INFO] [1732525874.676951441] [lifecycle_manager_slam]: [34m[1mCreating bond timer...[0m[0m
+[component_container_isolated-8] [INFO] [1732525874.683659474] [global_costmap.global_costmap]: 
+[component_container_isolated-8] 	global_costmap lifecycle node launched. 
+[component_container_isolated-8] 	Waiting on external lifecycle transitions to activate
+[component_container_isolated-8] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[component_container_isolated-8] [INFO] [1732525874.685196097] [global_costmap.global_costmap]: Creating Costmap
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/planner_server' in container '/nav2_container'
+[component_container_isolated-8] [INFO] [1732525874.694074127] [nav2_container]: Load Library: /opt/ros/jazzy/lib/libbehavior_server_core.so
+[component_container_isolated-8] [INFO] [1732525874.694818959] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<behavior_server::BehaviorServer>
+[component_container_isolated-8] [INFO] [1732525874.694852084] [nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<behavior_server::BehaviorServer>
+[component_container_isolated-8] [INFO] [1732525874.720932509] [behavior_server]: 
+[component_container_isolated-8] 	behavior_server lifecycle node launched. 
+[component_container_isolated-8] 	Waiting on external lifecycle transitions to activate
+[component_container_isolated-8] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/behavior_server' in container '/nav2_container'
+[component_container_isolated-8] [INFO] [1732525874.727516501] [nav2_container]: Load Library: /opt/ros/jazzy/lib/libbt_navigator_core.so
+[component_container_isolated-8] [INFO] [1732525874.728584749] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_bt_navigator::BtNavigator>
+[component_container_isolated-8] [INFO] [1732525874.728597666] [nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_bt_navigator::BtNavigator>
+[ruby $(which gz) sim-4] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] file:///usr/lib/aarch64-linux-gnu/qt5/qml/QtQuick/Dialogs/DefaultFileDialog.qml:413:17: QML ToolButton: Binding loop detected for property "implicitHeight"[0m[1;33m[0m
+[ruby $(which gz) sim-4] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] file:///usr/lib/aarch64-linux-gnu/qt5/qml/QtQuick/Dialogs/DefaultFileDialog.qml:309:21: QML Button: Binding loop detected for property "implicitHeight"[0m[1;33m[0m
+[ruby $(which gz) sim-4] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] file:///usr/lib/aarch64-linux-gnu/qt5/qml/QtQuick/Dialogs/DefaultFileDialog.qml:309:21: QML Button: Binding loop detected for property "implicitHeight"[0m[1;33m[0m
+[ruby $(which gz) sim-4] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] file:///usr/lib/aarch64-linux-gnu/qt5/qml/QtQuick/Dialogs/DefaultFileDialog.qml:413:17: QML ToolButton: Binding loop detected for property "implicitHeight"[0m[1;33m[0m
+[ruby $(which gz) sim-4] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] file:///usr/lib/aarch64-linux-gnu/qt5/qml/QtQuick/Dialogs/DefaultFileDialog.qml:309:21: QML Button: Binding loop detected for property "implicitHeight"[0m[1;33m[0m
+[ruby $(which gz) sim-4] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] file:///usr/lib/aarch64-linux-gnu/qt5/qml/QtQuick/Dialogs/DefaultFileDialog.qml:309:21: QML Button: Binding loop detected for property "implicitHeight"[0m[1;33m[0m
+[component_container_isolated-8] [INFO] [1732525874.779660059] [bt_navigator]: 
+[component_container_isolated-8] 	bt_navigator lifecycle node launched. 
+[component_container_isolated-8] 	Waiting on external lifecycle transitions to activate
+[component_container_isolated-8] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[component_container_isolated-8] [INFO] [1732525874.780899932] [bt_navigator]: Creating
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/bt_navigator' in container '/nav2_container'
+[component_container_isolated-8] [INFO] [1732525874.783849178] [nav2_container]: Load Library: /opt/ros/jazzy/lib/libwaypoint_follower_core.so
+[component_container_isolated-8] [INFO] [1732525874.785270676] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_waypoint_follower::WaypointFollower>
+[component_container_isolated-8] [INFO] [1732525874.785372260] [nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_waypoint_follower::WaypointFollower>
+[component_container_isolated-8] [INFO] [1732525874.823927168] [waypoint_follower]: 
+[component_container_isolated-8] 	waypoint_follower lifecycle node launched. 
+[component_container_isolated-8] 	Waiting on external lifecycle transitions to activate
+[component_container_isolated-8] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/waypoint_follower' in container '/nav2_container'
+[component_container_isolated-8] [INFO] [1732525874.824535459] [waypoint_follower]: Creating
+[component_container_isolated-8] [INFO] [1732525874.830011535] [nav2_container]: Load Library: /opt/ros/jazzy/lib/libvelocity_smoother_core.so
+[component_container_isolated-8] [INFO] [1732525874.832168283] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_velocity_smoother::VelocitySmoother>
+[component_container_isolated-8] [INFO] [1732525874.832202908] [nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_velocity_smoother::VelocitySmoother>
+[component_container_isolated-8] [INFO] [1732525874.847217722] [velocity_smoother]: 
+[component_container_isolated-8] 	velocity_smoother lifecycle node launched. 
+[component_container_isolated-8] 	Waiting on external lifecycle transitions to activate
+[component_container_isolated-8] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/velocity_smoother' in container '/nav2_container'
+[component_container_isolated-8] [INFO] [1732525874.850276343] [nav2_container]: Load Library: /opt/ros/jazzy/lib/libcollision_monitor_core.so
+[component_container_isolated-8] [INFO] [1732525874.854168588] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_collision_monitor::CollisionMonitor>
+[component_container_isolated-8] [INFO] [1732525874.854195379] [nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_collision_monitor::CollisionMonitor>
+[component_container_isolated-8] [INFO] [1732525874.892809163] [collision_monitor]: 
+[component_container_isolated-8] 	collision_monitor lifecycle node launched. 
+[component_container_isolated-8] 	Waiting on external lifecycle transitions to activate
+[component_container_isolated-8] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/collision_monitor' in container '/nav2_container'
+[component_container_isolated-8] [INFO] [1732525874.895599743] [nav2_container]: Load Library: /opt/ros/jazzy/lib/libopennav_docking_core.so
+[component_container_isolated-8] [INFO] [1732525874.897100616] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<opennav_docking::DockingServer>
+[component_container_isolated-8] [INFO] [1732525874.900413987] [nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<opennav_docking::DockingServer>
+[rviz2-7] [INFO] [1732525874.903038650] [rviz2]: Stereo is NOT SUPPORTED
+[rviz2-7] [INFO] [1732525874.903089525] [rviz2]: OpenGl version: 4.5 (GLSL 4.5)
+[ruby $(which gz) sim-4] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] file:///usr/lib/aarch64-linux-gnu/qt5/qml/QtQuick/Dialogs/DefaultFileDialog.qml:413:17: QML ToolButton: Binding loop detected for property "implicitHeight"[0m[1;33m[0m
+[ruby $(which gz) sim-4] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] file:///usr/lib/aarch64-linux-gnu/qt5/qml/QtQuick/Dialogs/DefaultFileDialog.qml:309:21: QML Button: Binding loop detected for property "implicitHeight"[0m[1;33m[0m
+[ruby $(which gz) sim-4] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] file:///usr/lib/aarch64-linux-gnu/qt5/qml/QtQuick/Dialogs/DefaultFileDialog.qml:309:21: QML Button: Binding loop detected for property "implicitHeight"[0m[1;33m[0m
+[component_container_isolated-8] [INFO] [1732525874.941682475] [docking_server]: 
+[component_container_isolated-8] 	docking_server lifecycle node launched. 
+[component_container_isolated-8] 	Waiting on external lifecycle transitions to activate
+[component_container_isolated-8] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[component_container_isolated-8] [INFO] [1732525874.941722934] [docking_server]: Creating docking_server
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/docking_server' in container '/nav2_container'
+[component_container_isolated-8] [INFO] [1732525874.946239636] [nav2_container]: Load Library: /opt/ros/jazzy/lib/libnav2_lifecycle_manager_core.so
+[component_container_isolated-8] [INFO] [1732525874.947649426] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_lifecycle_manager::LifecycleManager>
+[component_container_isolated-8] [INFO] [1732525874.949372590] [nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_lifecycle_manager::LifecycleManager>
+[component_container_isolated-8] [INFO] [1732525874.989770788] [lifecycle_manager_navigation]: Creating
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/lifecycle_manager_navigation' in container '/nav2_container'
+[rviz2-7] [INFO] [1732525875.000731108] [rviz2]: Stereo is NOT SUPPORTED
+[component_container_isolated-8] [INFO] [1732525875.003248354] [lifecycle_manager_navigation]: [34m[1mCreating and initializing lifecycle service clients[0m[0m
+[component_container_isolated-8] [INFO] [1732525875.059731532] [lifecycle_manager_navigation]: [34m[1mStarting managed nodes bringup...[0m[0m
+[component_container_isolated-8] [INFO] [1732525875.059774198] [lifecycle_manager_navigation]: [34m[1mConfiguring controller_server[0m[0m
+[component_container_isolated-8] [INFO] [1732525875.060447281] [controller_server]: Configuring controller interface
+[component_container_isolated-8] [INFO] [1732525875.060589781] [controller_server]: getting progress checker plugins..
+[component_container_isolated-8] [INFO] [1732525875.063358402] [controller_server]: getting goal checker plugins..
+[component_container_isolated-8] [INFO] [1732525875.063977401] [controller_server]: Controller frequency set to 20.0000Hz
+[component_container_isolated-8] [INFO] [1732525875.064665275] [local_costmap.local_costmap]: Configuring
+[component_container_isolated-8] [INFO] [1732525875.093188947] [local_costmap.local_costmap]: Using plugin "voxel_layer"
+[example_nav_to_pose-12] [0m[INFO] [1732525875.095858527] [basic_navigator]: Publishing Initial Pose[0m
+[component_container_isolated-8] [INFO] [1732525875.097136275] [local_costmap.local_costmap]: Subscribed to Topics: scan
+[example_nav_to_pose-12] Initial pose set!
+[component_container_isolated-8] [INFO] [1732525875.109539634] [local_costmap.local_costmap]: Initialized plugin "voxel_layer"
+[component_container_isolated-8] [INFO] [1732525875.109584676] [local_costmap.local_costmap]: Using plugin "inflation_layer"
+[component_container_isolated-8] [INFO] [1732525875.111006341] [local_costmap.local_costmap]: Initialized plugin "inflation_layer"
+[rviz2-7] [INFO] [1732525875.119830538] [rviz]: Subscribing to: /mobile_base/sensors/bumper_pointcloud
+[rviz2-7] 
+[rviz2-7] [INFO] [1732525875.123061659] [rviz]: Subscribing to: /mobile_base/sensors/bumper_pointcloud
+[rviz2-7] 
+[component_container_isolated-8] [INFO] [1732525875.130136191] [controller_server]: Created progress_checker : progress_checker of type nav2_controller::SimpleProgressChecker
+[component_container_isolated-8] [INFO] [1732525875.133422479] [controller_server]: Controller Server has progress_checker  progress checkers available.
+[component_container_isolated-8] [INFO] [1732525875.135021852] [controller_server]: Created goal checker : general_goal_checker of type nav2_controller::SimpleGoalChecker
+[component_container_isolated-8] [INFO] [1732525875.136203100] [controller_server]: Controller Server has general_goal_checker  goal checkers available.
+[component_container_isolated-8] [INFO] [1732525875.138195723] [controller_server]: Created controller : FollowPath of type nav2_mppi_controller::MPPIController
+[component_container_isolated-8] [INFO] [1732525875.147995668] [controller_server]: Controller period is equal to model dt. Control sequence shifting is ON
+[component_container_isolated-8] [INFO] [1732525875.150868498] [controller_server]: ConstraintCritic instantiated with 1 power and 4.000000 weight.
+[component_container_isolated-8] [INFO] [1732525875.150892831] [controller_server]: Critic loaded : mppi::critics::ConstraintCritic
+[component_container_isolated-8] [INFO] [1732525875.151577205] [controller_server]: InflationCostCritic instantiated with 1 power and 300.000000 / 0.015000 weights. Critic will collision check based on footprint cost.
+[component_container_isolated-8] [INFO] [1732525875.151609830] [controller_server]: Critic loaded : mppi::critics::CostCritic
+[component_container_isolated-8] [INFO] [1732525875.151778997] [controller_server]: GoalCritic instantiated with 1 power and 5.000000 weight.
+[component_container_isolated-8] [INFO] [1732525875.151784247] [controller_server]: Critic loaded : mppi::critics::GoalCritic
+[component_container_isolated-8] [INFO] [1732525875.151943663] [controller_server]: GoalAngleCritic instantiated with 1 power, 3.000000 weight, and 0.500000 angular threshold.
+[component_container_isolated-8] [INFO] [1732525875.151953747] [controller_server]: Critic loaded : mppi::critics::GoalAngleCritic
+[component_container_isolated-8] [INFO] [1732525875.152263288] [controller_server]: ReferenceTrajectoryCritic instantiated with 1 power and 14.000000 weight
+[component_container_isolated-8] [INFO] [1732525875.152268663] [controller_server]: Critic loaded : mppi::critics::PathAlignCritic
+[component_container_isolated-8] [INFO] [1732525875.152417621] [controller_server]: Critic loaded : mppi::critics::PathFollowCritic
+[component_container_isolated-8] [INFO] [1732525875.152651954] [controller_server]: PathAngleCritic instantiated with 1 power and 2.000000 weight. Mode set to: Forward Preference
+[component_container_isolated-8] [INFO] [1732525875.152662787] [controller_server]: Critic loaded : mppi::critics::PathAngleCritic
+[component_container_isolated-8] [INFO] [1732525875.152830037] [controller_server]: PreferForwardCritic instantiated with 1 power and 5.000000 weight.
+[component_container_isolated-8] [INFO] [1732525875.152834787] [controller_server]: Critic loaded : mppi::critics::PreferForwardCritic
+[component_container_isolated-8] [INFO] [1732525875.157953989] [controller_server]: Optimizer reset
+[component_container_isolated-8] [INFO] [1732525875.165054771] [MPPIController]: Configured MPPI Controller: FollowPath
+[component_container_isolated-8] [INFO] [1732525875.165079813] [controller_server]: Controller Server has FollowPath  controllers available.
+[rviz2-7] [INFO] [1732525875.173745469] [rviz]: Subscribing to: /local_costmap/voxel_marked_cloud
+[rviz2-7] 
+[component_container_isolated-8] [INFO] [1732525875.176209174] [lifecycle_manager_navigation]: [34m[1mConfiguring smoother_server[0m[0m
+[component_container_isolated-8] [INFO] [1732525875.176283424] [smoother_server]: Configuring smoother server
+[create-5] [INFO] [1732525875.181519750] [ros_gz_sim]: Waiting messages on topic [robot_description].
+[component_container_isolated-8] [INFO] [1732525875.188303575] [smoother_server]: Created smoother : simple_smoother of type nav2_smoother::SimpleSmoother
+[rviz2-7] [INFO] [1732525875.188814408] [rviz]: Subscribing to: /global_costmap/voxel_marked_cloud
+[rviz2-7] 
+[component_container_isolated-8] [INFO] [1732525875.192288903] [smoother_server]: Smoother Server has simple_smoother  smoothers available.
+[create-5] [INFO] [1732525875.196941064] [ros_gz_sim]: Requested creation of entity.
+[create-5] [INFO] [1732525875.196976980] [ros_gz_sim]: OK creation of entity.
+[component_container_isolated-8] [INFO] [1732525875.201873807] [lifecycle_manager_navigation]: [34m[1mConfiguring planner_server[0m[0m
+[component_container_isolated-8] [INFO] [1732525875.201952724] [planner_server]: Configuring
+[component_container_isolated-8] [INFO] [1732525875.201977724] [global_costmap.global_costmap]: Configuring
+[component_container_isolated-8] [INFO] [1732525875.209229423] [global_costmap.global_costmap]: Using plugin "static_layer"
+[component_container_isolated-8] [INFO] [1732525875.213558042] [global_costmap.global_costmap]: Subscribing to the map topic (/map) with transient local durability
+[component_container_isolated-8] [INFO] [1732525875.214936457] [global_costmap.global_costmap]: Initialized plugin "static_layer"
+[component_container_isolated-8] [INFO] [1732525875.214950541] [global_costmap.global_costmap]: Using plugin "obstacle_layer"
+[component_container_isolated-8] [INFO] [1732525875.217198288] [global_costmap.global_costmap]: Subscribed to Topics: scan
+[component_container_isolated-8] [INFO] [1732525875.225043653] [global_costmap.global_costmap]: Initialized plugin "obstacle_layer"
+[component_container_isolated-8] [INFO] [1732525875.225077611] [global_costmap.global_costmap]: Using plugin "inflation_layer"
+[component_container_isolated-8] [INFO] [1732525875.228086649] [global_costmap.global_costmap]: Initialized plugin "inflation_layer"
+[parameter_bridge-2] [INFO] [1732525875.230272396] [ros_gz_bridge]: Creating ROS->GZ Bridge: [fork_control (std_msgs/msg/Float64) -> fork_control (gz.msgs.Double)] (Lazy 0)
+[parameter_bridge-2] [INFO] [1732525875.233479100] [ros_gz_bridge]: Creating GZ->ROS Bridge: [cube/touched (gz.msgs.Boolean) -> forklift/touched (std_msgs/msg/Bool)] (Lazy 0)
+[parameter_bridge-2] [INFO] [1732525875.233928683] [ros_gz_bridge]: Creating GZ->ROS Bridge: [/model/cube/pose (gz.msgs.Pose_V) -> cube_pose (tf2_msgs/msg/TFMessage)] (Lazy 0)
+[parameter_bridge-2] [INFO] [1732525875.242975713] [ros_gz_bridge]: Creating GZ->ROS Bridge: [/clock (gz.msgs.Clock) -> clock (rosgraph_msgs/msg/Clock)] (Lazy 0)
+[rviz2-7] [INFO] [1732525875.244036003] [rviz]: Subscribing to: /mobile_base/sensors/bumper_pointcloud
+[rviz2-7] 
+[parameter_bridge-2] [INFO] [1732525875.248779789] [ros_gz_bridge]: Creating GZ->ROS Bridge: [joint_states (gz.msgs.Model) -> joint_states (sensor_msgs/msg/JointState)] (Lazy 0)
+[parameter_bridge-2] [INFO] [1732525875.250045370] [ros_gz_bridge]: Creating GZ->ROS Bridge: [/odom (gz.msgs.Odometry) -> odom (nav_msgs/msg/Odometry)] (Lazy 0)
+[parameter_bridge-2] [INFO] [1732525875.251246619] [ros_gz_bridge]: Creating GZ->ROS Bridge: [/tf (gz.msgs.Pose_V) -> tf (tf2_msgs/msg/TFMessage)] (Lazy 0)
+[rviz2-7] [INFO] [1732525875.250947869] [rviz]: Subscribing to: /local_costmap/voxel_marked_cloud
+[rviz2-7] 
+[rviz2-7] [INFO] [1732525875.254289823] [rviz]: Subscribing to: /global_costmap/voxel_marked_cloud
+[rviz2-7] 
+[parameter_bridge-2] [INFO] [1732525875.254797448] [ros_gz_bridge]: Creating GZ->ROS Bridge: [/scan (gz.msgs.LaserScan) -> scan (sensor_msgs/msg/LaserScan)] (Lazy 0)
+[parameter_bridge-2] [INFO] [1732525875.260550649] [ros_gz_bridge]: Creating ROS->GZ Bridge: [cmd_vel (geometry_msgs/msg/Twist) -> /cmd_vel (gz.msgs.Twist)] (Lazy 0)
+[component_container_isolated-8] [INFO] [1732525875.269901803] [planner_server]: Created global planner plugin GridBased of type nav2_navfn_planner::NavfnPlanner
+[component_container_isolated-8] [INFO] [1732525875.269946095] [planner_server]: Configuring plugin GridBased of type NavfnPlanner
+[component_container_isolated-8] [INFO] [1732525875.271428218] [planner_server]: Planner Server has GridBased  planners available.
+[component_container_isolated-8] [INFO] [1732525875.287215281] [lifecycle_manager_navigation]: [34m[1mConfiguring behavior_server[0m[0m
+[component_container_isolated-8] [INFO] [1732525875.287510947] [behavior_server]: Configuring
+[component_container_isolated-8] [INFO] [1732525875.300409597] [behavior_server]: Creating behavior plugin spin of type nav2_behaviors::Spin
+[component_container_isolated-8] [INFO] [1732525875.301578221] [behavior_server]: Creating behavior plugin backup of type nav2_behaviors::BackUp
+[component_container_isolated-8] [INFO] [1732525875.302931969] [behavior_server]: Creating behavior plugin drive_on_heading of type nav2_behaviors::DriveOnHeading
+[component_container_isolated-8] [INFO] [1732525875.304568842] [behavior_server]: Creating behavior plugin assisted_teleop of type nav2_behaviors::AssistedTeleop
+[component_container_isolated-8] [INFO] [1732525875.308654420] [behavior_server]: Creating behavior plugin wait of type nav2_behaviors::Wait
+[component_container_isolated-8] [INFO] [1732525875.328462353] [behavior_server]: Configuring spin
+[INFO] [create-5]: process has finished cleanly [pid 16194]
+[component_container_isolated-8] [INFO] [1732525875.345061832] [behavior_server]: Configuring backup
+[component_container_isolated-8] [INFO] [1732525875.348960535] [behavior_server]: Configuring drive_on_heading
+[component_container_isolated-8] [INFO] [1732525875.353793904] [behavior_server]: Configuring assisted_teleop
+[component_container_isolated-8] [INFO] [1732525875.363718474] [behavior_server]: Configuring wait
+[component_container_isolated-8] [INFO] [1732525875.369839175] [lifecycle_manager_navigation]: [34m[1mConfiguring velocity_smoother[0m[0m
+[component_container_isolated-8] [INFO] [1732525875.370115799] [velocity_smoother]: Configuring velocity smoother
+[component_container_isolated-8] [INFO] [1732525875.379914995] [lifecycle_manager_navigation]: [34m[1mConfiguring collision_monitor[0m[0m
+[component_container_isolated-8] [INFO] [1732525875.380095037] [collision_monitor]: Configuring
+[component_container_isolated-8] [INFO] [1732525875.391303814] [collision_monitor]: [FootprintApproach]: Creating Polygon
+[component_container_isolated-8] [INFO] [1732525875.391691480] [collision_monitor]: [FootprintApproach]: Polygon points are not defined. Using dynamic subscription instead.
+[component_container_isolated-8] [INFO] [1732525875.392101438] [collision_monitor]: [FootprintApproach]: Making footprint subscriber on /local_costmap/published_footprint topic
+[component_container_isolated-8] [INFO] [1732525875.395081517] [collision_monitor]: [scan]: Creating Scan
+[component_container_isolated-8] [INFO] [1732525875.401961300] [lifecycle_manager_navigation]: [34m[1mConfiguring bt_navigator[0m[0m
+[component_container_isolated-8] [INFO] [1732525875.402060717] [bt_navigator]: Configuring
+[component_container_isolated-8] [INFO] [1732525875.408445417] [bt_navigator]: Creating navigator id navigate_to_pose of type nav2_bt_navigator::NavigateToPoseNavigator
+[component_container_isolated-8] [INFO] [1732525875.505295417] [bt_navigator]: Creating navigator id navigate_through_poses of type nav2_bt_navigator::NavigateThroughPosesNavigator
+[ruby $(which gz) sim-4] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] file::/EntityContextMenuPlugin/EntityContextMenuPlugin.qml:52:3: QML RenderWindowOverlay: Detected anchors on an item that is managed by a layout. This is undefined behavior; use Layout.alignment instead.[0m[1;33m[0m
+[ruby $(which gz) sim-4] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] file::/EntityContextMenuPlugin/EntityContextMenuPlugin.qml:67:3: QML EntityContextMenu: Detected anchors on an item that is managed by a layout. This is undefined behavior; use Layout.alignment instead.[0m[1;33m[0m
+[ruby $(which gz) sim-4] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] file::/EntityContextMenuPlugin/EntityContextMenuPlugin.qml:52:3: QML RenderWindowOverlay: Detected anchors on an item that is managed by a layout. This is undefined behavior; use Layout.alignment instead.[0m[1;33m[0m
+[ruby $(which gz) sim-4] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] file::/EntityContextMenuPlugin/EntityContextMenuPlugin.qml:67:3: QML EntityContextMenu: Detected anchors on an item that is managed by a layout. This is undefined behavior; use Layout.alignment instead.[0m[1;33m[0m
+[ruby $(which gz) sim-4] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] file::/EntityContextMenuPlugin/EntityContextMenuPlugin.qml:52:3: QML RenderWindowOverlay: Detected anchors on an item that is managed by a layout. This is undefined behavior; use Layout.alignment instead.[0m[1;33m[0m
+[ruby $(which gz) sim-4] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] file::/EntityContextMenuPlugin/EntityContextMenuPlugin.qml:67:3: QML EntityContextMenu: Detected anchors on an item that is managed by a layout. This is undefined behavior; use Layout.alignment instead.[0m[1;33m[0m
+[ruby $(which gz) sim-4] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] file::/EntityContextMenuPlugin/EntityContextMenuPlugin.qml:52:3: QML RenderWindowOverlay: Detected anchors on an item that is managed by a layout. This is undefined behavior; use Layout.alignment instead.[0m[1;33m[0m
+[ruby $(which gz) sim-4] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] file::/EntityContextMenuPlugin/EntityContextMenuPlugin.qml:67:3: QML EntityContextMenu: Detected anchors on an item that is managed by a layout. This is undefined behavior; use Layout.alignment instead.[0m[1;33m[0m
+[ruby $(which gz) sim-4] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] file::/EntityContextMenuPlugin/EntityContextMenuPlugin.qml:52:3: QML RenderWindowOverlay: Detected anchors on an item that is managed by a layout. This is undefined behavior; use Layout.alignment instead.[0m[1;33m[0m
+[ruby $(which gz) sim-4] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] file::/EntityContextMenuPlugin/EntityContextMenuPlugin.qml:67:3: QML EntityContextMenu: Detected anchors on an item that is managed by a layout. This is undefined behavior; use Layout.alignment instead.[0m[1;33m[0m
+[ruby $(which gz) sim-4] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] file::/EntityContextMenuPlugin/EntityContextMenuPlugin.qml:52:3: QML RenderWindowOverlay: Detected anchors on an item that is managed by a layout. This is undefined behavior; use Layout.alignment instead.[0m[1;33m[0m
+[ruby $(which gz) sim-4] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] file::/EntityContextMenuPlugin/EntityContextMenuPlugin.qml:67:3: QML EntityContextMenu: Detected anchors on an item that is managed by a layout. This is undefined behavior; use Layout.alignment instead.[0m[1;33m[0m
+[component_container_isolated-8] [INFO] [1732525875.593576845] [lifecycle_manager_navigation]: [34m[1mConfiguring waypoint_follower[0m[0m
+[component_container_isolated-8] [INFO] [1732525875.596789758] [waypoint_follower]: Configuring
+[component_container_isolated-8] [INFO] [1732525875.666040502] [waypoint_follower]: Created waypoint_task_executor : wait_at_waypoint of type nav2_waypoint_follower::WaitAtWaypoint
+[component_container_isolated-8] [INFO] [1732525875.673625326] [lifecycle_manager_navigation]: [34m[1mConfiguring docking_server[0m[0m
+[component_container_isolated-8] [INFO] [1732525875.673822242] [docking_server]: Configuring docking_server
+[component_container_isolated-8] [INFO] [1732525875.673877034] [docking_server]: Controller frequency set to 50.0000Hz
+[ruby $(which gz) sim-4] [1;32m[Msg] [0m[1;32mGazebo Sim GUI    v[0m[1;32m8.6.0[0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;36m[Dbg] [Application.cc:96] [0m[1;36mInitializing application.[0m[1;36m[0m
+[ruby $(which gz) sim-4] [1;36m[Dbg] [Application.cc:170] [0m[1;36mQt using OpenGL graphics interface[0m[1;36m[0m
+[ruby $(which gz) sim-4] [1;36m[GUI] [Dbg] [Application.cc:657] [0m[1;36mCreate main window[0m[1;36m[0m
+[ruby $(which gz) sim-4] [1;36m[GUI] [Dbg] [PathManager.cc:68] [0m[1;36mRequesting resource paths through [[0m[1;36m/gazebo/resource_paths/get[0m[1;36m][0m[1;36m[0m
+[ruby $(which gz) sim-4] [1;36m[GUI] [Dbg] [Gui.cc:343] [0m[1;36mGUI requesting list of world names. The server may be busy [0m[1;36mdownloading resources. Please be patient.[0m[1;36m[0m
+[ruby $(which gz) sim-4] [1;36m[GUI] [Dbg] [Gui.cc:401] [0m[1;36mRequesting GUI from [[0m[1;36m/world/default/gui/info[0m[1;36m]...[0m[1;36m[0m
+[ruby $(which gz) sim-4] [1;36m[GUI] [Dbg] [PathManager.cc:57] [0m[1;36mReceived resource paths.[0m[1;36m[0m
+[ruby $(which gz) sim-4] [1;36m[GUI] [Dbg] [GuiRunner.cc:149] [0m[1;36mRequesting initial state from [[0m[1;36m/world/default/state[0m[1;36m]...[0m[1;36m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoading config [[0m[1;32m/home/elmeripk/.gz/sim/8/gui.config[0m[1;32m][0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mMinimalScene[0m[1;36m][0m[1;36m[0m
+[ruby $(which gz) sim-4] [1;36m[GUI] [Dbg] [MinimalScene.cc:802] [0m[1;36mCreating gz-rendering interface for OpenGL[0m[1;36m[0m
+[ruby $(which gz) sim-4] [1;36m[GUI] [Dbg] [MinimalScene.cc:802] [0m[1;36mCreating gz-rendering interface for OpenGL[0m[1;36m[0m
+[ruby $(which gz) sim-4] [1;36m[GUI] [Dbg] [MinimalScene.cc:986] [0m[1;36mCreating render thread interface for OpenGL[0m[1;36m[0m
+[ruby $(which gz) sim-4] [1;36m[GUI] [Dbg] [MinimalScene.cc:802] [0m[1;36mCreating gz-rendering interface for OpenGL[0m[1;36m[0m
+[ruby $(which gz) sim-4] [1;36m[GUI] [Dbg] [MinimalScene.cc:986] [0m[1;36mCreating render thread interface for OpenGL[0m[1;36m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32m3D View[0m[1;32m] to main window[0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mMinimalScene[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_gui_vendor/lib/gz-gui-8/plugins/libMinimalScene.so[0m[1;32m][0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mEntityContextMenuPlugin[0m[1;36m][0m[1;36m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mCurrently tracking topic on [[0m[1;32m/gui/currently_tracked[0m[1;32m][0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mEntity Context Menu[0m[1;32m] to main window[0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mEntityContextMenuPlugin[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libEntityContextMenuPlugin.so[0m[1;32m][0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mGzSceneManager[0m[1;36m][0m[1;36m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mScene Manager[0m[1;32m] to main window[0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mGzSceneManager[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libGzSceneManager.so[0m[1;32m][0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mInteractiveViewControl[0m[1;36m][0m[1;36m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mCamera view controller topic advertised on [[0m[1;32m/gui/camera/view_control[0m[1;32m][0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mCamera reference visual topic advertised on [[0m[1;32m/gui/camera/view_control/reference_visual[0m[1;32m][0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mCamera view control sensitivity advertised on [[0m[1;32m/gui/camera/view_control/sensitivity[0m[1;32m][0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mInteractive view control[0m[1;32m] to main window[0m[1;32m[0m
+[component_container_isolated-8] [INFO] [1732525875.731633001] [docking_server]: Created charging dock plugin simple_charging_dock of type opennav_docking::SimpleChargingDock
+[component_container_isolated-8] [WARN] [1732525875.757138677] [docking_server]: Dock database filepath nor dock parameters set. Docking actions can only be executed specifying the dock pose via the action request. Or update the dock database via the reload_database service.
+[component_container_isolated-8] [INFO] [1732525875.757178677] [docking_server]: Docking Server has 1 dock types and 0 dock instances available.
+[component_container_isolated-8] [INFO] [1732525875.760722922] [lifecycle_manager_navigation]: [34m[1mActivating controller_server[0m[0m
+[component_container_isolated-8] [INFO] [1732525875.760824589] [controller_server]: Activating
+[component_container_isolated-8] [INFO] [1732525875.760877630] [local_costmap.local_costmap]: Activating
+[component_container_isolated-8] [INFO] [1732525875.760885547] [local_costmap.local_costmap]: Checking transform
+[component_container_isolated-8] [INFO] [1732525875.760911714] [local_costmap.local_costmap]: Timed out waiting for transform from base_link to odom to become available, tf error: Invalid frame ID "odom" passed to canTransform argument target_frame - frame does not exist
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mInteractiveViewControl[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_gui_vendor/lib/gz-gui-8/plugins/libInteractiveViewControl.so[0m[1;32m][0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mCameraTracking[0m[1;36m][0m[1;36m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mCamera tracking[0m[1;32m] to main window[0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mCameraTracking[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_gui_vendor/lib/gz-gui-8/plugins/libCameraTracking.so[0m[1;32m][0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mMarkerManager[0m[1;36m][0m[1;36m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mListening to stats on [[0m[1;32m/world/default/stats[0m[1;32m][0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mMarker Manager[0m[1;32m] to main window[0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mMarkerManager[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_gui_vendor/lib/gz-gui-8/plugins/libMarkerManager.so[0m[1;32m][0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mSelectEntities[0m[1;36m][0m[1;36m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mSelect entities[0m[1;32m] to main window[0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mSelectEntities[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libSelectEntities.so[0m[1;32m][0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mSpawn[0m[1;36m][0m[1;36m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mSpawn[0m[1;32m] to main window[0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mSpawn[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libSpawn.so[0m[1;32m][0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mVisualizationCapabilities[0m[1;36m][0m[1;36m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mView as transparent service on [[0m[1;32m/gui/view/transparent[0m[1;32m][0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mView as wireframes service on [[0m[1;32m/gui/view/wireframes[0m[1;32m][0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mView center of mass service on [[0m[1;32m/gui/view/com[0m[1;32m][0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mView inertia service on [[0m[1;32m/gui/view/inertia[0m[1;32m][0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mView collisions service on [[0m[1;32m/gui/view/collisions[0m[1;32m][0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mView joints service on [[0m[1;32m/gui/view/joints[0m[1;32m][0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mView frames service on [[0m[1;32m/gui/view/frames[0m[1;32m][0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mVisualization capabilities[0m[1;32m] to main window[0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mVisualizationCapabilities[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libVisualizationCapabilities.so[0m[1;32m][0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mWorldControl[0m[1;36m][0m[1;36m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mUsing world control service [[0m[1;32m/world/default/control[0m[1;32m][0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mListening to stats on [[0m[1;32m/world/default/stats[0m[1;32m][0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;36m[GUI] [Dbg] [WorldControl.cc:237] [0m[1;36mUsing an event to share WorldControl msgs with the server[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mWorld control[0m[1;32m] to main window[0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] file:///usr/lib/aarch64-linux-gnu/qt5/qml/QtQuick/Dialogs/DefaultFileDialog.qml:413:17: QML ToolButton: Binding loop detected for property "implicitHeight"[0m[1;33m[0m
+[ruby $(which gz) sim-4] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] file:///usr/lib/aarch64-linux-gnu/qt5/qml/QtQuick/Dialogs/DefaultFileDialog.qml:309:21: QML Button: Binding loop detected for property "implicitHeight"[0m[1;33m[0m
+[ruby $(which gz) sim-4] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] file:///usr/lib/aarch64-linux-gnu/qt5/qml/QtQuick/Dialogs/DefaultFileDialog.qml:309:21: QML Button: Binding loop detected for property "implicitHeight"[0m[1;33m[0m
+[example_nav_to_pose-12] [0m[INFO] [1732525876.117201006] [basic_navigator]: amcl/get_state service not available, waiting...[0m
+[ruby $(which gz) sim-4] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] file::/ComponentInspector/ComponentInspector.qml:251:3: QML Dialog: Binding loop detected for property "implicitHeight"[0m[1;33m[0m
+[ruby $(which gz) sim-4] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] file:///usr/lib/aarch64-linux-gnu/qt5/qml/QtQuick/Dialogs/DefaultFileDialog.qml:413:17: QML ToolButton: Binding loop detected for property "implicitHeight"[0m[1;33m[0m
+[ruby $(which gz) sim-4] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] file:///usr/lib/aarch64-linux-gnu/qt5/qml/QtQuick/Dialogs/DefaultFileDialog.qml:309:21: QML Button: Binding loop detected for property "implicitHeight"[0m[1;33m[0m
+[ruby $(which gz) sim-4] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] file:///usr/lib/aarch64-linux-gnu/qt5/qml/QtQuick/Dialogs/DefaultFileDialog.qml:309:21: QML Button: Binding loop detected for property "implicitHeight"[0m[1;33m[0m
+[ruby $(which gz) sim-4] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] file::/EntityTree/EntityTree.qml:148:7: QML ToolButton: Detected anchors on an item that is managed by a layout. This is undefined behavior; use Layout.alignment instead.[0m[1;33m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mWorldControl[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_gui_vendor/lib/gz-gui-8/plugins/libWorldControl.so[0m[1;32m][0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mWorldStats[0m[1;36m][0m[1;36m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mListening to stats on [[0m[1;32m/world/default/stats[0m[1;32m][0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mWorld stats[0m[1;32m] to main window[0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mWorldStats[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_gui_vendor/lib/gz-gui-8/plugins/libWorldStats.so[0m[1;32m][0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mShapes[0m[1;36m][0m[1;36m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mShapes[0m[1;32m] to main window[0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mShapes[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libShapes.so[0m[1;32m][0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mLights[0m[1;36m][0m[1;36m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mLights[0m[1;32m] to main window[0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mLights[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libLights.so[0m[1;32m][0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mTransformControl[0m[1;36m][0m[1;36m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mTransform control[0m[1;32m] to main window[0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mTransformControl[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libTransformControl.so[0m[1;32m][0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mScreenshot[0m[1;36m][0m[1;36m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mScreenshot service on [[0m[1;32m/gui/screenshot[0m[1;32m][0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mScreenshot[0m[1;32m] to main window[0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mScreenshot[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_gui_vendor/lib/gz-gui-8/plugins/libScreenshot.so[0m[1;32m][0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mCopyPaste[0m[1;36m][0m[1;36m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mCopy/Paste[0m[1;32m] to main window[0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mCopyPaste[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libCopyPaste.so[0m[1;32m][0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mComponentInspector[0m[1;36m][0m[1;36m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mComponent inspector[0m[1;32m] to main window[0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mComponentInspector[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libComponentInspector.so[0m[1;32m][0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mEntityTree[0m[1;36m][0m[1;36m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mCurrently tracking topic on [[0m[1;32m/gui/currently_tracked[0m[1;32m][0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mEntity tree[0m[1;32m] to main window[0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] file::/EntityTree/EntityTree.qml:148:7: QML ToolButton: Detected anchors on an item that is managed by a layout. This is undefined behavior; use Layout.alignment instead.[0m[1;33m[0m
+[ruby $(which gz) sim-4] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] file::/WorldStats/WorldStats.qml:53:3: QML RowLayout: Binding loop detected for property "x"[0m[1;33m[0m
+[ruby $(which gz) sim-4] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] file::/EntityContextMenuPlugin/EntityContextMenuPlugin.qml:52:3: QML RenderWindowOverlay: Detected anchors on an item that is managed by a layout. This is undefined behavior; use Layout.alignment instead.[0m[1;33m[0m
+[ruby $(which gz) sim-4] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] file::/EntityContextMenuPlugin/EntityContextMenuPlugin.qml:67:3: QML EntityContextMenu: Detected anchors on an item that is managed by a layout. This is undefined behavior; use Layout.alignment instead.[0m[1;33m[0m
+[component_container_isolated-8] [INFO] [1732525876.261391112] [local_costmap.local_costmap]: Timed out waiting for transform from base_link to odom to become available, tf error: Invalid frame ID "odom" passed to canTransform argument target_frame - frame does not exist
+[ruby $(which gz) sim-4] libEGL warning: egl: failed to create dri2 screen
+[ruby $(which gz) sim-4] libEGL warning: egl: failed to create dri2 screen
+[ruby $(which gz) sim-4] libEGL warning: NEEDS EXTENSION: falling back to kms_swrast
+[ruby $(which gz) sim-3] [1;33mWarning [Utils.cc:132][0m [/sdf/model[@name="forklift"]/link[@name="rplidar_link"]/sensor[@name="rplidar"]/gz_frame_id:<urdf-string>:L0]: XML Element[gz_frame_id], child of element[sensor], not defined in SDF. Copying[gz_frame_id] as children of [sensor].
+[ruby $(which gz) sim-3] [1;31m[Err] [SystemLoader.cc:92] [0m[1;31mFailed to load system plugin [[0m[1;31mdummyfile[0m[1;31m] : Could not find shared library.[0m[1;31m[0m
+[ruby $(which gz) sim-3] [1;31m[Err] [TouchPlugin.cc:180] [0m[1;31m<namespace> [[0m[1;31m] is invalid.[0m[1;31m[0m
+[ruby $(which gz) sim-3] MESA: error: ZINK: failed to choose pdev
+[ruby $(which gz) sim-3] glx: failed to create drisw screen
+[ruby $(which gz) sim-3] libEGL warning: egl: failed to create dri2 screen
+[ruby $(which gz) sim-3] libEGL warning: egl: failed to create dri2 screen
+[ruby $(which gz) sim-3] libEGL warning: NEEDS EXTENSION: falling back to kms_swrast
+[component_container_isolated-8] [INFO] [1732525876.761836344] [local_costmap.local_costmap]: Timed out waiting for transform from base_link to odom to become available, tf error: Invalid frame ID "odom" passed to canTransform argument target_frame - frame does not exist
+[ruby $(which gz) sim-4] [1;33m[GUI] [Wrn] [Ogre2RenderTarget.cc:668] [0m[1;33mAnti-aliasing level of '[0m[1;33m[0m[1;33m' [0m[1;33mis not supported; valid FSAA levels are: [0m[1;33m[ 0 4 ][0m[1;33m. Setting to 1[0m[1;33m[0m
+[ruby $(which gz) sim-4] [1;33m[GUI] [Wrn] [Model.hh:98] [0m[1;33mUnable to deserialize sdf::Model[0m[1;33m[0m
+[ruby $(which gz) sim-4] [1;33m[GUI] [Wrn] [Component.hh:172] [0m[1;33mTrying to deserialize component with data type [[0m[1;33mSt10shared_ptrIN3sdf3v147ElementEE[0m[1;33m], which doesn't have [0m[1;33m`operator>>`. Component will not be deserialized.[0m[1;33m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mEntityTree[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libEntityTree.so[0m[1;32m][0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;36m[GUI] [Dbg] [Application.cc:398] [0m[1;36mLoading window config[0m[1;36m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mUsing server control service [[0m[1;32m/server_control[0m[1;32m][0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;36m[GUI] [Dbg] [Application.cc:671] [0m[1;36mApplying config[0m[1;36m[0m
+[ruby $(which gz) sim-4] [1;36m[GUI] [Dbg] [MinimalScene.cc:802] [0m[1;36mCreating gz-rendering interface for OpenGL[0m[1;36m[0m
+[ruby $(which gz) sim-4] [1;36m[GUI] [Dbg] [MinimalScene.cc:986] [0m[1;36mCreating render thread interface for OpenGL[0m[1;36m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoading plugin [[0m[1;32mgz-rendering-ogre2[0m[1;32m][0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;36m[GUI] [Dbg] [MinimalScene.cc:749] [0m[1;36mCreate scene [[0m[1;36mscene[0m[1;36m][0m[1;36m[0m
+[ruby $(which gz) sim-4] [1;36m[GUI] [Dbg] [MinimalScene.cc:1037] [0m[1;36mCreating texture node render interface for OpenGL[0m[1;36m[0m
+[ruby $(which gz) sim-4] [1;36m[GUI] [Dbg] [TransformControl.cc:453] [0m[1;36mTransformControl plugin is using camera [[0m[1;36mscene::Camera(65527)[0m[1;36m][0m[1;36m[0m
+[ruby $(which gz) sim-4] [1;36m[GUI] [Dbg] [Spawn.cc:308] [0m[1;36mSpawn plugin is using camera [[0m[1;36mscene::Camera(65527)[0m[1;36m][0m[1;36m[0m
+[ruby $(which gz) sim-4] [1;36m[GUI] [Dbg] [SelectEntities.cc:452] [0m[1;36mSelectEntities plugin is using camera [[0m[1;36mscene::Camera(65527)[0m[1;36m][0m[1;36m[0m
+[ruby $(which gz) sim-4] [1;36m[GUI] [Dbg] [MarkerManager.cc:169] [0m[1;36mAdvertise [0m[1;36m/marker[0m[1;36m/list service.[0m
+[ruby $(which gz) sim-4] [1;36m[GUI] [Dbg] [MarkerManager.cc:179] [0m[1;36mAdvertise [0m[1;36m/marker[0m[1;36m/list.[0m
+[ruby $(which gz) sim-4] [1;36m[GUI] [Dbg] [MarkerManager.cc:189] [0m[1;36mAdvertise [0m[1;36m/marker[0m[1;36m_array.[0m
+[ruby $(which gz) sim-4] [1;36m[GUI] [Dbg] [CameraTracking.cc:205] [0m[1;36mCameraTrackingPrivate plugin is moving camera [[0m[1;36mscene::Camera(65527)[0m[1;36m][0m[1;36m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mMove to service on [[0m[1;32m/gui/move_to[0m[1;32m][0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mFollow service on [[0m[1;32m/gui/follow[0m[1;32m] (deprecated)[0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mTracking topic on [[0m[1;32m/gui/track[0m[1;32m][0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mTracking status topic on [[0m[1;32m/gui/currently_tracked[0m[1;32m][0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mMove to pose service on [[0m[1;32m/gui/move_to/pose[0m[1;32m][0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mCamera pose topic advertised on [[0m[1;32m/gui/camera/pose[0m[1;32m][0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mFollow offset service on [[0m[1;32m/gui/follow/offset[0m[1;32m] (deprecated)[0m[1;32m[0m
+[ruby $(which gz) sim-4] [1;36m[GUI] [Dbg] [InteractiveViewControl.cc:176] [0m[1;36mInteractiveViewControl plugin is moving camera [[0m[1;36mscene::Camera(65527)[0m[1;36m][0m[1;36m[0m
+[ruby $(which gz) sim-4] [1;36m[GUI] [Dbg] [EntityContextMenuPlugin.cc:79] [0m[1;36mEntity context menu plugin is using camera [[0m[1;36mscene::Camera(65527)[0m[1;36m][0m[1;36m[0m
+[ruby $(which gz) sim-4] [1;33mWarning [Utils.cc:132][0m [/sdf/model[@name="forklift"]/link[@name="rplidar_link"]/sensor[@name="rplidar"]/gz_frame_id:<data-string>:L477]: XML Element[gz_frame_id], child of element[sensor], not defined in SDF. Copying[gz_frame_id] as children of [sensor].
+[example_nav_to_pose-12] [0m[INFO] [1732525877.120855507] [basic_navigator]: amcl/get_state service not available, waiting...[0m
+[ruby $(which gz) sim-4] [1;33m[GUI] [Wrn] [Model.hh:98] [0m[1;33mUnable to deserialize sdf::Model[0m[1;33m[0m
+[ruby $(which gz) sim-4] [1;33m[GUI] [Wrn] [Model.hh:98] [0m[1;33mUnable to deserialize sdf::Model[0m[1;33m[0m
+[ruby $(which gz) sim-4] [1;33m[GUI] [Wrn] [Component.hh:189] [0m[1;33mTrying to deserialize component with data type [[0m[1;33mN3sdf3v145WorldE[0m[1;33m], which doesn't have [0m[1;33m`operator>>`. Component will not be deserialized.[0m[1;33m[0m
+[ruby $(which gz) sim-3] [1;31m[Err] [SystemPaths.cc:525] [0m[1;31mCould not resolve file [[0m[1;31mcardboard_box.png[0m[1;31m][0m[1;31m[0m
+[ruby $(which gz) sim-4] [1;33m[GUI] [Wrn] [Model.hh:98] [0m[1;33mUnable to deserialize sdf::Model[0m[1;33m[0m
+[ruby $(which gz) sim-4] [1;33m[GUI] [Wrn] [Component.hh:189] [0m[1;33mTrying to deserialize component with data type [[0m[1;33mSt6vectorIdSaIdEE[0m[1;33m], which doesn't have [0m[1;33m`operator>>`. Component will not be deserialized.[0m[1;33m[0m
+[component_container_isolated-8] [INFO] [1732525877.260999368] [local_costmap.local_costmap]: Timed out waiting for transform from base_link to odom to become available, tf error: Invalid frame ID "odom" passed to canTransform argument target_frame - frame does not exist
+[ruby $(which gz) sim-4] [1;31m[GUI] [Err] [SystemPaths.cc:525] [0m[1;31mCould not resolve file [[0m[1;31mcardboard_box.png[0m[1;31m][0m[1;31m[0m
+[sync_slam_toolbox_node-11] [INFO] [1732525877.506963511] [slam_toolbox]: Message Filter dropping message: frame 'rplidar_link' at time 0.002 for reason 'discarding message because the queue is full'
+[sync_slam_toolbox_node-11] Registering sensor: [Custom Described Lidar]
+[component_container_isolated-8] [INFO] [1732525877.761179767] [local_costmap.local_costmap]: start
+[example_nav_to_pose-12] [0m[INFO] [1732525878.128293920] [basic_navigator]: amcl/get_state service not available, waiting...[0m
+[component_container_isolated-8] [WARN] [1732525878.175029735] [controller_server]: Parameter controller_server.verbose not found
+[component_container_isolated-8] [INFO] [1732525878.176176525] [controller_server]: Optimizer reset
+[component_container_isolated-8] [INFO] [1732525878.188657842] [MPPIController]: Activated MPPI Controller: FollowPath
+[component_container_isolated-8] [INFO] [1732525878.188702634] [controller_server]: Creating bond (controller_server) to lifecycle manager.
+[component_container_isolated-8] [INFO] [1732525878.366794197] [lifecycle_manager_navigation]: Server controller_server connected with bond.
+[component_container_isolated-8] [INFO] [1732525878.366850197] [lifecycle_manager_navigation]: [34m[1mActivating smoother_server[0m[0m
+[component_container_isolated-8] [INFO] [1732525878.367141196] [smoother_server]: Activating
+[component_container_isolated-8] [INFO] [1732525878.367189321] [smoother_server]: Creating bond (smoother_server) to lifecycle manager.
+[rviz2-7] [INFO] [1732525878.400663737] [rviz2]: Trying to create a map of size 60 x 60 using 1 swatches
+[rviz2-7] [ERROR] [1732525878.422588167] [rviz2]: rviz/glsl120/indexed_8bit_image.vert
+[rviz2-7] rviz/glsl120/indexed_8bit_image.frag
+[rviz2-7]  GLSL link result : 
+[rviz2-7] active samplers with a different type refer to the same texture image unit
+[component_container_isolated-8] [INFO] [1732525878.498662611] [lifecycle_manager_navigation]: Server smoother_server connected with bond.
+[component_container_isolated-8] [INFO] [1732525878.498701777] [lifecycle_manager_navigation]: [34m[1mActivating planner_server[0m[0m
+[component_container_isolated-8] [INFO] [1732525878.501505607] [planner_server]: Activating
+[component_container_isolated-8] [INFO] [1732525878.501548565] [global_costmap.global_costmap]: Activating
+[component_container_isolated-8] [INFO] [1732525878.501554357] [global_costmap.global_costmap]: Checking transform
+[component_container_isolated-8] [INFO] [1732525878.501630857] [global_costmap.global_costmap]: start
+[example_nav_to_pose-12] [0m[INFO] [1732525879.136688165] [basic_navigator]: amcl/get_state service not available, waiting...[0m
+[component_container_isolated-8] [WARN] [1732525879.502198862] [nav2_costmap_2d]: Robot is out of bounds of the costmap!
+[component_container_isolated-8] [WARN] [1732525879.502256529] [global_costmap.global_costmap]: Sensor origin at (-0.00, 0.00) is out of map bounds (0.00, 0.00) to (4.98, 4.98). The costmap cannot raytrace for it.
+[component_container_isolated-8] [INFO] [1732525879.514660388] [planner_server]: Activating plugin GridBased of type NavfnPlanner
+[component_container_isolated-8] [INFO] [1732525879.522247336] [planner_server]: Creating bond (planner_server) to lifecycle manager.
+[rviz2-7] [INFO] [1732525879.525100708] [rviz2]: Trying to create a map of size 100 x 100 using 1 swatches
+[component_container_isolated-8] [INFO] [1732525879.587228711] [global_costmap.global_costmap]: StaticLayer: Resizing costmap to 22 X 22 at 0.050000 m/pix
+[rviz2-7] [INFO] [1732525879.620209252] [rviz2]: Trying to create a map of size 22 x 22 using 1 swatches
+[component_container_isolated-8] [INFO] [1732525879.634636984] [lifecycle_manager_navigation]: Server planner_server connected with bond.
+[component_container_isolated-8] [INFO] [1732525879.634673525] [lifecycle_manager_navigation]: [34m[1mActivating behavior_server[0m[0m
+[component_container_isolated-8] [INFO] [1732525879.636204231] [behavior_server]: Activating
+[component_container_isolated-8] [INFO] [1732525879.636225440] [behavior_server]: Activating spin
+[component_container_isolated-8] [INFO] [1732525879.636262481] [behavior_server]: Activating backup
+[component_container_isolated-8] [INFO] [1732525879.636270023] [behavior_server]: Activating drive_on_heading
+[component_container_isolated-8] [INFO] [1732525879.636290273] [behavior_server]: Activating assisted_teleop
+[component_container_isolated-8] [INFO] [1732525879.636296273] [behavior_server]: Activating wait
+[component_container_isolated-8] [INFO] [1732525879.636394648] [behavior_server]: Creating bond (behavior_server) to lifecycle manager.
+[component_container_isolated-8] [INFO] [1732525879.741898596] [lifecycle_manager_navigation]: Server behavior_server connected with bond.
+[component_container_isolated-8] [INFO] [1732525879.741945137] [lifecycle_manager_navigation]: [34m[1mActivating velocity_smoother[0m[0m
+[component_container_isolated-8] [INFO] [1732525879.742266845] [velocity_smoother]: Activating
+[component_container_isolated-8] [INFO] [1732525879.742624720] [velocity_smoother]: Creating bond (velocity_smoother) to lifecycle manager.
+[component_container_isolated-8] [INFO] [1732525879.865736936] [lifecycle_manager_navigation]: Server velocity_smoother connected with bond.
+[component_container_isolated-8] [INFO] [1732525879.865775645] [lifecycle_manager_navigation]: [34m[1mActivating collision_monitor[0m[0m
+[component_container_isolated-8] [INFO] [1732525879.866214477] [collision_monitor]: Activating
+[component_container_isolated-8] [INFO] [1732525879.866277894] [collision_monitor]: Creating bond (collision_monitor) to lifecycle manager.
+[component_container_isolated-8] [INFO] [1732525879.990901567] [lifecycle_manager_navigation]: Server collision_monitor connected with bond.
+[component_container_isolated-8] [INFO] [1732525879.990942359] [lifecycle_manager_navigation]: [34m[1mActivating bt_navigator[0m[0m
+[component_container_isolated-8] [INFO] [1732525879.991169692] [bt_navigator]: Activating
+[example_nav_to_pose-12] [0m[INFO] [1732525880.147145450] [basic_navigator]: amcl/get_state service not available, waiting...[0m
+[component_container_isolated-8] [INFO] [1732525880.320078186] [bt_navigator]: Creating bond (bt_navigator) to lifecycle manager.
+[component_container_isolated-8] [INFO] [1732525880.431576209] [lifecycle_manager_navigation]: Server bt_navigator connected with bond.
+[component_container_isolated-8] [INFO] [1732525880.431609751] [lifecycle_manager_navigation]: [34m[1mActivating waypoint_follower[0m[0m
+[component_container_isolated-8] [INFO] [1732525880.432024625] [waypoint_follower]: Activating
+[component_container_isolated-8] [INFO] [1732525880.432068875] [waypoint_follower]: Creating bond (waypoint_follower) to lifecycle manager.
+[component_container_isolated-8] [INFO] [1732525880.557742922] [lifecycle_manager_navigation]: Server waypoint_follower connected with bond.
+[component_container_isolated-8] [INFO] [1732525880.557777505] [lifecycle_manager_navigation]: [34m[1mActivating docking_server[0m[0m
+[component_container_isolated-8] [INFO] [1732525880.558105505] [docking_server]: Activating docking_server
+[component_container_isolated-8] [INFO] [1732525880.608859939] [docking_server]: Creating bond (docking_server) to lifecycle manager.
+[component_container_isolated-8] [INFO] [1732525880.728054744] [lifecycle_manager_navigation]: Server docking_server connected with bond.
+[component_container_isolated-8] [INFO] [1732525880.728118119] [lifecycle_manager_navigation]: [34m[1mManaged nodes are active[0m[0m
+[component_container_isolated-8] [INFO] [1732525880.728135911] [lifecycle_manager_navigation]: [34m[1mCreating bond timer...[0m[0m
+[example_nav_to_pose-12] [0m[INFO] [1732525881.153112406] [basic_navigator]: amcl/get_state service not available, waiting...[0m
+[example_nav_to_pose-12] [0m[INFO] [1732525882.159497571] [basic_navigator]: amcl/get_state service not available, waiting...[0m
+[rviz2-7] [INFO] [1732525882.550915484] [rviz2]: Trying to create a map of size 22 x 22 using 1 swatches
+[example_nav_to_pose-12] [0m[INFO] [1732525883.167025192] [basic_navigator]: amcl/get_state service not available, waiting...[0m
+[example_nav_to_pose-12] [0m[INFO] [1732525884.177899851] [basic_navigator]: amcl/get_state service not available, waiting...[0m
+[example_nav_to_pose-12] [0m[INFO] [1732525885.184680307] [basic_navigator]: amcl/get_state service not available, waiting...[0m
+[example_nav_to_pose-12] [0m[INFO] [1732525886.192896719] [basic_navigator]: amcl/get_state service not available, waiting...[0m
+[example_nav_to_pose-12] [0m[INFO] [1732525887.196157721] [basic_navigator]: amcl/get_state service not available, waiting...[0m
+[example_nav_to_pose-12] [0m[INFO] [1732525888.199282848] [basic_navigator]: amcl/get_state service not available, waiting...[0m
+[WARNING] [launch]: user interrupted with ctrl-c (SIGINT)
+[example_nav_to_pose-12] Traceback (most recent call last):
+[example_nav_to_pose-12]   File "/opt/ros/jazzy/lib/nav2_simple_commander/example_nav_to_pose", line 33, in <module>
+[sync_slam_toolbox_node-11] [INFO] [1732525888.485003272] [rclcpp]: signal_handler(signum=2)
+[INFO] [parameter_bridge-2]: process has finished cleanly [pid 16188]
+[ERROR] [ruby $(which gz) sim-3]: process has died [pid 16189, exit code -2, cmd 'ruby $(which gz) sim -r -s /home/elmeripk/forklift_sim/install/forklift_controller/share/forklift_controller/worlds/empty.world --force-version 8'].
+[INFO] [map_saver_server-9]: process has finished cleanly [pid 16202]
+[INFO] [robot_state_publisher-6]: process has finished cleanly [pid 16196]
+[INFO] [lifecycle_manager-10]: process has finished cleanly [pid 16204]
+[INFO] [sync_slam_toolbox_node-11]: process has finished cleanly [pid 16205]
+[ERROR] [example_nav_to_pose-12]: process has died [pid 16208, exit code -2, cmd '/opt/ros/jazzy/lib/nav2_simple_commander/example_nav_to_pose --ros-args'].
+[INFO] [rviz2-7]: process has finished cleanly [pid 16197]
+[ERROR] [ruby $(which gz) sim-4]: process has died [pid 16190, exit code -2, cmd 'ruby $(which gz) sim -v4 -g  --force-version 8'].
+[robot_state_publisher-6] [INFO] [1732525888.484987064] [rclcpp]: signal_handler(signum=2)
+[parameter_bridge-2] [INFO] [1732525888.485043897] [rclcpp]: signal_handler(signum=2)
+[lifecycle_manager-10] [INFO] [1732525888.485229647] [rclcpp]: signal_handler(signum=2)
+[lifecycle_manager-10] [INFO] [1732525888.485399813] [lifecycle_manager_slam]: Running Nav2 LifecycleManager rcl preshutdown (lifecycle_manager_slam)
+[lifecycle_manager-10] [INFO] [1732525888.485436438] [lifecycle_manager_slam]: [34m[1mTerminating bond timer...[0m[0m
+[component_container_isolated-8] [INFO] [1732525888.485667271] [rclcpp]: signal_handler(signum=2)
+[component_container_isolated-8] [INFO] [1732525888.485732230] [controller_server]: Running Nav2 LifecycleNode rcl preshutdown (controller_server)
+[component_container_isolated-8] [INFO] [1732525888.485802063] [controller_server]: Deactivating
+[component_container_isolated-8] [INFO] [1732525888.485836355] [MPPIController]: Deactivated MPPI Controller: FollowPath
+[component_container_isolated-8] [INFO] [1732525888.485854563] [local_costmap.local_costmap]: Deactivating
+[example_nav_to_pose-12]     sys.exit(load_entry_point('nav2-simple-commander==1.0.0', 'console_scripts', 'example_nav_to_pose')())
+[example_nav_to_pose-12]              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[example_nav_to_pose-12]   File "/opt/ros/jazzy/lib/python3.12/site-packages/nav2_simple_commander/example_nav_to_pose.py", line 48, in main
+[example_nav_to_pose-12]     navigator.waitUntilNav2Active()
+[example_nav_to_pose-12]   File "/opt/ros/jazzy/lib/python3.12/site-packages/nav2_simple_commander/robot_navigator.py", line 484, in waitUntilNav2Active
+[example_nav_to_pose-12]     self._waitForNodeToActivate(localizer)
+[map_saver_server-9] [INFO] [1732525888.487952519] [rclcpp]: signal_handler(signum=2)
+[map_saver_server-9] [INFO] [1732525888.488028185] [map_saver]: Running Nav2 LifecycleNode rcl preshutdown (map_saver)
+[map_saver_server-9] [INFO] [1732525888.488105477] [map_saver]: Deactivating
+[map_saver_server-9] [INFO] [1732525888.488136602] [map_saver]: Destroying bond (map_saver) to lifecycle manager.
+[example_nav_to_pose-12]   File "/opt/ros/jazzy/lib/python3.12/site-packages/nav2_simple_commander/robot_navigator.py", line 735, in _waitForNodeToActivate
+[example_nav_to_pose-12]     while not state_client.wait_for_service(timeout_sec=1.0):
+[example_nav_to_pose-12]               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[example_nav_to_pose-12]   File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/client.py", line 188, in wait_for_service
+[example_nav_to_pose-12]     time.sleep(sleep_time)
+[example_nav_to_pose-12] KeyboardInterrupt
+[sync_slam_toolbox_node-11] Unregistering sensor: Custom Described Lidar
+[rviz2-7] [INFO] [1732525888.499921586] [rclcpp]: signal_handler(signum=2)
+[map_saver_server-9] [INFO] [1732525888.503545540] [map_saver]: Cleaning up
+[map_saver_server-9] [INFO] [1732525888.503568665] [map_saver]: Destroying bond (map_saver) to lifecycle manager.
+[map_saver_server-9] [INFO] [1732525888.510433115] [map_saver]: Destroying
+[lifecycle_manager-10] [INFO] [1732525888.544005946] [lifecycle_manager_slam]: Destroying lifecycle_manager_slam
+[component_container_isolated-8] [INFO] [1732525888.571102662] [controller_server]: Optimizer reset
+[component_container_isolated-8] [INFO] [1732525888.571158203] [controller_server]: Destroying bond (controller_server) to lifecycle manager.
+[component_container_isolated-8] [INFO] [1732525888.591258927] [controller_server]: Cleaning up
+[component_container_isolated-8] [INFO] [1732525888.624791759] [MPPIController]: Cleaned up MPPI Controller: FollowPath
+[component_container_isolated-8] [INFO] [1732525888.625680383] [local_costmap.local_costmap]: Cleaning up
+[component_container_isolated-8] [INFO] [1732525888.716457183] [controller_server]: Destroying bond (controller_server) to lifecycle manager.
+[component_container_isolated-8] [INFO] [1732525888.716489600] [smoother_server]: Running Nav2 LifecycleNode rcl preshutdown (smoother_server)
+[component_container_isolated-8] [INFO] [1732525888.716527391] [smoother_server]: Deactivating
+[component_container_isolated-8] [INFO] [1732525888.716537183] [smoother_server]: Destroying bond (smoother_server) to lifecycle manager.
+[component_container_isolated-8] [INFO] [1732525888.727140461] [smoother_server]: Cleaning up
+[component_container_isolated-8] [INFO] [1732525888.728232835] [lifecycle_manager_navigation]: [34m[1mHave not received a heartbeat from controller_server.[0m[0m
+[component_container_isolated-8] [ERROR] [1732525888.728257376] [lifecycle_manager_navigation]: CRITICAL FAILURE: SERVER controller_server IS DOWN after not receiving a heartbeat for 4000 ms. Shutting down related nodes.
+[component_container_isolated-8] [INFO] [1732525888.728288626] [lifecycle_manager_navigation]: [34m[1mTerminating bond timer...[0m[0m
+[component_container_isolated-8] [INFO] [1732525888.728292460] [lifecycle_manager_navigation]: [34m[1mResetting managed nodes...[0m[0m
+[component_container_isolated-8] [INFO] [1732525888.728295960] [lifecycle_manager_navigation]: [34m[1mDeactivating docking_server[0m[0m
+[component_container_isolated-8] [INFO] [1732525888.728560126] [docking_server]: Deactivating docking_server
+[component_container_isolated-8] [INFO] [1732525888.749137849] [smoother_server]: Destroying bond (smoother_server) to lifecycle manager.
+[component_container_isolated-8] [INFO] [1732525888.749172683] [planner_server]: Running Nav2 LifecycleNode rcl preshutdown (planner_server)
+[component_container_isolated-8] [INFO] [1732525888.749186266] [planner_server]: Deactivating
+[component_container_isolated-8] [INFO] [1732525888.749209683] [global_costmap.global_costmap]: Deactivating
+[component_container_isolated-8] [INFO] [1732525888.752830053] [docking_server]: Destroying bond (docking_server) to lifecycle manager.
+[component_container_isolated-8] [INFO] [1732525888.869137779] [lifecycle_manager_navigation]: [34m[1mDeactivating waypoint_follower[0m[0m
+[component_container_isolated-8] [INFO] [1732525888.869613486] [waypoint_follower]: Deactivating
+[component_container_isolated-8] [INFO] [1732525888.869641986] [waypoint_follower]: Destroying bond (waypoint_follower) to lifecycle manager.
+[component_container_isolated-8] [INFO] [1732525888.982246883] [lifecycle_manager_navigation]: [34m[1mDeactivating bt_navigator[0m[0m
+[component_container_isolated-8] [INFO] [1732525888.982575216] [bt_navigator]: Deactivating
+[component_container_isolated-8] [INFO] [1732525888.982609633] [bt_navigator]: Destroying bond (bt_navigator) to lifecycle manager.
+[ruby $(which gz) sim-4] [1;36m[GUI] [Dbg] [SignalHandler.cc:142] [0m[1;36mReceived signal[[0m[1;36m2[0m[1;36m].[0m
+[ruby $(which gz) sim-4] [1;36m[GUI] [Dbg] [Gui.cc:523] [0m[1;36mShutting down gz-sim-gui[0m[1;36m[0m
+[ruby $(which gz) sim-4] [1;36m[GUI] [Dbg] [Application.cc:237] [0m[1;36mTerminating application.[0m[1;36m[0m
+[ruby $(which gz) sim-4] [1;36m[GUI] [Dbg] [MinimalScene.cc:841] [0m[1;36mDestroy scene [[0m[1;36mscene[0m[1;36m][0m[1;36m[0m
+[INFO] [launch]: process[ruby $(which gz) sim-3] was required: shutting down launched system
+[INFO] [launch]: process[ruby $(which gz) sim-4] was required: shutting down launched system
+[ERROR] [launch]: Caught exception in launch (see debug for traceback): Cannot shutdown a ROS adapter that is not running
+[ERROR] [launch]: Caught exception in launch (see debug for traceback): Cannot shutdown a ROS adapter that is not running
+[ERROR] [launch]: Caught exception in launch (see debug for traceback): Cannot shutdown a ROS adapter that is not running
+[component_container_isolated-8] [INFO] [1732525889.097299735] [lifecycle_manager_navigation]: [34m[1mDeactivating collision_monitor[0m[0m
+[component_container_isolated-8] [INFO] [1732525889.504144296] [planner_server]: Deactivating plugin GridBased of type NavfnPlanner
+[component_container_isolated-8] [INFO] [1732525889.504267295] [planner_server]: Destroying bond (planner_server) to lifecycle manager.
+[component_container_isolated-8] [INFO] [1732525889.514678574] [planner_server]: Cleaning up
+[component_container_isolated-8] [INFO] [1732525889.526470267] [global_costmap.global_costmap]: Cleaning up
+[component_container_isolated-8] [INFO] [1732525889.534557465] [planner_server]: Cleaning up plugin GridBased of type NavfnPlanner
+[component_container_isolated-8] [INFO] [1732525889.534653840] [planner_server]: Destroying plugin GridBased of type NavfnPlanner
+[component_container_isolated-8] [INFO] [1732525889.552472525] [planner_server]: Destroying bond (planner_server) to lifecycle manager.
+[component_container_isolated-8] [INFO] [1732525889.552501150] [behavior_server]: Running Nav2 LifecycleNode rcl preshutdown (behavior_server)
+[component_container_isolated-8] [INFO] [1732525889.552514525] [behavior_server]: Deactivating
+[component_container_isolated-8] [INFO] [1732525889.552587608] [behavior_server]: Destroying bond (behavior_server) to lifecycle manager.
+[component_container_isolated-8] [INFO] [1732525889.563728927] [behavior_server]: Cleaning up
+[component_container_isolated-8] [INFO] [1732525889.581884904] [behavior_server]: Destroying bond (behavior_server) to lifecycle manager.
+[component_container_isolated-8] [INFO] [1732525889.581911362] [bt_navigator]: Running Nav2 LifecycleNode rcl preshutdown (bt_navigator)
+[component_container_isolated-8] [INFO] [1732525889.581921279] [bt_navigator]: Cleaning up
+[component_container_isolated-8] [INFO] [1732525889.653629187] [bt_navigator]: Completed Cleaning up
+[component_container_isolated-8] [INFO] [1732525889.653671020] [bt_navigator]: Destroying bond (bt_navigator) to lifecycle manager.
+[component_container_isolated-8] [INFO] [1732525889.653680270] [waypoint_follower]: Running Nav2 LifecycleNode rcl preshutdown (waypoint_follower)
+[component_container_isolated-8] [INFO] [1732525889.653690520] [waypoint_follower]: Cleaning up
+[component_container_isolated-8] [INFO] [1732525889.657296599] [waypoint_follower]: Destroying bond (waypoint_follower) to lifecycle manager.
+[component_container_isolated-8] [INFO] [1732525889.657351599] [velocity_smoother]: Running Nav2 LifecycleNode rcl preshutdown (velocity_smoother)
+[component_container_isolated-8] [INFO] [1732525889.657360432] [velocity_smoother]: Deactivating
+[component_container_isolated-8] [INFO] [1732525889.657375182] [velocity_smoother]: Destroying bond (velocity_smoother) to lifecycle manager.
+[component_container_isolated-8] [INFO] [1732525889.669220500] [velocity_smoother]: Cleaning up
+[component_container_isolated-8] [INFO] [1732525889.669245417] [velocity_smoother]: Destroying bond (velocity_smoother) to lifecycle manager.
+[component_container_isolated-8] [INFO] [1732525889.669252917] [collision_monitor]: Running Nav2 LifecycleNode rcl preshutdown (collision_monitor)
+[component_container_isolated-8] [INFO] [1732525889.669273292] [collision_monitor]: Deactivating
+[component_container_isolated-8] [INFO] [1732525889.669339666] [collision_monitor]: Destroying bond (collision_monitor) to lifecycle manager.
+[component_container_isolated-8] [INFO] [1732525889.769539829] [collision_monitor]: Cleaning up
+[component_container_isolated-8] [INFO] [1732525889.769603621] [collision_monitor]: [FootprintApproach]: Destroying Polygon
+[component_container_isolated-8] [INFO] [1732525889.773304616] [collision_monitor]: Destroying bond (collision_monitor) to lifecycle manager.
+[component_container_isolated-8] [INFO] [1732525889.773349866] [docking_server]: Running Nav2 LifecycleNode rcl preshutdown (docking_server)
+[component_container_isolated-8] [INFO] [1732525889.773360199] [docking_server]: Cleaning up docking_server
+[component_container_isolated-8] [INFO] [1732525889.781264773] [docking_server]: Destroying bond (docking_server) to lifecycle manager.
+[component_container_isolated-8] [INFO] [1732525889.781291023] [lifecycle_manager_navigation]: Running Nav2 LifecycleManager rcl preshutdown (lifecycle_manager_navigation)
+[ERROR] [component_container_isolated-8]: process[component_container_isolated-8] failed to terminate '5' seconds after receiving 'SIGINT', escalating to 'SIGTERM'
+[INFO] [component_container_isolated-8]: sending signal 'SIGTERM' to process[component_container_isolated-8]
+[component_container_isolated-8] [INFO] [1732525894.054991195] [rclcpp]: signal_handler(signum=15)
+[WARNING] [launch]: user interrupted with ctrl-c (SIGINT) again, ignoring...
+[component_container_isolated-8] [INFO] [1732525897.138368898] [rclcpp]: signal_handler(signum=2)
+[ERROR] [component_container_isolated-8]: process[component_container_isolated-8] failed to terminate '10.0' seconds after receiving 'SIGTERM', escalating to 'SIGKILL'
+[INFO] [component_container_isolated-8]: sending signal 'SIGKILL' to process[component_container_isolated-8]
+[ERROR] [component_container_isolated-8]: process has died [pid 16198, exit code -9, cmd '/opt/ros/jazzy/lib/rclcpp_components/component_container_isolated --ros-args --log-level info --ros-args -r __node:=nav2_container --params-file /tmp/launch_params_vpoevldm --params-file /tmp/launch_params_qg44wmkt -r /tf:=tf -r /tf_static:=tf_static'].

@@ -1,25 +1,3 @@
-- ros_topic_name: "fork_control"
-  gz_topic_name: "fork_control"
-  ros_type_name: "std_msgs/msg/Float64"
-  gz_type_name: "gz.msgs.Double"
-  direction: ROS_TO_GZ
-
-- ros_topic_name: "forklift/touched"
-  gz_topic_name: "cube/touched"
-  ros_type_name: "std_msgs/msg/Bool"
-  gz_type_name: "gz.msgs.Boolean"
-  direction: GZ_TO_ROS
-
-- ros_topic_name: "cube_pose"
-  gz_topic_name: "/model/cube/pose"
-  ros_type_name: "tf2_msgs/msg/TFMessage"
-  gz_type_name: "gz.msgs.Pose_V"
-  direction: GZ_TO_ROS
-
-
-#START OF NAV2 BRIDGE
-
-
 # replace clock_bridge
 - ros_topic_name: "clock"
   gz_topic_name: "/clock"
@@ -72,11 +50,9 @@
   gz_type_name: "gz.msgs.Twist"
   direction: ROS_TO_GZ
 
-
 # replace camera_info_bridge
 #- ros_topic_name: "/rgbd_camera/camera_info"
-#  gz_topic_name: "/rgbd_camera/camera_info"
- # ros_type_name: "sensor_msgs/msg/CameraInfo"
+  #gz_topic_name: "/rgbd_camera/camera_info"
+  #ros_type_name: "sensor_msgs/msg/CameraInfo"
   #gz_type_name: "gz.msgs.CameraInfo"
   #direction: GZ_TO_ROS
-

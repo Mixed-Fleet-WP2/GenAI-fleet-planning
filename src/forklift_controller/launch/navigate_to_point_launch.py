@@ -317,8 +317,8 @@ def spawn_robot(context, *args, **kwargs):
           'use_sim_time': use_sim_time, 
           'robot_description': robot_description_content,
           'frame_prefix': robot_name + "/"}],
-        remappings=[('/tf', f'/{robot_name}/tf'),
-                      ('/tf_static', f'/{robot_name}/tf_static'),
+          
+        remappings=[
                     ('/joint_states', f'/{robot_name}/joint_states'),
                     ('/robot_description', f'/{robot_name}/robot_description')
                       ]

@@ -1,0 +1,13 @@
+{
+    "ros.distro": "jazzy",
+    "python.autoComplete.extraPaths": [
+        "/home/elmeripk/forklift_sim/install/forklift_controller/lib/python3.12/site-packages",
+        "/home/elmeripk/forklift_sim/install/movement_interface/lib/python3.12/site-packages",
+        "/opt/ros/jazzy/lib/python3.12/site-packages"
+    ],
+    "python.analysis.extraPaths": [
+        "/home/elmeripk/forklift_sim/install/forklift_controller/lib/python3.12/site-packages",
+        "/home/elmeripk/forklift_sim/install/movement_interface/lib/python3.12/site-packages",
+        "/opt/ros/jazzy/lib/python3.12/site-packages"
+    ]
+}

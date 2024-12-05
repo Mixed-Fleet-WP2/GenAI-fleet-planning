@@ -40,14 +40,15 @@
         https://fuel.gazebosim.org/1.0/OpenRobotics/models/Sun
       </uri>
     </include>
-  
-    <!-- Include a model of the Ground Plane from an external URI -->
-    <include>
-      <uri>
-        https://fuel.gazebosim.org/1.0/OpenRobotics/models/Ground Plane
-      </uri>
-    </include>
+    
+    <model name="my-dock">
+      <include>
+        <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Dock</uri>
+        <pose>0 0 -5 0 0 0</pose>
+      </include>
+    </model>
 
+    <!--
     <model name="storage_platform">
       <pose>0 0 0.001 0 0 0</pose>
       <static>true</static>
@@ -55,12 +56,12 @@
         <inertial>
           <mass>1.0</mass>
           <inertia> 
-            <ixx>0.083</ixx>       <!-- for a box: ixx = 0.083 * mass * (y*y + z*z) -->
-            <ixy>0.0</ixy>         <!-- for a box: ixy = 0 -->
-            <ixz>0.0</ixz>         <!-- for a box: ixz = 0 -->
-            <iyy>0.083</iyy>       <!-- for a box: iyy = 0.083 * mass * (x*x + z*z) -->
-            <iyz>0.0</iyz>         <!-- for a box: iyz = 0 -->
-            <izz>0.083</izz>       <!-- for a box: izz = 0.083 * mass * (x*x + y*y) -->
+            <ixx>0.083</ixx>       
+            <ixy>0.0</ixy>         
+            <ixz>0.0</ixz>        
+            <iyy>0.083</iyy>      
+            <iyz>0.0</iyz>         
+            <izz>0.083</izz>       
           </inertia>
         </inertial>
         <collision name="collision">
@@ -76,16 +77,17 @@
               <size>2 2 0.001</size>
             </box>
           </geometry>
-          <!-- As per copilot-->
+          
           <material>
-            <ambient>0.8 0.4 0.0 1</ambient> <!-- Slightly lighter shade for ambient light reflection -->
-            <diffuse>0.8 0.4 0.0 1</diffuse> <!-- Main color under direct light -->
-            <specular>0.2 0.1 0.0 1</specular> <!-- Low specular reflection -->
-            <emissive>0.0 0.0 0.0 1</emissive> <!-- No emission, dark orange doesn't emit light -->
+            <ambient>0.8 0.4 0.0 1</ambient> 
+            <diffuse>0.8 0.4 0.0 1</diffuse> 
+            <specular>0.2 0.1 0.0 1</specular>
+            <emissive>0.0 0.0 0.0 1</emissive> 
         </material>
         </visual>
       </link>
     </model>
+    -->
       
 
 
@@ -101,7 +103,7 @@
             <use_pose_vector_msg>true</use_pose_vector_msg>
         </plugin>
 
-      <pose>-2 2 0.5 0 0 0</pose>
+      <pose>-1 1 0.5 0 0 0</pose>
       <!--<static>true</static>-->
         <link name="link">
         <inertial>
@@ -132,7 +134,98 @@
         </visual>
       </link>
     </model>
-     
+    
+    <model name="container1">
+        <static>false</static>
+   <link name='chassis'>
+            <pose>10 0 2 0 0 0</pose>
+            <collision name='collision'>
+              <geometry>
+                <box>
+                  <size>1 2.5 1</size>
+                </box>
+              </geometry>
+            </collision>
+
+            <visual name='visual'>
+              <geometry>
+                <box>
+                  <size>1 2.5 1</size>
+                </box>
+              </geometry>
+            </visual>
+          </link>
+  </model>
+
+  <model name="container2">
+    <static>false</static>
+<link name='chassis'>
+        <pose>12 0 2 0 0 0</pose>
+        <collision name='collision'>
+          <geometry>
+            <box>
+              <size>1 2.5 1</size>
+            </box>
+          </geometry>
+        </collision>
+
+        <visual name='visual'>
+          <geometry>
+            <box>
+              <size>1 2.5 1</size>
+            </box>
+          </geometry>
+        </visual>
+      </link>
+</model>
+
+<model name="container3">
+  <static>false</static>
+<link name='chassis'>
+      <pose>10 4 2 0 0 0</pose>
+      <collision name='collision'>
+        <geometry>
+          <box>
+            <size>1 2.5 1</size>
+          </box>
+        </geometry>
+      </collision>
+
+      <visual name='visual'>
+        <geometry>
+          <box>
+            <size>1 2.5 1</size>
+          </box>
+        </geometry>
+      </visual>
+    </link>
+</model>
+
+<model name="container4">
+  <static>false</static>
+<link name='chassis'>
+      <pose>12 4 2 0 0 0</pose>
+      <collision name='collision'>
+        <geometry>
+          <box>
+            <size>1 2.5 1</size>
+          </box>
+        </geometry>
+      </collision>
+
+      <visual name='visual'>
+        <geometry>
+          <box>
+            <size>1 2.5 1</size>
+          </box>
+        </geometry>
+      </visual>
+    </link>
+</model>
+    
+    
+      
+      
     <!-- Define scene properties -->
     <scene>
       <shadows>false</shadows>

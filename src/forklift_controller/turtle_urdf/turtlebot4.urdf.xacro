@@ -1,0 +1,98 @@
+<?xml version="1.0" ?>
+<robot name="turtlebot4" xmlns:xacro="http://ros.org/wiki/xacro">
+  <!-- Base create3 model -->
+  <xacro:include filename="$(find forklift_controller)/turtle_urdf/create3.urdf.xacro" />
+  <xacro:include filename="$(find forklift_controller)/turtle_urdf/rplidar.urdf.xacro" />
+  <xacro:include filename="$(find forklift_controller)/turtle_urdf/weight_block.urdf.xacro" />
+
+  <!-- Mechanical properties -->
+  <xacro:property name="shell_z_offset"                value="${3*cm2m}" />
+  <xacro:property name="shell_radius"                  value="${12*cm2m}" />
+  <xacro:property name="shell_length"                  value="${20*cm2m}" />
+  <xacro:property name="shell_mass"                    value="0.390" />
+
+  <xacro:property name="weight_x_offset"               value="${6.005267*cm2m}"/>
+  <xacro:property name="weight_y_offset"               value="${8.758841*cm2m}"/>
+  <xacro:property name="bottom_weight_z_offset"        value="${9.788546*cm2m}"/>
+  <xacro:property name="top_weight_z_offset"           value="${10.688546*cm2m}"/>
+
+  <xacro:property name="rplidar_x_offset"              value="${-4*cm2m}"/>
+  <xacro:property name="rplidar_y_offset"              value="${0*cm2m}"/>
+  <xacro:property name="rplidar_z_offset"              value="${9.8715*cm2m}"/>
+
+
+  <joint name="shell_link_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="shell_link"/>
+    <origin xyz="0 0 ${shell_z_offset + base_link_z_offset}" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Add a base footprint definition -->
+  <joint name="base_footprint_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="base_footprint"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+  <link name="base_footprint">
+    <inertial>
+      <mass value="0.0001"/>
+      <origin xyz="0 0 0"/>
+      <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <box size="0.001 0.001 0.001"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <!-- Turtlebot4 shell definition -->
+  <link name="shell_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="${pi/2} 0 ${pi/2}"/>
+      <geometry>
+        <mesh filename="package://nav2_minimal_tb4_description/meshes/shell.dae" scale="1 1 1" />
+      </geometry>
+    </visual>
+    <collision name="shell_collision">
+      <geometry>
+        <mesh filename="package://nav2_minimal_tb4_description/meshes/shell_collision.dae" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="${shell_mass}"/>
+      <inertia ixx="0.00281295367" ixy="-0.00000137675" ixz="-0.00005790057"
+	             iyy="0.00164666421" iyz="0.00000564466" izz="0.00424540124" />
+    </inertial>
+  </link>
+
+  <gazebo reference="shell_link">
+    <xacro:material_black/>
+  </gazebo>
+
+  <xacro:weight_block name="front_left_bottom_weight_block">
+    <origin xyz="${weight_x_offset} ${weight_y_offset} ${bottom_weight_z_offset}"/>
+  </xacro:weight_block>
+
+  <xacro:weight_block name="front_left_top_weight_block">
+    <origin xyz="${weight_x_offset} ${weight_y_offset} ${top_weight_z_offset}"/>
+  </xacro:weight_block>
+
+  <xacro:weight_block name="front_right_bottom_weight_block">
+    <origin xyz="${weight_x_offset} ${-weight_y_offset} ${bottom_weight_z_offset}"
+            rpy="${pi} 0 0"/>
+  </xacro:weight_block>
+
+  <xacro:weight_block name="front_right_top_weight_block">
+    <origin xyz="${weight_x_offset} ${-weight_y_offset} ${top_weight_z_offset}"
+            rpy="${pi} 0 0"/>
+  </xacro:weight_block>
+
+  <!-- Turtlebot4 sensor definitions -->
+  <xacro:rplidar name="rplidar" parent_link="shell_link" gazebo="$(arg gazebo)">
+    <origin xyz="${rplidar_x_offset} ${rplidar_y_offset} ${rplidar_z_offset}"
+            rpy="0 0 ${pi/2}"/>
+  </xacro:rplidar>
+
+</robot>
