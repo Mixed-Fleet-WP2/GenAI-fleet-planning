@@ -51,6 +51,7 @@ def generate_launch_description():
     bringup_dir = get_package_share_directory('nav2_bringup')
     launch_dir = os.path.join(bringup_dir, 'launch')
     sim_dir = get_package_share_directory('nav2_minimal_tb3_sim')
+    pkg_root = get_package_share_directory('forklift_controller')
 
     # Simulation settings
     world = LaunchConfiguration('world')
@@ -73,7 +74,7 @@ def generate_launch_description():
 
     declare_map_yaml_cmd = DeclareLaunchArgument(
         'map',
-        default_value=os.path.join(bringup_dir, 'maps', 'tb3_sandbox.yaml'),
+        default_value=os.path.join(bringup_dir , 'maps', 'depot.yaml') ,
         description='Full path to map file to load',
     )
 
@@ -106,12 +107,12 @@ def generate_launch_description():
     declare_use_rviz_cmd = DeclareLaunchArgument(
         'use_rviz', default_value='True', description='Whether to start RVIZ'
     )
-
+    
     # Start Gazebo with plugin providing the robot spawning service
     world_sdf = tempfile.mktemp(prefix='nav2_', suffix='.sdf')
     world_sdf_xacro = ExecuteProcess(
         cmd=['xacro', '-o', world_sdf, ['headless:=', 'False'], world])
-    start_gazebo_cmd = ExecuteProcess(
+    gazebo_server = ExecuteProcess(
         cmd=['gz', 'sim', '-r', '-s', world_sdf],
         output='screen',
     )
@@ -120,6 +121,16 @@ def generate_launch_description():
         on_shutdown=[
             OpaqueFunction(function=lambda _: os.remove(world_sdf))
         ]))
+    
+    gazebo_client = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(get_package_share_directory('ros_gz_sim'),
+                         'launch',
+                         'gz_sim.launch.py')
+        ),
+        launch_arguments={'gz_args': ['-v4 -g ']}.items(),
+    )
+
 
     robots_list = ParseMultiRobotPose('robots').value()
 
@@ -141,7 +152,7 @@ def generate_launch_description():
                     PythonLaunchDescriptionSource(
                         os.path.join(launch_dir, 'rviz_launch.py')
                     ),
-                    condition=IfCondition(use_rviz),
+                    condition=IfCondition('true'),
                     launch_arguments={
                         'namespace': TextSubstitution(text=robot_name),
                         'use_namespace': 'True',
@@ -150,17 +161,15 @@ def generate_launch_description():
                 ),
                 IncludeLaunchDescription(
                     PythonLaunchDescriptionSource(
-                        os.path.join(bringup_dir, 'launch', 'tb3_simulation_launch.py')
+                        os.path.join(pkg_root, 'launch', 'forklift_simulation_launch.py')
                     ),
                     launch_arguments={
-                        'namespace': robot_name,
                         'use_namespace': 'True',
                         'map': map_yaml_file,
                         'use_sim_time': 'True',
                         'params_file': params_file,
                         'autostart': autostart,
-                        'use_rviz': 'False',
-                        'use_simulator': 'True',
+                        'use_simulator': 'False',
                         'headless': 'False',
                         'use_robot_state_pub': use_robot_state_pub,
                         'x_pose': TextSubstitution(text=str(init_pose['x'])),
@@ -199,7 +208,9 @@ def generate_launch_description():
 
     # Add the actions to start gazebo, robots and simulations
     ld.add_action(world_sdf_xacro)
-    ld.add_action(start_gazebo_cmd)
+    ld.add_action(gazebo_server)
+    ld.add_action(gazebo_client)
+   
     ld.add_action(remove_temp_sdf_file)
 
     ld.add_action(LogInfo(msg=['number_of_robots=', str(len(robots_list))]))

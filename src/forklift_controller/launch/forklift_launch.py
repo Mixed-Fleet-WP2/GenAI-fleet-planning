@@ -41,13 +41,14 @@ def generate_launch_description():
     sim_dir = get_package_share_directory('nav2_minimal_tb4_sim')
     desc_dir = get_package_share_directory('nav2_minimal_tb4_description')
     pkg_root = get_package_share_directory('forklift_controller')
-    print("THE ENV IS", str(Path(os.path.join(pkg_root, 'meshes'))))
+    
     robot_urdf_file = os.path.join(pkg_root, 'urdf', 'robot.urdf.xacro')
     world_proper = os.path.join(pkg_root, 'worlds', 'empty.world')
     #ros_gz_bridge_config_file_path = os.path.join(pkg_root, 'config', 'ros_gz_bridge.yaml')
     rviz_config_file = os.path.join(nav2_bringup_dir, 'rviz', 'nav2_default_view.rviz')
 
     world = os.path.join(pkg_root, 'worlds', 'depot.sdf')
+    depot_map = os.path.join(nav2_bringup_dir , 'maps', 'depot.yaml') # Try warehouse.yaml!
     map_yaml_file = os.path.join(nav2_bringup_dir, 'maps', 'mymap.yaml')
 
     # Launch configuration variables
@@ -62,7 +63,6 @@ def generate_launch_description():
     declare_simulator_cmd = DeclareLaunchArgument(
         'headless', default_value='False', description='Whether to execute gzclient)'
     )
-    set_env = SetEnvironmentVariable('LIBGL_ALWAYS_SOFTWARE', '0')
     # start the simulation
     world_sdf = tempfile.mktemp(prefix='nav2_', suffix='.sdf')
     world_sdf_xacro = ExecuteProcess(
@@ -166,7 +166,7 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(
             os.path.join(nav2_bringup_dir, 'launch', 'bringup_launch.py')
         ),
-        launch_arguments={'map': map_yaml_file, 'slam':'True'}.items(),
+        launch_arguments={'map': depot_map, 'slam':'True'}.items(),
     )
 
     # start the demo autonomy task

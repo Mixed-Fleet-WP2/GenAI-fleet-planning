@@ -29,7 +29,7 @@ from nav2_common.launch import ReplaceString
 def generate_launch_description():
     # Get the launch directory
     bringup_dir = get_package_share_directory('nav2_bringup')
-    pkg_root = get_package_share_directory('forklift_controller')
+
     # Create the launch configuration variables
     namespace = LaunchConfiguration('namespace')
     use_namespace = LaunchConfiguration('use_namespace')
@@ -54,7 +54,7 @@ def generate_launch_description():
 
     declare_rviz_config_file_cmd = DeclareLaunchArgument(
         'rviz_config',
-        default_value=os.path.join(pkg_root, 'config', 'config.rviz'),
+        default_value=os.path.join(bringup_dir, 'rviz', 'nav2_default_view.rviz'),
         description='Full path to the RVIZ config file to use',
     )
 
@@ -71,7 +71,6 @@ def generate_launch_description():
         arguments=['-d', rviz_config_file],
         output='screen',
         parameters=[{'use_sim_time': use_sim_time}],
-
     )
 
     namespaced_rviz_config_file = ReplaceString(

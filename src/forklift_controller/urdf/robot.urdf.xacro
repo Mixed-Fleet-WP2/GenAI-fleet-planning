@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro"  name="forklift">
 
-    <xacro:arg name="robot_namespace" default=""/>
+    <xacro:arg name="namespace" default=""/>
     <xacro:include filename="robot_core.xacro" />
     
     <gazebo>
@@ -17,10 +17,10 @@
             <wheel_separation>0.3</wheel_separation>
             <wheel_radius>0.07</wheel_radius>
             <odom_publish_frequency>30</odom_publish_frequency>
-            <odom_topic>/odom</odom_topic>
+            <odom_topic>$(arg namespace)/odom</odom_topic>
             <frame_id>odom</frame_id>
-            <tf_topic>tf</tf_topic>
-            <topic>/cmd_vel</topic>
+            <tf_topic>$(arg namespace)/tf</tf_topic>
+            <topic>$(arg namespace)/cmd_vel</topic>
             <child_frame_id>base_link</child_frame_id>
         </plugin>
         
@@ -31,7 +31,7 @@
         filename="gz-sim-odometry-publisher-system"
         name="gz::sim::systems::OdometryPublisher">
             <odom_frame>base_link</odom_frame>
-            <odom_topic>$(arg robot_namespace)/odometry</odom_topic>
+            <odom_topic>$(arg namespace)/odometry</odom_topic>
         </plugin>
         
       
@@ -50,12 +50,11 @@
         
 
       <plugin filename="gz-sim-joint-state-publisher-system" name="gz::sim::systems::JointStatePublisher">
-        <topic>joint_states</topic>
         <joint_name>left_wheel_joint</joint_name>
         <joint_name>right_wheel_joint</joint_name>
         <joint_name>left_wheel_back_joint</joint_name>
         <joint_name>right_wheel_back_joint</joint_name>
-          <!-- <topic>$(arg robot_namespace)/joint_states</topic> -->
+        <topic>$(arg namespace)/joint_states</topic>
       </plugin>
 
       <plugin filename="gz-sim-joint-position-controller-system" name="gz::sim::systems::JointPositionController">

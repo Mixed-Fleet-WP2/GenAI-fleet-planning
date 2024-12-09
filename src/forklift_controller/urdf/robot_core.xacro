@@ -254,7 +254,7 @@
                 <target>cube</target>
                 <time>0.001</time>
                 <enabled>true</enabled>
-                <namespace>$(arg robot_namespace)</namespace>
+                <namespace>$(arg namespace)</namespace>
             </plugin>
     </gazebo>
     
@@ -300,7 +300,7 @@
           <visualize>true</visualize>
           <always_on>true</always_on>
           <gz_frame_id>rplidar_link</gz_frame_id>
-          <topic>scan</topic>
+          <topic>$(arg namespace)/scan</topic>
           <lidar>
             <scan>
               <horizontal>

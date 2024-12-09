@@ -35,6 +35,7 @@ from launch.event_handlers import OnShutdown
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, TextSubstitution
 from nav2_common.launch import ParseMultiRobotPose
+from launch_ros.actions import Node
 
 
 def generate_launch_description():
@@ -48,6 +49,7 @@ def generate_launch_description():
                  robot4={x: 1.0, y: 1.0, z: 1.0, roll: 0.0, pitch: 1.5707, yaw: 1.5707}'
     """
     # Get the launch directory
+    pkg_root = get_package_share_directory('forklift_controller')
     bringup_dir = get_package_share_directory('nav2_bringup')
     launch_dir = os.path.join(bringup_dir, 'launch')
     sim_dir = get_package_share_directory('nav2_minimal_tb3_sim')
@@ -123,6 +125,15 @@ def generate_launch_description():
 
     robots_list = ParseMultiRobotPose('robots').value()
 
+
+    #Bridge clock only once, see: https://github.com/gazebosim/ros_gz/issues/591
+    bridge_clock = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock'],
+      )
+
+
     # Define commands for launching the navigation instances
     bringup_cmd_group = []
     for robot_name in robots_list:
@@ -150,7 +161,7 @@ def generate_launch_description():
                 ),
                 IncludeLaunchDescription(
                     PythonLaunchDescriptionSource(
-                        os.path.join(bringup_dir, 'launch', 'tb3_simulation_launch.py')
+                        os.path.join(pkg_root, 'launch', 'tb3_simulation_launch.py')
                     ),
                     launch_arguments={
                         'namespace': robot_name,
@@ -196,6 +207,7 @@ def generate_launch_description():
     ld.add_action(declare_autostart_cmd)
     ld.add_action(declare_rviz_config_file_cmd)
     ld.add_action(declare_use_robot_state_pub_cmd)
+    ld.add_action(bridge_clock)
 
     # Add the actions to start gazebo, robots and simulations
     ld.add_action(world_sdf_xacro)
