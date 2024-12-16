@@ -23,6 +23,7 @@ setup(
         ('share/' + package_name + '/worlds', ['worlds/depot.sdf']),
         ('share/'+package_name+'/config', glob('config/*')),
         ('share/' + package_name + '/meshes/', glob('meshes/*')),
+        ('share/' + package_name + '/maps/', glob('maps/*')),
         #In the future, move the forklift.py to the lib directory?
         (('share/' + package_name + '/gui', ['forklift_controller/control.py'])),
         (('share/' + package_name + '/gui', ['forklift_controller/forklift.py'])),
@@ -39,7 +40,7 @@ setup(
         'console_scripts': [
             'fork_node = forklift_controller.fork_node:main',
             'primitive_node = forklift_controller.primitive_node:main',
-            'nav_node = forklift_controller.navigate:main',
+            'navigation_node = forklift_controller.navigate_to_pose:main',
         ],
     },
 )

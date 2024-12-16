@@ -27,6 +27,7 @@ from launch.actions import (
     OpaqueFunction,
     RegisterEventHandler,
 )
+from launch.substitutions.command import Command
 from launch.conditions import IfCondition
 from launch.event_handlers import OnShutdown
 from launch.launch_description_sources import PythonLaunchDescriptionSource
@@ -166,8 +167,11 @@ def generate_launch_description():
     )
 
     urdf = os.path.join(sim_dir, 'urdf', 'turtlebot3_waffle.urdf')
-    with open(urdf, 'r') as infp:
+    parsed_urdf = Command(['xacro', ' ', robot_sdf])
+    """
+    with open(robot_sdf, 'r') as infp:
         robot_description = infp.read()
+    """
 
     start_robot_state_publisher_cmd = Node(
         condition=IfCondition(use_robot_state_pub),
@@ -177,7 +181,7 @@ def generate_launch_description():
         namespace=namespace,
         output='screen',
         parameters=[
-            {'use_sim_time': use_sim_time, 'robot_description': robot_description}
+            {'use_sim_time': use_sim_time, 'robot_description': parsed_urdf}
         ],
         remappings=remappings,
     )
@@ -207,35 +211,7 @@ def generate_launch_description():
             'use_respawn': use_respawn,
         }.items(),
     )
-    # The SDF file for the world is a xacro file because we wanted to
-    # conditionally load the SceneBroadcaster plugin based on wheter we're
-    # running in headless mode. But currently, the Gazebo command line doesn't
-    # take SDF strings for worlds, so the output of xacro needs to be saved into
-    # a temporary file and passed to Gazebo.
-    world_sdf = tempfile.mktemp(prefix='nav2_', suffix='.sdf')
-    world_sdf_xacro = ExecuteProcess(
-        cmd=['xacro', '-o', world_sdf, ['headless:=', headless], world])
-    gazebo_server = ExecuteProcess(
-        cmd=['gz', 'sim', '-r', '-s', world_sdf],
-        output='screen',
-        condition=IfCondition(use_simulator)
-    )
-
-    remove_temp_sdf_file = RegisterEventHandler(event_handler=OnShutdown(
-        on_shutdown=[
-            OpaqueFunction(function=lambda _: os.remove(world_sdf))
-        ]))
-
-    gazebo_client = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(get_package_share_directory('ros_gz_sim'),
-                         'launch',
-                         'gz_sim.launch.py')
-        ),
-        condition=IfCondition(PythonExpression(
-            [use_simulator, ' and not ', headless])),
-        launch_arguments={'gz_args': ['-v4 -g ']}.items(),
-    )
+    
 
     gz_robot = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -274,11 +250,7 @@ def generate_launch_description():
     ld.add_action(declare_robot_sdf_cmd)
     ld.add_action(declare_use_respawn_cmd)
 
-    ld.add_action(world_sdf_xacro)
-    ld.add_action(remove_temp_sdf_file)
     ld.add_action(gz_robot)
-    ld.add_action(gazebo_server)
-    ld.add_action(gazebo_client)
 
     # Add the actions to launch all of the navigation nodes
     ld.add_action(start_robot_state_publisher_cmd)

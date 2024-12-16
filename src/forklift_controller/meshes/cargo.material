@@ -1,0 +1,29 @@
+material Crane/Diffuse
+{
+  receive_shadows off
+  technique
+  {
+    pass
+    {
+      texture_unit
+      {
+        texture crane_diffuse.jpg
+      }
+    }
+  }
+}
+
+material Crane/Other
+{
+  receive_shadows off
+  technique
+  {
+    pass
+    {
+      texture_unit
+      {
+        texture crane_spec.jpg
+      }
+    }
+  }
+}

@@ -40,15 +40,64 @@
         https://fuel.gazebosim.org/1.0/OpenRobotics/models/Sun
       </uri>
     </include>
+  
+  <!--
+   <model name="my-dock">
+  <include>
+    <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Dock</uri>
+    <pose>0 0 0 0 0 0</pose>
     
-    <model name="my-dock">
-      <include>
-        <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Dock</uri>
-        <pose>0 0 -5 0 0 0</pose>
-      </include>
-    </model>
+    
+  </include>
+  <scale>0.1 0.1 0.1</scale>
+  
+</model>
 
-    <!--
+-->
+
+
+  <model name="ground_plane">
+    <static>true</static>
+    <include>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Ground Plane</uri>
+    </include>
+  </model>
+
+  <!--
+  <model name="tower_crane">
+    <static>true</static>
+    <link name="link">
+      <collision name="collision">
+        <geometry>
+          <mesh>
+            <uri>model://tower_crane.dae</uri>
+            <scale>0.11 0.1 0.1</scale>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name="visual">
+      <material>
+              <script>
+                <uri>model://</uri>
+                <name>Crane/Other</name>
+              </script>
+               <ambient>0.1 0.1 0.1 1</ambient>
+          <diffuse>0.1 0.1 0.2 1</diffuse>
+          <specular>0 0 0 0</specular>
+          <emissive>0 0 0 1</emissive>
+        </material>
+        <geometry>
+          <mesh>
+            <uri>model://tower_crane.dae</uri>
+            <scale>0.11 0.1 0.1</scale>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+  </model>
+  -->
+
+    
     <model name="storage_platform">
       <pose>0 0 0.001 0 0 0</pose>
       <static>true</static>
@@ -87,7 +136,7 @@
         </visual>
       </link>
     </model>
-    -->
+    
       
 
 
@@ -138,7 +187,7 @@
     <model name="container1">
         <static>false</static>
    <link name='chassis'>
-            <pose>10 0 2 0 0 0</pose>
+            <pose>2 0 0.5 0 0 0</pose>
             <collision name='collision'>
               <geometry>
                 <box>
@@ -160,7 +209,7 @@
   <model name="container2">
     <static>false</static>
 <link name='chassis'>
-        <pose>12 0 2 0 0 0</pose>
+        <pose>4 0 0.5 0 0 0</pose>
         <collision name='collision'>
           <geometry>
             <box>
@@ -182,7 +231,7 @@
 <model name="container3">
   <static>false</static>
 <link name='chassis'>
-      <pose>10 4 2 0 0 0</pose>
+      <pose>2 4 0.5 0 0 0</pose>
       <collision name='collision'>
         <geometry>
           <box>
@@ -204,7 +253,7 @@
 <model name="container4">
   <static>false</static>
 <link name='chassis'>
-      <pose>12 4 2 0 0 0</pose>
+      <pose>4 4 0.5 0 0 0</pose>
       <collision name='collision'>
         <geometry>
           <box>

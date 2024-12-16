@@ -20,7 +20,7 @@ from pathlib import Path
 from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
-from launch.actions import AppendEnvironmentVariable
+from launch.actions import AppendEnvironmentVariable, LogInfo
 from launch.actions import DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration
 from launch.substitutions.command import Command
@@ -90,6 +90,27 @@ def generate_launch_description():
             '-R', pose['R'], '-P', pose['P'], '-Y', pose['Y']]
     )
 
+    
+
+    # start the demo autonomy task
+    demo_cmd = Node(
+        package='forklift_controller',
+        executable='navigation_node',
+        emulate_tty=True,
+        output='screen',
+        parameters=[
+            {'namespace': namespace,
+             'x_pose': pose['x'],
+             'y_pose': pose['y'],
+             'z_pose': pose['z'],
+             'roll': pose['R'],
+             'pitch': pose['P'],
+             'yaw': pose['Y'],
+             }
+        ]
+    )
+
+
     set_env_vars_resources = AppendEnvironmentVariable(
         'GZ_SIM_RESOURCE_PATH', os.path.join(bringup_dir, 'models'))
     set_env_vars_resources2 = AppendEnvironmentVariable(
@@ -98,6 +119,9 @@ def generate_launch_description():
 
     # Create the launch description and populate
     ld = LaunchDescription()
+    ld.add_action(LogInfo(
+        msg=[f"Estimated pose of robot: x={pose['x']}, y={pose['y']}, z={pose['z']}, roll={pose['R']}, pitch={pose['P']}, yaw={pose['Y']}"])
+    )
     ld.add_action(declare_namespace_cmd)
     ld.add_action(declare_robot_name_cmd)
     ld.add_action(declare_robot_sdf_cmd)
@@ -107,4 +131,5 @@ def generate_launch_description():
 
     ld.add_action(bridge)
     ld.add_action(spawn_model)
+    #ld.add_action(demo_cmd)
     return ld

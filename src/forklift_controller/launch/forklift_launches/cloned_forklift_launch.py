@@ -44,7 +44,7 @@ def generate_launch_description():
 
     Launch arguments consist of robot name(which is namespace) and pose for initialization.
     Keep general yaml format for pose information.
-    ex) robots:='robot1={x: 1.0, y: 1.0, yaw: 1.5707}; robot2={x: 1.0, y: 1.0, yaw: 1.5707}'
+    ex) robots:='robot1={x: 0.6, y: 1.0, yaw: 1.5707}; robot2={x: 0.65, y: -1.6, yaw: 1.5707}'
     ex) robots:='robot3={x: 1.0, y: 1.0, z: 1.0, roll: 0.0, pitch: 1.5707, yaw: 1.5707};
                  robot4={x: 1.0, y: 1.0, z: 1.0, roll: 0.0, pitch: 1.5707, yaw: 1.5707}'
     """
@@ -53,6 +53,7 @@ def generate_launch_description():
     bringup_dir = get_package_share_directory('nav2_bringup')
     launch_dir = os.path.join(bringup_dir, 'launch')
     sim_dir = get_package_share_directory('nav2_minimal_tb3_sim')
+    urdf_path = os.path.join(pkg_root, 'urdf', 'robot.urdf.xacro')
 
     # Simulation settings
     world = LaunchConfiguration('world')
@@ -65,17 +66,20 @@ def generate_launch_description():
     use_robot_state_pub = LaunchConfiguration('use_robot_state_pub')
     use_rviz = LaunchConfiguration('use_rviz')
     log_settings = LaunchConfiguration('log_settings', default='true')
+    
 
     # Declare the launch arguments
     declare_world_cmd = DeclareLaunchArgument(
         'world',
-        default_value=os.path.join(sim_dir, 'worlds', 'tb3_sandbox.sdf.xacro'),
+        default_value=os.path.join(pkg_root, 'worlds', 'empty.world'),
+        #default_value=os.path.join(sim_dir, 'worlds', 'tb3_sandbox.sdf.xacro'),
         description='Full path to world file to load',
     )
 
     declare_map_yaml_cmd = DeclareLaunchArgument(
         'map',
-        default_value=os.path.join(bringup_dir, 'maps', 'tb3_sandbox.yaml'),
+        default_value=os.path.join(pkg_root, 'maps', 'my_map.yaml'),
+        #default_value=os.path.join(bringup_dir, 'maps', 'tb3_sandbox.yaml'),
         description='Full path to map file to load',
     )
 
@@ -89,7 +93,7 @@ def generate_launch_description():
 
     declare_autostart_cmd = DeclareLaunchArgument(
         'autostart',
-        default_value='false',
+        default_value='true',
         description='Automatically startup the stacks',
     )
 
@@ -109,19 +113,33 @@ def generate_launch_description():
         'use_rviz', default_value='True', description='Whether to start RVIZ'
     )
 
-    # Start Gazebo with plugin providing the robot spawning service
+    # The SDF file for the world is a xacro file because we wanted to
+    # conditionally load the SceneBroadcaster plugin based on wheter we're
+    # running in headless mode. But currently, the Gazebo command line doesn't
+    # take SDF strings for worlds, so the output of xacro needs to be saved into
+    # a temporary file and passed to Gazebo.
     world_sdf = tempfile.mktemp(prefix='nav2_', suffix='.sdf')
     world_sdf_xacro = ExecuteProcess(
-        cmd=['xacro', '-o', world_sdf, ['headless:=', 'False'], world])
-    start_gazebo_cmd = ExecuteProcess(
+        cmd=['xacro', '-o', world_sdf, ['headless:=', 'false'], world])
+    
+    gazebo_server = ExecuteProcess(
         cmd=['gz', 'sim', '-r', '-s', world_sdf],
-        output='screen',
+        output='screen'
     )
 
     remove_temp_sdf_file = RegisterEventHandler(event_handler=OnShutdown(
         on_shutdown=[
             OpaqueFunction(function=lambda _: os.remove(world_sdf))
         ]))
+
+    gazebo_client = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(get_package_share_directory('ros_gz_sim'),
+                         'launch',
+                         'gz_sim.launch.py')
+        ),
+        launch_arguments={'gz_args': ['-v4 -g ']}.items(),
+    )
 
     robots_list = ParseMultiRobotPose('robots').value()
 
@@ -181,6 +199,7 @@ def generate_launch_description():
                         'pitch': TextSubstitution(text=str(init_pose['pitch'])),
                         'yaw': TextSubstitution(text=str(init_pose['yaw'])),
                         'robot_name': TextSubstitution(text=robot_name),
+                        'robot_sdf': urdf_path,
                     }.items(),
                 ),
             ]
@@ -188,16 +207,27 @@ def generate_launch_description():
 
         bringup_cmd_group.append(group)
 
+    """
     set_env_vars_resources = AppendEnvironmentVariable(
         'GZ_SIM_RESOURCE_PATH', os.path.join(sim_dir, 'models'))
     set_env_vars_resources2 = AppendEnvironmentVariable(
             'GZ_SIM_RESOURCE_PATH',
             str(Path(os.path.join(sim_dir)).parent.resolve()))
+    """
 
+    set_env_vars_resources = AppendEnvironmentVariable(
+        'GZ_SIM_RESOURCE_PATH', os.path.join(pkg_root, 'meshes'))
+    set_env_vars_resources2 = AppendEnvironmentVariable(
+            'GZ_SIM_RESOURCE_PATH',
+            str(Path(os.path.join(sim_dir)).parent.resolve()))
+    
+    
+    
     # Create the launch description and populate
     ld = LaunchDescription()
     ld.add_action(set_env_vars_resources)
     ld.add_action(set_env_vars_resources2)
+    ld.add_action(LogInfo(msg=['GZ_SIM_RESOURCE_PATH=', os.path.join(pkg_root, 'meshes')]))
 
     # Declare the launch options
     ld.add_action(declare_world_cmd)
@@ -211,8 +241,12 @@ def generate_launch_description():
 
     # Add the actions to start gazebo, robots and simulations
     ld.add_action(world_sdf_xacro)
-    ld.add_action(start_gazebo_cmd)
+    ld.add_action(gazebo_client)
+    ld.add_action(gazebo_server)
     ld.add_action(remove_temp_sdf_file)
+
+    ld.add_action(LogInfo(msg=['Starting multi-robot launch']))
+    ld.add_action(LogInfo(msg=[f"The robots are {robots_list}"]))
 
     ld.add_action(LogInfo(msg=['number_of_robots=', str(len(robots_list))]))
 
