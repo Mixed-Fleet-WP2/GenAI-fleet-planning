@@ -15,8 +15,6 @@ setup(
         ('share/' + package_name + '/launch', glob('launch/forklift_launches/*')),
         ('share/' + package_name + '/turtle_urdf', glob('turtle_urdf/*')),
         ('share/' + package_name + '/launch', ['launch/joint_launch.py']),
-        ('share/' + package_name + '/launch', ['launch/navigate_to_point_launch.py']),
-        ('share/' + package_name + '/launch', ['launch/turtle_launch.py']),
         ('share/' + package_name + '/launch', ['launch/rviz_launch.py']),
         ('share/' + package_name + '/launch', ['launch/forklift_launch.py']),
         ('share/' + package_name + '/worlds', ['worlds/empty.world']),

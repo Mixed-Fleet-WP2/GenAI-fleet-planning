@@ -131,5 +131,5 @@ def generate_launch_description():
 
     ld.add_action(bridge)
     ld.add_action(spawn_model)
-    #ld.add_action(demo_cmd)
+    ld.add_action(demo_cmd)
     return ld

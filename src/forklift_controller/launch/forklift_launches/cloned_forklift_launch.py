@@ -62,12 +62,11 @@ def generate_launch_description():
     map_yaml_file = LaunchConfiguration('map')
     params_file = LaunchConfiguration('params_file')
     autostart = LaunchConfiguration('autostart')
+    slam = LaunchConfiguration('slam')
     rviz_config_file = LaunchConfiguration('rviz_config')
     use_robot_state_pub = LaunchConfiguration('use_robot_state_pub')
     use_rviz = LaunchConfiguration('use_rviz')
-    log_settings = LaunchConfiguration('log_settings', default='true')
-    
-
+ 
     # Declare the launch arguments
     declare_world_cmd = DeclareLaunchArgument(
         'world',
@@ -95,6 +94,12 @@ def generate_launch_description():
         'autostart',
         default_value='true',
         description='Automatically startup the stacks',
+    )
+
+    declare_slam_cmd = DeclareLaunchArgument(
+        'slam',
+        default_value='False',
+        description='Wheter to use slam',
     )
 
     declare_rviz_config_file_cmd = DeclareLaunchArgument(
@@ -141,9 +146,6 @@ def generate_launch_description():
         launch_arguments={'gz_args': ['-v4 -g ']}.items(),
     )
 
-    robots_list = ParseMultiRobotPose('robots').value()
-
-
     #Bridge clock only once, see: https://github.com/gazebosim/ros_gz/issues/591
     bridge_clock = Node(
         package='ros_gz_bridge',
@@ -151,6 +153,8 @@ def generate_launch_description():
         arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock'],
       )
 
+
+    robots_list = ParseMultiRobotPose('robots').value()
 
     # Define commands for launching the navigation instances
     bringup_cmd_group = []
@@ -179,7 +183,7 @@ def generate_launch_description():
                 ),
                 IncludeLaunchDescription(
                     PythonLaunchDescriptionSource(
-                        os.path.join(pkg_root, 'launch', 'tb3_simulation_launch.py')
+                        os.path.join(pkg_root, 'launch', 'forklift_simulation_launch.py')
                     ),
                     launch_arguments={
                         'namespace': robot_name,
@@ -189,8 +193,8 @@ def generate_launch_description():
                         'params_file': params_file,
                         'autostart': autostart,
                         'use_rviz': 'False',
-                        'use_simulator': 'True',
-                        'headless': 'False',
+                        'use_simulator': 'False', #Set this to false because we only want to launch one simulation instance
+                        'headless': 'True', #Set this to True for the same reasons as above
                         'use_robot_state_pub': use_robot_state_pub,
                         'x_pose': TextSubstitution(text=str(init_pose['x'])),
                         'y_pose': TextSubstitution(text=str(init_pose['y'])),
@@ -200,6 +204,7 @@ def generate_launch_description():
                         'yaw': TextSubstitution(text=str(init_pose['yaw'])),
                         'robot_name': TextSubstitution(text=robot_name),
                         'robot_sdf': urdf_path,
+                        'slam' : slam,
                     }.items(),
                 ),
             ]
@@ -207,20 +212,12 @@ def generate_launch_description():
 
         bringup_cmd_group.append(group)
 
-    """
-    set_env_vars_resources = AppendEnvironmentVariable(
-        'GZ_SIM_RESOURCE_PATH', os.path.join(sim_dir, 'models'))
-    set_env_vars_resources2 = AppendEnvironmentVariable(
-            'GZ_SIM_RESOURCE_PATH',
-            str(Path(os.path.join(sim_dir)).parent.resolve()))
-    """
-
+    
     set_env_vars_resources = AppendEnvironmentVariable(
         'GZ_SIM_RESOURCE_PATH', os.path.join(pkg_root, 'meshes'))
     set_env_vars_resources2 = AppendEnvironmentVariable(
             'GZ_SIM_RESOURCE_PATH',
             str(Path(os.path.join(sim_dir)).parent.resolve()))
-    
     
     
     # Create the launch description and populate
@@ -237,6 +234,7 @@ def generate_launch_description():
     ld.add_action(declare_autostart_cmd)
     ld.add_action(declare_rviz_config_file_cmd)
     ld.add_action(declare_use_robot_state_pub_cmd)
+    ld.add_action(declare_slam_cmd)
     ld.add_action(bridge_clock)
 
     # Add the actions to start gazebo, robots and simulations
@@ -245,32 +243,8 @@ def generate_launch_description():
     ld.add_action(gazebo_server)
     ld.add_action(remove_temp_sdf_file)
 
-    ld.add_action(LogInfo(msg=['Starting multi-robot launch']))
-    ld.add_action(LogInfo(msg=[f"The robots are {robots_list}"]))
-
-    ld.add_action(LogInfo(msg=['number_of_robots=', str(len(robots_list))]))
-
-    ld.add_action(
-        LogInfo(condition=IfCondition(log_settings), msg=['map yaml: ', map_yaml_file])
-    )
-    ld.add_action(
-        LogInfo(condition=IfCondition(log_settings), msg=['params yaml: ', params_file])
-    )
-    ld.add_action(
-        LogInfo(
-            condition=IfCondition(log_settings),
-            msg=['rviz config file: ', rviz_config_file],
-        )
-    )
-    ld.add_action(
-        LogInfo(
-            condition=IfCondition(log_settings),
-            msg=['using robot state pub: ', use_robot_state_pub],
-        )
-    )
-    ld.add_action(
-        LogInfo(condition=IfCondition(log_settings), msg=['autostart: ', autostart])
-    )
+    #ld.add_action(LogInfo(msg=['Starting multi-robot launch']))
+    
 
     for cmd in bringup_cmd_group:
         ld.add_action(cmd)

@@ -75,8 +75,8 @@ class ExampleNavToPose(Node):
         goal_pose = PoseStamped()
         goal_pose.header.frame_id = 'map'
         goal_pose.header.stamp = self.navigator.get_clock().now().to_msg()
-        goal_pose.pose.position.x = -1.0
-        goal_pose.pose.position.y = -1.6
+        goal_pose.pose.position.x = 3.0
+        goal_pose.pose.position.y = 2.0
         #Keep the orientation as is
         goal_pose.pose.orientation.w = quaternion[3]
         goal_pose.pose.orientation.x = quaternion[0]

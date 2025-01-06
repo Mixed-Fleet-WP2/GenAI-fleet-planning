@@ -1,4 +1,4 @@
-# Copyright (C) 2024 Open Navigation LLC
+# Copyright (C) 2023 Open Source Robotics Foundation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,6 +14,11 @@
 
 """This is all-in-one launch script intended for use by nav2 developers."""
 
+"""
+LAUNCHES A SINGLE INSTANCE OF A ROBOT SIMULATION
+"""
+
+
 import os
 import tempfile
 
@@ -21,17 +26,17 @@ from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
 from launch.actions import (
-    AppendEnvironmentVariable,
     DeclareLaunchArgument,
     ExecuteProcess,
     IncludeLaunchDescription,
     OpaqueFunction,
     RegisterEventHandler,
 )
+from launch.substitutions.command import Command
 from launch.conditions import IfCondition
 from launch.event_handlers import OnShutdown
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import Command, LaunchConfiguration, PythonExpression
+from launch.substitutions import LaunchConfiguration, PythonExpression
 
 from launch_ros.actions import Node
 
@@ -40,10 +45,8 @@ def generate_launch_description():
     # Get the launch directory
     bringup_dir = get_package_share_directory('nav2_bringup')
     launch_dir = os.path.join(bringup_dir, 'launch')
-    # This checks that tb4 exists needed for the URDF / simulation files.
-    # If not using TB4, its safe to remove.
-    sim_dir = get_package_share_directory('nav2_minimal_tb4_sim')
-    desc_dir = get_package_share_directory('nav2_minimal_tb4_description')
+    pkg_root = get_package_share_directory('forklift_controller')
+    sim_dir = get_package_share_directory('nav2_minimal_tb3_sim')
 
     # Create the launch configuration variables
     slam = LaunchConfiguration('slam')
@@ -63,13 +66,15 @@ def generate_launch_description():
     use_rviz = LaunchConfiguration('use_rviz')
     headless = LaunchConfiguration('headless')
     world = LaunchConfiguration('world')
+    #gz_has_been_launched = LaunchConfiguration('gz_has_been_launched')
+
     pose = {
-        'x': LaunchConfiguration('x_pose', default='-8.00'),  # Warehouse: 2.12
-        'y': LaunchConfiguration('y_pose', default='0.00'),  # Warehouse: -21.3
-        'z': LaunchConfiguration('z_pose', default='0.01'),
+        'x': LaunchConfiguration('x_pose', default='-2.00'),
+        'y': LaunchConfiguration('y_pose', default='-0.50'),
+        'z': LaunchConfiguration('z_pose', default='0.5'),
         'R': LaunchConfiguration('roll', default='0.00'),
         'P': LaunchConfiguration('pitch', default='0.00'),
-        'Y': LaunchConfiguration('yaw', default='0.00'),  # Warehouse: 1.57
+        'Y': LaunchConfiguration('yaw', default='0.00'),
     }
     robot_name = LaunchConfiguration('robot_name')
     robot_sdf = LaunchConfiguration('robot_sdf')
@@ -93,8 +98,7 @@ def generate_launch_description():
 
     declare_map_yaml_cmd = DeclareLaunchArgument(
         'map',
-        default_value=os.path.join(bringup_dir, 'maps', 'depot.yaml'),  # Try warehouse.yaml!
-        description='Full path to map file to load',
+        default_value=os.path.join(pkg_root, 'maps', 'my_map.yaml'),
     )
 
     declare_use_sim_time_cmd = DeclareLaunchArgument(
@@ -150,25 +154,29 @@ def generate_launch_description():
     )
 
     declare_simulator_cmd = DeclareLaunchArgument(
-        'headless', default_value='True', description='Whether to execute gzclient)'
+        'headless', default_value='False', description='Whether to execute gzclient)'
     )
 
+    # Declare the launch arguments
     declare_world_cmd = DeclareLaunchArgument(
         'world',
-        default_value=os.path.join(sim_dir, 'worlds', 'depot.sdf'),  # Try warehouse.sdf!
-        description='Full path to world model file to load',
+        default_value=os.path.join(pkg_root, 'worlds', 'empty.world'),
+        #default_value=os.path.join(sim_dir, 'worlds', 'tb3_sandbox.sdf.xacro'),
+        description='Full path to world file to load',
     )
 
     declare_robot_name_cmd = DeclareLaunchArgument(
-        'robot_name', default_value='nav2_turtlebot4', description='name of the robot'
+        'robot_name', default_value='turtlebot3_waffle', description='name of the robot'
     )
 
     declare_robot_sdf_cmd = DeclareLaunchArgument(
         'robot_sdf',
-        default_value=os.path.join(desc_dir, 'urdf', 'standard', 'turtlebot4.urdf.xacro'),
+        default_value=os.path.join(pkg_root, 'urdf', 'robot.urdf.xacro'),
         description='Full path to robot sdf file to spawn the robot in gazebo',
     )
 
+    parsed_urdf = Command(['xacro', ' ', robot_sdf])
+   
     start_robot_state_publisher_cmd = Node(
         condition=IfCondition(use_robot_state_pub),
         package='robot_state_publisher',
@@ -177,7 +185,7 @@ def generate_launch_description():
         namespace=namespace,
         output='screen',
         parameters=[
-            {'use_sim_time': use_sim_time, 'robot_description': Command(['xacro', ' ', robot_sdf])}
+            {'use_sim_time': use_sim_time, 'robot_description': parsed_urdf}
         ],
         remappings=remappings,
     )
@@ -208,7 +216,7 @@ def generate_launch_description():
         }.items(),
     )
 
-    # The SDF file for the world is a xacro file because we wanted to
+     # The SDF file for the world is a xacro file because we wanted to
     # conditionally load the SceneBroadcaster plugin based on wheter we're
     # running in headless mode. But currently, the Gazebo command line doesn't
     # take SDF strings for worlds, so the output of xacro needs to be saved into
@@ -219,7 +227,8 @@ def generate_launch_description():
     gazebo_server = ExecuteProcess(
         cmd=['gz', 'sim', '-r', '-s', world_sdf],
         output='screen',
-        condition=IfCondition(use_simulator)
+        #Dont launch the simulation again if it has already been launched
+        #condition=IfCondition(PythonExpression(' not ', gz_has_been_launched))
     )
 
     remove_temp_sdf_file = RegisterEventHandler(event_handler=OnShutdown(
@@ -227,9 +236,6 @@ def generate_launch_description():
             OpaqueFunction(function=lambda _: os.remove(world_sdf))
         ]))
 
-    set_env_vars_resources = AppendEnvironmentVariable(
-            'GZ_SIM_RESOURCE_PATH',
-            os.path.join(sim_dir, 'worlds'))
     gazebo_client = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(get_package_share_directory('ros_gz_sim'),
@@ -237,15 +243,17 @@ def generate_launch_description():
                          'gz_sim.launch.py')
         ),
         condition=IfCondition(PythonExpression(
+            #If the upper level launch file has launched the simulation, we dont launch it again
+            #in order to use only one simualtion instance for multiple robots
             [use_simulator, ' and not ', headless])),
         launch_arguments={'gz_args': ['-v4 -g ']}.items(),
     )
+    
 
     gz_robot = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(sim_dir, 'launch', 'spawn_tb4.launch.py')),
+            os.path.join(pkg_root, 'launch', 'spawn_forklift.launch.py')),
         launch_arguments={'namespace': namespace,
-                          'use_simulator': use_simulator,
                           'use_sim_time': use_sim_time,
                           'robot_name': robot_name,
                           'robot_sdf': robot_sdf,
@@ -279,16 +287,18 @@ def generate_launch_description():
     ld.add_action(declare_robot_sdf_cmd)
     ld.add_action(declare_use_respawn_cmd)
 
-    ld.add_action(set_env_vars_resources)
-    ld.add_action(world_sdf_xacro)
-    ld.add_action(remove_temp_sdf_file)
     ld.add_action(gz_robot)
-    ld.add_action(gazebo_server)
-    ld.add_action(gazebo_client)
 
     # Add the actions to launch all of the navigation nodes
     ld.add_action(start_robot_state_publisher_cmd)
     ld.add_action(rviz_cmd)
     ld.add_action(bringup_cmd)
+
+    #These are related to spawning in gazebo
+    # Add the actions to start gazebo, robots and simulations
+    ld.add_action(world_sdf_xacro)
+    ld.add_action(gazebo_client)
+    ld.add_action(gazebo_server)
+    ld.add_action(remove_temp_sdf_file)
 
     return ld
