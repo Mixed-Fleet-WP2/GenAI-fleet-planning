@@ -46,7 +46,7 @@ def generate_launch_description():
     bringup_dir = get_package_share_directory('nav2_bringup')
     launch_dir = os.path.join(bringup_dir, 'launch')
     pkg_root = get_package_share_directory('forklift_controller')
-    sim_dir = get_package_share_directory('nav2_minimal_tb3_sim')
+    sim_dir = get_package_share_directory('nav2_minimal_tb4_sim')
 
     # Create the launch configuration variables
     slam = LaunchConfiguration('slam')
@@ -69,8 +69,8 @@ def generate_launch_description():
     #gz_has_been_launched = LaunchConfiguration('gz_has_been_launched')
 
     pose = {
-        'x': LaunchConfiguration('x_pose', default='-2.00'),
-        'y': LaunchConfiguration('y_pose', default='-0.50'),
+        'x': LaunchConfiguration('x_pose', default='0.0'),
+        'y': LaunchConfiguration('y_pose', default='0.0'),
         'z': LaunchConfiguration('z_pose', default='0.5'),
         'R': LaunchConfiguration('roll', default='0.00'),
         'P': LaunchConfiguration('pitch', default='0.00'),
@@ -98,7 +98,7 @@ def generate_launch_description():
 
     declare_map_yaml_cmd = DeclareLaunchArgument(
         'map',
-        default_value=os.path.join(pkg_root, 'maps', 'my_map.yaml'),
+        default_value=os.path.join(pkg_root, 'maps', 'depot.yaml'),
     )
 
     declare_use_sim_time_cmd = DeclareLaunchArgument(
@@ -160,8 +160,8 @@ def generate_launch_description():
     # Declare the launch arguments
     declare_world_cmd = DeclareLaunchArgument(
         'world',
-        default_value=os.path.join(pkg_root, 'worlds', 'empty.world'),
-        #default_value=os.path.join(sim_dir, 'worlds', 'tb3_sandbox.sdf.xacro'),
+        #default_value=os.path.join(pkg_root, 'worlds', 'empty.world'),
+        default_value=os.path.join(sim_dir, 'worlds', 'depot.sdf'),
         description='Full path to world file to load',
     )
 
@@ -263,6 +263,22 @@ def generate_launch_description():
                           'roll': pose['R'],
                           'pitch': pose['P'],
                           'yaw': pose['Y']}.items())
+    
+    execution_node_action = Node(
+        package="forklift_controller",
+        executable="primitive_node", #Corresponds to a name in setup.py
+        parameters=[{'namespace': namespace,
+                    'x_pose': pose['x'],
+                    'y_pose': pose['y'],
+                    'z_pose': pose['z'],
+                    'roll': pose['R'],
+                    'pitch': pose['P'],
+                    'yaw': pose['Y'],
+                    'use_sim_time':True}
+        ],
+        arguments=[namespace]
+        )
+      
 
     # Create the launch description and populate
     ld = LaunchDescription()
@@ -300,5 +316,7 @@ def generate_launch_description():
     ld.add_action(gazebo_client)
     ld.add_action(gazebo_server)
     ld.add_action(remove_temp_sdf_file)
+
+    ld.add_action(execution_node_action)
 
     return ld

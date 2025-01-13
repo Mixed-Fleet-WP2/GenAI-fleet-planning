@@ -182,6 +182,7 @@ class GUI:
         if response.status_code == 200:
             res = response.json()
             
+            #Claude's API follows a different request format, thus this is needed
             if is_claude:
                 code = res['content'][0]['text']
             else:
@@ -232,18 +233,17 @@ class GUI:
                 node_name = args[0]
                 node = self.nodes[node_name]
                 node.get_logger().info(node_name)
-
+                
                 if func_name == "move":
                     node.get_logger().info("Move")
                     
                     x = float(args[1])
                     y = float(args[2])
+                    x = float(-10)
 
-                    response = node.move(x, y)
-                    was_success = bool(response.success)
-
-                    if not was_success:
-                        raise Exception("Movement to point was not successful")
+                    node.get_logger().info("Before calling move_action")
+                    node.move_action(x, y, True)
+                    node.get_logger().info("After calling move_action")
 
                 elif func_name == "pick_up":
                     node.get_logger().info("Pick up")
@@ -262,7 +262,7 @@ class GUI:
 
                     if not was_success:
                         raise Exception("Dropping the object was not successful")
-                    
+              
                 node.get_logger().info("All commands executed")
 
 

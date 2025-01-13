@@ -24,6 +24,7 @@
    <!--Useful for experimentation-->
   <depend>joint_state_publisher_gui</depend>
   <depend>robot_state_publisher</depend>
+  <depend>tf_transformations</depend>
   <depend>rviz2</depend>
 
 
