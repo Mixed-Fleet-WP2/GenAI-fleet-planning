@@ -223,12 +223,19 @@ def generate_launch_description():
     # a temporary file and passed to Gazebo.
     world_sdf = tempfile.mktemp(prefix='nav2_', suffix='.sdf')
     world_sdf_xacro = ExecuteProcess(
-        cmd=['xacro', '-o', world_sdf, ['headless:=', headless], world])
+        cmd=['xacro', '-o', world_sdf, ['headless:=', headless], world],
+        condition=IfCondition(PythonExpression(
+        #If the upper level launch file has launched the simulation backend, we dont launch it again
+        #in order to use only one simualtion instance for multiple robots
+        [use_simulator, ' and not ', headless])),)
+    
     gazebo_server = ExecuteProcess(
         cmd=['gz', 'sim', '-r', '-s', world_sdf],
         output='screen',
-        #Dont launch the simulation again if it has already been launched
-        #condition=IfCondition(PythonExpression(' not ', gz_has_been_launched))
+        condition=IfCondition(PythonExpression(
+        #If the upper level launch file has launched the simulation backend, we dont launch it again
+        #in order to use only one simualtion instance for multiple robots
+        [use_simulator, ' and not ', headless])),
     )
 
     remove_temp_sdf_file = RegisterEventHandler(event_handler=OnShutdown(

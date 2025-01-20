@@ -31,6 +31,9 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
 
+     # Create the launch description and populate
+    ld = LaunchDescription()
+
     pkg_root = get_package_share_directory('forklift_controller')
     bringup_dir = get_package_share_directory('nav2_minimal_tb3_sim')
 
@@ -59,6 +62,7 @@ def generate_launch_description():
         'robot_sdf',
         default_value=os.path.join(bringup_dir, 'urdf', 'gz_waffle.sdf.xacro'),
         description='Full path to robot sdf file to spawn the robot in gazebo')
+    
 
     bridge = Node(
         package='ros_gz_bridge',
@@ -76,6 +80,7 @@ def generate_launch_description():
         output='screen',
     )
 
+    ld.add_action(LogInfo(msg="Spawning model"))
     spawn_model = Node(
         package='ros_gz_sim',
         executable='create',
@@ -96,11 +101,8 @@ def generate_launch_description():
             'GZ_SIM_RESOURCE_PATH',
             str(Path(os.path.join(bringup_dir)).parent.resolve()))
 
-    # Create the launch description and populate
-    ld = LaunchDescription()
-    ld.add_action(LogInfo(
-        msg=[f"Estimated pose of robot: x={pose['x']}, y={pose['y']}, z={pose['z']}, roll={pose['R']}, pitch={pose['P']}, yaw={pose['Y']}"])
-    )
+   
+ 
     ld.add_action(declare_namespace_cmd)
     ld.add_action(declare_robot_name_cmd)
     ld.add_action(declare_robot_sdf_cmd)

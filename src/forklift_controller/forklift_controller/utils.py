@@ -73,19 +73,3 @@ def reset_contact_sensor():
         subprocess.run(cmd, capture_output=False, text=True, check=True)
     except Exception as e:
         print(e)
-
-def euler_to_quaternion(yaw):
-    quaternion = np.zeros(4)
-    quaternion[3] = math.cos(yaw / 2)
-    quaternion[2] = math.sin(yaw / 2)
-    x = quaternion[0]
-    y = quaternion[1]
-    z = quaternion[2]
-    w = quaternion[3]
-
-    return x, y, z, w
-
-def euler_from_quaternion(x, y, z, w):
-    t3 = +2.0 * (w * z + x * y)
-    t4 = +1.0 - 2.0 * (y * y + z * z)
-    return math.atan2(t3, t4)

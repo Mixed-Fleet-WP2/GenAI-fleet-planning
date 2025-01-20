@@ -15,6 +15,7 @@ import tf_transformations
 from tf2_ros import TransformListener
 from movement_interface.action import MoveToPoint
 from rclpy.action import ActionServer, GoalResponse
+from rclpy.action.server import ServerGoalHandle
 import sys
 
 from utils import move_object_to_point, reset_contact_sensor
@@ -50,6 +51,7 @@ class PrimitiveNode(Node):
         self.declare_parameter('pitch', 0.0)
         self.declare_parameter('yaw', 0.0)
 
+        #https://roboticsbackend.com/rclpy-params-tutorial-get-set-ros2-params-with-python/#Get_params_one_by_one
         namespace_p, x_pose_p, y_pose_p, z_pose_p, roll_p, pitch_p, yaw_p = self.get_parameters(['namespace','x_pose','y_pose','z_pose','roll','pitch','yaw'])
 
          # Retrieve parameters
@@ -71,13 +73,12 @@ class PrimitiveNode(Node):
         #self.create_subscription(Odometry, f"{self.__namespace}/odometry", self.__get_odom, 10)
         self.create_subscription(Bool, f"{self.__namespace}/touched", self.__detect_contact, 10)
 
-        self.movement_server = ActionServer(self, MoveToPoint,  f'{self.__namespace}_move', self.move_callback, callback_group=self.action_cb_group)
+        self.movement_server = ActionServer(self, MoveToPoint,  f'{self.__namespace}/move', self.move_callback, callback_group=self.action_cb_group)
 
         self.cube_pos_service = self.create_service(CubePos, 'cube_pos', self.send_cube_pos, callback_group=self.service_cb_group)
         self.pickup_srv = self.create_service(Pickup, f"{self.__namespace}/pick_up", self.pick_up, callback_group=self.service_cb_group) 
         self.drop_srv = self.create_service(Drop, f"{self.__namespace}/drop", self.drop, callback_group=self.service_cb_group)
-        self.get_logger().info(f"Primitive node {self.__namespace} started")
-        
+
         self.subscription = self.create_subscription(
             TFMessage,
             'cube_pose',  
@@ -101,7 +102,7 @@ class PrimitiveNode(Node):
 
         self.__init_nav()
 
-    def move_callback(self, goal_handle):
+    def move_callback(self, goal_handle: ServerGoalHandle):
         x = goal_handle.request.x
         y = goal_handle.request.y
         self.get_logger().info("Moving to point")
@@ -111,23 +112,20 @@ class PrimitiveNode(Node):
             goal_handle.abort()
             return MoveToPoint.Result(success=False)
 
-        result = MoveToPoint.Result()
-        self.move(x,y)
-        result.success = True
-        goal_handle.succeed()
-        return result
-
+        return self.move(x,y, goal_handle)
+        
 
     def __init_nav(self):
         # Initialize the navigator
         self.__navigator = BasicNavigator(namespace=self.__namespace)
         quaternion = tf_transformations.quaternion_from_euler(self.__roll, self.__pitch, self.__yaw)
 
+        self.get_logger().info("SETTING INITIAL POSE")
+
         # Set the initial pose
         initial_pose = PoseStamped()
         initial_pose.header.frame_id = 'map'
         initial_pose.header.stamp = self.__navigator.get_clock().now().to_msg()
-        self.get_logger().info(f"THE TIME IS {self.__navigator.get_clock().now().to_msg()}")
         initial_pose.pose.position.x = self.__x_pose
         initial_pose.pose.position.y = self.__y_pose
         initial_pose.pose.position.z = self.__z_pose
@@ -135,11 +133,9 @@ class PrimitiveNode(Node):
         initial_pose.pose.orientation.x = quaternion[0]
         initial_pose.pose.orientation.y = quaternion[1]
         initial_pose.pose.orientation.z = quaternion[2]
-        self.get_logger().info("SETTTING INITIAL POSE")
-        self.__navigator.setInitialPose(initial_pose)
-        self.get_logger().info("POSE SET")
 
-        
+        self.__navigator.setInitialPose(initial_pose)
+        self.get_logger().info("INITIAL POSE SET")
         # Activate navigation, if not autostarted. This should be called after setInitialPose()
         # or this will initialize at the origin of the map and update the costmap with bogus readings.
         # If autostart, you should `waitUntilNav2Active()` instead.
@@ -147,7 +143,6 @@ class PrimitiveNode(Node):
 
         # Wait for navigation to fully activate, since autostarting nav2
         self.__navigator.waitUntilNav2Active()
-
 
     def send_cube_pos(self, request, response):
         response.pos_vector[0] = self.cube_pos_x
@@ -170,11 +165,11 @@ class PrimitiveNode(Node):
         self.cube_pos_x = msg.transforms[1].transform.translation.x
         self.cube_pos_y = msg.transforms[1].transform.translation.y
         
-    def move(self, x:float, y:float):
+    def move(self, x:float, y:float, goal_handle: ServerGoalHandle) -> MoveToPoint.Result:
         
         goal_pose = PoseStamped()
         goal_pose.header.frame_id = 'map'
-        goal_pose.header.stamp = self.navigator.get_clock().now().to_msg()
+        goal_pose.header.stamp = self.__navigator.get_clock().now().to_msg()
         goal_pose.pose.position.x = x
         goal_pose.pose.position.y = y
         #Keep the orientation as is
@@ -184,17 +179,21 @@ class PrimitiveNode(Node):
         goal_pose.pose.orientation.y = quaternion[1]
         goal_pose.pose.orientation.z = quaternion[2]
         """
-        self.navigator.goToPose(goal_pose)
+        self.__navigator.goToPose(goal_pose)
 
         # Monitor the navigation task
-        self.monitor_navigation(self.__namespace)
+        return self.monitor_navigation(self.__namespace, goal_handle)
 
-    def monitor_navigation(self, namespace):
+    def monitor_navigation(self, namespace: str, goal_handle: ServerGoalHandle) -> MoveToPoint.Result:
         i = 0
-        while not self.navigator.isTaskComplete():
+        feedback_msg = MoveToPoint.Feedback()
+        while not self.__navigator.isTaskComplete():
             i += 1
-            feedback = self.navigator.getFeedback()
+            feedback = self.__navigator.getFeedback()
+            
             if feedback and i % 5 == 0:
+                feedback_msg.curr_pos = [feedback.current_pose.pose.position.x, feedback.current_pose.pose.position.y]
+                goal_handle.publish_feedback(feedback_msg)
                 self.get_logger().info(
                     'Estimated time of arrival: '
                     + '{0:.0f}'.format(
@@ -202,11 +201,13 @@ class PrimitiveNode(Node):
                         / 1e9
                     )
                     + ' seconds.'
-                )
+                ) 
+
+                #The feedback is: nav2_msgs.action.NavigateToPose_Feedback(current_pose=geometry_msgs.msg.PoseStamped(header=std_msgs.msg.Header(stamp=builtin_interfaces.msg.Time(sec=15, nanosec=876000000), frame_id='map'), pose=geometry_msgs.msg.Pose(position=geometry_msgs.msg.Point(x=0.20310853538829562, y=0.0591938412848921, z=0.15), orientation=geometry_msgs.msg.Quaternion(x=0.0, y=0.0, z=0.2484336233448129, w=0.9686489223613309))), navigation_time=builtin_interfaces.msg.Duration(sec=0, nanosec=0), estimated_time_remaining=builtin_interfaces.msg.
 
                 # Some navigation timeout to demo cancellation
                 if Duration.from_msg(feedback.navigation_time) > Duration(seconds=600.0):
-                    self.navigator.cancelTask()
+                    self.__navigator.cancelTask()
 
                 """
                 # Some navigation request change to demo preemption
@@ -221,17 +222,16 @@ class PrimitiveNode(Node):
                 """
 
         # Do something depending on the return code
-        result = self.navigator.getResult()
+        result = self.__navigator.getResult()
         if result == TaskResult.SUCCEEDED:
-            self.get_logger().info('Goal succeeded!')
-        elif result == TaskResult.CANCELED:
-            self.get_logger().info('Goal was canceled!')
-        elif result == TaskResult.FAILED:
-            self.get_logger().info('Goal failed!')
+            goal_handle.succeed()
+            return MoveToPoint.Result(success=True)
+        #Nav failed, was canceled or other
         else:
-            self.get_logger().info('Goal has an invalid return status!')
+            goal_handle.abort()
+            return MoveToPoint.Result(success=False)
 
-        self.navigator.lifecycleShutdown()
+        #self.__navigator.lifecycleShutdown()
         
     """
     frame_local_pos_x: the x-coordinate of the origin of a frame specified in terms of the base link's 

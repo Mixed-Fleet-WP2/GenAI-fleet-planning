@@ -70,14 +70,14 @@ def generate_launch_description():
     # Declare the launch arguments
     declare_world_cmd = DeclareLaunchArgument(
         'world',
-        default_value=os.path.join(pkg_root, 'worlds', 'empty.world'),
+        default_value=os.path.join(pkg_root, 'worlds', 'depot.sdf'),
         #default_value=os.path.join(sim_dir, 'worlds', 'tb3_sandbox.sdf.xacro'),
         description='Full path to world file to load',
     )
 
     declare_map_yaml_cmd = DeclareLaunchArgument(
         'map',
-        default_value=os.path.join(pkg_root, 'maps', 'my_map.yaml'),
+        default_value=os.path.join(pkg_root, 'maps', 'depot.yaml'),
         #default_value=os.path.join(bringup_dir, 'maps', 'tb3_sandbox.yaml'),
         description='Full path to map file to load',
     )
@@ -150,6 +150,7 @@ def generate_launch_description():
     bridge_clock = Node(
         package='ros_gz_bridge',
         executable='parameter_bridge',
+        parameters=[{'use_sim_time':True}],
         arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock'],
       )
 
@@ -198,7 +199,7 @@ def generate_launch_description():
                         'use_robot_state_pub': use_robot_state_pub,
                         'x_pose': TextSubstitution(text=str(init_pose['x'])),
                         'y_pose': TextSubstitution(text=str(init_pose['y'])),
-                        'z_pose': TextSubstitution(text=str(init_pose['z'])),
+                        'z_pose': TextSubstitution(text=str(0.15)),
                         'roll': TextSubstitution(text=str(init_pose['roll'])),
                         'pitch': TextSubstitution(text=str(init_pose['pitch'])),
                         'yaw': TextSubstitution(text=str(init_pose['yaw'])),
@@ -242,9 +243,6 @@ def generate_launch_description():
     ld.add_action(gazebo_client)
     ld.add_action(gazebo_server)
     ld.add_action(remove_temp_sdf_file)
-
-    #ld.add_action(LogInfo(msg=['Starting multi-robot launch']))
-    
 
     for cmd in bringup_cmd_group:
         ld.add_action(cmd)
