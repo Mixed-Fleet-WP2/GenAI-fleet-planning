@@ -4,7 +4,6 @@ from nav_msgs.msg import Odometry
 from geometry_msgs.msg import Twist, PoseStamped
 from std_msgs.msg import Bool
 import numpy as np
-from collections import deque
 from movement_interface.srv import MovementSuccess, Pickup, Drop, CubePos
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.callback_groups import ReentrantCallbackGroup
@@ -12,11 +11,13 @@ from tf2_msgs.msg import TFMessage
 from nav2_simple_commander.robot_navigator import BasicNavigator, TaskResult
 from rclpy.duration import Duration
 import tf_transformations
-from tf2_ros import TransformListener
+from tf2_ros import TransformListener, Buffer
 from movement_interface.action import MoveToPoint
 from rclpy.action import ActionServer, GoalResponse
 from rclpy.action.server import ServerGoalHandle
 import sys
+from rclpy.time import Duration, Time
+#import paho.mqtt.client as mqtt
 
 from utils import move_object_to_point, reset_contact_sensor
 
@@ -81,7 +82,7 @@ class PrimitiveNode(Node):
 
         self.subscription = self.create_subscription(
             TFMessage,
-            'cube_pose',  
+            '/model/cube/pose',  
             self.cube_pose_callback,
             10
         )
@@ -120,8 +121,6 @@ class PrimitiveNode(Node):
         self.__navigator = BasicNavigator(namespace=self.__namespace)
         quaternion = tf_transformations.quaternion_from_euler(self.__roll, self.__pitch, self.__yaw)
 
-        self.get_logger().info("SETTING INITIAL POSE")
-
         # Set the initial pose
         initial_pose = PoseStamped()
         initial_pose.header.frame_id = 'map'
@@ -135,7 +134,6 @@ class PrimitiveNode(Node):
         initial_pose.pose.orientation.z = quaternion[2]
 
         self.__navigator.setInitialPose(initial_pose)
-        self.get_logger().info("INITIAL POSE SET")
         # Activate navigation, if not autostarted. This should be called after setInitialPose()
         # or this will initialize at the origin of the map and update the costmap with bogus readings.
         # If autostart, you should `waitUntilNav2Active()` instead.
@@ -185,12 +183,29 @@ class PrimitiveNode(Node):
         return self.monitor_navigation(self.__namespace, goal_handle)
 
     def monitor_navigation(self, namespace: str, goal_handle: ServerGoalHandle) -> MoveToPoint.Result:
+        
+        tfbuffer = Buffer()
+        listener = TransformListener(tfbuffer, self)
+
+        while True:
+            try:
+                trans = tfbuffer.lookup_transform(f'{self.__namespace}/base_link', f'{self.__namespace}/base_link', Time(), Duration(seconds=10))
+                self.get_logger().info(f"TRANSFORM IS NOW: {trans.transform.translation.x}")
+            except Exception as e:
+                self.get_logger().info(f"EXCEPTION: {e}")
+            
         i = 0
         feedback_msg = MoveToPoint.Feedback()
         while not self.__navigator.isTaskComplete():
             i += 1
             feedback = self.__navigator.getFeedback()
             
+            #Simulate arriving to pick up the cube
+            if self.in_cube_contact:
+                self.__navigator.cancelTask()
+                goal_handle.succeed()
+                return MoveToPoint.Result(success=True)
+                
             if feedback and i % 5 == 0:
                 feedback_msg.curr_pos = [feedback.current_pose.pose.position.x, feedback.current_pose.pose.position.y]
                 goal_handle.publish_feedback(feedback_msg)
@@ -224,6 +239,7 @@ class PrimitiveNode(Node):
         # Do something depending on the return code
         result = self.__navigator.getResult()
         if result == TaskResult.SUCCEEDED:
+            self.pick_up_object('cube')
             goal_handle.succeed()
             return MoveToPoint.Result(success=True)
         #Nav failed, was canceled or other

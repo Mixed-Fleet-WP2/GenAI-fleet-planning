@@ -90,7 +90,7 @@
         </inertial>
     </link>
     
-    <joint name="fork_plate_joint" type="prismatic">
+    <joint name="fork_plate_joint" type="fixed">
         <parent link="base_link"/>
         <child link="fork_plate"/>
         <!--Offset the joint position by the track depth amount-->
@@ -254,6 +254,7 @@
                 <target>cube</target>
                 <time>0.001</time>
                 <enabled>true</enabled>
+                <!--$(arg namespace)-->
                 <namespace>$(arg namespace)</namespace>
             </plugin>
     </gazebo>

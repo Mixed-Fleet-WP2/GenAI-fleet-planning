@@ -37,14 +37,54 @@ from launch.substitutions import LaunchConfiguration, TextSubstitution
 from nav2_common.launch import ParseMultiRobotPose
 from launch_ros.actions import Node
 
+"""
+ for namespace in namespaces:
+
+            #Add the capablities of the robot
+            ros_to_mqtt = data['mqtt_client']['ros__parameters']['bridge']['ros2mqtt']
+            mqtt_to_ros = data['mqtt_client']['ros__parameters']['bridge']['mqtt2ros']
+
+            ros_topic_names = ros_to_mqtt['ros_topics']
+            mqtt_topic_names = mqtt_to_ros['mqtt_topics']
+
+            #Add the topics to the ros2mqtt and mqtt2ros bridges
+            for ability in abilities:
+                ros_topic_names.append(f"/{namespace}/{ability}")
+                mqtt_topic_names.append(f"/{namespace}/{ability}")
+
+                ros_to_mqtt[f"/{namespace}/{ability}2"] = {"mqtt_topic": f"{namespace}/{ability}"}
+                mqtt_to_ros[f"{namespace}/{ability}"] = {"ros_topic": f"/{namespace}/{ability}"}
+"""
+
+
+"""
+mqtt_client:
+  ros__parameters:
+    broker:
+      host: 0.0.0.0
+      port: 1883
+    bridge:
+      ros2mqtt:
+        ros_topics: 
+          - /ping/ros
+        /ping/ros:
+          mqtt_topic: pingpong/ros
+      mqtt2ros:
+        mqtt_topics: 
+          - pingpong/ros
+        pingpong/ros:
+          ros_topic: /pong/ros
+
+"""
 
 def generate_launch_description():
+    ld = LaunchDescription()
     """
     Bring up the multi-robots with given launch arguments.
 
     Launch arguments consist of robot name(which is namespace) and pose for initialization.
     Keep general yaml format for pose information.
-    ex) robots:='robot1={x: 0.6, y: 1.0, yaw: 1.5707}; robot2={x: 0.65, y: -1.6, yaw: 1.5707}'
+    ex) robots:='robot1={x: 0.6, y: 1.0, yaw: 1.5707, z: 0.2}; robot2={x: 0.65, y: -1.6, yaw: 1.5707, z: 0.2}'
     ex) robots:='robot3={x: 1.0, y: 1.0, z: 1.0, roll: 0.0, pitch: 1.5707, yaw: 1.5707};
                  robot4={x: 1.0, y: 1.0, z: 1.0, roll: 0.0, pitch: 1.5707, yaw: 1.5707}'
     """
@@ -118,6 +158,12 @@ def generate_launch_description():
         'use_rviz', default_value='True', description='Whether to start RVIZ'
     )
 
+    declare_mqtt_config = DeclareLaunchArgument(
+        'mqtt_config',
+        default_value=os.path.join(pkg_root, 'config', 'mqtt_params.yaml'),
+        description="Config file for the mqtt client"
+    )
+
     # The SDF file for the world is a xacro file because we wanted to
     # conditionally load the SceneBroadcaster plugin based on wheter we're
     # running in headless mode. But currently, the Gazebo command line doesn't
@@ -154,9 +200,21 @@ def generate_launch_description():
         arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock'],
       )
 
+    bridge_cube_pose = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        parameters=[{'use_sim_time':True}],
+        arguments=['/model/cube/pose@tf2_msgs/msg/TFMessage[gz.msgs.Pose_V'],
+    )
 
-    robots_list = ParseMultiRobotPose('robots').value()
+    
+    #robots_list = ParseMultiRobotPose('robots').value()
+    robots_list = {
+        'forklift_1': {'x': 0.6, 'y': 1.0, 'z': 0.2},
+        'forklift_2': {'x': -3.0, 'y': -1.6, 'z': 0.2}
+        }
 
+    
     # Define commands for launching the navigation instances
     bringup_cmd_group = []
     for robot_name in robots_list:
@@ -200,9 +258,9 @@ def generate_launch_description():
                         'x_pose': TextSubstitution(text=str(init_pose['x'])),
                         'y_pose': TextSubstitution(text=str(init_pose['y'])),
                         'z_pose': TextSubstitution(text=str(0.15)),
-                        'roll': TextSubstitution(text=str(init_pose['roll'])),
-                        'pitch': TextSubstitution(text=str(init_pose['pitch'])),
-                        'yaw': TextSubstitution(text=str(init_pose['yaw'])),
+                        'roll': TextSubstitution(text=str(0.0)),
+                        'pitch': TextSubstitution(text=str(0.0)),
+                        'yaw': TextSubstitution(text=str(0.0)),
                         'robot_name': TextSubstitution(text=robot_name),
                         'robot_sdf': urdf_path,
                         'slam' : slam,
@@ -222,7 +280,6 @@ def generate_launch_description():
     
     
     # Create the launch description and populate
-    ld = LaunchDescription()
     ld.add_action(set_env_vars_resources)
     ld.add_action(set_env_vars_resources2)
     ld.add_action(LogInfo(msg=['GZ_SIM_RESOURCE_PATH=', os.path.join(pkg_root, 'meshes')]))
@@ -243,6 +300,9 @@ def generate_launch_description():
     ld.add_action(gazebo_client)
     ld.add_action(gazebo_server)
     ld.add_action(remove_temp_sdf_file)
+
+    ld.add_action(declare_mqtt_config)
+    ld.add_action(bridge_cube_pose)
 
     for cmd in bringup_cmd_group:
         ld.add_action(cmd)
