@@ -274,6 +274,8 @@ def generate_launch_description():
     
     execution_node_action = Node(
         package="forklift_controller",
+        namespace=namespace,
+        remappings=remappings,
         executable="primitive_node", #Corresponds to a name in setup.py
         parameters=[{'namespace': namespace,
                     'x_pose': pose['x'],

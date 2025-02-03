@@ -1,6 +1,26 @@
 import subprocess
-import math
+
+from rclpy.node import Node
 import numpy as np
+from tf2_ros import TransformListener, Buffer
+from rclpy.time import Duration, Time
+
+
+def get_pos_as_other_coord_frame(node: Node, target_frame: str, source_frame: str):
+    buffer = Buffer()
+    listener = TransformListener(buffer, node)
+    try:
+        transform = buffer.lookup_transform(target_frame, source_frame, Time(), Duration(seconds=10))
+        translation = transform.transform.translation
+        rotation = transform.transform.rotation
+        translation = [translation.x, translation.y, translation.z]
+        rotation = [rotation.x, rotation.y, rotation.z, rotation.w]
+    except Exception as e:
+        node.get_logger().error(f"Error getting transform: {e}")
+        return None
+    
+    return [translation[0], translation[1], translation[2], rotation[0], rotation[1], rotation[2], rotation[3]]
+            
 
 """
 Teleports an object to a given position in the world. Utilised
@@ -10,7 +30,7 @@ def move_object_to_point(object, x, y, z, orient_x=0, orient_y=0, orient_z=0, or
 
     cmd = [
         "gz", "service",
-        "-s", "/world/default/set_pose",
+        "-s", "/world/depot/set_pose",
         "--reqtype", "gz.msgs.Pose",
         "--reptype", "gz.msgs.Boolean",
         "--timeout", "300",
@@ -26,37 +46,6 @@ def move_object_to_point(object, x, y, z, orient_x=0, orient_y=0, orient_z=0, or
     except Exception as e:
         print(e)
 
-def calculate_position_targets(goal_x:float, goal_y:float, entity_x:float, entity_y:float, entity_yaw:float):
-        # Calculate the x and y components of the vector that starts from the forklift and ends at the target
-        
-        direction_vector_x_component = goal_x - entity_x
-        direction_vector_y_component = goal_y - entity_y
-        # Calculate the length of the sum vector (direct vector leading to target)
-        distance = math.hypot(direction_vector_x_component, direction_vector_y_component)
-
-        # convert to the sum vector to unit vector, courtesy of ChatGPT
-        if distance > 0:
-            direction_vector_x_component /= distance
-            direction_vector_y_component /= distance
-
-        # Set an offset from the target by moving the real target away to the opposite direction of the vector,
-        # this is quite a stupid solution but prevents the forklift from crashing into the object
-        # it tries to pick up
-        """
-        self.target_x = goal_x #- 0.75 * direction_vector_x_component
-        self.target_y = goal_y #- 0.75 * direction_vector_y_component
-        """
-
-        # Calculate how big the x, y and yaw differences are between the current
-        # position of the forklift and the target
-        x_diff_to_target = goal_x - entity_x
-        y_diff_to_target =  goal_y - entity_y
-        angle_diff_to_target = math.atan2(y_diff_to_target, x_diff_to_target)
-
-        # Calculate the target angle (relative to the world) that we must achieve
-        target_angle = entity_yaw + (angle_diff_to_target - entity_yaw)
-
-        return target_angle
 
 def reset_contact_sensor():
      

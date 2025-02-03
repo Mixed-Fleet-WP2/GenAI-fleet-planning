@@ -1,9 +1,7 @@
 import rclpy
 from rclpy.node import Node
-from nav_msgs.msg import Odometry
-from geometry_msgs.msg import Twist, PoseStamped
+from geometry_msgs.msg import PoseStamped
 from std_msgs.msg import Bool
-import numpy as np
 from movement_interface.srv import MovementSuccess, Pickup, Drop, CubePos
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.callback_groups import ReentrantCallbackGroup
@@ -11,7 +9,6 @@ from tf2_msgs.msg import TFMessage
 from nav2_simple_commander.robot_navigator import BasicNavigator, TaskResult
 from rclpy.duration import Duration
 import tf_transformations
-from tf2_ros import TransformListener, Buffer
 from movement_interface.action import MoveToPoint
 from rclpy.action import ActionServer, GoalResponse
 from rclpy.action.server import ServerGoalHandle
@@ -19,24 +16,13 @@ import sys
 from rclpy.time import Duration, Time
 #import paho.mqtt.client as mqtt
 
-from utils import move_object_to_point, reset_contact_sensor
+from utils import move_object_to_point, reset_contact_sensor, get_pos_as_other_coord_frame
 
-# Specifies at which index in the pose
-# array received from gazebo the cube is located
-
-CUBE_WIDTH = 0.2
+CUBE_WIDTH = 0.1
 FORK_LENGTH = 0.3
-FORK_PLATE_JOINT_ORIGIN_X = 0.38
-FORK_PLATE_JOINT_ORIGIN_Y = 0
-LEFT_FORK_VISUAL_ORIGIN_X = 0.15
-LEFT_FORK_VISUAL_ORIGIN_Y = 0.05
-# The height at which drop the "picked up cube onto the fork, could be in the future be replaced with an odometry value"
-TELEPORT_HEIGHT = 0.2
 
 class PrimitiveNode(Node):
     def __init__(self, node_name):
-
-        move_object_to_point('cube', np.random.randint(3, 14), np.random.randint(3, 14), 0.5)
 
         # Use the namespace in the Node initialization
         # node_name = namespace but we cannot get it through
@@ -72,13 +58,13 @@ class PrimitiveNode(Node):
         self.service_cb_group = ReentrantCallbackGroup()
         self.action_cb_group = ReentrantCallbackGroup()
         #self.create_subscription(Odometry, f"{self.__namespace}/odometry", self.__get_odom, 10)
-        self.create_subscription(Bool, f"{self.__namespace}/touched", self.__detect_contact, 10)
+        self.create_subscription(Bool, "touched", self.__detect_contact, 10)
 
-        self.movement_server = ActionServer(self, MoveToPoint,  f'{self.__namespace}/move', self.move_callback, callback_group=self.action_cb_group)
+        self.movement_server = ActionServer(self, MoveToPoint,  'move', self.move_callback, callback_group=self.action_cb_group)
 
         self.cube_pos_service = self.create_service(CubePos, 'cube_pos', self.send_cube_pos, callback_group=self.service_cb_group)
-        self.pickup_srv = self.create_service(Pickup, f"{self.__namespace}/pick_up", self.pick_up, callback_group=self.service_cb_group) 
-        self.drop_srv = self.create_service(Drop, f"{self.__namespace}/drop", self.drop, callback_group=self.service_cb_group)
+        self.pickup_srv = self.create_service(Pickup, "pick_up", self.pick_up, callback_group=self.service_cb_group) 
+        self.drop_srv = self.create_service(Drop, "drop", self.drop, callback_group=self.service_cb_group)
 
         self.subscription = self.create_subscription(
             TFMessage,
@@ -142,6 +128,8 @@ class PrimitiveNode(Node):
         # Wait for navigation to fully activate, since autostarting nav2
         self.__navigator.waitUntilNav2Active()
 
+        
+    
     def send_cube_pos(self, request, response):
         response.pos_vector[0] = self.cube_pos_x
         response.pos_vector[1] = self.cube_pos_y
@@ -149,13 +137,25 @@ class PrimitiveNode(Node):
 
     def pick_up(self, request, response):
         object = request.object
-        self.pick_up_object(object)
+        x, y, z, orient_x, orient_y, orient_z, orient_w = get_pos_as_other_coord_frame(self, 'map', 'fork_1')
+        
+        move_object_to_point('cube', x+0.15, y+0.05, z+0.1, orient_x, orient_y, orient_z, orient_w)
+
         response.success = True
         return response
     
     def drop(self, request, response):
         object = request.object
-        self.drop_object(object)
+        x, y, z, orient_x, orient_y, orient_z, orient_w = get_pos_as_other_coord_frame(self, 'map', 'fork_1')
+
+        #The transformation origin is the joint where the fork is attached to the forklift
+        # The fork is 0.3 meters long and the cube is 0.2 meters wide
+        # so in order to drop the cube in front of the fork, we need to move it 0.4 meters  
+        # in the x axis (i.e. the fork length + the half of the cube width where the origin is)     
+        pos_from_fork_start_to_end = x + FORK_LENGTH + CUBE_WIDTH
+
+        move_object_to_point('cube', pos_from_fork_start_to_end, y+0.05, z+0.1, orient_x, orient_y, orient_z, orient_w)
+
         response.success = True
         return response    
 
@@ -183,17 +183,9 @@ class PrimitiveNode(Node):
         return self.monitor_navigation(self.__namespace, goal_handle)
 
     def monitor_navigation(self, namespace: str, goal_handle: ServerGoalHandle) -> MoveToPoint.Result:
-        
-        tfbuffer = Buffer()
-        listener = TransformListener(tfbuffer, self)
 
-        while True:
-            try:
-                trans = tfbuffer.lookup_transform(f'{self.__namespace}/base_link', f'{self.__namespace}/base_link', Time(), Duration(seconds=10))
-                self.get_logger().info(f"TRANSFORM IS NOW: {trans.transform.translation.x}")
-            except Exception as e:
-                self.get_logger().info(f"EXCEPTION: {e}")
-            
+        self.get_logger().info("Monitoring navigation")
+        
         i = 0
         feedback_msg = MoveToPoint.Feedback()
         while not self.__navigator.isTaskComplete():
@@ -239,7 +231,6 @@ class PrimitiveNode(Node):
         # Do something depending on the return code
         result = self.__navigator.getResult()
         if result == TaskResult.SUCCEEDED:
-            self.pick_up_object('cube')
             goal_handle.succeed()
             return MoveToPoint.Result(success=True)
         #Nav failed, was canceled or other
@@ -249,63 +240,6 @@ class PrimitiveNode(Node):
 
         #self.__navigator.lifecycleShutdown()
         
-    """
-    frame_local_pos_x: the x-coordinate of the origin of a frame specified in terms of the base link's 
-    coordinate system. In Gazebo one can see the this coordinate by inspecting the link (if the link
-    is not fixed)
-    frame_local_y: the y-coordinate of the origin of a frame specified in terms of the base link's 
-    coordinate system. In Gazebo one can see the this coordinate by inspecting the link (if the link
-    is not fixed)
-    offset_x: How much the returned x-coordinate should be offset to the
-    x-direction (in the forklift's coordinate frame, not global) i.e. forward when looking towards the front
-    offset_y: How much the returned y-coordinate should be offset to the
-    y-direction (in the forklift's coordinate frame, not global) i.e. left when looking towards the front
-    """
-
-    def get_frame_pos_as_global(self, frame_local_pos_x, frame_local_pos_y, offset_x=0, offset_y=0):
-
-        forklift_origin_global_x = self.current_x
-        forklift_origin_global_y = self.current_y
-        forklift_rotation_angle = self.current_yaw
-        frame_local_position = np.array([frame_local_pos_x + offset_x, frame_local_pos_y + offset_y])
-
-        # Transformation matrix to rotate the forlift's coordinate axis to the same
-        # position as global axis
-        rotation_matrix = np.array([
-            [np.cos(forklift_rotation_angle), -np.sin(forklift_rotation_angle)],
-            [np.sin(forklift_rotation_angle), np.cos(forklift_rotation_angle)]
-        ])
-
-        rotated_local_position = rotation_matrix.dot(frame_local_position)
-
-        frame_global_pos_x = rotated_local_position[0] + forklift_origin_global_x
-        frame_global_pos_y = rotated_local_position[1] + forklift_origin_global_y
-
-        return frame_global_pos_x, frame_global_pos_y
-
-    def pick_up_object(self, object):
-        # 0.05 offset is to put the cube's origin between the 2 forks, otherwise it would be at the center of the left fork
-        fork_center_x, fork_center_y = self.get_frame_pos_as_global(FORK_PLATE_JOINT_ORIGIN_X, FORK_PLATE_JOINT_ORIGIN_Y,
-                                                                    LEFT_FORK_VISUAL_ORIGIN_X, LEFT_FORK_VISUAL_ORIGIN_Y - 0.05)
-        # Movement to target is complete, pick up the target
-        move_object_to_point('cube', fork_center_x, fork_center_y, TELEPORT_HEIGHT, self.current_quaternion_x,
-                                  self.current_quaternion_y, self.current_quaternion_z, self.current_quaternion_w)
-
-        cube_x, cube_y = self.cube_pos_x, self.cube_pos_y
-
-        if abs(fork_center_x - cube_x) < 0.5 and abs(fork_center_y - cube_y) < 0.5:
-            return True
-        return False
-
-    def drop_object(self, object):
-        # Get the coordinates of a point right in front of the forklift, relative to the global frame
-        x, y = self.get_frame_pos_as_global(FORK_PLATE_JOINT_ORIGIN_X, FORK_PLATE_JOINT_ORIGIN_Y,
-                                            FORK_LENGTH + CUBE_WIDTH / 2, LEFT_FORK_VISUAL_ORIGIN_Y - 0.05)
-        move_object_to_point('cube', x, y, TELEPORT_HEIGHT, self.current_quaternion_x, self.current_quaternion_y,
-                                  self.current_quaternion_z, self.current_quaternion_w)
-        self.in_cube_contact = False
-        reset_contact_sensor()
-
     def __detect_contact(self, msg):
         self.in_cube_contact = msg.data
   
@@ -319,29 +253,13 @@ def main(args=None):
     #One is the default thread, another reserved for service callbacks and third for actions
     executor = MultiThreadedExecutor(num_threads=2)
     rclpy.spin(node, executor=executor)
+
+    for i in range(2):
+        executor.remove_node(node)
+
     node.destroy_node()
     rclpy.shutdown()
 
 if __name__ == '__main__':
     main()
 
-
-"""
- # start the demo autonomy task
-    demo_cmd = Node(
-        package='forklift_controller',
-        executable='navigation_node',
-        emulate_tty=True,
-        output='screen',
-        parameters=[
-            {'namespace': namespace,
-             'x_pose': pose['x'],
-             'y_pose': pose['y'],
-             'z_pose': pose['z'],
-             'roll': pose['R'],
-             'pitch': pose['P'],
-             'yaw': pose['Y'],
-             }
-        ]
-    )
-"""
