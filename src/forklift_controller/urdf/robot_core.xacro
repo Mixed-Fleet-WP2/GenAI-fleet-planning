@@ -21,6 +21,7 @@
 
     <!-- BASE LINK -->
 
+    <xacro:property name="scaler" value="1.0"/>
     <xacro:property name="track_length" value="0.3"/>
     <xacro:property name="track_depth" value="0.02"/> <!--This is actually the depth of the track when in up position-->
     <xacro:property name="track_width" value="0.05"/> <!--This is actually the depth of the track when in up position-->
@@ -36,7 +37,7 @@
           <visual>
             <origin rpy="0 0 0" xyz="0 0 0"/>
             <geometry>
-              <box size="0.001 0.001 0.001"/>
+              <box size="${scaler*0.001} ${scaler*0.001} ${scaler*0.001}"/>
             </geometry>
           </visual>
     </link>
@@ -45,7 +46,8 @@
     <joint name="base_link_joint" type="fixed">
         <parent link="base_link"/>
         <child link="base_footprint"/>
-        <origin xyz="0 0 -0.15" rpy="0 0 0"/>
+        <origin xyz="${scaler*0} ${scaler*0} ${scaler*-0.15}" rpy="0 0 0"/>
+        
     </joint>
 
  
@@ -59,8 +61,8 @@
         <collision>
             <origin xyz="0 0 0"/>
             <geometry>
-                <mesh filename="$(find forklift_controller)/meshes/body.dae" scale="0.0027 0.0027 0.0027"/>
-                <!-- <box size="0.3 ${base_width} ${base_height}"/> -->
+                <mesh filename="$(find forklift_controller)/meshes/body.dae" 
+                  scale="${scaler*0.0027} ${scaler*0.0027} ${scaler*0.0027}"/>
             </geometry>
         </collision>
         <xacro:inertial_box mass="500" x="0.3" y="${base_width}" z="${base_height}">

@@ -106,6 +106,11 @@ def generate_launch_description():
     rviz_config_file = LaunchConfiguration('rviz_config')
     use_robot_state_pub = LaunchConfiguration('use_robot_state_pub')
     use_rviz = LaunchConfiguration('use_rviz')
+
+    gui_script_path = 'gui/control.py'
+    # Set the path to different files and folders.  
+
+    gui_path = os.path.join(pkg_root, gui_script_path)
  
     # Declare the launch arguments
     declare_world_cmd = DeclareLaunchArgument(
@@ -207,6 +212,11 @@ def generate_launch_description():
         arguments=['/model/cube/pose@tf2_msgs/msg/TFMessage[gz.msgs.Pose_V'],
     )
 
+    launch_gui_cmd = ExecuteProcess(
+        cmd=['python3', gui_path, 2],
+        output='screen'
+    )
+
     
     #robots_list = ParseMultiRobotPose('robots').value()
     robots_list = {
@@ -306,5 +316,7 @@ def generate_launch_description():
 
     for cmd in bringup_cmd_group:
         ld.add_action(cmd)
+    
+    ld.add_action(launch_gui_cmd)
 
     return ld

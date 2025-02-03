@@ -1,7 +1,6 @@
 import subprocess
 
 from rclpy.node import Node
-import numpy as np
 from tf2_ros import TransformListener, Buffer
 from rclpy.time import Duration, Time
 

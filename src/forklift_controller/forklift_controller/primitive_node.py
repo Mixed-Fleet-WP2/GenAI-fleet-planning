@@ -57,7 +57,6 @@ class PrimitiveNode(Node):
         self.subscription_cb_group = ReentrantCallbackGroup()
         self.service_cb_group = ReentrantCallbackGroup()
         self.action_cb_group = ReentrantCallbackGroup()
-        #self.create_subscription(Odometry, f"{self.__namespace}/odometry", self.__get_odom, 10)
         self.create_subscription(Bool, "touched", self.__detect_contact, 10)
 
         self.movement_server = ActionServer(self, MoveToPoint,  'move', self.move_callback, callback_group=self.action_cb_group)
@@ -73,18 +72,6 @@ class PrimitiveNode(Node):
             10
         )
         
-        self.current_yaw = None
-        self.current_x = None
-        self.current_y = None
-        self.current_z = None
-        self.action_in_progress = False
-        self.in_cube_contact = False
-
-        self.current_quaternion_w = 0.0
-        self.current_quaternion_x = 0.0
-        self.current_quaternion_y = 0.0
-        self.current_quaternion_z = 0.0
-        self.odom_received = False
         self.__navigator = None
 
         self.__init_nav()
@@ -129,7 +116,6 @@ class PrimitiveNode(Node):
         self.__navigator.waitUntilNav2Active()
 
         
-    
     def send_cube_pos(self, request, response):
         response.pos_vector[0] = self.cube_pos_x
         response.pos_vector[1] = self.cube_pos_y

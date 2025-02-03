@@ -62,7 +62,6 @@ def generate_launch_description():
     ld = LaunchDescription()
 
     pkg_root = get_package_share_directory('forklift_controller')
-    bringup_dir = get_package_share_directory('nav2_minimal_tb3_sim')
 
     namespace = LaunchConfiguration('namespace')
     robot_name = LaunchConfiguration('robot_name')
@@ -88,7 +87,7 @@ def generate_launch_description():
 
     declare_robot_sdf_cmd = DeclareLaunchArgument(
         'robot_sdf',
-        default_value=os.path.join(bringup_dir, 'urdf', 'gz_waffle.sdf.xacro'),
+        default_value=os.path.join(pkg_root, 'urdf', 'robot.urdf.xacro'),
         description='Full path to robot sdf file to spawn the robot in gazebo')
     
     bridge = Node(
@@ -150,19 +149,15 @@ def generate_launch_description():
     )
 
     set_env_vars_resources = AppendEnvironmentVariable(
-        'GZ_SIM_RESOURCE_PATH', os.path.join(bringup_dir, 'models'))
-    set_env_vars_resources2 = AppendEnvironmentVariable(
-            'GZ_SIM_RESOURCE_PATH',
-            str(Path(os.path.join(bringup_dir)).parent.resolve()))
+        'GZ_SIM_RESOURCE_PATH', os.path.join(pkg_root, 'meshes'))
+    
+    ld.add_action(LogInfo(msg=f"The path is: {os.path.join(pkg_root, 'meshes')}"))
 
-   
- 
     ld.add_action(declare_namespace_cmd)
     ld.add_action(declare_robot_name_cmd)
     ld.add_action(declare_robot_sdf_cmd)
     ld.add_action(set_env_vars_resources)
-    ld.add_action(set_env_vars_resources2)
-
+ 
     ld.add_action(bridge)
     #ld.add_action(mqtt_bridge)
 
