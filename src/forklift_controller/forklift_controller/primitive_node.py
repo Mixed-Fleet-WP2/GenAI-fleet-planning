@@ -2,18 +2,18 @@ import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import PoseStamped
 from std_msgs.msg import Bool
-from movement_interface.srv import MovementSuccess, Pickup, Drop, CubePos
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.callback_groups import ReentrantCallbackGroup
 from tf2_msgs.msg import TFMessage
 from nav2_simple_commander.robot_navigator import BasicNavigator, TaskResult
 from rclpy.duration import Duration
 import tf_transformations
-from movement_interface.action import MoveToPoint
-from rclpy.action import ActionServer, GoalResponse
+from movement_interface.srv import CubePos
+from movement_interface.action import MoveToPoint, Drop, PickUp
+from rclpy.action import ActionServer
 from rclpy.action.server import ServerGoalHandle
 import sys
-from rclpy.time import Duration, Time
+from rclpy.time import Duration
 #import paho.mqtt.client as mqtt
 
 from utils import move_object_to_point, reset_contact_sensor, get_pos_as_other_coord_frame
@@ -62,8 +62,8 @@ class PrimitiveNode(Node):
         self.movement_server = ActionServer(self, MoveToPoint,  'move', self.move_callback, callback_group=self.action_cb_group)
 
         self.cube_pos_service = self.create_service(CubePos, 'cube_pos', self.send_cube_pos, callback_group=self.service_cb_group)
-        self.pickup_srv = self.create_service(Pickup, "pick_up", self.pick_up, callback_group=self.service_cb_group) 
-        self.drop_srv = self.create_service(Drop, "drop", self.drop, callback_group=self.service_cb_group)
+        self.pickup_server = ActionServer(self, PickUp, 'pickup', self.pick_up, callback_group=self.action_cb_group)
+        self.drop_server = ActionServer(self, Drop, 'drop', self.drop, callback_group=self.action_cb_group)
 
         self.subscription = self.create_subscription(
             TFMessage,
@@ -73,12 +73,11 @@ class PrimitiveNode(Node):
         )
         
         self.__navigator = None
-
         self.__init_nav()
 
     def move_callback(self, goal_handle: ServerGoalHandle):
-        x = goal_handle.request.x
-        y = goal_handle.request.y
+        x = float(goal_handle.request.x)
+        y = float(goal_handle.request.y)
         self.get_logger().info("Moving to point")
 
         if x < -9 or y is None:
@@ -87,7 +86,14 @@ class PrimitiveNode(Node):
             return MoveToPoint.Result(success=False)
 
         return self.move(x,y, goal_handle)
-        
+
+    def drop_callback(self, goal_handle: ServerGoalHandle):
+        object = goal_handle.request.object
+        return self.drop(object, goal_handle)
+    
+    def pick_up_callback(self, goal_handle: ServerGoalHandle):
+        object = goal_handle.request.object
+        return self.pick_up(object, goal_handle)
 
     def __init_nav(self):
         # Initialize the navigator
@@ -121,17 +127,17 @@ class PrimitiveNode(Node):
         response.pos_vector[1] = self.cube_pos_y
         return response
 
-    def pick_up(self, request, response):
-        object = request.object
+    def pick_up(self, object, goal_handle: ServerGoalHandle):
+ 
         x, y, z, orient_x, orient_y, orient_z, orient_w = get_pos_as_other_coord_frame(self, 'map', 'fork_1')
         
-        move_object_to_point('cube', x+0.15, y+0.05, z+0.1, orient_x, orient_y, orient_z, orient_w)
+        move_object_to_point(object, x+0.15, y+0.05, z+0.1, orient_x, orient_y, orient_z, orient_w)
 
-        response.success = True
-        return response
+        goal_handle.succeed()
+        return PickUp.Result(success=True)
     
-    def drop(self, request, response):
-        object = request.object
+    def drop(self, object, goal_handle: ServerGoalHandle):
+    
         x, y, z, orient_x, orient_y, orient_z, orient_w = get_pos_as_other_coord_frame(self, 'map', 'fork_1')
 
         #The transformation origin is the joint where the fork is attached to the forklift
@@ -140,10 +146,10 @@ class PrimitiveNode(Node):
         # in the x axis (i.e. the fork length + the half of the cube width where the origin is)     
         pos_from_fork_start_to_end = x + FORK_LENGTH + CUBE_WIDTH
 
-        move_object_to_point('cube', pos_from_fork_start_to_end, y+0.05, z+0.1, orient_x, orient_y, orient_z, orient_w)
+        move_object_to_point(object, pos_from_fork_start_to_end, y+0.05, z+0.1, orient_x, orient_y, orient_z, orient_w)
 
-        response.success = True
-        return response    
+        goal_handle.succeed()
+        return Drop.Result(success=True)   
 
     def cube_pose_callback(self, msg):
         self.cube_pos_x = msg.transforms[1].transform.translation.x

@@ -22,7 +22,8 @@ setup(
         ('share/' + package_name + '/maps/', glob('maps/*')),
         #In the future, move the forklift.py to the lib directory?
         (('share/' + package_name + '/gui', ['forklift_controller/control.py'])),
-        (('share/' + package_name + '/gui', ['forklift_controller/forklift.py'])),
+        (('share/' + package_name + '/gui', ['forklift_controller/controller.py'])),
+        (('share/' + package_name + '/gui', ['forklift_controller/robots.xml'])),
         (('lib/' + package_name, ['forklift_controller/utils.py'])),
     ],
     install_requires=['setuptools'],
@@ -36,7 +37,6 @@ setup(
         'console_scripts': [
             'fork_node = forklift_controller.fork_node:main',
             'primitive_node = forklift_controller.primitive_node:main',
-            'navigation_node = forklift_controller.navigate_to_pose:main',
         ],
     },
 )

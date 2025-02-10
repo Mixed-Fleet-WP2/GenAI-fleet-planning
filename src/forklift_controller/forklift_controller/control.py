@@ -6,11 +6,11 @@ import tkinter as tk
 import requests
 import os
 import re
-import sys
 
 from rclpy.executors import MultiThreadedExecutor
+from rclpy.node import Node
 
-from forklift import Forklift
+from controller import Controller
 
 CLAUDE_MODELS = ["claude-3-sonnet-20240229", "claude-3-5-sonnet-20240620", "claude-3-opus-20240229", "claude-3-haiku-20240307"]
 OPEN_AI_MODELS = ["gpt-4o-mini", "gpt-3.5-turbo", "gpt-4o"]
@@ -18,37 +18,62 @@ LLAMA_MODELS = ["llama3.1-405b","llama3.1-70b","llama3.1-8b","llama3-70b","llama
 
 
 COMMON_PROMPT = """You control a fleet of robots and have access to following commands:
-                - pick_up(robot, object): makes the robot specified by the argument pick up an object specified as a string. Returns nothing
-                - move(robot, x,y): makes the robot specified by the argument move to the specified coordinates. Takes two integers, returns
-                - drop(robot, object): makes the robot specified by the argument drop an object in front of it, specified as a string. Returns nothing\n\n
+                - pick_up(object): makes a robot pick up an object specified as a string. Returns nothing
+                - move(x,y): makes a robot move to the specified coordinates. Takes two integers, returns
+                - drop(object): makes the robot drop an object in front of it, specified as a string. Returns nothing\n\n
                 """
 
 TASK_PROMPT = "\n\nYour tasks is: {task}"
 
-FORMAT_INSTRUCTION = """\n\nYou should return the proposed instructions in a form following this example:
+FORMAT_INSTRUCTION = """\n\n
+                        You should return the proposed instructions in a form following this example:
                         [
-                        {"cmd": "cmd_name",
-                        "args": [arg1, arg2, arg3],
+                        {"uuid": 1,
+                        "executor": "robot_1",
+                        "cmd": "cmd_name",
+                        "args": {
+                            "arg1": arg1,
+                            "arg2": arg2,
+                            "arg3": arg3
+                        },
                         "reason": "Explain the reasoning behind command here"
                         },
-                        {"cmd": "cmd_name2",
-                        "args": [arg1, arg2],
+                        {"uuid": 2,
+                        "executor": "robot_2",
+                        "cmd": "cmd_name2",
+                        "args": {
+                            "arg1": arg1,
+                            "arg2": arg2,},
+                        prerequisite: [1]
                         "reason": "Explain the reasoning behind command 2 here"
+                        
                         }
                         ...More commands
                     ]. 
+                    Concrete example:
+                    [
+                        {"uuid": 1,
+                        "executor": "drone_1",
+                        "cmd": "inspect_area",
+                        "args": {"x": 0, "y": 0},
+                        "reason": "Inspect the area to find the object"
+                        }
+                    ]
+
                     Return only the JSON and say nothing else, do not wrap json in a comment.
-                      If there are no arguments, leave the array empty.
+                    If there are no arguments, leave the array empty.
                     You may only use the functions that were given to
-                    you before in the returned JSON and nothing else. You may assume that the actions are always
+                    you and nothing else. You may assume that the actions are always
                     successful. Use only the functions
-                    you deem necessary. In addition to the commands, explain the reasoning behind the commands an include
+                    you deem necessary. If some action requires another to be completed before it can be started
+                    use the 'prerequisite field" and insert the uuid of the prequisite action as an item 
+                    in the array. In addition to the commands, explain the reasoning behind the commands an include
                     it in the JSON as string following the format specified before, do not insert comments
                     outside the JSON. 
                     """
 
 class GUI:
-    def __init__(self, root, nodes):
+    def __init__(self, root, controller):
 
         self.object_states = {
                             "environment": {
@@ -66,8 +91,10 @@ class GUI:
 
         
         self.json_commands = collections.deque()
-        self.command_lock = threading.Lock()
-        self.nodes = nodes
+
+        self.json_instructions = {}
+
+        self.controller:Controller = controller
 
         self.model = OPEN_AI_MODELS[0]
         self.root = root
@@ -120,8 +147,7 @@ class GUI:
         is_claude = False
         model_name = self.model
 
-        temp_node = self.nodes["forklift_1"]
-        x,y = temp_node.get_cube_pos()
+        x,y = self.controller.get_cube_pos()
         self.object_states["environment"]["object_positions"]["cube"] = (x,y)
        
         #Convert the object states to a string
@@ -188,120 +214,63 @@ class GUI:
             else:
                 code = res['choices'][0]['message']['content']
 
+            self.json_instructions = code
             self.parse_and_write_ai_response(code, model_name)
         else:
             raise Exception(f"Request failed with status code {response.status_code}: {response.text}")
 
     def parse_and_write_ai_response(self, response, model_name):
 
-        try:
-            with open('instructions.json', 'w') as json_file:
-                #Write the response string to a json file
-                json_file.write(response)
-                #Write the output to gui
-                header = f"Response written by {model_name}\n\n"
-                self.response_area.configure(state="normal")
-                self.response_area.insert("1.0", header + response)
-                self.response_area.configure(state="disable")
-        except Exception as e:
-            print("Error writing json",e)
-
-        self.load_json_commands()
-
+        #Write the output to gui
+        header = f"Response written by {model_name}\n\n"
+        self.response_area.configure(state="normal")
+        self.response_area.insert("1.0", header + response)
+        self.response_area.configure(state="disable")
+       
         #Start execution on separate thread, because otherwise GUI doesn't have time to update the view
         execution_thread = threading.Thread(target=self.start_execution, daemon=True)
         execution_thread.start()
         execution_thread.join
 
-    def load_json_commands(self):
-        try:
-            with open('instructions.json') as json_file:
-                data = json.load(json_file)
-                for item in data:
-                    cmd_pair = (item["cmd"], item["args"])
-                    self.json_commands.append(cmd_pair)
-        except Exception as e:
-            print("Error loading json",e)
-    
     def start_execution(self):
-        with self.command_lock:
-            commands = self.json_commands
 
-            while commands:
-                func_name, args = commands.popleft()
-                
-                node_name = args[0]
-                node = self.nodes[node_name]
-                node.get_logger().info(node_name)
-                
-                if func_name == "move":
-                    node.get_logger().info("Move")
-                    
-                    x = float(args[1])
-                    y = float(args[2])
-                    x = float(-10)
+        commands = self.json_instructions
 
-                    node.get_logger().info("Before calling move_action")
-                    node.move_action(x, y, True)
-                    node.get_logger().info("After calling move_action")
-
-                elif func_name == "pick_up":
-                    node.get_logger().info("Pick up")
-                    object = args[1]
-                    response = node.pick_up(object)
-                    was_success = bool(response.success)
-
-                    if not was_success:
-                        raise Exception("Picking up the object was not successful")
-                    
-                elif func_name == "drop":
-                    node.get_logger().info("Drop")
-                    object = args[1]
-                    response = node.drop(object)
-                    was_success = bool(response.success)
-
-                    if not was_success:
-                        raise Exception("Dropping the object was not successful")
-              
-                node.get_logger().info("All commands executed")
-
-
+        for command in commands:
+            
+            executing_robot = command["executor"]
+            command_name = command["cmd"]
+            args:dict = command["args"]
+            uuid = command["uuid"]
+            self.controller.run_action(executing_robot, command_name, args, uuid)
 
 def main(args=None):
 
-    amount_of_robots = int(sys.argv[1])
-
-    
     rclpy.init(args=args)
 
+    #https://robotics.stackexchange.com/questions/106026/ros2-multi-nodes-each-on-a-thread-in-same-process
     executor = MultiThreadedExecutor()
-    nodes = {}
 
-    for i in range(0,amount_of_robots):
-        robot = Forklift(node_name=f'forklift_{i+1}')
-        nodes[f'forklift_{i+1}'] = robot
-        executor.add_node(robot)
-
+    controller_node:Node = Controller()
+    executor.add_node(controller_node)
 
     root = tk.Tk()
-    app = GUI(root, nodes)
+    app = GUI(root, controller_node)
 
     #Separate thread for the ROS2 node, so that the gui can run in the main thread
     spin_thread = threading.Thread(target=executor.spin, daemon=True)
     spin_thread.start()
 
-    root.protocol("WM_DELETE_WINDOW", lambda: on_closing(root, spin_thread, executor, nodes))
+    root.protocol("WM_DELETE_WINDOW", lambda: on_closing(root, spin_thread, executor, controller_node))
     root.mainloop()
 
 
-def on_closing(root, spin_thread, executor, nodes):
+def on_closing(root, spin_thread, executor, controller_node):
     # Stop executor's spinning thread
     executor.shutdown()
     spin_thread.join() 
 
-    # Destroy all forklifts
-    for node in nodes.values():
-        node.destroy_node()
+    controller_node.destroy_node()
 
     rclpy.shutdown()
 

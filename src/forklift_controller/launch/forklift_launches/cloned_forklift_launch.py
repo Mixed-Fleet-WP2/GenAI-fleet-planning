@@ -213,7 +213,7 @@ def generate_launch_description():
     )
 
     launch_gui_cmd = ExecuteProcess(
-        cmd=['python3', gui_path, 2],
+        cmd=['python3', gui_path],
         output='screen'
     )
 
