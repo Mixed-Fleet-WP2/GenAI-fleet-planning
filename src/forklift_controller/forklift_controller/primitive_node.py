@@ -61,7 +61,6 @@ class PrimitiveNode(Node):
 
         self.movement_server = ActionServer(self, MoveToPoint,  'move', self.move_callback, callback_group=self.action_cb_group)
 
-        self.cube_pos_service = self.create_service(CubePos, 'cube_pos', self.send_cube_pos, callback_group=self.service_cb_group)
         self.pickup_server = ActionServer(self, PickUp, 'pickup', self.pick_up, callback_group=self.action_cb_group)
         self.drop_server = ActionServer(self, Drop, 'drop', self.drop, callback_group=self.action_cb_group)
 
@@ -120,12 +119,6 @@ class PrimitiveNode(Node):
 
         # Wait for navigation to fully activate, since autostarting nav2
         self.__navigator.waitUntilNav2Active()
-
-        
-    def send_cube_pos(self, request, response):
-        response.pos_vector[0] = self.cube_pos_x
-        response.pos_vector[1] = self.cube_pos_y
-        return response
 
     def pick_up(self, object, goal_handle: ServerGoalHandle):
  

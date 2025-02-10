@@ -6,6 +6,7 @@ import movement_interface.action as mv
 from rclpy.action import ActionClient
 import xml.etree.ElementTree as ET
 import os
+from tf2_msgs.msg import TFMessage
 
 class Controller(Node):
 
@@ -23,7 +24,17 @@ class Controller(Node):
         #to launch file in the future
         self.robots_in_network = robots_in_network
         connections = {}
-        self.cube_pos_cli = self.create_client(CubePos, 'cube_pos')
+        self.cube_pos_x = None
+        self.cube_pos_y = None
+        
+
+        self.subscription = self.create_subscription(
+            TFMessage,
+            '/model/cube/pose',  
+            self.cube_pose_callback,
+            10
+        )
+        
         self.cube_pos_req = CubePos.Request()
 
         for robot in self.robots_in_network:
@@ -101,8 +112,11 @@ class Controller(Node):
         )
       
     def get_cube_pos(self):
-        res = self.cube_pos_cli.call(self.cube_pos_req)
-        x,y = res.pos_vector[0],res.pos_vector[1]
-        return x,y
+        return self.cube_pos_x, self.cube_pos_y
+    
+    def cube_pose_callback(self, msg):
+        self.cube_pos_x = msg.transforms[1].transform.translation.x
+        self.cube_pos_y = msg.transforms[1].transform.translation.y
+
 
     
