@@ -23,7 +23,7 @@ class Controller(Node):
         #Move a cube to a random position, should be maybe allocated
         #to launch file in the future
         self.robots_in_network = robots_in_network
-        connections = {}
+        self.connections = {}
         self.cube_pos_x = None
         self.cube_pos_y = None
         
@@ -48,7 +48,7 @@ class Controller(Node):
             for primitive in robot_node.findall('primitive'):
                 primitive_name = primitive.attrib.get('name')
                 primitive_class = getattr(mv, primitive_name, None)
-                connections[f"{name}/{primitive_name}"] = ActionClient(self, primitive_class, f'{name}/{primitive_name}')
+                self.connections[f"{name}/{primitive_name}"] = ActionClient(self, primitive_class, f'{name}/{primitive_name}')
         
         #Assume that the robots in network are ready to accept commands, so no need to wait for services
         """

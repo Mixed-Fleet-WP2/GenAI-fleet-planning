@@ -245,7 +245,7 @@ class GUI:
 
     def start_execution(self):
 
-        commands = self.json_instructions
+        commands = json.loads(self.json_instructions)
 
         for command in commands:
             
