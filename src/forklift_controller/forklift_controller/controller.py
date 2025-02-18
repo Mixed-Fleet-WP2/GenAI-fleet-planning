@@ -44,10 +44,23 @@ class Controller(Node):
 
             robot_node = root.find(f"./robot[@type='{type}']")
 
+            if robot_node is None:
+                self.get_logger().error(f"Robot type {type} not found in robots.xml")
+            else:
+                robot_node_str = ET.tostring(robot_node, encoding='unicode')
+                self.get_logger().info(robot_node_str)
+            primitive_list = robot_node.find('./primitives')
+            self.get_logger().info(f"Primitive parent: {primitive_list}")
+            primitives = primitive_list.findall('primitive')
+            if primitives is None:
+                self.get_logger().error(f"Primitives not found for robot {name}")
+
+
             #Go through all the primitives and create an action client for each
-            for primitive in robot_node.findall('primitive'):
+            for primitive in robot_node.find('./primitives').findall('primitive'):
                 primitive_name = primitive.attrib.get('name')
                 primitive_class = getattr(mv, primitive_name, None)
+                self.get_logger().info(f"Primitive: {primitive_name}")
                 self.connections[f"{name}/{primitive_name}"] = ActionClient(self, primitive_class, f'{name}/{primitive_name}')
         
         #Assume that the robots in network are ready to accept commands, so no need to wait for services
@@ -69,20 +82,22 @@ class Controller(Node):
         :param prereqs: The prerequisites to the action
         """
 
-        move_client = self.connections[f"{robot}/{action_name}"]
+        action_client = self.connections[f"{robot}/{action_name}"]
         primitive_class = getattr(mv, action_name, None)
         goal_msg = primitive_class.Goal()
 
         #Attach named arguments to the goal message
-        for arg in args[1:]:
-            arg_value = args[arg]
-            goal_msg[arg] = arg_value
-
+        for arg in args:
+            arg_value = str(args[arg])
+            #Alternative to do syntax
+            setattr(goal_msg, arg, arg_value)
+        
+        self.get_logger().info(f"Running action {action_name} on robot {robot}")
         #If there are prerquisites, we need to wait for them
         if prereqs:
             #We do not get anything about the acceptance
             self.get_logger().info("SYNC ACTION")
-            result = move_client.send_goal(goal_msg)
+            result = action_client.send_goal(goal_msg)
             if result is not None:
                 self.get_logger().info('Result: {0}'.format(result.result.success))
             else:
@@ -90,8 +105,9 @@ class Controller(Node):
         
         #For non-blocking behaviour, callbacks are used (default behaviour)
         else:
+            self.get_logger().info("ASYNC ACTION")
              #Returns a future that can be waited (this future completes when action server accepts or rejects the request)
-            self.send_goal_future = self.move_client.send_goal_async(goal_msg)
+            self.send_goal_future = action_client.send_goal_async(goal_msg)
             #Callback fires when the future resolves
             self.send_goal_future.add_done_callback(self.goal_response_callback)
 

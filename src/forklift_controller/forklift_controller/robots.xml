@@ -3,7 +3,7 @@
 <robots>
     <robot type="Toyota 02-8FGF15">
         <primitives>
-            <primitive name="MoveToPoint">
+            <primitive name="move" type="MoveToPoint">
                 <parameters>
                     <parameter name="x" type="float" description="x coordinate to navigate to"/>
                     <parameter name="y" type="float" description="y coordinate to navigate to"/>
@@ -13,7 +13,7 @@
                 </returns>
             </primitive>
 
-            <primitive name="PickUp">
+            <primitive name="pick_up" type="PickUp">
                 <parameters>
                     <parameter name="object" type="string" description="name of the object to pick up"/>
                 </parameters>
@@ -22,7 +22,7 @@
                 </returns>
             </primitive>
 
-            <primitive name="Drop">
+            <primitive name="drop" type="Drop">
                 <parameters>
                     <parameter name="object" type="string" description="name of the object to drop"/>
                 </parameters>
