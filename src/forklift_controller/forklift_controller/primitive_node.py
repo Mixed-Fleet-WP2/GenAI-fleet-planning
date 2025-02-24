@@ -9,12 +9,11 @@ from nav2_simple_commander.robot_navigator import BasicNavigator, TaskResult
 from rclpy.duration import Duration
 import tf_transformations
 from movement_interface.srv import CubePos
-from movement_interface.action import MoveToPoint, Drop, PickUp
-from rclpy.action import ActionServer
-from rclpy.action.server import ServerGoalHandle
 import sys
 from rclpy.time import Duration
-#import paho.mqtt.client as mqtt
+from std_msgs.msg._float32_multi_array import Float32MultiArray
+from std_msgs.msg._string import String
+
 
 from utils import move_object_to_point, reset_contact_sensor, get_pos_as_other_coord_frame
 
@@ -23,7 +22,7 @@ FORK_LENGTH = 0.3
 
 class PrimitiveNode(Node):
     def __init__(self, node_name):
-
+        
         # Use the namespace in the Node initialization
         # node_name = namespace but we cannot get it through
         #parameters, as the super constructor must be called first
@@ -56,14 +55,12 @@ class PrimitiveNode(Node):
         #Callbacks inside Reentrant groups may be executed in parallel, but things outside cannot not
         self.subscription_cb_group = ReentrantCallbackGroup()
         self.service_cb_group = ReentrantCallbackGroup()
-        self.action_cb_group = ReentrantCallbackGroup()
+
+        self.create_subscription(Float32MultiArray, "move", self.move_callback, 10, callback_group=self.subscription_cb_group)
         self.create_subscription(Bool, "touched", self.__detect_contact, 10)
-
-        self.movement_server = ActionServer(self, MoveToPoint,  'move', self.move_callback, callback_group=self.action_cb_group)
-
-        self.pickup_server = ActionServer(self, PickUp, 'pickup', self.pick_up, callback_group=self.action_cb_group)
-        self.drop_server = ActionServer(self, Drop, 'drop', self.drop, callback_group=self.action_cb_group)
-
+        self.create_subscription(String, 'pick_up', self.pick_up_callback, 10, callback_group=self.subscription_cb_group)
+        self.create_subscription(String, 'drop', self.drop_callback, 10, callback_group=self.subscription_cb_group)
+   
         self.subscription = self.create_subscription(
             TFMessage,
             '/model/cube/pose',  
@@ -74,25 +71,20 @@ class PrimitiveNode(Node):
         self.__navigator = None
         self.__init_nav()
 
-    def move_callback(self, goal_handle: ServerGoalHandle):
-        x = float(goal_handle.request.x)
-        y = float(goal_handle.request.y)
+    def move_callback(self, msg):
+        x = float(msg.data[0])
+        y = float(msg.data[1])
         self.get_logger().info("Moving to point")
 
-        if x < -9 or y is None:
-            self.get_logger().info("No target x coordinate provided")
-            goal_handle.abort()
-            return MoveToPoint.Result(success=False)
+        return self.move(x,y)
 
-        return self.move(x,y, goal_handle)
-
-    def drop_callback(self, goal_handle: ServerGoalHandle):
-        object = goal_handle.request.object
-        return self.drop(object, goal_handle)
+    def drop_callback(self, msg:String):
+        object = msg.data
+        return self.drop(object)
     
-    def pick_up_callback(self, goal_handle: ServerGoalHandle):
-        object = goal_handle.request.object
-        return self.pick_up(object, goal_handle)
+    def pick_up_callback(self, msg:String):
+        object = msg.data
+        return self.pick_up(object)
 
     def __init_nav(self):
         # Initialize the navigator
@@ -120,16 +112,13 @@ class PrimitiveNode(Node):
         # Wait for navigation to fully activate, since autostarting nav2
         self.__navigator.waitUntilNav2Active()
 
-    def pick_up(self, object, goal_handle: ServerGoalHandle):
+    def pick_up(self, object):
  
         x, y, z, orient_x, orient_y, orient_z, orient_w = get_pos_as_other_coord_frame(self, 'map', 'fork_1')
         
         move_object_to_point(object, x+0.15, y+0.05, z+0.1, orient_x, orient_y, orient_z, orient_w)
 
-        goal_handle.succeed()
-        return PickUp.Result(success=True)
-    
-    def drop(self, object, goal_handle: ServerGoalHandle):
+    def drop(self, object):
     
         x, y, z, orient_x, orient_y, orient_z, orient_w = get_pos_as_other_coord_frame(self, 'map', 'fork_1')
 
@@ -141,14 +130,11 @@ class PrimitiveNode(Node):
 
         move_object_to_point(object, pos_from_fork_start_to_end, y+0.05, z+0.1, orient_x, orient_y, orient_z, orient_w)
 
-        goal_handle.succeed()
-        return Drop.Result(success=True)   
-
     def cube_pose_callback(self, msg):
         self.cube_pos_x = msg.transforms[1].transform.translation.x
         self.cube_pos_y = msg.transforms[1].transform.translation.y
         
-    def move(self, x:float, y:float, goal_handle: ServerGoalHandle) -> MoveToPoint.Result:
+    def move(self, x:float, y:float):
         
         goal_pose = PoseStamped()
         goal_pose.header.frame_id = 'map'
@@ -165,14 +151,13 @@ class PrimitiveNode(Node):
         self.__navigator.goToPose(goal_pose)
 
         # Monitor the navigation task
-        return self.monitor_navigation(self.__namespace, goal_handle)
+        return self.monitor_navigation(self.__namespace)
 
-    def monitor_navigation(self, namespace: str, goal_handle: ServerGoalHandle) -> MoveToPoint.Result:
+    def monitor_navigation(self, namespace: str):
 
         self.get_logger().info("Monitoring navigation")
         
         i = 0
-        feedback_msg = MoveToPoint.Feedback()
         while not self.__navigator.isTaskComplete():
             i += 1
             feedback = self.__navigator.getFeedback()
@@ -180,12 +165,9 @@ class PrimitiveNode(Node):
             #Simulate arriving to pick up the cube
             if self.in_cube_contact:
                 self.__navigator.cancelTask()
-                goal_handle.succeed()
-                return MoveToPoint.Result(success=True)
+                return False
                 
             if feedback and i % 5 == 0:
-                feedback_msg.curr_pos = [feedback.current_pose.pose.position.x, feedback.current_pose.pose.position.y]
-                goal_handle.publish_feedback(feedback_msg)
                 self.get_logger().info(
                     'Estimated time of arrival: '
                     + '{0:.0f}'.format(
@@ -216,12 +198,10 @@ class PrimitiveNode(Node):
         # Do something depending on the return code
         result = self.__navigator.getResult()
         if result == TaskResult.SUCCEEDED:
-            goal_handle.succeed()
-            return MoveToPoint.Result(success=True)
+            return True
         #Nav failed, was canceled or other
         else:
-            goal_handle.abort()
-            return MoveToPoint.Result(success=False)
+            return True
 
         #self.__navigator.lifecycleShutdown()
         

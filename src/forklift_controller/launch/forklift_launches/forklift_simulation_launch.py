@@ -67,6 +67,7 @@ def generate_launch_description():
     use_rviz = LaunchConfiguration('use_rviz')
     headless = LaunchConfiguration('headless')
     world = LaunchConfiguration('world')
+    mqtt_config = LaunchConfiguration('mqtt_config')
     #gz_has_been_launched = LaunchConfiguration('gz_has_been_launched')
 
     pose = {
@@ -176,6 +177,13 @@ def generate_launch_description():
         description='Full path to robot sdf file to spawn the robot in gazebo',
     )
 
+    declare_mqtt_config = DeclareLaunchArgument(
+        'mqtt_config',
+        default_value=os.path.join(pkg_root, 'config', 'mqtt_params.yaml'),
+        description="Config file for the mqtt client"
+    )
+
+
     parsed_urdf = Command(['xacro', ' ', robot_sdf])
    
     start_robot_state_publisher_cmd = Node(
@@ -270,7 +278,8 @@ def generate_launch_description():
                           'z_pose': pose['z'],
                           'roll': pose['R'],
                           'pitch': pose['P'],
-                          'yaw': pose['Y']}.items())
+                          'yaw': pose['Y'],
+                            'mqtt_config': mqtt_config}.items())
     
     execution_node_action = Node(
         package="forklift_controller",
@@ -328,5 +337,5 @@ def generate_launch_description():
     ld.add_action(remove_temp_sdf_file)
 
     ld.add_action(execution_node_action)
-
+    ld.add_action(declare_mqtt_config)
     return ld

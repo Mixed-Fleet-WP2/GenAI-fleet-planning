@@ -37,45 +37,6 @@ from launch.substitutions import LaunchConfiguration, TextSubstitution
 from nav2_common.launch import ParseMultiRobotPose
 from launch_ros.actions import Node
 
-"""
- for namespace in namespaces:
-
-            #Add the capablities of the robot
-            ros_to_mqtt = data['mqtt_client']['ros__parameters']['bridge']['ros2mqtt']
-            mqtt_to_ros = data['mqtt_client']['ros__parameters']['bridge']['mqtt2ros']
-
-            ros_topic_names = ros_to_mqtt['ros_topics']
-            mqtt_topic_names = mqtt_to_ros['mqtt_topics']
-
-            #Add the topics to the ros2mqtt and mqtt2ros bridges
-            for ability in abilities:
-                ros_topic_names.append(f"/{namespace}/{ability}")
-                mqtt_topic_names.append(f"/{namespace}/{ability}")
-
-                ros_to_mqtt[f"/{namespace}/{ability}2"] = {"mqtt_topic": f"{namespace}/{ability}"}
-                mqtt_to_ros[f"{namespace}/{ability}"] = {"ros_topic": f"/{namespace}/{ability}"}
-"""
-
-
-"""
-mqtt_client:
-  ros__parameters:
-    broker:
-      host: 0.0.0.0
-      port: 1883
-    bridge:
-      ros2mqtt:
-        ros_topics: 
-          - /ping/ros
-        /ping/ros:
-          mqtt_topic: pingpong/ros
-      mqtt2ros:
-        mqtt_topics: 
-          - pingpong/ros
-        pingpong/ros:
-          ros_topic: /pong/ros
-
-"""
 
 def generate_launch_description():
     ld = LaunchDescription()
@@ -274,6 +235,7 @@ def generate_launch_description():
                         'robot_name': TextSubstitution(text=robot_name),
                         'robot_sdf': urdf_path,
                         'slam' : slam,
+                        'mqtt_config': LaunchConfiguration('mqtt_config')
                     }.items(),
                 ),
             ]

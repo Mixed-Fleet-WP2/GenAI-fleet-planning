@@ -29,9 +29,9 @@ LLAMA_MODELS = ["llama3.1-405b","llama3.1-70b","llama3.1-8b","llama3-70b","llama
 
 
 COMMON_PROMPT = """You control a fleet of robots and have access to following commands:
-                - PickUp(object): makes a robot pick up an object specified as a string. Returns nothing
-                - MoveToPoint(x,y): makes a robot move to the specified coordinates. Takes two integers, returns
-                - Drop(object): makes the robot drop an object in front of it, specified as a string. Returns nothing\n\n
+                - pick_up(object): makes a robot pick up an object specified as a string. Returns nothing
+                - move(x,y): makes a robot move to the specified coordinates. Takes two integers, returns
+                - drop(object): makes the robot drop an object in front of it, specified as a string. Returns nothing\n\n
                 """
 
 TASK_PROMPT = "\n\nYour tasks is: {task}"

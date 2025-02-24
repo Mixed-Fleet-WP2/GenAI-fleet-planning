@@ -25,36 +25,16 @@ from launch.actions import DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration
 from launch.substitutions.command import Command
 from launch.substitutions.find_executable import FindExecutable
-from launch.launch_context import LaunchContext
-
 from launch_ros.actions import Node
-from nav2_common.launch import RewrittenYaml
+from launch.actions import OpaqueFunction
 
-def rewrite_config():
+def print_path(context, *args, **kwargs):
 
-    #Namespaces are added automatically by ros2
-    mqtt_topics = ['move', 'pick_up', 'drop', 'ping', 'pong']
+    mqtt_file = LaunchConfiguration('mqtt_config').perform(context)
+    print("HERE IT IS")
+    print(f"The mqtt_config is: {mqtt_file}")
 
-    mqtt_to_ros = []
-    ros_to_mqtt = []
 
-    for topic in mqtt_topics:
-        mqtt_to_ros.append({
-            "mqtt_topic": topic,
-            "ros_topic": f"/{topic}"
-        })
-
-        ros_to_mqtt.append({
-            "ros_topic": f"/{topic}",
-            "mqtt_topic": topic
-        })
-    
-    param_overrides = {
-        'mqtt2ros': mqtt_to_ros,
-        'ros2mqtt': ros_to_mqtt
-    }
-    print(param_overrides)
-    return param_overrides
 
 def generate_launch_description():
 
@@ -72,7 +52,12 @@ def generate_launch_description():
             'R': LaunchConfiguration('roll', default='0.00'),
             'P': LaunchConfiguration('pitch', default='0.00'),
             'Y': LaunchConfiguration('yaw', default='0.00')}
-    mqtt_config = LaunchConfiguration('mqtt_config')
+    
+    declare_mqtt_config = DeclareLaunchArgument(
+        'mqtt_config',
+        default_value=os.path.join(pkg_root, 'config', 'mqtt_params.yaml'),
+        description="Config file for the mqtt client"
+    )
 
     # Declare the launch arguments
     declare_namespace_cmd = DeclareLaunchArgument(
@@ -106,34 +91,16 @@ def generate_launch_description():
         output='screen',
     )
 
-    """
-    param_rewrites = {'ros2mqtt': {'ros_topic': '/cmd_vel', 'mqtt_topic': 'cmd_vel'}}
-   
-    context = LaunchContext()
-    rewritten_yaml = RewrittenYaml(
-        source_file=os.path.join(pkg_root, 'config', 'mqtt_params.yaml'),
-        param_rewrites=param_rewrites,
-        convert_types=True
-    )
-
-     # Perform the substitution to get the temporary file path
-    rewritten_yaml_path = rewritten_yaml.perform(context)
-    print(f"Temporary file path: {rewritten_yaml_path}")
-
-    # Read and print the contents of the temporary file
-    with open(rewritten_yaml_path, 'r') as file:
-        rewritten_yaml_content = file.read()
-        print(f"Rewritten YAML content:\n{rewritten_yaml_content}")
-
     mqtt_bridge = Node(
         package='mqtt_client',
         executable='mqtt_client',
         namespace=namespace,
-        parameters=[rewritten_yaml]
+        output='screen',
+        parameters=[LaunchConfiguration('mqtt_config')
+        ]
+        
     )
-    """
 
-    ld.add_action(LogInfo(msg="Spawning model"))
     spawn_model = Node(
         package='ros_gz_sim',
         executable='create',
@@ -159,9 +126,11 @@ def generate_launch_description():
     ld.add_action(set_env_vars_resources)
  
     ld.add_action(bridge)
-    #ld.add_action(mqtt_bridge)
+    ld.add_action(mqtt_bridge)
 
     ld.add_action(spawn_model)
+    print_func = OpaqueFunction(function=print_path)
+    ld.add_action(print_func)
     return ld
 
 

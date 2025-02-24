@@ -7,6 +7,9 @@ from rclpy.action import ActionClient
 import xml.etree.ElementTree as ET
 import os
 from tf2_msgs.msg import TFMessage
+import paho.mqtt.client as mqtt
+
+import json
 
 class Controller(Node):
 
@@ -14,6 +17,9 @@ class Controller(Node):
                                           {"type":"Toyota 02-8FGF15","name":"forklift_2"}]):
         
         super().__init__('controller')
+
+        self.mqtt_client = mqtt.Client()
+        self.mqtt_client.connect("localhost")
         
 
         script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -26,6 +32,9 @@ class Controller(Node):
         self.connections = {}
         self.cube_pos_x = None
         self.cube_pos_y = None
+
+        self.mqtt_client.subscribe([("feedback", 2)])
+        self.mqtt_client.on_message =self.on_message
         
 
         self.subscription = self.create_subscription(
@@ -37,41 +46,13 @@ class Controller(Node):
         
         self.cube_pos_req = CubePos.Request()
 
-        for robot in self.robots_in_network:
-            self.get_logger().info(f"Robot: {robot}")
-            type = robot['type']
-            name = robot['name']
-
-            robot_node = root.find(f"./robot[@type='{type}']")
-
-            if robot_node is None:
-                self.get_logger().error(f"Robot type {type} not found in robots.xml")
-            else:
-                robot_node_str = ET.tostring(robot_node, encoding='unicode')
-                self.get_logger().info(robot_node_str)
-            primitive_list = robot_node.find('./primitives')
-            self.get_logger().info(f"Primitive parent: {primitive_list}")
-            primitives = primitive_list.findall('primitive')
-            if primitives is None:
-                self.get_logger().error(f"Primitives not found for robot {name}")
-
-
-            #Go through all the primitives and create an action client for each
-            for primitive in robot_node.find('./primitives').findall('primitive'):
-                primitive_name = primitive.attrib.get('name')
-                primitive_class = getattr(mv, primitive_name, None)
-                self.get_logger().info(f"Primitive: {primitive_name}")
-                self.connections[f"{name}/{primitive_name}"] = ActionClient(self, primitive_class, f'{name}/{primitive_name}')
         
         #Assume that the robots in network are ready to accept commands, so no need to wait for services
-        """
-        while not self.pick_up_cli.wait_for_service(timeout_sec=1.0) and not self.move_client.wait_for_server(): #and not self.move_cli.wait_for_service(timeout_sec=1.0)
-            self.get_logger().info('Services not available yet')
-        """
     
-    """
+    def on_message(self, client, userdata, message):
+        payload = json.loads(message.payload)
+        self.get_logger().info(f"Received message: {payload}")
 
-    """
     def run_action(self, robot:str, action_name:str, args:dict, uuid, prereqs:list = None):
         """
         Run a generic action on a robot.
@@ -82,17 +63,10 @@ class Controller(Node):
         :param prereqs: The prerequisites to the action
         """
 
-        action_client = self.connections[f"{robot}/{action_name}"]
-        primitive_class = getattr(mv, action_name, None)
-        goal_msg = primitive_class.Goal()
+        payload = json.dumps(args)
 
-        #Attach named arguments to the goal message
-        for arg in args:
-            arg_value = str(args[arg])
-            #Alternative to do syntax
-            setattr(goal_msg, arg, arg_value)
-        
-        self.get_logger().info(f"Running action {action_name} on robot {robot}")
+        self.mqtt_client.publish(f"{robot}/{action_name}", payload, qos=2)
+        """
         #If there are prerquisites, we need to wait for them
         if prereqs:
             #We do not get anything about the acceptance
@@ -126,6 +100,7 @@ class Controller(Node):
         self.get_result_future.add_done_callback(
             lambda future: self.get_logger().info(f'Result: {future.result().result.success}')
         )
+    """
       
     def get_cube_pos(self):
         return self.cube_pos_x, self.cube_pos_y
@@ -135,4 +110,32 @@ class Controller(Node):
         self.cube_pos_y = msg.transforms[1].transform.translation.y
 
 
-    
+"""
+
+        for robot in self.robots_in_network:
+            self.get_logger().info(f"Robot: {robot}")
+            type = robot['type']
+            name = robot['name']
+
+            robot_node = root.find(f"./robot[@type='{type}']")
+
+            if robot_node is None:
+                self.get_logger().error(f"Robot type {type} not found in robots.xml")
+            else:
+                robot_node_str = ET.tostring(robot_node, encoding='unicode')
+                self.get_logger().info(robot_node_str)
+            primitive_list = robot_node.find('./primitives')
+            self.get_logger().info(f"Primitive parent: {primitive_list}")
+            primitives = primitive_list.findall('primitive')
+            if primitives is None:
+                self.get_logger().error(f"Primitives not found for robot {name}")
+
+
+            #Go through all the primitives and create an action client for each
+            for primitive in robot_node.find('./primitives').findall('primitive'):
+                primitive_name = primitive.attrib.get('name')
+                primitive_class = getattr(mv, primitive_name, None)
+                self.get_logger().info(f"Primitive: {primitive_name}")
+                self.connections[f"{name}/{primitive_name}"] = ActionClient(self, primitive_class, f'{name}/{primitive_name}')
+
+"""
