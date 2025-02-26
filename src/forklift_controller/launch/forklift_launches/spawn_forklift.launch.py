@@ -26,15 +26,48 @@ from launch.substitutions import LaunchConfiguration
 from launch.substitutions.command import Command
 from launch.substitutions.find_executable import FindExecutable
 from launch_ros.actions import Node
-from launch.actions import OpaqueFunction
+from launch.actions import OpaqueFunction, RegisterEventHandler
+from launch.event_handlers import OnShutdown
+from nav2_common.launch import RewrittenYaml
+import tempfile
 
-def print_path(context, *args, **kwargs):
+import yaml
 
-    mqtt_file = LaunchConfiguration('mqtt_config').perform(context)
-    print("HERE IT IS")
-    print(f"The mqtt_config is: {mqtt_file}")
+def add_namespace(context, yaml_file, namespace, ):
 
+    print("THE YAML FILE IS: ", yaml_file)
+    with open(yaml_file, "r") as file:
+        config = yaml.safe_load(file)
 
+    # Iterate through bridge topics and add namespace
+    bridge = config["/**/*"]["ros__parameters"]["bridge"]
+
+    ros_to_mqtt_topics = bridge["ros2mqtt"]["ros_topics"]
+
+    #Topic names for the mqtt messages (mqtt -> ros)
+    mqtt_to_ros_topics_mqtt_names = bridge["mqtt2ros"]["mqtt_topics"]
+    print("THE TEMP FILE IS: ", yaml_file)
+
+    namespaced_topics = []
+    #Append namespaces to mqtt topics as that is not done by ros2 system
+    for topic in mqtt_to_ros_topics_mqtt_names:
+        namespaced_topics.append(f"{namespace}/{topic}") 
+
+    bridge["mqtt2ros"]["mqtt_topics"] = namespaced_topics
+
+    with open(f"modified_{yaml_file}", "w") as file:
+        yaml.dump(config, file, default_flow_style=False)
+
+    mqtt_bridge = Node(
+        package='mqtt_client',
+        executable='mqtt_client',
+        namespace=namespace,
+        output='screen',
+        parameters=[yaml_file]
+        
+    )
+
+    return mqtt_bridge
 
 def generate_launch_description():
 
@@ -43,7 +76,10 @@ def generate_launch_description():
 
     pkg_root = get_package_share_directory('forklift_controller')
 
+    test_path = os.path.join(pkg_root, 'config', 'test.yaml')
+
     namespace = LaunchConfiguration('namespace')
+    mqtt_config = LaunchConfiguration('mqtt_config')
     robot_name = LaunchConfiguration('robot_name')
     robot_sdf = LaunchConfiguration('robot_sdf')
     pose = {'x': LaunchConfiguration('x_pose', default='-2.00'),
@@ -91,15 +127,10 @@ def generate_launch_description():
         output='screen',
     )
 
-    mqtt_bridge = Node(
-        package='mqtt_client',
-        executable='mqtt_client',
-        namespace=namespace,
-        output='screen',
-        parameters=[LaunchConfiguration('mqtt_config')
-        ]
-        
-    )
+    set_env_vars_resources = AppendEnvironmentVariable(
+        'GZ_SIM_RESOURCE_PATH', os.path.join(pkg_root, 'meshes'))
+    
+    #ld.add_action(OpaqueFunction(function=add_namespace, args=[namespace, test_path]))
 
     spawn_model = Node(
         package='ros_gz_sim',
@@ -115,22 +146,16 @@ def generate_launch_description():
             '-R', pose['R'], '-P', pose['P'], '-Y', pose['Y']]
     )
 
-    set_env_vars_resources = AppendEnvironmentVariable(
-        'GZ_SIM_RESOURCE_PATH', os.path.join(pkg_root, 'meshes'))
-    
-    ld.add_action(LogInfo(msg=f"The path is: {os.path.join(pkg_root, 'meshes')}"))
-
     ld.add_action(declare_namespace_cmd)
     ld.add_action(declare_robot_name_cmd)
     ld.add_action(declare_robot_sdf_cmd)
     ld.add_action(set_env_vars_resources)
  
     ld.add_action(bridge)
-    ld.add_action(mqtt_bridge)
 
     ld.add_action(spawn_model)
-    print_func = OpaqueFunction(function=print_path)
-    ld.add_action(print_func)
+
+   
     return ld
 
 

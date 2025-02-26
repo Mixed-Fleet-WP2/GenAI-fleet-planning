@@ -28,9 +28,9 @@
     bridge:
       ros2mqtt:
         ros_topics: 
-          - /feedback
+          - feedback
           - /pingpong/ros
-        /feedback:
+        feedback:
           mqtt_topic: feedback
         /pingpong/ros:
           mqtt_topic: pingpong/ros
