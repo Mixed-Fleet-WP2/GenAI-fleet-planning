@@ -29,45 +29,113 @@ from launch_ros.actions import Node
 from launch.actions import OpaqueFunction, RegisterEventHandler
 from launch.event_handlers import OnShutdown
 from nav2_common.launch import RewrittenYaml
-import tempfile
+from tempfile import NamedTemporaryFile, _TemporaryFileWrapper
 
 import yaml
 
-def add_namespace(context, yaml_file, namespace, ):
+"""
+Add a namespace to a mqtt config file
 
-    print("THE YAML FILE IS: ", yaml_file)
-    with open(yaml_file, "r") as file:
-        config = yaml.safe_load(file)
+param context: The context of the launch file
+param namespace: The namespace to add to the mqtt config file
+param base_file: The base mqtt config file to add the namespace to
+param temp_file: A temporary file to write the namespaced topics to and pass to the mqtt client node
 
-    # Iterate through bridge topics and add namespace
-    bridge = config["/**/*"]["ros__parameters"]["bridge"]
+returns: A list containing the mqtt client node
 
-    ros_to_mqtt_topics = bridge["ros2mqtt"]["ros_topics"]
+Example of the structure of the base_file:
 
-    #Topic names for the mqtt messages (mqtt -> ros)
-    mqtt_to_ros_topics_mqtt_names = bridge["mqtt2ros"]["mqtt_topics"]
-    print("THE TEMP FILE IS: ", yaml_file)
+/**/*:
+  ros__parameters:
+    broker:
+      host: localhost
+      port: 1883
+    bridge:
+      ros2mqtt:
+        ros_topics: 
+          - feedback
+          - /pingpong/ros
+        /feedback:
+          mqtt_topic: feedback
+        /pingpong/ros:
+          mqtt_topic: pingpong/ros
+      mqtt2ros:
+        mqtt_topics: 
+          - move
+          - drop
+          - pick_up
+          - ping/ros
+        move:
+          ros_topic: move
+          ros_type: std_msgs/msg/Float32MultiArray
+          primitive: true
+        drop:
+          ros_topic: drop
+          ros_type: std_msgs/msg/String
+          primitive: true
+        pick_up:
+          ros_topic: pick_up
+          ros_type: std_msgs/msg/String
+          primitive: true
+        ping/ros:
+          ros_topic: ping/ros
+          primitive: true
+"""
 
-    namespaced_topics = []
-    #Append namespaces to mqtt topics as that is not done by ros2 system
-    for topic in mqtt_to_ros_topics_mqtt_names:
-        namespaced_topics.append(f"{namespace}/{topic}") 
+def add_namespace(context, namespace:LaunchConfiguration, base_file: LaunchConfiguration, temp_file: _TemporaryFileWrapper) -> list:
 
-    bridge["mqtt2ros"]["mqtt_topics"] = namespaced_topics
+    try:
 
-    with open(f"modified_{yaml_file}", "w") as file:
-        yaml.dump(config, file, default_flow_style=False)
+        print("THE TYPE OF BASE FILE: ", type(temp_file))
 
-    mqtt_bridge = Node(
-        package='mqtt_client',
-        executable='mqtt_client',
-        namespace=namespace,
-        output='screen',
-        parameters=[yaml_file]
+        yaml_file_path = base_file.perform(context)
+        #yaml_file_path = yaml_file
+        namespace = namespace.perform(context)
+
+        temp_file_name:str = temp_file.name
+
+        with open(yaml_file_path, "r") as file:
+            config = yaml.safe_load(file)
+
+        # Iterate through bridge topics and add namespace
+        bridge = config["/**/*"]["ros__parameters"]["bridge"]
+
+        #Topic names for the mqtt messages (mqtt -> ros)
+        mqtt_to_ros = bridge["mqtt2ros"]
+
+        #Namespace the mqtt messages as ros2 system does not do this automatically
+        for topic in list(mqtt_to_ros):
+            
+            if topic == "mqtt_topics":
+                namespaced_topics = []
+                topics = mqtt_to_ros["mqtt_topics"]
+                for topic_mqtt in topics:
+                    namespaced_topics.append(f"{namespace}/{topic_mqtt}") 
+                mqtt_to_ros["mqtt_topics"] = namespaced_topics
+            else:
+                mqtt_to_ros[f"{namespace}/{topic}"] = mqtt_to_ros[topic]
+                del mqtt_to_ros[topic]
+            
+
+        #Write namespaced topics to a temp file
+        with open(temp_file.name, "w") as file:
+            yaml.dump(config, file, default_flow_style=False)
         
-    )
-
-    return mqtt_bridge
+        print("THE FILE PATH: ", temp_file_name)
+          
+        mqtt_bridge = Node(
+            package='mqtt_client',
+            executable='mqtt_client',
+            namespace=namespace,
+            output='screen',
+            parameters=[temp_file_name]
+            
+        )
+    except Exception as e:
+        print("Error in add_namespace: ", e)
+        return []
+       
+    return [mqtt_bridge]
 
 def generate_launch_description():
 
@@ -75,8 +143,6 @@ def generate_launch_description():
     ld = LaunchDescription()
 
     pkg_root = get_package_share_directory('forklift_controller')
-
-    test_path = os.path.join(pkg_root, 'config', 'test.yaml')
 
     namespace = LaunchConfiguration('namespace')
     mqtt_config = LaunchConfiguration('mqtt_config')
@@ -91,7 +157,7 @@ def generate_launch_description():
     
     declare_mqtt_config = DeclareLaunchArgument(
         'mqtt_config',
-        default_value=os.path.join(pkg_root, 'config', 'mqtt_params.yaml'),
+        default_value=os.path.join(pkg_root, 'config', 'forklift_mqtt_bridge.yaml'),
         description="Config file for the mqtt client"
     )
 
@@ -130,7 +196,18 @@ def generate_launch_description():
     set_env_vars_resources = AppendEnvironmentVariable(
         'GZ_SIM_RESOURCE_PATH', os.path.join(pkg_root, 'meshes'))
     
-    #ld.add_action(OpaqueFunction(function=add_namespace, args=[namespace, test_path]))
+    mqtt_config_temp_file:_TemporaryFileWrapper = NamedTemporaryFile(mode='w+t', delete=False, suffix='.yaml')
+
+    ld.add_action(LogInfo(msg=["HERE IT IS ", mqtt_config_temp_file.name]))
+
+    # Remove the temporary file when the launch file is shutdown
+    remove_temp_mqtt_file = RegisterEventHandler(event_handler=OnShutdown(
+        on_shutdown=[
+            OpaqueFunction(function=lambda _: os.remove(mqtt_config_temp_file.name))
+        ]))
+
+
+    ld.add_action(OpaqueFunction(function=add_namespace, args=[namespace, mqtt_config, mqtt_config_temp_file]))
 
     spawn_model = Node(
         package='ros_gz_sim',
@@ -149,11 +226,13 @@ def generate_launch_description():
     ld.add_action(declare_namespace_cmd)
     ld.add_action(declare_robot_name_cmd)
     ld.add_action(declare_robot_sdf_cmd)
+    ld.add_action(declare_mqtt_config)
     ld.add_action(set_env_vars_resources)
  
     ld.add_action(bridge)
-
+    
     ld.add_action(spawn_model)
+    ld.add_action(remove_temp_mqtt_file)
 
    
     return ld

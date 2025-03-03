@@ -13,15 +13,11 @@ from rclpy.node import Node
 from controller import Controller
 from dotenv import load_dotenv
 
-
 path_to_env = os.path.expanduser('~/.forklift_controller/.env')
 load_dotenv()
 
 CLAUDE_API_KEY = os.getenv('CLAUDE_API_KEY')
 OPEN_AI_API_KEY = os.getenv('OPEN_AI_API_KEY')
-
-print(CLAUDE_API_KEY)
-
 
 CLAUDE_MODELS = ["claude-3-sonnet-20240229", "claude-3-5-sonnet-20240620", "claude-3-opus-20240229", "claude-3-haiku-20240307"]
 OPEN_AI_MODELS = ["gpt-4o-mini", "gpt-3.5-turbo", "gpt-4o"]

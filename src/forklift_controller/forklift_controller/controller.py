@@ -1,15 +1,13 @@
 
 from rclpy.node import Node
-import collections
 from movement_interface.srv import CubePos
-import movement_interface.action as mv
-from rclpy.action import ActionClient
 import xml.etree.ElementTree as ET
 import os
 from tf2_msgs.msg import TFMessage
 import paho.mqtt.client as mqtt
 
 import json
+import threading
 
 class Controller(Node):
 
@@ -20,8 +18,13 @@ class Controller(Node):
 
         self.mqtt_client = mqtt.Client()
         self.mqtt_client.connect("localhost")
-        
 
+        #Start the mqtt client in a separate thread
+        self.mqtt_client.loop_start()
+        self.condition = threading.Condition()
+
+        self.received_feedback = None
+        
         script_dir = os.path.dirname(os.path.abspath(__file__))
         tree = ET.parse(os.path.join(script_dir, 'robots.xml'))
         root = tree.getroot()
@@ -35,6 +38,9 @@ class Controller(Node):
 
         self.mqtt_client.subscribe([("feedback", 2)])
         self.mqtt_client.on_message =self.on_message
+
+        self.current_action_preconditions = []
+        self.current_action_completed_preconditions = []
         
 
         self.subscription = self.create_subscription(
@@ -51,6 +57,21 @@ class Controller(Node):
     
     def on_message(self, client, userdata, message):
         payload = json.loads(message.payload)
+
+        if payload['error']:
+            self.get_logger().error(f"Received error: {payload['error']}")
+            return
+        else:
+            #No prerequisites, so we can just return
+            if self.current_action_preconditions == []:
+                return
+            else:
+                #Push the completed action to the list
+                self.current_action_completed_preconditions.append(payload['action_id'])
+                if self.current_action_completed_preconditions == self.current_action_preconditions:
+                    with self.condition:
+                        self.condition.notify()
+
         self.get_logger().info(f"Received message: {payload}")
 
     def run_action(self, robot:str, action_name:str, args:dict, uuid, prereqs:list = None):
@@ -65,43 +86,23 @@ class Controller(Node):
 
         payload = json.dumps(args)
 
-        self.mqtt_client.publish(f"{robot}/{action_name}", payload, qos=2)
-        """
-        #If there are prerquisites, we need to wait for them
+        self.current_action_preconditions = prereqs
+
+        #If there are no prerequisites, we can just publish the message right away
+        #instead of waiting the robot to complete previous actions
         if prereqs:
-            #We do not get anything about the acceptance
-            self.get_logger().info("SYNC ACTION")
-            result = action_client.send_goal(goal_msg)
-            if result is not None:
-                self.get_logger().info('Result: {0}'.format(result.result.success))
-            else:
-                self.get_logger().error('Failed to get result from action server')
-        
-        #For non-blocking behaviour, callbacks are used (default behaviour)
+            self.mqtt_client.publish(f"{robot}/{action_name}", payload, qos=2)
         else:
-            self.get_logger().info("ASYNC ACTION")
-             #Returns a future that can be waited (this future completes when action server accepts or rejects the request)
-            self.send_goal_future = action_client.send_goal_async(goal_msg)
-            #Callback fires when the future resolves
-            self.send_goal_future.add_done_callback(self.goal_response_callback)
-
-    #https://docs.ros.org/en/jazzy/Tutorials/Intermediate/Writing-an-Action-Server-Client/Py.html#writing-an-action-server
-    def goal_response_callback(self, future):
-        goal_handle = future.result()
-
-        if not goal_handle.accepted:
-            self.get_logger().info('Goal rejected')
-            return
-        
-        self.get_logger().info("Goal accepted")
-        
-        #Returns a future that can be waited (this future completes when the action completes or is aborted)
-        self.get_result_future = goal_handle.get_result_async()
-        self.get_result_future.add_done_callback(
-            lambda future: self.get_logger().info(f'Result: {future.result().result.success}')
-        )
-    """
-      
+            #With automatically acquires the lock and releases it when the block is exited
+            #(even on error)
+            with self.condition:
+                #Wait for previous actions to complete
+                while self.current_action_completed_preconditions != self.current_action_preconditions:
+                    self.condition.wait()
+                    #Publish the message
+                    self.mqtt_client.publish(f"{robot}/{action_name}", payload, qos=2)
+                    break
+                
     def get_cube_pos(self):
         return self.cube_pos_x, self.cube_pos_y
     
