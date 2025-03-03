@@ -1,7 +1,6 @@
 import rclpy
 import json
-import collections
-import threading
+from threading import Thread
 import tkinter as tk
 import requests
 import os
@@ -70,11 +69,12 @@ FORMAT_INSTRUCTION = """\n\n
                     Return only the JSON and say nothing else, do not wrap json in a comment.
                     If there are no arguments, leave the array empty.
                     You may only use the functions that were given to
-                    you and nothing else. You may assume that the actions are always
-                    successful. Use only the functions
+                    you and nothing else. Use only the functions
                     you deem necessary. If some action requires another to be completed before it can be started
-                    use the 'prerequisite field" and insert the uuid of the prequisite action as an item 
-                    in the array. In addition to the commands, explain the reasoning behind the commands an include
+                    use the 'prerequisite field" and insert the id of the prequisite action as an item 
+                    in the array. If actions can be executed in parallel (for example two robots moving
+                    at the same time), leave the array empty. In addition to the commands, 
+                    explain the reasoning behind the commands an include
                     it in the JSON as string following the format specified before, do not insert comments
                     outside the JSON. 
                     """
@@ -97,8 +97,6 @@ class GUI:
                         }
 
         
-        self.json_commands = collections.deque()
-
         self.json_instructions = {}
 
         self.controller:Controller = controller
@@ -235,7 +233,7 @@ class GUI:
         self.response_area.configure(state="disable")
        
         #Start execution on separate thread, because otherwise GUI doesn't have time to update the view
-        execution_thread = threading.Thread(target=self.start_execution, daemon=True)
+        execution_thread = Thread(target=self.start_execution, daemon=True)
         execution_thread.start()
         execution_thread.join
 
@@ -244,11 +242,11 @@ class GUI:
         commands = json.loads(self.json_instructions)
 
         for command in commands:
-            
             executing_robot = command["executor"]
             command_name = command["cmd"]
             args:dict = command["args"]
             uuid = command["uuid"]
+            print("RUNNING COMMAND")
             self.controller.run_action(executing_robot, command_name, args, uuid)
 
 def main(args=None):
@@ -258,21 +256,21 @@ def main(args=None):
     #https://robotics.stackexchange.com/questions/106026/ros2-multi-nodes-each-on-a-thread-in-same-process
     executor = MultiThreadedExecutor()
 
-    controller_node:Node = Controller()
+    controller_node:Controller = Controller()
     executor.add_node(controller_node)
 
     root = tk.Tk()
     app = GUI(root, controller_node)
 
     #Separate thread for the ROS2 node, so that the gui can run in the main thread
-    spin_thread = threading.Thread(target=executor.spin, daemon=True)
+    spin_thread = Thread(target=executor.spin, daemon=True)
     spin_thread.start()
 
     root.protocol("WM_DELETE_WINDOW", lambda: on_closing(root, spin_thread, executor, controller_node))
     root.mainloop()
 
 
-def on_closing(root, spin_thread, executor, controller_node):
+def on_closing(root, spin_thread:Thread, executor:MultiThreadedExecutor, controller_node:Controller):
     # Stop executor's spinning thread
     executor.shutdown()
     spin_thread.join() 

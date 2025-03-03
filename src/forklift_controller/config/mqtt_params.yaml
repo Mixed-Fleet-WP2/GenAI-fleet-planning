@@ -42,7 +42,7 @@
           - ping/ros
         move:
           ros_topic: move
-          ros_type: std_msgs/msg/Float32MultiArray
+          ros_type: std_msgs/msg/String
           primitive: true
         drop:
           ros_topic: drop

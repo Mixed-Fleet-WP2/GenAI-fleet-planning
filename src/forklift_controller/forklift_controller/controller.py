@@ -55,8 +55,23 @@ class Controller(Node):
         
         #Assume that the robots in network are ready to accept commands, so no need to wait for services
     
+    def __del__(self):
+
+        self.mqtt_client.loop_stop()
+        self.mqtt_client.disconnect()
+
     def on_message(self, client, userdata, message):
-        payload = json.loads(message.payload)
+        
+        self.get_logger().info(f"Received message: {message.payload}")
+        cleaned_message = message.payload.replace(b'\x00', b'')
+        payload_as_str = cleaned_message.decode('utf-8')
+        self.get_logger().info(f"THE TYPE: {type(payload_as_str)}")
+        self.get_logger().info(f"Received message: {payload_as_str}")
+        return
+        self.get_logger().info(f"Received message: {payload_as_str}")
+        payload = json.loads(payload_as_str)
+
+        self.get_logger().info(f"Received message: {payload}")
 
         if payload['error']:
             self.get_logger().error(f"Received error: {payload['error']}")
@@ -84,14 +99,27 @@ class Controller(Node):
         :param prereqs: The prerequisites to the action
         """
 
-        payload = json.dumps(args)
+        self.get_logger().info(f"Running action {action_name} on robot {robot} with args {args}")
+
+        #payload = {"data":{}}
+        payload = {}
+
+        payload['args'] = args
+        payload['action_id'] = uuid
+
+        self.get_logger().info(f"Payload: {payload}")
+
+        payload_as_string = json.dumps(payload)
 
         self.current_action_preconditions = prereqs
 
+        self.get_logger().info(f"Preconditions: {self.current_action_preconditions}")
+
         #If there are no prerequisites, we can just publish the message right away
         #instead of waiting the robot to complete previous actions
-        if prereqs:
-            self.mqtt_client.publish(f"{robot}/{action_name}", payload, qos=2)
+        if not prereqs:
+            endpoint = f"{robot}/{action_name}"
+            self.mqtt_client.publish(endpoint, payload_as_string, qos=2)
         else:
             #With automatically acquires the lock and releases it when the block is exited
             #(even on error)

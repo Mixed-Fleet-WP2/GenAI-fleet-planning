@@ -8,11 +8,11 @@ from tf2_msgs.msg import TFMessage
 from nav2_simple_commander.robot_navigator import BasicNavigator, TaskResult
 from rclpy.duration import Duration
 import tf_transformations
-from movement_interface.srv import CubePos
 import sys
 from rclpy.time import Duration
-from std_msgs.msg._float32_multi_array import Float32MultiArray
-from std_msgs.msg._string import String
+from std_msgs.msg import String
+from MqttPayload import MqttPayload
+import json
 
 
 from utils import move_object_to_point, reset_contact_sensor, get_pos_as_other_coord_frame
@@ -21,6 +21,7 @@ CUBE_WIDTH = 0.1
 FORK_LENGTH = 0.3
 
 class PrimitiveNode(Node):
+    
     def __init__(self, node_name):
         
         # Use the namespace in the Node initialization
@@ -54,13 +55,14 @@ class PrimitiveNode(Node):
 
         #Callbacks inside Reentrant groups may be executed in parallel, but things outside cannot not
         self.subscription_cb_group = ReentrantCallbackGroup()
-        self.service_cb_group = ReentrantCallbackGroup()
+        self.publisher_cb_group = ReentrantCallbackGroup()
 
-        self.create_subscription(Float32MultiArray, "move", self.move_callback, 10, callback_group=self.subscription_cb_group)
+        self.create_subscription(String, "move", self.move_callback, 10, callback_group=self.subscription_cb_group)
         self.create_subscription(Bool, "touched", self.__detect_contact, 10)
         self.create_subscription(String, 'pick_up', self.pick_up_callback, 10, callback_group=self.subscription_cb_group)
         self.create_subscription(String, 'drop', self.drop_callback, 10, callback_group=self.subscription_cb_group)
-   
+        self.feedback_publisher = self.create_publisher(String, 'feedback', 10, callback_group=self.publisher_cb_group)
+
         self.subscription = self.create_subscription(
             TFMessage,
             '/model/cube/pose',  
@@ -72,19 +74,56 @@ class PrimitiveNode(Node):
         self.__init_nav()
 
     def move_callback(self, msg):
-        x = float(msg.data[0])
-        y = float(msg.data[1])
-        self.get_logger().info("Moving to point")
+        
+        self.get_logger().info(f"The type of the msg is {type(msg)}")
+        try:
+            data = json.loads(msg.data)
 
-        return self.move(x,y)
+            self.get_logger().info(f"Data: {data}")
+
+            x = float(data["args"]["x"])
+            y = float(data["args"]["y"])
+            action_id = int(data["action_id"])
+
+            self.move(x,y, action_id)
+        except Exception as e:
+            self.get_logger().error(f"Error: {e}")
+            #self.feedback_publisher(MqttPayload("error", action_id, {"error": "Move failed, invalid arguments"}))
+
 
     def drop_callback(self, msg:String):
-        object = msg.data
-        return self.drop(object)
+
+        try:
+            data = json.loads(msg.data)
+
+            self.get_logger().info(f"Data: {data}")
+
+            object:str = data["args"]["object"]
+            action_id:int = int(data["action_id"])
+
+            return self.drop(object, action_id)
+        except Exception as e:
+            self.get_logger().error(f"Error: {e}")
+            #self.feedback_publisher(MqttPayload("error", action_id, {"error": "Drop failed, invalid
     
     def pick_up_callback(self, msg:String):
-        object = msg.data
-        return self.pick_up(object)
+        
+        try:
+            self.get_logger().info(f"The type of the msg is {type(msg)}")
+            self.get_logger().info(f"The data is {msg.data}")
+
+            data = json.loads(msg.data)
+            self.get_logger().info(f"Data: {data}")
+
+            object:str = data["args"]["object"]
+            action_id:int = int(data["action_id"])
+
+            self.get_logger().info(f"Object: {object}, action_id: {action_id}")
+
+            return self.pick_up(object, action_id)
+        except Exception as e:
+            self.get_logger().error(f"Error: {e}")
+            #self.feedback_publisher(MqttPayload("error", action_id, {"error": "Pick up failed, invalid arguments"}))
 
     def __init_nav(self):
         # Initialize the navigator
@@ -112,13 +151,21 @@ class PrimitiveNode(Node):
         # Wait for navigation to fully activate, since autostarting nav2
         self.__navigator.waitUntilNav2Active()
 
-    def pick_up(self, object):
+    def pick_up(self, object, action_id:int):
  
         x, y, z, orient_x, orient_y, orient_z, orient_w = get_pos_as_other_coord_frame(self, 'map', 'fork_1')
         
         move_object_to_point(object, x+0.15, y+0.05, z+0.1, orient_x, orient_y, orient_z, orient_w)
 
-    def drop(self, object):
+        payload = MqttPayload("success", action_id, {"success": "Pick up succeeded"})
+        payload_as_string = str(payload)
+        msg = String()
+        msg.data = "test"
+        self.get_logger().info(f"The string representation of the payload is {payload_as_string}")
+
+        self.feedback_publisher.publish(msg)
+
+    def drop(self, object, action_id:int):
     
         x, y, z, orient_x, orient_y, orient_z, orient_w = get_pos_as_other_coord_frame(self, 'map', 'fork_1')
 
@@ -129,12 +176,15 @@ class PrimitiveNode(Node):
         pos_from_fork_start_to_end = x + FORK_LENGTH + CUBE_WIDTH
 
         move_object_to_point(object, pos_from_fork_start_to_end, y+0.05, z+0.1, orient_x, orient_y, orient_z, orient_w)
+        payload = MqttPayload("success", action_id, {"success": "Drop succeeded"})
+        payload_as_string = str(payload)
+        self.feedback_publisher.publish(payload_as_string)
 
     def cube_pose_callback(self, msg):
         self.cube_pos_x = msg.transforms[1].transform.translation.x
         self.cube_pos_y = msg.transforms[1].transform.translation.y
         
-    def move(self, x:float, y:float):
+    def move(self, x:float, y:float, action_id:int):
         
         goal_pose = PoseStamped()
         goal_pose.header.frame_id = 'map'
@@ -151,9 +201,10 @@ class PrimitiveNode(Node):
         self.__navigator.goToPose(goal_pose)
 
         # Monitor the navigation task
-        return self.monitor_navigation(self.__namespace)
+        #return self.monitor_navigation(self.__namespace)
+        return self.monitor_navigation(self)
 
-    def monitor_navigation(self, namespace: str):
+    def monitor_navigation(self, action_id):
 
         self.get_logger().info("Monitoring navigation")
         
@@ -162,10 +213,13 @@ class PrimitiveNode(Node):
             i += 1
             feedback = self.__navigator.getFeedback()
             
+
+            """
             #Simulate arriving to pick up the cube
             if self.in_cube_contact:
                 self.__navigator.cancelTask()
                 return False
+            """
                 
             if feedback and i % 5 == 0:
                 self.get_logger().info(
@@ -198,11 +252,12 @@ class PrimitiveNode(Node):
         # Do something depending on the return code
         result = self.__navigator.getResult()
         if result == TaskResult.SUCCEEDED:
-            return True
+            success_payload = MqttPayload("success", action_id, {"success": "Navigation succeeded"})
+            self.feedback_publisher.publish(String(data=str(success_payload)))
         #Nav failed, was canceled or other
         else:
-            return True
-
+            error_payload = MqttPayload("error", action_id, {"error": "Navigation failed"})
+            self.feedback_publisher.publish(String(data=str(error_payload)))
         #self.__navigator.lifecycleShutdown()
         
     def __detect_contact(self, msg):
