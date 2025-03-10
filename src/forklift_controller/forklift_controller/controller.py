@@ -8,6 +8,7 @@ import paho.mqtt.client as mqtt
 
 import json
 import threading
+import re
 
 class Controller(Node):
 
@@ -62,21 +63,25 @@ class Controller(Node):
 
     def on_message(self, client, userdata, message):
         
-        self.get_logger().info(f"Received message: {message.payload}")
-        cleaned_message = message.payload.replace(b'\x00', b'')
-        payload_as_str = cleaned_message.decode('utf-8')
-        self.get_logger().info(f"THE TYPE: {type(payload_as_str)}")
-        self.get_logger().info(f"Received message: {payload_as_str}")
-        return
-        self.get_logger().info(f"Received message: {payload_as_str}")
+        self.get_logger().info(f"Raw message payload: {message.payload}")
+        decoded_message = message.payload.decode('utf-8')
+        payload_as_str:str = re.sub(r'[\x00-\x1F\x7F]', '', decoded_message)
+        self.get_logger().info(repr(payload_as_str))
         payload = json.loads(payload_as_str)
-
         self.get_logger().info(f"Received message: {payload}")
+        #For some reason the string includes null bytes so clean those up
+     
+        return
+        payload_as_str:str = cleaned_message.decode('utf-8')
+       
+        self.get_logger().info(f"Received message: {payload_as_str.strip()}")
+        payload = json.loads(payload_as_str)
 
         if payload['error']:
             self.get_logger().error(f"Received error: {payload['error']}")
             return
         else:
+            print("HEYAAA")
             #No prerequisites, so we can just return
             if self.current_action_preconditions == []:
                 return
@@ -86,8 +91,6 @@ class Controller(Node):
                 if self.current_action_completed_preconditions == self.current_action_preconditions:
                     with self.condition:
                         self.condition.notify()
-
-        self.get_logger().info(f"Received message: {payload}")
 
     def run_action(self, robot:str, action_name:str, args:dict, uuid, prereqs:list = None):
         """
@@ -100,14 +103,10 @@ class Controller(Node):
         """
 
         self.get_logger().info(f"Running action {action_name} on robot {robot} with args {args}")
-
-        #payload = {"data":{}}
         payload = {}
 
         payload['args'] = args
         payload['action_id'] = uuid
-
-        self.get_logger().info(f"Payload: {payload}")
 
         payload_as_string = json.dumps(payload)
 

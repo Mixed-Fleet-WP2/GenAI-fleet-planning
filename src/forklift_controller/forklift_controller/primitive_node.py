@@ -160,7 +160,7 @@ class PrimitiveNode(Node):
         payload = MqttPayload("success", action_id, {"success": "Pick up succeeded"})
         payload_as_string = str(payload)
         msg = String()
-        msg.data = "test"
+        msg.data = '{"payload_as_str": "test"}' 
         self.get_logger().info(f"The string representation of the payload is {payload_as_string}")
 
         self.feedback_publisher.publish(msg)

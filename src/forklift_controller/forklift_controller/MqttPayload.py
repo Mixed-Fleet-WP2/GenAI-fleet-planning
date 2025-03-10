@@ -1,3 +1,5 @@
+import json
+
 class MqttPayload():
 
     def __init__(self, type:str, action_id:int, payload={}):
@@ -5,9 +7,11 @@ class MqttPayload():
         self.payload = payload
         self.action_id = action_id
 
+        self.msg = {}
+
+        self.msg['type'] = type
+        self.msg['action_id'] = action_id
+        self.msg['payload'] = payload
+
     def __str__(self):
-        return f"""{{
-            "type": {self.type},
-            "action_id": {self.action_id},
-            "payload": {self.payload}
-        }}"""
+        return json.dumps(self.msg)
