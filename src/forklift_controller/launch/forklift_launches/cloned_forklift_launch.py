@@ -68,7 +68,7 @@ def generate_launch_description():
     use_robot_state_pub = LaunchConfiguration('use_robot_state_pub')
     use_rviz = LaunchConfiguration('use_rviz')
 
-    gui_script_path = 'gui/control.py'
+    gui_script_path = 'gui/GUI.py'
     # Set the path to different files and folders.  
 
     gui_path = os.path.join(pkg_root, gui_script_path)

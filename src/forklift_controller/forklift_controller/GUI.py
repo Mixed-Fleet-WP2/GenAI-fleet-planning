@@ -80,7 +80,7 @@ FORMAT_INSTRUCTION = """\n\n
                     """
 
 class GUI:
-    def __init__(self, root, controller):
+    def __init__(self, root):
 
         self.object_states = {
                             "environment": {
@@ -99,7 +99,7 @@ class GUI:
         
         self.json_instructions = {}
 
-        self.controller:Controller = controller
+        self.controller:Controller = Controller()
 
         self.model = OPEN_AI_MODELS[0]
         self.root = root
@@ -247,7 +247,9 @@ class GUI:
             args:dict = command["args"]
             uuid = command["uuid"]
             print("RUNNING COMMAND")
-            self.controller.run_action(executing_robot, command_name, args, uuid)
+            thread = Thread(target=self.controller.run_command, args=(executing_robot, command_name, args, uuid))
+            thread.start()
+            #thread.join()
 
 def main(args=None):
 
@@ -256,26 +258,21 @@ def main(args=None):
     #https://robotics.stackexchange.com/questions/106026/ros2-multi-nodes-each-on-a-thread-in-same-process
     executor = MultiThreadedExecutor()
 
-    controller_node:Controller = Controller()
-    executor.add_node(controller_node)
-
     root = tk.Tk()
-    app = GUI(root, controller_node)
+    app = GUI(root)
 
     #Separate thread for the ROS2 node, so that the gui can run in the main thread
     spin_thread = Thread(target=executor.spin, daemon=True)
     spin_thread.start()
 
-    root.protocol("WM_DELETE_WINDOW", lambda: on_closing(root, spin_thread, executor, controller_node))
+    root.protocol("WM_DELETE_WINDOW", lambda: on_closing(root, spin_thread, executor))
     root.mainloop()
 
 
-def on_closing(root, spin_thread:Thread, executor:MultiThreadedExecutor, controller_node:Controller):
+def on_closing(root, spin_thread:Thread, executor:MultiThreadedExecutor):
     # Stop executor's spinning thread
     executor.shutdown()
     spin_thread.join() 
-
-    controller_node.destroy_node()
 
     rclpy.shutdown()
 

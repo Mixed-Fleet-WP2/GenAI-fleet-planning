@@ -1,21 +1,16 @@
-
-from rclpy.node import Node
-from movement_interface.srv import CubePos
 import xml.etree.ElementTree as ET
 import os
-from tf2_msgs.msg import TFMessage
 import paho.mqtt.client as mqtt
 
 import json
 import threading
 import re
 
-class Controller(Node):
+class Controller():
 
     def __init__(self, robots_in_network=[{"type":"Toyota 02-8FGF15","name":"forklift_1"},
                                           {"type":"Toyota 02-8FGF15","name":"forklift_2"}]):
         
-        super().__init__('controller')
 
         self.mqtt_client = mqtt.Client()
         self.mqtt_client.connect("localhost")
@@ -54,20 +49,19 @@ class Controller(Node):
 
     def on_message(self, client, userdata, message):
 
-        self.get_logger().info(f"Received msg")
+        print(f"Received message: {message.topic}", flush=True)
 
         if message.topic == "cube_pos":
-            self.get_logger().info(f"Received cube position message")
+            print("Received cube pos", flush=True)
         
-        self.get_logger().info(f"Raw message payload: {message.payload}")
         decoded_message = message.payload.decode('utf-8')
         #Remove control characters from the message, as they are left for some unknown reason???
         cleaned_message:str = re.sub(r'[\x00-\x1F\x7F]', '', decoded_message)
   
         payload = json.loads(cleaned_message)
 
-        if payload['error']:
-            self.get_logger().error(f"Received error: {payload['error']}")
+        if "error" in payload:
+            print(f"Received error: {payload['error']}", flush=True)
             return
         else:
             #No prerequisites, so we can just return
@@ -90,7 +84,7 @@ class Controller(Node):
         :param prereqs: The prerequisites to the action
         """
 
-        self.get_logger().info(f"Running action {action_name} on robot {robot} with args {args}")
+        print(f"Running action {action_name} on robot {robot} with args {args}")
         payload = {}
 
         payload['args'] = args
@@ -100,7 +94,7 @@ class Controller(Node):
 
         self.current_action_preconditions = prereqs
 
-        self.get_logger().info(f"Preconditions: {self.current_action_preconditions}")
+        print(f"Preconditions: {self.current_action_preconditions}")
 
         #If there are no prerequisites, we can just publish the message right away
         #instead of waiting the robot to complete previous actions
