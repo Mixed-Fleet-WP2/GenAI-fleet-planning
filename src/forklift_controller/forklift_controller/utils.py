@@ -7,12 +7,10 @@ from rclpy.time import Duration, Time
 
 def get_pos_as_other_coord_frame(node: Node, target_frame: str, source_frame: str):
     buffer = Buffer()
-    listener = TransformListener(buffer, node)
+    __ = TransformListener(buffer, node)
     try:
         transform = buffer.lookup_transform(target_frame=target_frame, source_frame=source_frame, time=Time(seconds=0), timeout=Duration(seconds=20))
         translation = transform.transform.translation
-        node.get_logger().info(f"Translation: {translation}")
-
         rotation = transform.transform.rotation
         translation = [translation.x, translation.y, translation.z]
         rotation = [rotation.x, rotation.y, rotation.z, rotation.w]

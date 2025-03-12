@@ -13,6 +13,8 @@ from rclpy.time import Duration
 from std_msgs.msg import String
 from MqttPayload import MqttPayload
 import json
+#https://answers.ros.org/question/409120/
+import rosidl_runtime_py
 
 
 from utils import move_object_to_point, reset_contact_sensor, get_pos_as_other_coord_frame
@@ -62,17 +64,24 @@ class PrimitiveNode(Node):
         self.create_subscription(String, 'pick_up', self.pick_up_callback, 10, callback_group=self.subscription_cb_group)
         self.create_subscription(String, 'drop', self.drop_callback, 10, callback_group=self.subscription_cb_group)
         self.feedback_publisher = self.create_publisher(String, 'feedback', 10, callback_group=self.publisher_cb_group)
-
-        self.subscription = self.create_subscription(
-            TFMessage,
-            '/model/cube/pose',  
-            self.cube_pose_callback,
-            10
-        )
+        self.cube_pos_publisher = self.create_publisher(String, '/cube_pos', 10, callback_group=self.publisher_cb_group)
+        
+        #Subscribe to the gazebo topic where the cube is published
+        self.subscription = self.create_subscription(TFMessage,'/cube_pos_gz', self.cube_pose_callback, 10)
         
         self.__navigator = None
         self.__init_nav()
 
+    
+    def cube_pose_callback(self, msg):
+        #Immediately forward the message to the mqtt bridge
+        #Convert the message to an ordered dictionary
+        msg_to_fwd = rosidl_runtime_py.convert.message_to_ordereddict(msg)
+        msg_as_string = json.dumps(msg_to_fwd)
+        msg = String()
+        msg.data = msg_as_string
+        self.cube_pos_publisher.publish(msg)
+        
     def move_callback(self, msg):
         
         self.get_logger().info(f"The type of the msg is {type(msg)}")
@@ -180,10 +189,6 @@ class PrimitiveNode(Node):
         payload_as_string = str(payload)
         self.feedback_publisher.publish(payload_as_string)
 
-    def cube_pose_callback(self, msg):
-        self.cube_pos_x = msg.transforms[1].transform.translation.x
-        self.cube_pos_y = msg.transforms[1].transform.translation.y
-        
     def move(self, x:float, y:float, action_id:int):
         
         goal_pose = PoseStamped()

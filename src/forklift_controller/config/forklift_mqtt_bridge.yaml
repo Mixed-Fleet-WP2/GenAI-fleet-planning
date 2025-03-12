@@ -26,14 +26,15 @@
       host: localhost
       port: 1883
     bridge:
+    #ROS topics with the starting slash are considered as global topics (not namespaced by ros2)
       ros2mqtt:
         ros_topics: 
           - feedback
-          - /pingpong/ros
-        /feedback:
+          - /cube_pos
+        feedback:
           mqtt_topic: feedback
-        /pingpong/ros:
-          mqtt_topic: pingpong/ros
+        /cube_pos:
+          mqtt_topic: cube_pos
       mqtt2ros:
         mqtt_topics: 
           - move

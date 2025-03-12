@@ -38,22 +38,13 @@ class Controller(Node):
         self.cube_pos_y = None
 
         self.mqtt_client.subscribe([("feedback", 2)])
+        self.mqtt_client.subscribe([("cube_pos", 2)])
         self.mqtt_client.on_message =self.on_message
 
         self.current_action_preconditions = []
         self.current_action_completed_preconditions = []
         
 
-        self.subscription = self.create_subscription(
-            TFMessage,
-            '/model/cube/pose',  
-            self.cube_pose_callback,
-            10
-        )
-        
-        self.cube_pos_req = CubePos.Request()
-
-        
         #Assume that the robots in network are ready to accept commands, so no need to wait for services
     
     def __del__(self):
@@ -62,26 +53,23 @@ class Controller(Node):
         self.mqtt_client.disconnect()
 
     def on_message(self, client, userdata, message):
+
+        self.get_logger().info(f"Received msg")
+
+        if message.topic == "cube_pos":
+            self.get_logger().info(f"Received cube position message")
         
         self.get_logger().info(f"Raw message payload: {message.payload}")
         decoded_message = message.payload.decode('utf-8')
-        payload_as_str:str = re.sub(r'[\x00-\x1F\x7F]', '', decoded_message)
-        self.get_logger().info(repr(payload_as_str))
-        payload = json.loads(payload_as_str)
-        self.get_logger().info(f"Received message: {payload}")
-        #For some reason the string includes null bytes so clean those up
-     
-        return
-        payload_as_str:str = cleaned_message.decode('utf-8')
-       
-        self.get_logger().info(f"Received message: {payload_as_str.strip()}")
-        payload = json.loads(payload_as_str)
+        #Remove control characters from the message, as they are left for some unknown reason???
+        cleaned_message:str = re.sub(r'[\x00-\x1F\x7F]', '', decoded_message)
+  
+        payload = json.loads(cleaned_message)
 
         if payload['error']:
             self.get_logger().error(f"Received error: {payload['error']}")
             return
         else:
-            print("HEYAAA")
             #No prerequisites, so we can just return
             if self.current_action_preconditions == []:
                 return

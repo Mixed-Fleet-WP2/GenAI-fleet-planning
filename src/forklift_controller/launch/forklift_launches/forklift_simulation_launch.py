@@ -179,7 +179,7 @@ def generate_launch_description():
 
     declare_mqtt_config = DeclareLaunchArgument(
         'mqtt_config',
-        default_value=os.path.join(pkg_root, 'config', 'mqtt_params.yaml'),
+        default_value=os.path.join(pkg_root, 'config', 'forklift_mqtt_bridge.yaml'),
         description="Config file for the mqtt client"
     )
 

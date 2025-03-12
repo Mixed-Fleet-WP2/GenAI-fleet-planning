@@ -14,8 +14,6 @@
 # limitations under the License.
 
 import os
-from pathlib import Path
-
 
 from ament_index_python.packages import get_package_share_directory
 
@@ -28,13 +26,14 @@ from launch.substitutions.find_executable import FindExecutable
 from launch_ros.actions import Node
 from launch.actions import OpaqueFunction, RegisterEventHandler
 from launch.event_handlers import OnShutdown
-from nav2_common.launch import RewrittenYaml
 from tempfile import NamedTemporaryFile, _TemporaryFileWrapper
 
 import yaml
 
 """
-Add a namespace to a mqtt config file
+Add a namespace to a mqtt config file. This is necessary because only the messages from the ros2 side are namespaced
+and the mqtt messages are not. This function adds the namespace to the mqtt messages so that the mqtt client node
+can subscribe to the correct topics.
 
 param context: The context of the launch file
 param namespace: The namespace to add to the mqtt config file
@@ -86,12 +85,9 @@ def add_namespace(context, namespace:LaunchConfiguration, base_file: LaunchConfi
 
     try:
 
-        print("THE TYPE OF BASE FILE: ", type(temp_file))
-
         yaml_file_path = base_file.perform(context)
-        #yaml_file_path = yaml_file
         namespace = namespace.perform(context)
-
+        #Temporary file is created in the create_launch_description function, only name is passed
         temp_file_name:str = temp_file.name
 
         with open(yaml_file_path, "r") as file:
@@ -121,8 +117,6 @@ def add_namespace(context, namespace:LaunchConfiguration, base_file: LaunchConfi
         with open(temp_file.name, "w") as file:
             yaml.dump(config, file, default_flow_style=False)
         
-        print("THE FILE PATH: ", temp_file_name)
-          
         mqtt_bridge = Node(
             package='mqtt_client',
             executable='mqtt_client',
@@ -197,8 +191,6 @@ def generate_launch_description():
         'GZ_SIM_RESOURCE_PATH', os.path.join(pkg_root, 'meshes'))
     
     mqtt_config_temp_file:_TemporaryFileWrapper = NamedTemporaryFile(mode='w+t', delete=False, suffix='.yaml')
-
-    ld.add_action(LogInfo(msg=["HERE IT IS ", mqtt_config_temp_file.name]))
 
     # Remove the temporary file when the launch file is shutdown
     remove_temp_mqtt_file = RegisterEventHandler(event_handler=OnShutdown(
