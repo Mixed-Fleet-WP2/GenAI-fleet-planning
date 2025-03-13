@@ -63,6 +63,7 @@
             <publish_visual_pose>false</publish_visual_pose>
             <publish_nested_model_pose>true</publish_nested_model_pose>
             <use_pose_vector_msg>true</use_pose_vector_msg>
+            <update_frequency>0.5</update_frequency> <!-- Hz, this means that pose is published every 2s-->
         </plugin>
 
       <pose>13 1.25 0.5 0 0 0</pose>

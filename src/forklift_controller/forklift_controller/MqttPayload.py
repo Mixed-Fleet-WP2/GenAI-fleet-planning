@@ -15,3 +15,4 @@ class MqttPayload():
 
     def __str__(self):
         return json.dumps(self.msg)
+        

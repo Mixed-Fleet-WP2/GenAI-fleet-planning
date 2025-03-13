@@ -7,12 +7,12 @@ import os
 import re
 
 from rclpy.executors import MultiThreadedExecutor
-from rclpy.node import Node
+
 
 from controller import Controller
 from dotenv import load_dotenv
 
-path_to_env = os.path.expanduser('~/.forklift_controller/.env')
+#path_to_env = os.path.expanduser('~/.forklift_controller/.env')
 load_dotenv()
 
 CLAUDE_API_KEY = os.getenv('CLAUDE_API_KEY')
@@ -141,7 +141,7 @@ class GUI:
         self.btn_frame = tk.Frame(root)
         self.btn_frame.grid(row=3, column=2, columnspan=2)
 
-        self.start_button = tk.Button(self.btn_frame, text="Create an initiate plan", command=self.get_ai_response)
+        self.start_button = tk.Button(self.btn_frame, text="Create and initiate plan", command=self.get_ai_response)
         self.start_button.pack(anchor='center')
     
     def callback(self,selection):
@@ -152,8 +152,8 @@ class GUI:
         is_claude = False
         model_name = self.model
 
-        x,y = self.controller.get_cube_pos()
-        self.object_states["environment"]["object_positions"]["cube"] = (x,y)
+        object_pos_dict = self.controller.get_object_positions()
+        self.object_states["environment"]["object_positions"] = object_pos_dict
        
         #Convert the object states to a string
         object_states_str = json.dumps(self.object_states)
@@ -246,35 +246,35 @@ class GUI:
             command_name = command["cmd"]
             args:dict = command["args"]
             uuid = command["uuid"]
-            print("RUNNING COMMAND")
-            thread = Thread(target=self.controller.run_command, args=(executing_robot, command_name, args, uuid))
+            thread = Thread(target=self.controller.run_action, args=(executing_robot, command_name, args, uuid))
             thread.start()
             #thread.join()
 
 def main(args=None):
 
-    rclpy.init(args=args)
+    #rclpy.init(args=args)
 
     #https://robotics.stackexchange.com/questions/106026/ros2-multi-nodes-each-on-a-thread-in-same-process
-    executor = MultiThreadedExecutor()
+    #executor = MultiThreadedExecutor()
 
     root = tk.Tk()
     app = GUI(root)
 
     #Separate thread for the ROS2 node, so that the gui can run in the main thread
-    spin_thread = Thread(target=executor.spin, daemon=True)
-    spin_thread.start()
+    #spin_thread = Thread(target=executor.spin, daemon=True)
+    #spin_thread.start()
 
-    root.protocol("WM_DELETE_WINDOW", lambda: on_closing(root, spin_thread, executor))
+    #root.protocol("WM_DELETE_WINDOW", lambda: on_closing(root, spin_thread, executor))
+    root.protocol("WM_DELETE_WINDOW", lambda: on_closing(root))
     root.mainloop()
 
-
-def on_closing(root, spin_thread:Thread, executor:MultiThreadedExecutor):
+#def on_closing(root, spin_thread:Thread, executor:MultiThreadedExecutor):
+def on_closing(root):
     # Stop executor's spinning thread
-    executor.shutdown()
-    spin_thread.join() 
+    #executor.shutdown()
+    #spin_thread.join() 
 
-    rclpy.shutdown()
+    #rclpy.shutdown()
 
     root.destroy()
 

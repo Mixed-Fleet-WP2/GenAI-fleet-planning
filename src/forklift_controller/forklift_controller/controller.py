@@ -38,6 +38,8 @@ class Controller():
 
         self.current_action_preconditions = []
         self.current_action_completed_preconditions = []
+
+        self.object_positions = {}
         
 
         #Assume that the robots in network are ready to accept commands, so no need to wait for services
@@ -46,19 +48,67 @@ class Controller():
 
         self.mqtt_client.loop_stop()
         self.mqtt_client.disconnect()
-
-    def on_message(self, client, userdata, message):
-
-        print(f"Received message: {message.topic}", flush=True)
-
-        if message.topic == "cube_pos":
-            print("Received cube pos", flush=True)
+    
+    def __process_mqtt_msg(self, msg:mqtt.MQTTMessage, debug: bool = False):
         
-        decoded_message = message.payload.decode('utf-8')
+        decoded_message = msg.payload.decode('utf-8')
         #Remove control characters from the message, as they are left for some unknown reason???
         cleaned_message:str = re.sub(r'[\x00-\x1F\x7F]', '', decoded_message)
-  
+        if debug:
+            print(f"Cleaned message: {cleaned_message}", flush=True)
         payload = json.loads(cleaned_message)
+
+        return payload
+    
+    def get_object_positions(self):
+        """
+        Get positions of all known objects in the environment. Simultaneously
+        convert the complex TFMessage to a simple dict with only the necessary information
+        to be used in prompting. The conversion happens only when the prompt is being
+        created and not when the position message is received as it would
+        hinder performance
+
+        :return: A dict with object positions in the format:
+        {
+            "object_name": {
+                "x": x_position,
+                "y": y_position,
+                "z": z_position,
+                "quaternion_x": x_rotation,
+                "quaternion_y": y_rotation,
+                "quaternion_z": z_rotation,
+                "quaternion_w": w_rotation
+            }
+        }	
+        """
+       
+        object_positions = {}
+
+        for object in self.object_positions:
+            object_positions[object] = {}
+            object_positions[object]['x'] = self.object_positions[object]['transforms'][1]['transform']['translation']['x']
+            object_positions[object]['y'] = self.object_positions[object]['transforms'][1]['transform']['translation']['y']
+            object_positions[object]['z'] = self.object_positions[object]['transforms'][1]['transform']['translation']['z']
+
+            object_positions[object]['quaternion_x'] = self.object_positions[object]['transforms'][1]['transform']['rotation']['x']
+            object_positions[object]['quaternion_y'] = self.object_positions[object]['transforms'][1]['transform']['rotation']['y']
+            object_positions[object]['quaternion_z'] = self.object_positions[object]['transforms'][1]['transform']['rotation']['z']
+            object_positions[object]['quaternion_w'] = self.object_positions[object]['transforms'][1]['transform']['rotation']['w']
+
+        return object_positions
+    
+
+    def on_message(self, client, userdata, message:mqtt.MQTTMessage):
+
+        if message.topic == "cube_pos":
+            #Always replace the object positions with the latest ones (even if existing)
+            pos_dict = self.__process_mqtt_msg(message) #This is a dict in format following
+            #ros2 TFMessage. See: https://docs.ros.org/en/melodic/api/tf2_msgs/html/msg/TFMessage.html
+            self.object_positions["cube"] = pos_dict
+            return
+        
+        print(f"Received message on topic {message.topic}", flush=True)
+        payload = self.__process_mqtt_msg(message, debug=True)
 
         if "error" in payload:
             print(f"Received error: {payload['error']}", flush=True)
@@ -102,6 +152,7 @@ class Controller():
             endpoint = f"{robot}/{action_name}"
             self.mqtt_client.publish(endpoint, payload_as_string, qos=2)
         else:
+            print("Waiting for preconditions to be met", flush=True)
             #With automatically acquires the lock and releases it when the block is exited
             #(even on error)
             with self.condition:
@@ -112,14 +163,6 @@ class Controller():
                     self.mqtt_client.publish(f"{robot}/{action_name}", payload, qos=2)
                     break
                 
-    def get_cube_pos(self):
-        return self.cube_pos_x, self.cube_pos_y
-    
-    def cube_pose_callback(self, msg):
-        self.cube_pos_x = msg.transforms[1].transform.translation.x
-        self.cube_pos_y = msg.transforms[1].transform.translation.y
-
-
 """
 
         for robot in self.robots_in_network:

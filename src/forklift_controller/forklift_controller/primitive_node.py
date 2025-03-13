@@ -96,7 +96,7 @@ class PrimitiveNode(Node):
 
             self.move(x,y, action_id)
         except Exception as e:
-            self.get_logger().error(f"Error: {e}")
+            self.get_logger().error(f"Error1: {e}")
             #self.feedback_publisher(MqttPayload("error", action_id, {"error": "Move failed, invalid arguments"}))
 
 
@@ -112,14 +112,11 @@ class PrimitiveNode(Node):
 
             return self.drop(object, action_id)
         except Exception as e:
-            self.get_logger().error(f"Error: {e}")
-            #self.feedback_publisher(MqttPayload("error", action_id, {"error": "Drop failed, invalid
+            self.get_logger().error(f"Error2: {e}")
     
     def pick_up_callback(self, msg:String):
         
         try:
-            self.get_logger().info(f"The type of the msg is {type(msg)}")
-            self.get_logger().info(f"The data is {msg.data}")
 
             data = json.loads(msg.data)
             self.get_logger().info(f"Data: {data}")
@@ -131,7 +128,7 @@ class PrimitiveNode(Node):
 
             return self.pick_up(object, action_id)
         except Exception as e:
-            self.get_logger().error(f"Error: {e}")
+            self.get_logger().error(f"Error3: {e}")
             #self.feedback_publisher(MqttPayload("error", action_id, {"error": "Pick up failed, invalid arguments"}))
 
     def __init_nav(self):
@@ -207,7 +204,7 @@ class PrimitiveNode(Node):
 
         # Monitor the navigation task
         #return self.monitor_navigation(self.__namespace)
-        return self.monitor_navigation(self)
+        return self.monitor_navigation(self, action_id)
 
     def monitor_navigation(self, action_id):
 
@@ -258,6 +255,8 @@ class PrimitiveNode(Node):
         result = self.__navigator.getResult()
         if result == TaskResult.SUCCEEDED:
             success_payload = MqttPayload("success", action_id, {"success": "Navigation succeeded"})
+            paylaod = "The payload is: " +  str(success_payload)
+            self.get_logger().info(paylaod)
             self.feedback_publisher.publish(String(data=str(success_payload)))
         #Nav failed, was canceled or other
         else:
