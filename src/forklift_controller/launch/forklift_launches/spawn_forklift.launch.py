@@ -28,6 +28,7 @@ from launch.actions import OpaqueFunction, RegisterEventHandler
 from launch.event_handlers import OnShutdown
 from tempfile import NamedTemporaryFile, _TemporaryFileWrapper
 
+
 import yaml
 
 """
@@ -199,8 +200,6 @@ def generate_launch_description():
         ]))
 
 
-    ld.add_action(OpaqueFunction(function=add_namespace, args=[namespace, mqtt_config, mqtt_config_temp_file]))
-
     spawn_model = Node(
         package='ros_gz_sim',
         executable='create',
@@ -215,6 +214,7 @@ def generate_launch_description():
             '-R', pose['R'], '-P', pose['P'], '-Y', pose['Y']]
     )
 
+    ld.add_action(OpaqueFunction(function=add_namespace, args=[namespace, mqtt_config, mqtt_config_temp_file]))
     ld.add_action(declare_namespace_cmd)
     ld.add_action(declare_robot_name_cmd)
     ld.add_action(declare_robot_sdf_cmd)

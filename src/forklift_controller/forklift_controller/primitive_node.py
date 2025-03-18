@@ -79,6 +79,7 @@ class PrimitiveNode(Node):
         msg_to_fwd = rosidl_runtime_py.convert.message_to_ordereddict(msg)
         msg_as_string = json.dumps(msg_to_fwd)
         msg = String()
+        #self.get_logger().info(f"Message to forward: {msg_as_string}")
         msg.data = msg_as_string
         self.cube_pos_publisher.publish(msg)
         
@@ -161,13 +162,12 @@ class PrimitiveNode(Node):
  
         x, y, z, orient_x, orient_y, orient_z, orient_w = get_pos_as_other_coord_frame(self, 'map', 'fork_1')
         
-        move_object_to_point(object, x+0.15, y+0.05, z+0.1, orient_x, orient_y, orient_z, orient_w)
+        move_object_to_point(object, x+0.55, y-0.05, z+0.1, orient_x, orient_y, orient_z, orient_w)
 
         payload = MqttPayload("success", action_id, {"success": "Pick up succeeded"})
         payload_as_string = str(payload)
         msg = String()
-        msg.data = '{"payload_as_str": "test"}' 
-        self.get_logger().info(f"The string representation of the payload is {payload_as_string}")
+        msg.data = payload_as_string
 
         self.feedback_publisher.publish(msg)
 
@@ -184,7 +184,9 @@ class PrimitiveNode(Node):
         move_object_to_point(object, pos_from_fork_start_to_end, y+0.05, z+0.1, orient_x, orient_y, orient_z, orient_w)
         payload = MqttPayload("success", action_id, {"success": "Drop succeeded"})
         payload_as_string = str(payload)
-        self.feedback_publisher.publish(payload_as_string)
+        msg = String()
+        msg.data = payload_as_string
+        self.feedback_publisher.publish(msg)
 
     def move(self, x:float, y:float, action_id:int):
         
@@ -204,7 +206,7 @@ class PrimitiveNode(Node):
 
         # Monitor the navigation task
         #return self.monitor_navigation(self.__namespace)
-        return self.monitor_navigation(self, action_id)
+        return self.monitor_navigation(action_id)
 
     def monitor_navigation(self, action_id):
 

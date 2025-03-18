@@ -18,7 +18,8 @@ def get_pos_as_other_coord_frame(node: Node, target_frame: str, source_frame: st
         node.get_logger().error(f"Error getting transform: {e}")
         return None
     
-    return [translation[0], translation[1], translation[2], rotation[0], rotation[1], rotation[2], rotation[3]]
+    node.get_logger().info(f"Got transform: {translation}, {rotation}")
+    return [translation[0]-0.3, translation[1], translation[2], rotation[0], rotation[1], rotation[2], rotation[3]]
             
 
 """

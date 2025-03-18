@@ -50,7 +50,7 @@ FORMAT_INSTRUCTION = """\n\n
                         "args": {
                             "arg1": arg1,
                             "arg2": arg2,},
-                        prerequisite: [1]
+                        "prerequisite": [1]
                         "reason": "Explain the reasoning behind command 2 here"
                         
                         }
@@ -246,7 +246,9 @@ class GUI:
             command_name = command["cmd"]
             args:dict = command["args"]
             uuid = command["uuid"]
-            thread = Thread(target=self.controller.run_action, args=(executing_robot, command_name, args, uuid))
+            prereguisites = command.get("prerequisite", None)
+
+            thread = Thread(target=self.controller.run_action, args=(executing_robot, command_name, args, uuid, prereguisites), daemon=True)
             thread.start()
             #thread.join()
 

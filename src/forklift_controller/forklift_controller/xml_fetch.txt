@@ -1,0 +1,29 @@
+"""
+
+        for robot in self.robots_in_network:
+            self.get_logger().info(f"Robot: {robot}")
+            type = robot['type']
+            name = robot['name']
+
+            robot_node = root.find(f"./robot[@type='{type}']")
+
+            if robot_node is None:
+                self.get_logger().error(f"Robot type {type} not found in robots.xml")
+            else:
+                robot_node_str = ET.tostring(robot_node, encoding='unicode')
+                self.get_logger().info(robot_node_str)
+            primitive_list = robot_node.find('./primitives')
+            self.get_logger().info(f"Primitive parent: {primitive_list}")
+            primitives = primitive_list.findall('primitive')
+            if primitives is None:
+                self.get_logger().error(f"Primitives not found for robot {name}")
+
+
+            #Go through all the primitives and create an action client for each
+            for primitive in robot_node.find('./primitives').findall('primitive'):
+                primitive_name = primitive.attrib.get('name')
+                primitive_class = getattr(mv, primitive_name, None)
+                self.get_logger().info(f"Primitive: {primitive_name}")
+                self.connections[f"{name}/{primitive_name}"] = ActionClient(self, primitive_class, f'{name}/{primitive_name}')
+
+"""

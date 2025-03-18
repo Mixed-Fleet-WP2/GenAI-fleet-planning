@@ -1,6 +1,7 @@
 import xml.etree.ElementTree as ET
 import os
 import paho.mqtt.client as mqtt
+from collections import deque
 
 import json
 import threading
@@ -34,11 +35,14 @@ class Controller():
 
         self.mqtt_client.subscribe([("feedback", 2)])
         self.mqtt_client.subscribe([("cube_pos", 2)])
+        self.mqtt_client.subscribe([("test", 2)])
         self.mqtt_client.on_message =self.on_message
 
-        self.current_action_preconditions = []
-        self.current_action_completed_preconditions = []
-
+        #Items are sets of prerequisites for each action,
+        #preconditions are checked in the order they are added
+        #Each set contains the prerequisites for a single action
+        self.preconditions_queue = deque()
+        
         self.object_positions = {}
         
 
@@ -49,15 +53,22 @@ class Controller():
         self.mqtt_client.loop_stop()
         self.mqtt_client.disconnect()
     
-    def __process_mqtt_msg(self, msg:mqtt.MQTTMessage, debug: bool = False):
+    def __process_mqtt_msg(self, msg: mqtt.MQTTMessage, debug: bool = False):
+        decoded_message = str(msg.payload.decode('utf-8'))
+        # Remove control characters from the message
+        #cleaned_message = re.sub(r'[\x00-\x1F\x7F]', '', decoded_message)
+        cleaned_message = re.sub(r'^[^\{]+', '', decoded_message)
+        cleaned_message = re.sub(r'[^\}]+$', '', cleaned_message)
         
-        decoded_message = msg.payload.decode('utf-8')
-        #Remove control characters from the message, as they are left for some unknown reason???
-        cleaned_message:str = re.sub(r'[\x00-\x1F\x7F]', '', decoded_message)
         if debug:
+            print(f"Received message: {msg.payload}", flush=True)
+            print(f"Decoded message: {decoded_message}", flush=True)
             print(f"Cleaned message: {cleaned_message}", flush=True)
-        payload = json.loads(cleaned_message)
-
+        try:
+            payload = json.loads(cleaned_message)
+        except json.JSONDecodeError as e:
+            print(f"JSON decode error: {e}", flush=True)
+            payload = None
         return payload
     
     def get_object_positions(self):
@@ -94,7 +105,7 @@ class Controller():
             object_positions[object]['quaternion_y'] = self.object_positions[object]['transforms'][1]['transform']['rotation']['y']
             object_positions[object]['quaternion_z'] = self.object_positions[object]['transforms'][1]['transform']['rotation']['z']
             object_positions[object]['quaternion_w'] = self.object_positions[object]['transforms'][1]['transform']['rotation']['w']
-
+        
         return object_positions
     
 
@@ -115,12 +126,22 @@ class Controller():
             return
         else:
             #No prerequisites, so we can just return
-            if self.current_action_preconditions == []:
+            if not self.preconditions_queue:
+                print("No preconditions, returning", flush=True)
                 return
             else:
-                #Push the completed action to the list
-                self.current_action_completed_preconditions.append(payload['action_id'])
-                if self.current_action_completed_preconditions == self.current_action_preconditions:
+                #The first set in the queue is the one that is waiting for feedback first
+                first_waiting_action_preconditions:set = self.preconditions_queue[0]
+                #Remove the action that was just completed from the set
+                first_waiting_action_preconditions.remove(int(payload['action_id']))
+                #If the set is empty, all actions have been completed
+                if not first_waiting_action_preconditions:
+                    #Remove the set from the queue
+                    self.preconditions_queue.popleft()
+                    #print("All preconditions met, notifying the waiting thread", flush=True)
+                    print("Preconditions after removal", flush=True)
+                    print(self.preconditions_queue, flush=True)
+                    #Notify the waiting thread that the preconditions have been met
                     with self.condition:
                         self.condition.notify()
 
@@ -142,9 +163,19 @@ class Controller():
 
         payload_as_string = json.dumps(payload)
 
-        self.current_action_preconditions = prereqs
+        #Each activation record has a set of prerequisites
+        preconditions_for_this_stack = None
 
-        print(f"Preconditions: {self.current_action_preconditions}")
+        #Only if there are prerequisites, we need to add them to the queue
+        if prereqs:
+            print(f"Adding prerequisites {prereqs} to the queue", flush=True)
+            #Multiple instances of this function may be running at the same time
+            preconditions_for_this_stack = set(prereqs)
+            #Add the preconditions to the queue (by reference)
+            self.preconditions_queue.append(preconditions_for_this_stack)
+
+        print("Preconditions queue is now", flush=True)
+        print(self.preconditions_queue, flush=True)
 
         #If there are no prerequisites, we can just publish the message right away
         #instead of waiting the robot to complete previous actions
@@ -155,40 +186,14 @@ class Controller():
             print("Waiting for preconditions to be met", flush=True)
             #With automatically acquires the lock and releases it when the block is exited
             #(even on error)
+            #print(f"THe payload is: {payload_as_string}", flush=True)
             with self.condition:
-                #Wait for previous actions to complete
-                while self.current_action_completed_preconditions != self.current_action_preconditions:
+                #Wait for previous actions to complete (if the precondition set is empty, it means that all actions have been completed)
+                #When feedback is received, the set is modified by removing the completed action and the condition is notified
+                while len(preconditions_for_this_stack) > 0:
+                    print(f"Waiting for {preconditions_for_this_stack}", flush=True)
                     self.condition.wait()
-                    #Publish the message
-                    self.mqtt_client.publish(f"{robot}/{action_name}", payload, qos=2)
-                    break
+                    #Publish the message when the condition is notified
+            self.mqtt_client.publish(f"{robot}/{action_name}", payload_as_string, qos=2)
+                    
                 
-"""
-
-        for robot in self.robots_in_network:
-            self.get_logger().info(f"Robot: {robot}")
-            type = robot['type']
-            name = robot['name']
-
-            robot_node = root.find(f"./robot[@type='{type}']")
-
-            if robot_node is None:
-                self.get_logger().error(f"Robot type {type} not found in robots.xml")
-            else:
-                robot_node_str = ET.tostring(robot_node, encoding='unicode')
-                self.get_logger().info(robot_node_str)
-            primitive_list = robot_node.find('./primitives')
-            self.get_logger().info(f"Primitive parent: {primitive_list}")
-            primitives = primitive_list.findall('primitive')
-            if primitives is None:
-                self.get_logger().error(f"Primitives not found for robot {name}")
-
-
-            #Go through all the primitives and create an action client for each
-            for primitive in robot_node.find('./primitives').findall('primitive'):
-                primitive_name = primitive.attrib.get('name')
-                primitive_class = getattr(mv, primitive_name, None)
-                self.get_logger().info(f"Primitive: {primitive_name}")
-                self.connections[f"{name}/{primitive_name}"] = ActionClient(self, primitive_class, f'{name}/{primitive_name}')
-
-"""

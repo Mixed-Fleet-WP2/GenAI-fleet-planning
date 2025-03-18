@@ -36,6 +36,13 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, TextSubstitution
 from nav2_common.launch import ParseMultiRobotPose
 from launch_ros.actions import Node
+from launch import LaunchContext
+
+def launch_print(context:LaunchContext, item:LaunchConfiguration):
+
+    item_val = item.perform(context)
+
+    print("THE VALUE OF THE ITEM IS: ", item_val)
 
 
 def generate_launch_description():
@@ -91,7 +98,7 @@ def generate_launch_description():
     declare_params_file_cmd = DeclareLaunchArgument(
         'params_file',
         default_value=os.path.join(
-            bringup_dir, 'params', 'nav2_multirobot_params_all.yaml'
+            pkg_root, 'config', 'nav2_config.yaml'
         ),
         description='Full path to the ROS2 parameters file to use for all launched nodes',
     )
@@ -275,6 +282,8 @@ def generate_launch_description():
 
     ld.add_action(declare_mqtt_config)
     ld.add_action(bridge_cube_pose)
+
+    ld.add_action(OpaqueFunction(function=launch_print, args=[params_file]))
 
     for cmd in bringup_cmd_group:
         ld.add_action(cmd)
