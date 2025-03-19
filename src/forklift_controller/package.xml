@@ -18,7 +18,7 @@
   <!-- <exec_depend>trajectory_msgs</exec_depend> -->
   <exec_depend>xacro</exec_depend>
   <exec_depend>movement_interface</exec_depend>
-
+  <exec_depend>mqtt_client</exec_depend>
   <depend>rclpy</depend>
   <depend>joint_state_publisher</depend>
    <!--Useful for experimentation-->
