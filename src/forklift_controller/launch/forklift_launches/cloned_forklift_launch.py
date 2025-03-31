@@ -252,7 +252,7 @@ def generate_launch_description():
 
     
     set_env_vars_resources = AppendEnvironmentVariable(
-        'GZ_SIM_RESOURCE_PATH', os.path.join(pkg_root, 'meshes'))
+        'GZ_SIM_RESOURCE_PATH', os.path.join(pkg_root, 'models'))
     set_env_vars_resources2 = AppendEnvironmentVariable(
             'GZ_SIM_RESOURCE_PATH',
             str(Path(os.path.join(sim_dir)).parent.resolve()))
@@ -261,7 +261,7 @@ def generate_launch_description():
     # Create the launch description and populate
     ld.add_action(set_env_vars_resources)
     ld.add_action(set_env_vars_resources2)
-    ld.add_action(LogInfo(msg=['GZ_SIM_RESOURCE_PATH=', os.path.join(pkg_root, 'meshes')]))
+    ld.add_action(LogInfo(msg=['GZ_SIM_RESOURCE_PATH=', os.path.join(pkg_root, 'models')]))
 
     # Declare the launch options
     ld.add_action(declare_world_cmd)

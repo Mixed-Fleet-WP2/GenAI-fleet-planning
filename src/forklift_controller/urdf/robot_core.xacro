@@ -55,13 +55,13 @@
         <visual>
             <origin xyz="0 0 0"/>
             <geometry>
-                <mesh filename="$(find forklift_controller)/meshes/body.dae" scale="0.0027 0.0027 0.0027"/>
+                <mesh filename="$(find forklift_controller)/models/forklift/meshes/body.dae" scale="0.0027 0.0027 0.0027"/>
             </geometry>
         </visual>
         <collision>
             <origin xyz="0 0 0"/>
             <geometry>
-                <mesh filename="$(find forklift_controller)/meshes/body.dae" 
+                <mesh filename="$(find forklift_controller)/models/forklift/meshes/body.dae" 
                   scale="${scaler*0.0027} ${scaler*0.0027} ${scaler*0.0027}"/>
             </geometry>
         </collision>
@@ -76,7 +76,7 @@
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
                 <!-- <box size="0.01 0.2 0.2"/> -->
-                <mesh filename="$(find forklift_controller)/meshes/fork_plate.dae" scale="0.0027 0.0027 0.0027"/>
+                <mesh filename="$(find forklift_controller)/models/forklift/meshes/fork_plate.dae" scale="0.0027 0.0027 0.0027"/>
             </geometry>
         </visual>
         <collision>
@@ -206,7 +206,8 @@
         <visual>
             <origin xyz="0 0 0" rpy="-${pi/2} 0 0"/>
             <geometry>
-                <mesh filename="$(find forklift_controller)/meshes/front_wheel_right.dae" scale="0.002 0.002 0.002"/>
+              <mesh filename="package://forklift_controller/models/forklift/meshes/front_wheel_right.dae" scale="0.002 0.002 0.002"/>
+              <!-- <mesh filename="$(find forklift_controller)/meshes/front_wheel_right.dae" scale="0.002 0.002 0.002"/> -->
             </geometry>
         </visual>
         <collision>
@@ -235,7 +236,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
             <geometry>
-                <mesh filename="$(find forklift_controller)/meshes/front_wheel_right.dae" scale="0.002 0.002 0.002"/>
+                <mesh filename="$(find forklift_controller)/models/forklift/meshes/front_wheel_right.dae" scale="0.002 0.002 0.002"/>
             </geometry>
         </visual>
         <collision>
@@ -336,7 +337,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
             <geometry>
-                <mesh filename="$(find forklift_controller)/meshes/front_wheel_right.dae" scale="0.002 0.002 0.002"/>
+                <mesh filename="$(find forklift_controller)/models/forklift/meshes/front_wheel_right.dae" scale="0.002 0.002 0.002"/>
             </geometry>
         </visual>
         <collision>
@@ -362,7 +363,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="-${pi/2} 0 0"/>
             <geometry>
-                <mesh filename="$(find forklift_controller)/meshes/front_wheel_right.dae" scale="0.002 0.002 0.002"/>
+                <mesh filename="$(find forklift_controller)/models/forklift/meshes/front_wheel_right.dae" scale="0.002 0.002 0.002"/>
             </geometry>
         </visual>
         <collision>

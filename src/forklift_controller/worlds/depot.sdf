@@ -92,7 +92,7 @@
           <pose>0 0 -0.1 0 0 0</pose>  <!-- shift upward by half the height -->
           <geometry>
           <mesh>
-            <uri>model://cardboard_box.dae</uri>
+            <uri>model://box/meshes/cardboard_box.dae</uri>
             <scale> 0.503727584 0.503727584 0.503727584 </scale>
             <!-- <scale>1.25931896 1.007455168 0.755591376</scale> -->
           </mesh>

@@ -3,6 +3,21 @@ from glob import glob
 
 package_name = 'forklift_controller'
 
+def define_models() -> list:
+    """
+    Utility function to define the models and their corresponding data files.
+    Needed because glob doesnt copy directories."""
+    model_names = ["forklift", "box"]
+    data_tuples = []
+
+    for model_name in model_names:
+        destination = f'share/{package_name}/models/{model_name}/meshes/'
+        source = f'models/{model_name}/meshes/*'
+        # Copy the files from source to destination
+        data_tuples.append((destination, glob(source)))
+    return data_tuples
+
+
 setup(
     name=package_name,
     version='0.0.0',
@@ -13,13 +28,12 @@ setup(
         ('share/' + package_name, ['package.xml']),
         ('share/' + package_name + '/urdf', glob('urdf/*')),
         ('share/' + package_name + '/launch', glob('launch/forklift_launches/*')),
-        ('share/' + package_name + '/turtle_urdf', glob('turtle_urdf/*')),
         ('share/' + package_name + '/launch', ['launch/rviz_launch.py']),
         ('share/' + package_name + '/worlds', ['worlds/empty.world']),
         ('share/' + package_name + '/worlds', ['worlds/depot.sdf']),
         ('share/'+package_name+'/config', glob('config/*')),
-        ('share/' + package_name + '/meshes/', glob('meshes/*')),
         ('share/' + package_name + '/maps/', glob('maps/*')),
+        #*define_models(),
         #In the future, move the forklift.py to the lib directory?
         (('share/' + package_name + '/gui', ['forklift_controller/GUI.py'])),
         (('share/' + package_name + '/gui', ['forklift_controller/controller.py'])),
