@@ -83,14 +83,14 @@ def generate_launch_description():
     # Declare the launch arguments
     declare_world_cmd = DeclareLaunchArgument(
         'world',
-        default_value=os.path.join(pkg_root, 'worlds', 'depot.sdf'),
+        default_value=os.path.join(pkg_root, 'worlds', 'warehouse.world'),
         #default_value=os.path.join(sim_dir, 'worlds', 'tb3_sandbox.sdf.xacro'),
         description='Full path to world file to load',
     )
 
     declare_map_yaml_cmd = DeclareLaunchArgument(
         'map',
-        default_value=os.path.join(pkg_root, 'maps', 'depot.yaml'),
+        default_value=os.path.join(pkg_root, 'maps', 'warehouse_map.yaml'),
         #default_value=os.path.join(bringup_dir, 'maps', 'tb3_sandbox.yaml'),
         description='Full path to map file to load',
     )

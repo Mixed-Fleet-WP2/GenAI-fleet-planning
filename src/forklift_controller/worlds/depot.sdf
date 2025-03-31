@@ -108,5 +108,10 @@
       </link>
     </model>
 
+    <include>
+      <name>warehouse</name>
+      <uri>model://warehouse/warehouse.sdf</uri>
+    </include>
+
   </world>
 </sdf>
