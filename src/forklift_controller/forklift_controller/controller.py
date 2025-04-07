@@ -132,18 +132,25 @@ class Controller():
             else:
                 #The first set in the queue is the one that is waiting for feedback first
                 first_waiting_action_preconditions:set = self.preconditions_queue[0]
-                #Remove the action that was just completed from the set
-                first_waiting_action_preconditions.remove(int(payload['action_id']))
-                #If the set is empty, all actions have been completed
-                if not first_waiting_action_preconditions:
-                    #Remove the set from the queue
-                    self.preconditions_queue.popleft()
-                    #print("All preconditions met, notifying the waiting thread", flush=True)
-                    print("Preconditions after removal", flush=True)
-                    print(self.preconditions_queue, flush=True)
-                    #Notify the waiting thread that the preconditions have been met
-                    with self.condition:
-                        self.condition.notify()
+
+
+                precondition_to_remove = int(payload['action_id'])
+
+                #Only an action with the same ID can remove the precondition (only action itself may remove it), also non-existing action cannot be removed
+                if payload['action_id'] == precondition_to_remove and precondition_to_remove in first_waiting_action_preconditions:
+
+                    #Remove the action that was just completed from the set
+                    first_waiting_action_preconditions.remove(int(payload['action_id']))
+                    #If the set is empty, all actions have been completed
+                    if not first_waiting_action_preconditions:
+                        #Remove the set from the queue
+                        self.preconditions_queue.popleft()
+                        #print("All preconditions met, notifying the waiting thread", flush=True)
+                        print("Preconditions after removal", flush=True)
+                        print(self.preconditions_queue, flush=True)
+                        #Notify the waiting thread that the preconditions have been met
+                        with self.condition:
+                            self.condition.notify()
 
     def run_action(self, robot:str, action_name:str, args:dict, uuid, prereqs:list = None):
         """
@@ -180,6 +187,7 @@ class Controller():
         #If there are no prerequisites, we can just publish the message right away
         #instead of waiting the robot to complete previous actions
         if not prereqs:
+            print("No prerequisites, publishing the message right away", flush=True)
             endpoint = f"{robot}/{action_name}"
             self.mqtt_client.publish(endpoint, payload_as_string, qos=2)
         else:

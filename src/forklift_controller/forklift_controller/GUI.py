@@ -66,7 +66,9 @@ FORMAT_INSTRUCTION = """\n\n
                         }
                     ]
 
-                    Return only the JSON and say nothing else, do not wrap json in a comment.
+                    Return only the JSON and say nothing else. Do not wrap json in a comment or do anything else
+                    with it, just return plain json object. Do not add any other text or explanation. Follow the format strictly.
+
                     If there are no arguments, leave the array empty.
                     You may only use the functions that were given to
                     you and nothing else. Use only the functions
@@ -74,7 +76,7 @@ FORMAT_INSTRUCTION = """\n\n
                     use the 'prerequisite field" and insert the id of the prequisite action as an item 
                     in the array. If actions can be executed in parallel (for example two robots moving
                     at the same time), leave the array empty. In addition to the commands, 
-                    explain the reasoning behind the commands an include
+                    explain the reasoning behind the commands and include
                     it in the JSON as string following the format specified before, do not insert comments
                     outside the JSON. 
                     """
