@@ -163,7 +163,7 @@ class PrimitiveNode(Node):
         x, y, z, orient_x, orient_y, orient_z, orient_w = get_pos_as_other_coord_frame(self, 'map', 'fork_1')
         
         move_object_to_point(object, x+0.55, y-0.05, z+0.1, orient_x, orient_y, orient_z, orient_w)
-
+        self.get_logger().info("PICKING UP")
         payload = MqttPayload("success", action_id, {"success": "Pick up succeeded"})
         payload_as_string = str(payload)
         msg = String()

@@ -103,15 +103,17 @@
     
     <link name="fork_1">
         <visual>
-            <origin xyz="0.15 0 0" rpy="0 0 0"/>
+            <origin xyz="0 0.02 0" rpy="0 0 -${pi}"/>
             <geometry>
-                <box size="0.3 0.05 0.01"/>
+                <mesh filename="$(find forklift_controller)/models/forklift/meshes/fork.dae" scale="0.0027 0.0027 0.0027"/>
+                <!-- <box size="0.3 0.05 0.01"/> -->
             </geometry>
         </visual>
         <collision>
-            <origin xyz="0.15 0 0" rpy="0 0 0"/>
+            <origin xyz="0 0 0"  rpy="0 0 -${pi}"/>
             <geometry>
-                <box size="0.3 0.05 0.01"/>
+                <mesh filename="$(find forklift_controller)/models/forklift/meshes/fork.dae" scale="0.0027 0.0027 0.0027"/>
+                <!-- <box size="0.3 0.05 0.01"/> -->
             </geometry>
         </collision>
         <inertial>
@@ -124,20 +126,21 @@
     <joint name="fork_1_joint" type="fixed">
         <parent link="fork_plate"/>
         <child link="fork_1"/>
-        <origin xyz="0 -0.05 -0.01" rpy="0 0 0"/>
+        <origin xyz="-0.02 -0.06 -0.07" rpy="0 0 0"/>
     </joint>
     
     <link name="fork_2">
         <visual>
-            <origin xyz="0.15 0 0" rpy="0 0 0"/>
+            <!-- For some reason, the another forks origin is a bit different than fork1-->
+            <origin xyz="0 0.01 0" rpy="0 0 -${pi}"/>
             <geometry>
-                <box size="0.3 0.05 0.01"/>
+              <mesh filename="$(find forklift_controller)/models/forklift/meshes/fork.dae" scale="0.0027 0.0027 0.0027"/>
             </geometry>
         </visual>
         <collision>
-            <origin xyz="0.15 0 0" rpy="0 0 0"/>
+            <origin xyz="0 0 0" rpy="0 0 -${pi}"/>
             <geometry>
-                <box size="0.3 0.05 0.01"/>
+              <mesh filename="$(find forklift_controller)/models/forklift/meshes/fork.dae" scale="0.0027 0.0027 0.0027"/>
             </geometry>
         </collision>
         <inertial>
@@ -150,8 +153,7 @@
     <joint name="fork_2_joint" type="fixed">
         <parent link="fork_plate"/>
         <child link="fork_2"/>
-       
-        <origin xyz="0 0.05 -0.01" rpy="0 0 0"/>
+        <origin xyz="-0.02 0.06 -0.07" rpy="0 0 0"/>
     </joint>
  
 
@@ -390,61 +392,19 @@
         <kp>1000000.0</kp>
         <kd>1.0</kd>
       </gazebo>
+
+      <!-- https://osrf-migration.github.io/sdformat-gh-pages/#!/osrf/sdformat/issues/131/page/1-->
     
+      <gazebo reference="fork_1_joint">
+        <disableFixedJointLumping>true</disableFixedJointLumping>
+      </gazebo>
 
+      <gazebo reference="fork_2_joint">
+        <disableFixedJointLumping>true</disableFixedJointLumping>
+      </gazebo>
 
-      <!--
-  <gazebo reference="base_link">
-    <sensor type="imu" name="imu_sensor">
-      <preserveFixedJoint>true</preserveFixedJoint>
-      <always_on>true</always_on>
-      <update_rate>30</update_rate>
-      <topic>imu</topic>
-      <imu>
-        <angular_velocity>
-          <x>
-            <noise type="gaussian">
-              <mean>0.0</mean>
-              <stddev>0.0</stddev>
-            </noise>
-          </x>
-          <y>
-            <noise type="gaussian">
-              <mean>0.0</mean>
-              <stddev>0.0</stddev>
-            </noise>
-          </y>
-          <z>
-            <noise type="gaussian">
-              <mean>0.0</mean>
-              <stddev>0.0</stddev>
-            </noise>
-          </z>
-        </angular_velocity>
-        <linear_acceleration>
-          <x>
-            <noise type="gaussian">
-              <mean>0.0</mean>
-              <stddev>0.0</stddev>
-            </noise>
-          </x>
-          <y>
-            <noise type="gaussian">
-              <mean>0.0</mean>
-              <stddev>0.0</stddev>
-            </noise>
-          </y>
-          <z>
-            <noise type="gaussian">
-              <mean>0.0</mean>
-              <stddev>0.0</stddev>
-            </noise>
-          </z>
-        </linear_acceleration>
-      </imu>
-    </sensor>
-  </gazebo>
-    -->
-
+      <gazebo reference="fork_plate_joint">
+        <disableFixedJointLumping>true</disableFixedJointLumping>
+      </gazebo>
 
 </robot>

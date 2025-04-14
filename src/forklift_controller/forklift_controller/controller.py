@@ -18,8 +18,7 @@ class Controller():
 
         #Start the mqtt client in a separate thread
         self.mqtt_client.loop_start()
-        self.condition = threading.Condition()
-
+   
         self.received_feedback = None
         
         script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -38,10 +37,9 @@ class Controller():
         self.mqtt_client.subscribe([("test", 2)])
         self.mqtt_client.on_message =self.on_message
 
-        #Items are sets of prerequisites for each action,
-        #preconditions are checked in the order they are added
-        #Each set contains the prerequisites for a single action
-        self.preconditions_queue = deque()
+        self.completed_tasks = set()  # Globally shared set of completed action_ids
+        self.condition = threading.Condition()
+
         
         self.object_positions = {}
         
@@ -109,48 +107,32 @@ class Controller():
         return object_positions
     
 
-    def on_message(self, client, userdata, message:mqtt.MQTTMessage):
 
+    def on_message(self, client, userdata, message:mqtt.MQTTMessage):
         if message.topic == "cube_pos":
-            #Always replace the object positions with the latest ones (even if existing)
-            pos_dict = self.__process_mqtt_msg(message) #This is a dict in format following
-            #ros2 TFMessage. See: https://docs.ros.org/en/melodic/api/tf2_msgs/html/msg/TFMessage.html
+            pos_dict = self.__process_mqtt_msg(message)
             self.object_positions["cube"] = pos_dict
             return
         
-        print(f"Received message on topic {message.topic}", flush=True)
+        
+        
         payload = self.__process_mqtt_msg(message, debug=True)
 
         if "error" in payload:
             print(f"Received error: {payload['error']}", flush=True)
             return
-        else:
-            #No prerequisites, so we can just return
-            if not self.preconditions_queue:
-                print("No preconditions, returning", flush=True)
-                return
-            else:
-                #The first set in the queue is the one that is waiting for feedback first
-                first_waiting_action_preconditions:set = self.preconditions_queue[0]
 
+        if not payload or "action_id" not in payload:
+            print(f"Ignoring message without valid action_id: {payload}")
+            return
 
-                precondition_to_remove = int(payload['action_id'])
+        action_id = int(payload['action_id'])
 
-                #Only an action with the same ID can remove the precondition (only action itself may remove it), also non-existing action cannot be removed
-                if payload['action_id'] == precondition_to_remove and precondition_to_remove in first_waiting_action_preconditions:
+        with self.condition:
+            print(f"[MQTT] Marking action {action_id} as completed.")
+            self.completed_tasks.add(action_id)
+            self.condition.notify_all()  # Notify all threads waiting on preconditions
 
-                    #Remove the action that was just completed from the set
-                    first_waiting_action_preconditions.remove(int(payload['action_id']))
-                    #If the set is empty, all actions have been completed
-                    if not first_waiting_action_preconditions:
-                        #Remove the set from the queue
-                        self.preconditions_queue.popleft()
-                        #print("All preconditions met, notifying the waiting thread", flush=True)
-                        print("Preconditions after removal", flush=True)
-                        print(self.preconditions_queue, flush=True)
-                        #Notify the waiting thread that the preconditions have been met
-                        with self.condition:
-                            self.condition.notify()
 
     def run_action(self, robot:str, action_name:str, args:dict, uuid, prereqs:list = None):
         """
@@ -163,45 +145,27 @@ class Controller():
         """
 
         print(f"Running action {action_name} on robot {robot} with args {args}")
-        payload = {}
 
-        payload['args'] = args
-        payload['action_id'] = uuid
-
+        payload = {
+            'args': args,
+            'action_id': uuid
+        }
         payload_as_string = json.dumps(payload)
 
-        #Each activation record has a set of prerequisites
-        preconditions_for_this_stack = None
-
-        #Only if there are prerequisites, we need to add them to the queue
-        if prereqs:
-            print(f"Adding prerequisites {prereqs} to the queue", flush=True)
-            #Multiple instances of this function may be running at the same time
-            preconditions_for_this_stack = set(prereqs)
-            #Add the preconditions to the queue (by reference)
-            self.preconditions_queue.append(preconditions_for_this_stack)
-
-        print("Preconditions queue is now", flush=True)
-        print(self.preconditions_queue, flush=True)
-
-        #If there are no prerequisites, we can just publish the message right away
-        #instead of waiting the robot to complete previous actions
         if not prereqs:
-            print("No prerequisites, publishing the message right away", flush=True)
-            endpoint = f"{robot}/{action_name}"
-            self.mqtt_client.publish(endpoint, payload_as_string, qos=2)
-        else:
-            print("Waiting for preconditions to be met", flush=True)
-            #With automatically acquires the lock and releases it when the block is exited
-            #(even on error)
-            #print(f"THe payload is: {payload_as_string}", flush=True)
-            with self.condition:
-                #Wait for previous actions to complete (if the precondition set is empty, it means that all actions have been completed)
-                #When feedback is received, the set is modified by removing the completed action and the condition is notified
-                while len(preconditions_for_this_stack) > 0:
-                    print(f"Waiting for {preconditions_for_this_stack}", flush=True)
-                    self.condition.wait()
-                    #Publish the message when the condition is notified
+            print("No prerequisites, publishing immediately")
             self.mqtt_client.publish(f"{robot}/{action_name}", payload_as_string, qos=2)
+            return
+
+        prereqs_set = set(prereqs)
+
+        with self.condition:
+            while not prereqs_set.issubset(self.completed_tasks):
+                missing = prereqs_set - self.completed_tasks
+                print(f"[{uuid}] Waiting for prerequisites: {missing}")
+                self.condition.wait()
+
+        print(f"[{uuid}] Prerequisites met. Publishing action.")
+        self.mqtt_client.publish(f"{robot}/{action_name}", payload_as_string, qos=2)
                     
                 
