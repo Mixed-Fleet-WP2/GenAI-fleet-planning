@@ -87,7 +87,7 @@
         </collision>
         <inertial>
             <mass value="75"/>
-            <origin xyz="0.005 0.15 0.1" rpy="0 0 0"/>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
             <inertia ixx="0.075" ixy="0" ixz="0" iyy="0.075" iyz="0" izz="0.0045"/>
         </inertial>
     </link>
@@ -96,14 +96,14 @@
         <parent link="base_link"/>
         <child link="fork_plate"/>
         <!--Offset the joint position by the track depth amount-->
-        <origin xyz="0.375 0 0" rpy="0 0 0"/>
+        <origin xyz="0.375 0 0.05" rpy="0 0 0"/>
         <axis xyz="0 0 1"/>
         <limit effort="110" lower="0" upper="0.6" velocity="0.5"/>
     </joint>
     
     <link name="fork_1">
         <visual>
-            <origin xyz="0 0.02 0" rpy="0 0 -${pi}"/>
+            <origin xyz="0 0 0" rpy="0 0 -${pi}"/>
             <geometry>
                 <mesh filename="$(find forklift_controller)/models/forklift/meshes/fork.dae" scale="0.0027 0.0027 0.0027"/>
                 <!-- <box size="0.3 0.05 0.01"/> -->
@@ -118,7 +118,7 @@
         </collision>
         <inertial>
             <mass value="50"/>
-            <origin xyz="0.15 0 0" rpy="0 0 0"/>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
             <inertia ixx="0.00010417" ixy="0" ixz="0" iyy="0.06510417" iyz="0" izz="0.06510417"/>
         </inertial>
     </link>
@@ -132,7 +132,7 @@
     <link name="fork_2">
         <visual>
             <!-- For some reason, the another forks origin is a bit different than fork1-->
-            <origin xyz="0 0.01 0" rpy="0 0 -${pi}"/>
+            <origin xyz="0 0 0" rpy="0 0 -${pi}"/>
             <geometry>
               <mesh filename="$(find forklift_controller)/models/forklift/meshes/fork.dae" scale="0.0027 0.0027 0.0027"/>
             </geometry>
@@ -145,7 +145,7 @@
         </collision>
         <inertial>
             <mass value="50"/>
-            <origin xyz="0.15 0 0" rpy="0 0 0"/>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
             <inertia ixx="0.00010417" ixy="0" ixz="0" iyy="0.06510417" iyz="0" izz="0.06510417"/>
         </inertial>
     </link>
@@ -330,7 +330,7 @@
       <joint name="right_wheel_back_joint" type="continuous">
         <parent link="base_link"/>
         <child link="right_wheel_back"/>
-        <origin xyz="-0.2 -0.13 -0.075" rpy="-${pi/2} 0 0" />
+        <origin xyz="-0.2 -0.13 -0.1" rpy="-${pi/2} 0 0" />
         <axis xyz="0 0 1"/>
     </joint>
 
@@ -344,7 +344,7 @@
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
-                <cylinder radius="0.07" length="0.02"/>
+                <cylinder radius="0.065" length="0.02"/>
             </geometry>
         </collision>
         <xacro:inertial_cylinder mass="0.1" length="0.02" radius="0.05">
@@ -356,7 +356,7 @@
       <joint name="left_wheel_back_joint" type="continuous">
         <parent link="base_link"/>
         <child link="left_wheel_back"/>
-        <origin xyz="-0.2 0.13 -0.075" rpy="-${pi/2} 0 0" />
+        <origin xyz="-0.2 0.13 -0.1" rpy="-${pi/2} 0 0" />
         <axis xyz="0 0 1"/>
     </joint>
 
@@ -370,7 +370,7 @@
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
-                <cylinder radius="0.07" length="0.02"/>
+                <cylinder radius="0.065" length="0.02"/>
             </geometry>
         </collision>
         <xacro:inertial_cylinder mass="0.1" length="0.02" radius="0.05">

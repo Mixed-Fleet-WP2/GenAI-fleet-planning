@@ -229,7 +229,7 @@ def generate_launch_description():
                         'use_sim_time': 'True',
                         'params_file': params_file,
                         'autostart': autostart,
-                        'use_rviz': 'False',
+                        'use_rviz': 'True',
                         'use_simulator': 'False', #Set this to false because we only want to launch one simulation instance
                         'headless': 'True', #Set this to True for the same reasons as above
                         'use_robot_state_pub': use_robot_state_pub,

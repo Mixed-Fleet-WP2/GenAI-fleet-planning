@@ -57,11 +57,13 @@
         <topic>$(arg namespace)/joint_states</topic>
       </plugin>
 
+      <!--
       <plugin filename="gz-sim-joint-position-controller-system" name="gz::sim::systems::JointPositionController">
         <joint_name>fork_plate_joint</joint_name>
         <topic>fork_control</topic>
         <initial_position>0.6</initial_position>
       </plugin>
+      -->
 
     </gazebo>  
     
