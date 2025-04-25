@@ -25,8 +25,20 @@
     <xacro:property name="track_length" value="0.3"/>
     <xacro:property name="track_depth" value="0.02"/> <!--This is actually the depth of the track when in up position-->
     <xacro:property name="track_width" value="0.05"/> <!--This is actually the depth of the track when in up position-->
-    <xacro:property name="base_height" value="0.15"/>
+    <xacro:property name="base_height" value="0.52"/>
     <xacro:property name="base_width" value="0.3"/>
+    <xacro:property name="base_length" value="0.68"/>
+
+    <xacro:property name="fork_mass" value="15"/>
+
+    <!--Simple collision calculation, used for inertia-->
+    <!-- 
+      <origin xyz="0.042 0 0.14"/>
+            <geometry>
+              <box size="${base_length} ${base_width} ${base_height}"/>
+            </geometry>
+    
+    -->
     
     <link name="base_footprint">
         <inertial>
@@ -59,23 +71,27 @@
             </geometry>
         </visual>
         <collision>
-            <origin xyz="0 0 0"/>
+            <origin xyz="0.042 0 0.14"/>
             <geometry>
+              <!--
                 <mesh filename="$(find forklift_controller)/models/forklift/meshes/body.dae" 
                   scale="${scaler*0.0027} ${scaler*0.0027} ${scaler*0.0027}"/>
+                -->
+
+              <box size="${base_length} ${base_width} ${base_height}"/>
             </geometry>
         </collision>
-        <xacro:inertial_box mass="500" x="0.3" y="${base_width}" z="${base_height}">
-            <origin xyz="0 0 0" rpy="0 0 0"/>
+        <xacro:inertial_box mass="50" x="${base_length}" y="${base_width}" z="${base_height}">
+            <origin xyz="-0.1 0 0" rpy="0 0 0"/>
         </xacro:inertial_box>
     </link>
 
-  
+    
     <link name="fork_plate">
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
-                <!-- <box size="0.01 0.2 0.2"/> -->
+             
                 <mesh filename="$(find forklift_controller)/models/forklift/meshes/fork_plate.dae" scale="0.0027 0.0027 0.0027"/>
             </geometry>
         </visual>
@@ -85,43 +101,46 @@
                 <box size="0.01 0.3 0.2"/>
             </geometry>
         </collision>
-        <inertial>
-            <mass value="75"/>
+          <xacro:inertial_box mass="50" x="0.01" y="0.3" z="0.2">
             <origin xyz="0 0 0" rpy="0 0 0"/>
-            <inertia ixx="0.075" ixy="0" ixz="0" iyy="0.075" iyz="0" izz="0.0045"/>
-        </inertial>
+        </xacro:inertial_box>
     </link>
+    
     
     <joint name="fork_plate_joint" type="fixed">
         <parent link="base_link"/>
         <child link="fork_plate"/>
-        <!--Offset the joint position by the track depth amount-->
         <origin xyz="0.375 0 0.05" rpy="0 0 0"/>
         <axis xyz="0 0 1"/>
         <limit effort="110" lower="0" upper="0.6" velocity="0.5"/>
     </joint>
     
+
     <link name="fork_1">
-        <visual>
-            <origin xyz="0 0 0" rpy="0 0 -${pi}"/>
-            <geometry>
-                <mesh filename="$(find forklift_controller)/models/forklift/meshes/fork.dae" scale="0.0027 0.0027 0.0027"/>
-                <!-- <box size="0.3 0.05 0.01"/> -->
-            </geometry>
-        </visual>
-        <collision>
-            <origin xyz="0 0 0"  rpy="0 0 -${pi}"/>
-            <geometry>
-                <mesh filename="$(find forklift_controller)/models/forklift/meshes/fork.dae" scale="0.0027 0.0027 0.0027"/>
-                <!-- <box size="0.3 0.05 0.01"/> -->
-            </geometry>
-        </collision>
-        <inertial>
-            <mass value="50"/>
-            <origin xyz="0 0 0" rpy="0 0 0"/>
-            <inertia ixx="0.00010417" ixy="0" ixz="0" iyy="0.06510417" iyz="0" izz="0.06510417"/>
-        </inertial>
-    </link>
+      <visual>
+          <origin xyz="0 0 0" rpy="0 0 -${pi}"/>
+          <geometry>
+              <mesh filename="$(find forklift_controller)/models/forklift/meshes/fork.dae" scale="0.0027 0.0027 0.0027"/>
+          </geometry>
+      </visual>
+      <collision>
+          <origin xyz="0 0 0"  rpy="0 0 -${pi}"/>
+          <geometry>
+              <mesh filename="$(find forklift_controller)/models/forklift/meshes/fork.dae" scale="0.0027 0.0027 0.0027"/>
+          </geometry>
+      </collision>
+      <inertial>
+          <origin xyz="-0.03808040868302371, 0.00482172099079702, -0.016262899934648207"></origin>
+          <mass value="${fork_mass}"/>
+          <inertia
+          ixx="${2.55322 * fork_mass * (0.0027**5)}" 
+          ixy="${2.05649 * fork_mass * (0.0027**5)}" 
+          ixz="${-2.66481 * fork_mass * (0.0027**5)}"
+          iyy="${11.5514 * fork_mass * (0.0027**5)}" 
+          iyz="${1.45586  * fork_mass * (0.0027**5)}"
+          izz="${9.14891 * fork_mass * (0.0027**5)}" />
+      </inertial>
+  </link>
     
     <joint name="fork_1_joint" type="fixed">
         <parent link="fork_plate"/>
@@ -129,9 +148,11 @@
         <origin xyz="-0.02 -0.06 -0.07" rpy="0 0 0"/>
     </joint>
     
+    <!--
+    
     <link name="fork_2">
         <visual>
-            <!-- For some reason, the another forks origin is a bit different than fork1-->
+   
             <origin xyz="0 0 0" rpy="0 0 -${pi}"/>
             <geometry>
               <mesh filename="$(find forklift_controller)/models/forklift/meshes/fork.dae" scale="0.0027 0.0027 0.0027"/>
@@ -144,9 +165,11 @@
             </geometry>
         </collision>
         <inertial>
-            <mass value="50"/>
-            <origin xyz="0 0 0" rpy="0 0 0"/>
-            <inertia ixx="0.00010417" ixy="0" ixz="0" iyy="0.06510417" iyz="0" izz="0.06510417"/>
+            <mass value="${fork_mass}"/>
+            <inertia
+            ixx="${1.27661 * fork_mass}" ixy="${1.028245 * fork_mass}" ixz="${-1.332405 * fork_mass}"
+            iyy="${5.7757 * fork_mass}" iyz="${0.72793 * fork_mass}"
+            izz="${4.574455 * fork_mass}" />
         </inertial>
     </link>
     
@@ -155,6 +178,7 @@
         <child link="fork_2"/>
         <origin xyz="-0.02 0.06 -0.07" rpy="0 0 0"/>
     </joint>
+    -->
  
 
      <!--Offset the joint position by the track depth amount-->
@@ -200,7 +224,7 @@
     <joint name="left_wheel_joint" type="continuous">
         <parent link="base_link"/>
         <child link="left_wheel"/>
-        <origin xyz="0.23 0.13 -0.075" rpy="-${pi/2} 0 0" />
+        <origin xyz="0.23 0.13 -0.1" rpy="-${pi/2} 0 0" />
         <axis xyz="0 0 1"/>
     </joint>
 
@@ -214,10 +238,10 @@
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
-                <cylinder radius="0.07" length="0.02"/>
+                <cylinder radius="0.08" length="0.02"/>
             </geometry>
         </collision>
-        <xacro:inertial_cylinder mass="0.1" length="0.02" radius="0.05">
+        <xacro:inertial_cylinder mass="5" length="0.02" radius="0.08">
             <origin xyz="0 0 0" rpy="0 0 0"/>
         </xacro:inertial_cylinder>
     </link>
@@ -229,7 +253,7 @@
     <joint name="right_wheel_joint" type="continuous">
         <parent link="base_link"/>
         <child link="right_wheel"/>
-        <origin xyz="0.23 -0.13 -0.075" rpy="-${pi/2} 0 0" />
+        <origin xyz="0.23 -0.13 -0.1" rpy="-${pi/2} 0 0" />
         <axis xyz="0 0 1"/>
     </joint>
 
@@ -243,10 +267,10 @@
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
-                <cylinder radius="0.07" length="0.02"/>
+                <cylinder radius="0.08" length="0.02"/>
             </geometry>
         </collision>
-        <xacro:inertial_cylinder mass="0.1" length="0.02" radius="0.05">
+        <xacro:inertial_cylinder mass="5" length="0.02" radius="0.08">
             <origin xyz="0 0 0" rpy="0 0 0"/>
         </xacro:inertial_cylinder>
     </link>
@@ -334,6 +358,9 @@
         <axis xyz="0 0 1"/>
     </joint>
 
+    
+
+
     <link name="right_wheel_back">
         <visual>
             <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
@@ -344,10 +371,10 @@
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
-                <cylinder radius="0.065" length="0.02"/>
+                <cylinder radius="0.08" length="0.02"/>
             </geometry>
         </collision>
-        <xacro:inertial_cylinder mass="0.1" length="0.02" radius="0.05">
+        <xacro:inertial_cylinder mass="5" length="0.02" radius="0.08">
             <origin xyz="0 0 0" rpy="0 0 0"/>
         </xacro:inertial_cylinder>
     </link>
@@ -370,28 +397,119 @@
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
-                <cylinder radius="0.065" length="0.02"/>
+                <cylinder radius="0.08" length="0.02"/>
             </geometry>
         </collision>
-        <xacro:inertial_cylinder mass="0.1" length="0.02" radius="0.05">
+        <xacro:inertial_cylinder mass="5" length="0.02" radius="0.08">
             <origin xyz="0 0 0" rpy="0 0 0"/>
         </xacro:inertial_cylinder>
     </link>
     
     <!--Make the back wheel almost frictionless in order to simulate free wheels-->
     <gazebo reference="left_wheel_back">
-        <mu1>0.1</mu1>
-        <mu2>0.1</mu2>
-        <kp>1000000.0</kp>
-        <kd>1.0</kd>
+      <friction>
+        <ode>
+          <mu>1.01</mu>
+          <mu2>1.01</mu2>
+          <fdir1>0 0 1</fdir1>
+          <slip1>0</slip1>
+          <slip2>0</slip2>
+        </ode>
+      </friction>
+      <bounce>
+        <restitution_coefficient>0.0</restitution_coefficient>
+        <threshold>100000.0</threshold>
+      </bounce>
+      <contact>
+        <ode>
+          <soft_cfm>0.0</soft_cfm>
+          <soft_erp>0.2</soft_erp>
+          <kp>100000.0</kp>
+          <kd>1.0</kd>
+          <max_vel>100.0</max_vel>
+          <min_depth>0.001</min_depth>
+        </ode>
+      </contact>
+      </gazebo>
+
+      <gazebo reference="left_wheel">
+        <friction>
+          <ode>
+            <mu>1.01</mu>
+            <mu2>1.01</mu2>
+            <fdir1>0 0 1</fdir1>
+            <slip1>0</slip1>
+            <slip2>0</slip2>
+          </ode>
+        </friction>
+        <bounce>
+          <restitution_coefficient>0.0</restitution_coefficient>
+          <threshold>100000.0</threshold>
+        </bounce>
+        <contact>
+          <ode>
+            <soft_cfm>0.0</soft_cfm>
+            <soft_erp>0.2</soft_erp>
+            <kp>100000.0</kp>
+            <kd>1.0</kd>
+            <max_vel>100.0</max_vel>
+            <min_depth>0.001</min_depth>
+          </ode>
+        </contact>
+      </gazebo>
+
+      <gazebo reference="right_wheel">
+        <friction>
+          <ode>
+            <mu>1.01</mu>
+            <mu2>1.01</mu2>
+            <fdir1>0 0 1</fdir1>
+            <slip1>0</slip1>
+            <slip2>0</slip2>
+          </ode>
+        </friction>
+        <bounce>
+          <restitution_coefficient>0.0</restitution_coefficient>
+          <threshold>100000.0</threshold>
+        </bounce>
+        <contact>
+          <ode>
+            <soft_cfm>0.0</soft_cfm>
+            <soft_erp>0.2</soft_erp>
+            <kp>100000.0</kp>
+            <kd>1.0</kd>
+            <max_vel>100.0</max_vel>
+            <min_depth>0.001</min_depth>
+          </ode>
+        </contact>
       </gazebo>
 
       <gazebo reference="right_wheel_back">
-        <mu1>0.1</mu1>
-        <mu2>0.1</mu2>
-        <kp>1000000.0</kp>
-        <kd>1.0</kd>
+        <friction>
+          <ode>
+            <mu>1.01</mu>
+            <mu2>1.01</mu2>
+            <fdir1>0 0 1</fdir1>
+            <slip1>0</slip1>
+            <slip2>0</slip2>
+          </ode>
+        </friction>
+        <bounce>
+          <restitution_coefficient>0.0</restitution_coefficient>
+          <threshold>100000.0</threshold>
+        </bounce>
+        <contact>
+          <ode>
+            <soft_cfm>0.0</soft_cfm>
+            <soft_erp>0.2</soft_erp>
+            <kp>100000.0</kp>
+            <kd>1.0</kd>
+            <max_vel>100.0</max_vel>
+            <min_depth>0.001</min_depth>
+          </ode>
+        </contact>
       </gazebo>
+      
 
       <!-- https://osrf-migration.github.io/sdformat-gh-pages/#!/osrf/sdformat/issues/131/page/1-->
     

@@ -101,7 +101,7 @@ def generate_launch_description():
 
     declare_map_yaml_cmd = DeclareLaunchArgument(
         'map',
-        default_value=os.path.join(pkg_root, 'maps', 'depot.yaml'),
+        default_value=os.path.join(pkg_root, 'maps', 'warehouse.yaml'),
     )
 
     declare_use_sim_time_cmd = DeclareLaunchArgument(
@@ -164,7 +164,7 @@ def generate_launch_description():
     declare_world_cmd = DeclareLaunchArgument(
         'world',
         #default_value=os.path.join(pkg_root, 'worlds', 'empty.world'),
-        default_value=os.path.join(sim_dir, 'worlds', 'depot.sdf'),
+        default_value=os.path.join(sim_dir, 'worlds', 'warehouse.sdf'),
         description='Full path to world file to load',
     )
 

@@ -60,7 +60,7 @@ def generate_launch_description():
     pkg_root = get_package_share_directory('forklift_controller')
     bringup_dir = get_package_share_directory('nav2_bringup')
     launch_dir = os.path.join(bringup_dir, 'launch')
-    sim_dir = get_package_share_directory('nav2_minimal_tb3_sim')
+    sim_dir = get_package_share_directory('nav2_minimal_tb4_sim')
     urdf_path = os.path.join(pkg_root, 'urdf', 'robot.urdf.xacro')
 
     # Simulation settings
@@ -83,15 +83,15 @@ def generate_launch_description():
     # Declare the launch arguments
     declare_world_cmd = DeclareLaunchArgument(
         'world',
-        default_value=os.path.join(pkg_root, 'worlds', 'depot.sdf'),
-        #default_value=os.path.join(sim_dir, 'worlds', 'tb3_sandbox.sdf.xacro'),
+        #default_value=os.path.join(pkg_root, 'worlds', 'warehouse.sdf'),
+        default_value=os.path.join(sim_dir, 'worlds', 'warehouse.sdf'),
         description='Full path to world file to load',
     )
 
     declare_map_yaml_cmd = DeclareLaunchArgument(
         'map',
-        default_value=os.path.join(pkg_root, 'maps', 'depot.yaml'),
-        #default_value=os.path.join(bringup_dir, 'maps', 'tb3_sandbox.yaml'),
+        #default_value=os.path.join(pkg_root, 'maps', 'warehouse.yaml'),
+        default_value=os.path.join(bringup_dir, 'maps', 'warehouse.yaml'),
         description='Full path to map file to load',
     )
 
