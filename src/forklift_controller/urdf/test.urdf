@@ -9,24 +9,7 @@
   <material name="white">
     <color rgba="1 1 1 1"/>
   </material>
-  <material name="orange">
-    <color rgba="1 0.3 0.1 1"/>
-  </material>
-  <material name="blue">
-    <color rgba="0.2 0.2 1 1"/>
-  </material>
-  <material name="black">
-    <color rgba="0 0 0 1"/>
-  </material>
   <!-- BASE LINK -->
-  <!--Simple collision calculation, used for inertia-->
-  <!-- 
-      <origin xyz="0.042 0 0.14"/>
-            <geometry>
-              <box size="${base_length} ${base_width} ${base_height}"/>
-            </geometry>
-    
-    -->
   <link name="base_footprint">
     <inertial>
       <mass value="0.0001"/>
@@ -49,29 +32,29 @@
     <visual>
       <origin xyz="0 0 0"/>
       <geometry>
+        <!--
+                <mesh filename="package://forklift_controller/models/forklift/meshes/body.dae" scale="0.0027 0.0027 0.0027"/>
+                 -->
         <mesh filename="/home/elmeripk/forklift_sim/install/forklift_controller/share/forklift_controller/models/forklift/meshes/body.dae" scale="0.0027 0.0027 0.0027"/>
       </geometry>
     </visual>
     <collision>
-      <origin xyz="0.042 0 0.14"/>
       <geometry>
-        <!--
-                <mesh filename="$(find forklift_controller)/models/forklift/meshes/body.dae" 
-                  scale="${scaler*0.0027} ${scaler*0.0027} ${scaler*0.0027}"/>
-                -->
-        <box size="0.68 0.3 0.52"/>
+        <mesh filename="/home/elmeripk/forklift_sim/install/forklift_controller/share/forklift_controller/models/forklift/meshes/body.dae" scale="0.0027 0.0027 0.0027"/>
+        <!-- <mesh filename="package://forklift_controller/models/forklift/meshes/body.dae" scale="0.0027 0.0027 0.0027"/> -->
       </geometry>
     </collision>
     <inertial>
       <origin rpy="0 0 0" xyz="-0.1 0 0"/>
       <mass value="50"/>
-      <inertia ixx="1.5016666666666667" ixy="0.0" ixz="0.0" iyy="3.0533333333333332" iyz="0.0" izz="2.3016666666666667"/>
+      <inertia ixx="1.5016666666666667" ixy="0.0" ixz="0.0" iyy="2.9416666666666664" iyz="0.0" izz="2.19"/>
     </inertial>
   </link>
   <link name="fork_plate">
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
+        <!-- <mesh filename="package://forklift_controller/models/forklift/meshes/fork_plate.dae" scale="0.0027 0.0027 0.0027"/> -->
         <mesh filename="/home/elmeripk/forklift_sim/install/forklift_controller/share/forklift_controller/models/forklift/meshes/fork_plate.dae" scale="0.0027 0.0027 0.0027"/>
       </geometry>
     </visual>
@@ -87,85 +70,161 @@
       <inertia ixx="0.5416666666666666" ixy="0.0" ixz="0.0" iyy="0.16708333333333336" iyz="0.0" izz="0.3754166666666666"/>
     </inertial>
   </link>
-  <joint name="fork_plate_joint" type="fixed">
+  <joint name="fork_plate_joint" type="prismatic">
     <parent link="base_link"/>
     <child link="fork_plate"/>
-    <origin rpy="0 0 0" xyz="0.375 0 0.05"/>
+    <origin rpy="0 0 0" xyz="0.375 0 -0.02"/>
     <axis xyz="0 0 1"/>
     <limit effort="110" lower="0" upper="0.6" velocity="0.5"/>
   </joint>
+  <!-- Specify some standard inertial calculations https://en.wikipedia.org/wiki/List_of_moments_of_inertia -->
+  <!-- These make use of xacro's mathematical functionality -->
+  <!--
+    Dimensions are defined when viewing link from the front:
+      height is up
+      length is forward (towards you)
+      width is sideways (left/right)
+    -->
+  <material name="darkgray">
+    <color rgba="0.01 0.01 0.01 1"/>
+  </material>
+  <link name="fork_1_attach">
+    <visual>
+      <origin rpy="0 -1.5707963267948966 0" xyz="0 0 -0.04"/>
+      <geometry>
+        <box size="0.15 0.025 0.01"/>
+      </geometry>
+      <material name="darkgray"/>
+    </visual>
+    <collision>
+      <origin rpy="0 -1.5707963267948966 0" xyz="0 0 -0.04"/>
+      <geometry>
+        <box size="0.15 0.025 0.01"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="7.5"/>
+      <inertia ixx="0.0004531250000000001" ixy="0.0" ixz="0.0" iyy="0.014124999999999999" iyz="0.0" izz="0.014453125"/>
+    </inertial>
+  </link>
   <link name="fork_1">
     <visual>
-      <origin rpy="0 0 -3.141592653589793" xyz="0 0 0"/>
+      <origin rpy="0 0 0" xyz="0.1 0 0"/>
       <geometry>
-        <mesh filename="/home/elmeripk/forklift_sim/install/forklift_controller/share/forklift_controller/models/forklift/meshes/fork_correct_scale.dae" scale="0.0027 0.0027 0.0027"/>
+        <box size="0.2 0.025 0.005"/>
       </geometry>
+      <material name="darkgray"/>
     </visual>
-    <!--
-      <collision>
-          <origin xyz="0 0 0"  rpy="0 0 -${pi}"/>
-          <geometry>
-              <mesh filename="$(find forklift_controller)/models/forklift/meshes/fork.dae" scale="0.0027 0.0027 0.0027"/>
-          </geometry>
-      </collision>
-      -->
-    <!--
-      <inertial>
-          <origin xyz="-0.03808040868302371 0.00482172099079702 -0.016262899934648207"></origin>
-          <mass value="${fork_mass}"/>
-          <inertia
-          ixx="${2.55322 * fork_mass * (0.0027**5)}" 
-          ixy="${2.05649 * fork_mass * (0.0027**5)}" 
-          ixz="${-2.66481 * fork_mass * (0.0027**5)}"
-          iyy="${11.5514 * fork_mass * (0.0027**5)}" 
-          iyz="${1.45586  * fork_mass * (0.0027**5)}"
-          izz="${9.14891 * fork_mass * (0.0027**5)}" />
-      </inertial>
-      -->
-  </link>
-  <gazebo reference="fork_1">
-    <inertial auto="true"/>
     <collision>
-      <cylinder length="2" radius="1"/>
-      <density>1</density>
+      <origin rpy="0 0 0" xyz="0.1 0 0"/>
+      <!-- <origin xyz="0 0 0"  rpy="0 0 -${pi}"/> -->
+      <geometry>
+        <box size="0.2 0.025 0.005"/>
+      </geometry>
+      <!--
+            <geometry>
+                <mesh filename="$(find forklift_controller)/models/forklift/meshes/fork.dae" scale="0.0027 0.0027 0.0027"/>
+            </geometry>
+            -->
     </collision>
-  </gazebo>
-  <joint name="fork_1_joint" type="fixed">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="7.5"/>
+      <inertia ixx="0.00040625000000000004" ixy="0.0" ixz="0.0" iyy="0.025015625000000003" iyz="0.0" izz="0.025390625000000007"/>
+    </inertial>
+  </link>
+  <joint name="fork_attach_1_joint" type="fixed">
     <parent link="fork_plate"/>
-    <child link="fork_1"/>
-    <origin rpy="0 0 0" xyz="-0.02 -0.06 -0.07"/>
+    <child link="fork_1_attach"/>
+    <origin rpy="0 0 0" xyz="0.01 -0.05 -0.03"/>
   </joint>
+  <joint name="fork_1_joint" type="fixed">
+    <parent link="fork_1_attach"/>
+    <child link="fork_1"/>
+    <origin rpy="0 0 0" xyz="0.005 0 -0.11249999999999999"/>
+  </joint>
+  <!-- https://osrf-migration.github.io/sdformat-gh-pages/#!/osrf/sdformat/issues/131/page/1-->
+  <gazebo reference="fork_{id}_joint">
+    <disableFixedJointLumping>true</disableFixedJointLumping>
+  </gazebo>
+  <gazebo reference="fork_attach_1_joint">
+    <disableFixedJointLumping>true</disableFixedJointLumping>
+  </gazebo>
+  <!-- Specify some standard inertial calculations https://en.wikipedia.org/wiki/List_of_moments_of_inertia -->
+  <!-- These make use of xacro's mathematical functionality -->
   <!--
-    
-    <link name="fork_2">
-        <visual>
-   
-            <origin xyz="0 0 0" rpy="0 0 -${pi}"/>
-            <geometry>
-              <mesh filename="$(find forklift_controller)/models/forklift/meshes/fork.dae" scale="0.0027 0.0027 0.0027"/>
-            </geometry>
-        </visual>
-        <collision>
-            <origin xyz="0 0 0" rpy="0 0 -${pi}"/>
-            <geometry>
-              <mesh filename="$(find forklift_controller)/models/forklift/meshes/fork.dae" scale="0.0027 0.0027 0.0027"/>
-            </geometry>
-        </collision>
-        <inertial>
-            <mass value="${fork_mass}"/>
-            <inertia
-            ixx="${1.27661 * fork_mass}" ixy="${1.028245 * fork_mass}" ixz="${-1.332405 * fork_mass}"
-            iyy="${5.7757 * fork_mass}" iyz="${0.72793 * fork_mass}"
-            izz="${4.574455 * fork_mass}" />
-        </inertial>
-    </link>
-    
-    <joint name="fork_2_joint" type="fixed">
-        <parent link="fork_plate"/>
-        <child link="fork_2"/>
-        <origin xyz="-0.02 0.06 -0.07" rpy="0 0 0"/>
-    </joint>
+    Dimensions are defined when viewing link from the front:
+      height is up
+      length is forward (towards you)
+      width is sideways (left/right)
     -->
+  <material name="darkgray">
+    <color rgba="0.01 0.01 0.01 1"/>
+  </material>
+  <link name="fork_2_attach">
+    <visual>
+      <origin rpy="0 -1.5707963267948966 0" xyz="0 0 -0.04"/>
+      <geometry>
+        <box size="0.15 0.025 0.01"/>
+      </geometry>
+      <material name="darkgray"/>
+    </visual>
+    <collision>
+      <origin rpy="0 -1.5707963267948966 0" xyz="0 0 -0.04"/>
+      <geometry>
+        <box size="0.15 0.025 0.01"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="7.5"/>
+      <inertia ixx="0.0004531250000000001" ixy="0.0" ixz="0.0" iyy="0.014124999999999999" iyz="0.0" izz="0.014453125"/>
+    </inertial>
+  </link>
+  <link name="fork_2">
+    <visual>
+      <origin rpy="0 0 0" xyz="0.1 0 0"/>
+      <geometry>
+        <box size="0.2 0.025 0.005"/>
+      </geometry>
+      <material name="darkgray"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0.1 0 0"/>
+      <!-- <origin xyz="0 0 0"  rpy="0 0 -${pi}"/> -->
+      <geometry>
+        <box size="0.2 0.025 0.005"/>
+      </geometry>
+      <!--
+            <geometry>
+                <mesh filename="$(find forklift_controller)/models/forklift/meshes/fork.dae" scale="0.0027 0.0027 0.0027"/>
+            </geometry>
+            -->
+    </collision>
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="7.5"/>
+      <inertia ixx="0.00040625000000000004" ixy="0.0" ixz="0.0" iyy="0.025015625000000003" iyz="0.0" izz="0.025390625000000007"/>
+    </inertial>
+  </link>
+  <joint name="fork_attach_2_joint" type="fixed">
+    <parent link="fork_plate"/>
+    <child link="fork_2_attach"/>
+    <origin rpy="0 0 0" xyz="0.01 0.05 -0.03"/>
+  </joint>
+  <joint name="fork_2_joint" type="fixed">
+    <parent link="fork_2_attach"/>
+    <child link="fork_2"/>
+    <origin rpy="0 0 0" xyz="0.005 0 -0.11249999999999999"/>
+  </joint>
+  <!-- https://osrf-migration.github.io/sdformat-gh-pages/#!/osrf/sdformat/issues/131/page/1-->
+  <gazebo reference="fork_{id}_joint">
+    <disableFixedJointLumping>true</disableFixedJointLumping>
+  </gazebo>
+  <gazebo reference="fork_attach_2_joint">
+    <disableFixedJointLumping>true</disableFixedJointLumping>
+  </gazebo>
   <!--Offset the joint position by the track depth amount-->
   <!--
     <joint name="caster" type="fixed">
@@ -206,13 +265,14 @@
   <joint name="left_wheel_joint" type="continuous">
     <parent link="base_link"/>
     <child link="left_wheel"/>
-    <origin rpy="-1.5707963267948966 0 0" xyz="0.23 0.13 -0.1"/>
+    <origin rpy="-1.5707963267948966 0 0" xyz="0.25 0.13 -0.1"/>
     <axis xyz="0 0 1"/>
   </joint>
   <link name="left_wheel">
     <visual>
       <origin rpy="-1.5707963267948966 0 0" xyz="0 0 0"/>
       <geometry>
+        <!-- <mesh filename="package://forklift_controller/models/forklift/meshes/front_wheel_right.dae" scale="0.0025 0.0025 0.0025"/> -->
         <mesh filename="/home/elmeripk/forklift_sim/install/forklift_controller/share/forklift_controller/models/forklift/meshes/front_wheel_right.dae" scale="0.002 0.002 0.002"/>
       </geometry>
     </visual>
@@ -232,13 +292,16 @@
   <joint name="right_wheel_joint" type="continuous">
     <parent link="base_link"/>
     <child link="right_wheel"/>
-    <origin rpy="-1.5707963267948966 0 0" xyz="0.23 -0.13 -0.1"/>
+    <origin rpy="-1.5707963267948966 0 0" xyz="0.25 -0.13 -0.1"/>
     <axis xyz="0 0 1"/>
   </joint>
   <link name="right_wheel">
     <visual>
       <origin rpy="1.5707963267948966 0 0" xyz="0 0 0"/>
       <geometry>
+        <!--
+              <mesh filename="package://forklift_controller/models/forklift/meshes/front_wheel_right.dae" scale="0.0025 0.0025 0.0025"/>
+               -->
         <mesh filename="/home/elmeripk/forklift_sim/install/forklift_controller/share/forklift_controller/models/forklift/meshes/front_wheel_right.dae" scale="0.002 0.002 0.002"/>
       </geometry>
     </visual>
@@ -260,7 +323,7 @@
       <time>0.001</time>
       <enabled>true</enabled>
       <!--$(arg namespace)-->
-      <namespace></namespace>
+      <!-- <namespace>$(arg namespace)</namespace> -->
     </plugin>
   </gazebo>
   <gazebo reference="fork_plate">
@@ -300,7 +363,7 @@
       <visualize>true</visualize>
       <always_on>true</always_on>
       <gz_frame_id>rplidar_link</gz_frame_id>
-      <topic>/scan</topic>
+      <!-- <topic>$(arg namespace)/scan</topic> -->
       <lidar>
         <scan>
           <horizontal>
@@ -332,6 +395,9 @@
     <visual>
       <origin rpy="1.5707963267948966 0 0" xyz="0 0 0"/>
       <geometry>
+        <!--
+                <mesh filename="package://forklift_controller/models/forklift/meshes/front_wheel_right.dae" scale="0.0025 0.0025 0.0025"/>
+                -->
         <mesh filename="/home/elmeripk/forklift_sim/install/forklift_controller/share/forklift_controller/models/forklift/meshes/front_wheel_right.dae" scale="0.002 0.002 0.002"/>
       </geometry>
     </visual>
@@ -357,6 +423,9 @@
     <visual>
       <origin rpy="-1.5707963267948966 0 0" xyz="0 0 0"/>
       <geometry>
+        <!--
+                <mesh filename="package://forklift_controller/models/forklift/meshes/front_wheel_right.dae" scale="0.0025 0.0025 0.0025"/>
+                  -->
         <mesh filename="/home/elmeripk/forklift_sim/install/forklift_controller/share/forklift_controller/models/forklift/meshes/front_wheel_right.dae" scale="0.002 0.002 0.002"/>
       </geometry>
     </visual>
@@ -472,13 +541,6 @@
         <min_depth>0.001</min_depth>
       </ode>
     </contact>
-  </gazebo>
-  <!-- https://osrf-migration.github.io/sdformat-gh-pages/#!/osrf/sdformat/issues/131/page/1-->
-  <gazebo reference="fork_1_joint">
-    <disableFixedJointLumping>true</disableFixedJointLumping>
-  </gazebo>
-  <gazebo reference="fork_2_joint">
-    <disableFixedJointLumping>true</disableFixedJointLumping>
   </gazebo>
   <gazebo reference="fork_plate_joint">
     <disableFixedJointLumping>true</disableFixedJointLumping>

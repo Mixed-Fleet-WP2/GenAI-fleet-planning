@@ -211,7 +211,9 @@ def generate_launch_description():
                 FindExecutable(name='xacro'), ' ', 'namespace:=',
                 LaunchConfiguration('namespace'), ' ', robot_sdf]),
             '-x', pose['x'], '-y', pose['y'], '-z', pose['z'],
-            '-R', pose['R'], '-P', pose['P'], '-Y', pose['Y']]
+            '-R', pose['R'], '-P', pose['P'], '-Y', pose['Y'],
+            '--ros-args', '--log-level', 'fatal'
+            ]
     )
 
     ld.add_action(OpaqueFunction(function=add_namespace, args=[namespace, mqtt_config, mqtt_config_temp_file]))

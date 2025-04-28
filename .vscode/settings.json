@@ -1,13 +1,17 @@
 {
     "ros.distro": "jazzy",
     "python.autoComplete.extraPaths": [
-        "/home/elmeripk/forklift_sim/install/forklift_controller/lib/python3.12/site-packages",
-        "/home/elmeripk/forklift_sim/install/movement_interface/lib/python3.12/site-packages",
+        "/home/elmeripk/robots/install/test_bot_controller/lib/python3.12/site-packages",
+        "/home/elmeripk/robots/src/install/test_bot_controller/lib/python3.12/site-packages",
         "/opt/ros/jazzy/lib/python3.12/site-packages"
     ],
     "python.analysis.extraPaths": [
-        "/home/elmeripk/forklift_sim/install/forklift_controller/lib/python3.12/site-packages",
-        "/home/elmeripk/forklift_sim/install/movement_interface/lib/python3.12/site-packages",
+        "/home/elmeripk/robots/install/test_bot_controller/lib/python3.12/site-packages",
+        "/home/elmeripk/robots/src/install/test_bot_controller/lib/python3.12/site-packages",
         "/opt/ros/jazzy/lib/python3.12/site-packages"
-    ]
+    ],
+
+    "urdf-visualizer.packages": {
+        "forklift_controller": "${workspaceFolder}/install/forklift_controller/share/forklift_controller"
+    },
 }

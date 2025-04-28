@@ -40,6 +40,7 @@ from launch.substitutions import LaunchConfiguration, PythonExpression
 
 
 from launch_ros.actions import Node
+from launch_ros.parameter_descriptions import ParameterValue
 
 
 
@@ -195,7 +196,8 @@ def generate_launch_description():
         namespace=namespace,
         output='screen',
         parameters=[
-            {'use_sim_time': use_sim_time, 'robot_description': parsed_urdf}
+            {'use_sim_time': use_sim_time, 'robot_description': ParameterValue(
+                parsed_urdf, value_type=str)}, #This was required because the colon in urdf was not being parsed correctly as this was considreded yaml
         ],
         remappings=remappings,
     )

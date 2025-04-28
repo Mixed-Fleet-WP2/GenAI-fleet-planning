@@ -191,6 +191,13 @@ def generate_launch_description():
         'forklift_1': {'x': 0.0, 'y': 0.0, 'z': 0.2},
         'forklift_2': {'x': -3.0, 'y': -1.6, 'z': 0.2}
         }
+    
+    logs:Node = Node(
+         package='demo_nodes_cpp',
+         executable='talker',
+         output='screen', 
+         arguments=['--ros-args', '--log-level', 'debug']
+    )
 
     
     # Define commands for launching the navigation instances
@@ -259,6 +266,7 @@ def generate_launch_description():
     
     
     # Create the launch description and populate
+    #ld.add_action(logs)
     ld.add_action(set_env_vars_resources)
     ld.add_action(set_env_vars_resources2)
     ld.add_action(LogInfo(msg=['GZ_SIM_RESOURCE_PATH=', os.path.join(pkg_root, 'models')]))
