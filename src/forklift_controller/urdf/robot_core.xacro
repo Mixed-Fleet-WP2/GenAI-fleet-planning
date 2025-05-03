@@ -1,457 +1,309 @@
 <?xml version="1.0"?>
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro" >
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-    <xacro:include filename="inertial_macros.xacro"/>
-    <xacro:include filename="fork.xacro"/>
+  <xacro:include filename="inertial_macros.xacro" />
+  <xacro:include filename="fork.xacro" />
 
-    <material name="white">
-        <color rgba="1 1 1 1" />
-    </material>
+  <material name="white">
+    <color rgba="1 1 1 1" />
+  </material>
 
-    <!-- BASE LINK -->
+  <!-- BASE LINK -->
 
-    <xacro:property name="scaler" value="1.0"/>
-    <xacro:property name="track_length" value="0.3"/>
-    <xacro:property name="track_depth" value="0.02"/> <!--This is actually the depth of the track when in up position-->
-    <xacro:property name="track_width" value="0.05"/> <!--This is actually the depth of the track when in up position-->
-    <xacro:property name="base_height" value="0.52"/>
-    <xacro:property name="base_width" value="0.3"/>
-    <xacro:property name="base_length" value="0.66"/>
+  <xacro:property name="scaler" value="1.0" />
+  <xacro:property name="track_length" value="0.3" />
+  <xacro:property name="track_depth" value="0.02" /> <!--This
+  is actually the depth of the track when in up position-->
+  <xacro:property name="track_width" value="0.05" /> <!--This
+  is actually the depth of the track when in up position-->
+  <xacro:property name="base_height" value="0.52" />
+  <xacro:property name="base_width" value="0.3" />
+  <xacro:property name="base_length" value="0.66" />
 
-    <material name="darkgray">
-      <color rgba="0.01 0.01 0.01 1"/>
-    </material>
+  <material name="darkgray">
+    <color rgba="0.01 0.01 0.01 1" />
+  </material>
 
-    <xacro:property name="fork_mass" value="15"/>
+  <xacro:property name="fork_mass" value="15" />
 
-    <link name="base_footprint">
-        <inertial>
-            <mass value="0.0001"/>
-            <origin xyz="0 0 0"/>
-            <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001"/>
-          </inertial>
-          <visual>
-            <origin rpy="0 0 0" xyz="0 0 0"/>
-            <geometry>
-              <box size="${scaler*0.001} ${scaler*0.001} ${scaler*0.001}"/>
-            </geometry>
-          </visual>
-    </link>
+  <link name="base_footprint">
+    <inertial>
+      <mass value="0.0001" />
+      <origin xyz="0 0 0" />
+      <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <geometry>
+        <box size="${scaler*0.001} ${scaler*0.001} ${scaler*0.001}" />
+      </geometry>
+    </visual>
+  </link>
 
 
-    <joint name="base_link_joint" type="fixed">
-        <parent link="base_link"/>
-        <child link="base_footprint"/>
-        <origin xyz="${scaler*0} ${scaler*0} ${scaler*-0.15}" rpy="0 0 0"/>
-        
-    </joint>
+  <joint name="base_link_joint" type="fixed">
+    <parent link="base_link" />
+    <child link="base_footprint" />
+    <origin xyz="${scaler*0} ${scaler*0} ${scaler*-0.15}" rpy="0 0 0" />
 
- 
-    <link name="base_link">
-        <visual>
-            <origin xyz="0 0 0"/>
-            <geometry>
-              
-                <mesh filename="package://forklift_controller/models/forklift/meshes/body.dae" scale="0.0027 0.0027 0.0027"/>
-                 <!--
-                <mesh filename="$(find forklift_controller)/models/forklift/meshes/body.dae" scale="0.0027 0.0027 0.0027"/>
-               -->
-            </geometry>
-        </visual>
-        <collision>
-            
-            <geometry>
-              
-                <mesh filename="$(find forklift_controller)/models/forklift/meshes/body.dae" 
-                  scale="${scaler*0.0027} ${scaler*0.0027} ${scaler*0.0027}"/>
-            
+  </joint>
 
-                <!-- <mesh filename="package://forklift_controller/models/forklift/meshes/body.dae" scale="0.0027 0.0027 0.0027"/> -->
-            </geometry>
-        </collision>
-        <xacro:inertial_box mass="50" x="${base_length}" y="${base_width}" z="${base_height}">
-            <origin xyz="-0.1 0 0" rpy="0 0 0"/>
-        </xacro:inertial_box>
-    </link>
 
-    
-    <link name="fork_plate">
-        <visual>
-            <origin xyz="0 0 0" rpy="0 0 0"/>
-            <geometry>
-               <mesh filename="package://forklift_controller/models/forklift/meshes/fork_plate.dae" scale="0.0027 0.0027 0.0027"/> 
-               <!--<mesh filename="$(find forklift_controller)/models/forklift/meshes/fork_plate.dae" scale="0.0027 0.0027 0.0027"/> -->
-            </geometry>
-        </visual>
-        <collision>
-            <origin xyz="0 0 0" rpy="0 0 0"/>
-            <geometry>
-                <box size="0.01 0.3 0.2"/>
-            </geometry>
-        </collision>
-          <xacro:inertial_box mass="50" x="0.01" y="0.3" z="0.2">
-            <origin xyz="0 0 0" rpy="0 0 0"/>
-        </xacro:inertial_box>
-    </link>
-    
-    <joint name="fork_plate_joint" type="prismatic">
-        <parent link="base_link"/>
-        <child link="fork_plate"/>
-        <origin xyz="0.375 0 -0.02" rpy="0 0 0"/>
-        <axis xyz="0 0 1"/>
-        <limit effort="110" lower="0" upper="0.6" velocity="0.5"/>
-    </joint>
+  <link name="base_link">
+    <visual>
+      <origin xyz="0 0 0" />
+      <geometry>
 
-    <xacro:fork id="1" mass="15" scale="1" fork_attach_offsets="0.01 -0.05 -0.03">
-      
-    </xacro:fork>
-    <xacro:fork id="2" mass="15" scale="1" fork_attach_offsets="0.01 0.05 -0.03"></xacro:fork>
-     <!--Offset the joint position by the track depth amount-->
-    
+        <mesh filename="package://forklift_controller/models/forklift/meshes/body.dae"
+          scale="0.0027 0.0027 0.0027" />
+
+      </geometry>
+    </visual>
+    <collision>
+
+      <geometry>
+
+        <mesh filename="package://forklift_controller/models/forklift/meshes/body.dae"
+          scale="${scaler*0.0027} ${scaler*0.0027} ${scaler*0.0027}" />
+      </geometry>
+    </collision>
+    <xacro:inertial_box mass="50" x="${base_length}" y="${base_width}" z="${base_height}">
+      <origin xyz="-0.1 0 0" rpy="0 0 0" />
+    </xacro:inertial_box>
+  </link>
+
+
+  <link name="fork_plate">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://forklift_controller/models/forklift/meshes/fork_plate.dae"
+          scale="0.0027 0.0027 0.0027" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.01 0.3 0.2" />
+      </geometry>
+    </collision>
+    <xacro:inertial_box mass="50" x="0.01" y="0.3" z="0.2">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+    </xacro:inertial_box>
+  </link>
+
+  <joint name="fork_plate_joint" type="prismatic">
+    <parent link="base_link" />
+    <child link="fork_plate" />
+    <origin xyz="0.375 0 -0.02" rpy="0 0 0" />
+    <axis xyz="0 0 1" />
+    <limit effort="110" lower="0" upper="0.6" velocity="0.5" />
+  </joint>
+
+  <xacro:fork id="1" mass="15" scale="1" fork_attach_offsets="0.01 -0.05 -0.03">
+
+  </xacro:fork>
+  <xacro:fork id="2" mass="15" scale="1" fork_attach_offsets="0.01 0.05 -0.03"></xacro:fork>
+
+
+  <!-- LEFT WHEEL LINK -->
+
+  <joint name="left_wheel_joint" type="continuous">
+    <parent link="base_link" />
+    <child link="left_wheel" />
+    <origin xyz="0.25 0.13 -0.1" rpy="-${pi/2} 0 0" />
+    <axis xyz="0 0 1" />
+  </joint>
+
+  <link name="left_wheel">
+    <visual>
+      <origin xyz="0 0 0" rpy="-${pi/2} 0 0" />
+      <geometry>
+        <!--The
+        package resolves into install/forklift_controller/share/forklift_controller/-->
+        <mesh filename="package://forklift_controller/models/forklift/meshes/front_wheel_right.dae"
+          scale="0.0025 0.0025 0.0025" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <cylinder radius="0.08" length="0.02" />
+      </geometry>
+    </collision>
+    <xacro:inertial_cylinder mass="5" length="0.02" radius="0.08">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+    </xacro:inertial_cylinder>
+  </link>
+
+
+  <!-- RIGHT WHEEL LINK -->
+
+  <joint name="right_wheel_joint" type="continuous">
+    <parent link="base_link" />
+    <child link="right_wheel" />
+    <origin xyz="0.25 -0.13 -0.1" rpy="-${pi/2} 0 0" />
+    <axis xyz="0 0 1" />
+  </joint>
+
+  <link name="right_wheel">
+    <visual>
+      <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+      <geometry>
+        <!-- package://forklift_controller resolves to
+        install/forklift_controller/share/forklift_controller-->
+        <mesh filename="package://forklift_controller/models/forklift/meshes/front_wheel_right.dae"
+          scale="0.0025 0.0025 0.0025" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <cylinder radius="0.08" length="0.02" />
+      </geometry>
+    </collision>
+    <xacro:inertial_cylinder mass="5" length="0.02" radius="0.08">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+    </xacro:inertial_cylinder>
+  </link>
+
+  <gazebo>
     <!--
-    <joint name="caster" type="fixed">
-        <parent link="base_link"/>
-        <child link="caster_link"/>
-        <origin rpy="0 0 0" xyz="-0.15 0 -0.10"/>
-      </joint>
-      
-      <link name="caster_link">
-        <visual>
-          <origin rpy="0 0 0" xyz="0 0 0"/>
-          <geometry>
-            <sphere radius="0.05"/>
-          </geometry>
-        </visual>
-        <collision>
-          <origin rpy="0 0 0" xyz="0 0 0"/>
-          <geometry>
-            <sphere radius="0.05"/>
-          </geometry>
-        </collision>
-        <inertial>
-          <mass value="0.1"/>
-          <origin rpy="0 0 0" xyz="0 0 0"/>
-          <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/>
-        </inertial>
-      </link>
-
-      <gazebo reference="caster_link">
-        <material>Gazebo/DarkGrey</material>
-        <mu1>0.1</mu1>
-        <mu2>0.1</mu2>
-        <kp>1000000.0</kp>
-        <kd>1.0</kd>
-      </gazebo>
-    -->
-   
-    <!-- LEFT WHEEL LINK -->
-
-    <joint name="left_wheel_joint" type="continuous">
-        <parent link="base_link"/>
-        <child link="left_wheel"/>
-        <origin xyz="0.25 0.13 -0.1" rpy="-${pi/2} 0 0" />
-        <axis xyz="0 0 1"/>
-    </joint>
-
-    <link name="left_wheel">
-        <visual>
-            <origin xyz="0 0 0" rpy="-${pi/2} 0 0"/>
-            <geometry>
-               <mesh filename="package://forklift_controller/models/forklift/meshes/front_wheel_right.dae" scale="0.0025 0.0025 0.0025"/> 
-               <!-- <mesh filename="$(find forklift_controller)/models/forklift/meshes/front_wheel_right.dae" scale="0.002 0.002 0.002"/> -->
-            </geometry>
-        </visual>
-        <collision>
-            <origin xyz="0 0 0" rpy="0 0 0"/>
-            <geometry>
-                <cylinder radius="0.08" length="0.02"/>
-            </geometry>
-        </collision>
-        <xacro:inertial_cylinder mass="5" length="0.02" radius="0.08">
-            <origin xyz="0 0 0" rpy="0 0 0"/>
-        </xacro:inertial_cylinder>
-    </link>
-
+    <plugin filename="gz-sim-touchplugin-system"
+      name="gz::sim::systems::TouchPlugin">
+      <target>cube</target>
+      <time>0.001</time>
+      <enabled>true</enabled>
+     <namespace>$(arg namespace)</namespace> 
+    </plugin>
+  -->
+  </gazebo>
   
 
-    <!-- RIGHT WHEEL LINK -->
 
-    <joint name="right_wheel_joint" type="continuous">
-        <parent link="base_link"/>
-        <child link="right_wheel"/>
-        <origin xyz="0.25 -0.13 -0.1" rpy="-${pi/2} 0 0" />
-        <axis xyz="0 0 1"/>
-    </joint>
+  <gazebo reference="fork_plate">
+    <sensor name='sensor_contact' type='contact'>
+      <contact>
+        <collision>fork_plate_fixed_joint_lump__fork_1_collision_1</collision>
+      </contact>
+    </sensor>
+  </gazebo>
 
-    <link name="right_wheel">
-        <visual>
-            <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
-            <geometry>
-              
-              <!-- package://forklift_controller resolves to install/forklift_controller/share/forklift_controller-->
-              <mesh filename="package://forklift_controller/models/forklift/meshes/front_wheel_right.dae" scale="0.0025 0.0025 0.0025"/>
-              
-              <!--<mesh filename="$(find forklift_controller)/models/forklift/meshes/front_wheel_right.dae" scale="0.002 0.002 0.002"/>  -->
-             
-            </geometry>
-        </visual>
-        <collision>
-            <origin xyz="0 0 0" rpy="0 0 0"/>
-            <geometry>
-                <cylinder radius="0.08" length="0.02"/>
-            </geometry>
-        </collision>
-        <xacro:inertial_cylinder mass="5" length="0.02" radius="0.08">
-            <origin xyz="0 0 0" rpy="0 0 0"/>
-        </xacro:inertial_cylinder>
-    </link>
-    
-    <gazebo>
-    
-    <plugin filename="gz-sim-touchplugin-system"
-                    name="gz::sim::systems::TouchPlugin">
-                <target>cube</target>
-                <time>0.001</time>
-                <enabled>true</enabled>
-                <!--$(arg namespace)-->
-                <!-- <namespace>$(arg namespace)</namespace> -->
-            </plugin>
-    </gazebo>
-    
+  <link name="rplidar_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <cylinder radius="0.03" length="0.03"></cylinder>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <cylinder radius="0.03" length="0.03"></cylinder>
+      </geometry>
+    </collision>
+    <xacro:inertial_cylinder mass="0.1" length="0.03" radius="0.03">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+    </xacro:inertial_cylinder>
+  </link>
 
-    <gazebo reference="fork_plate">
-            <sensor name='sensor_contact' type='contact'>
-                    <contact>
-                        <collision>fork_plate_fixed_joint_lump__fork_1_collision_1</collision>
-                    </contact>
-            </sensor>
-    </gazebo>
-
-    <link name="rplidar_link">
-        <visual>
-            <origin xyz="0 0 0" rpy="0 0 0"/>
-            <geometry>
-              <cylinder radius="0.03" length="0.03"></cylinder>
-            </geometry>
-        </visual>
-        <collision>
-            <origin xyz="0 0 0" rpy="0 0 0"/>
-            <geometry>
-              <cylinder radius="0.03" length="0.03"></cylinder>
-            </geometry>
-        </collision>
-       <xacro:inertial_cylinder mass="0.1" length="0.03" radius="0.03">
-            <origin xyz="0 0 0" rpy="0 0 0"/>
-        </xacro:inertial_cylinder>
-    </link>
-
-    <joint name="rplidar_joint" type="fixed">
-        <parent link="base_link"/>
-        <child link="rplidar_link"/>
-        <origin xyz="0 0 0.4" rpy="0 0 0"/>
-    </joint>
+  <joint name="rplidar_joint" type="fixed">
+    <parent link="base_link" />
+    <child link="rplidar_link" />
+    <origin xyz="0 0 0.4" rpy="0 0 0" />
+  </joint>
 
 
-    <gazebo reference="rplidar_link">
-        <sensor name="rplidar" type="gpu_lidar">
-          <update_rate>10.0</update_rate>
-          <visualize>true</visualize>
-          <always_on>true</always_on>
-          <gz_frame_id>rplidar_link</gz_frame_id>
-          <!-- <topic>$(arg namespace)/scan</topic> -->
-          <lidar>
-            <scan>
-              <horizontal>
-                <samples>360</samples>
-                <resolution>1.0</resolution>
-                <min_angle>0.000</min_angle>
-                <max_angle>6.280000</max_angle>
-              </horizontal>
-            </scan>
-            <range>
-              <min>0.164</min>
-              <max>20.0</max>
-              <resolution>0.01</resolution>
-            </range>
-          </lidar>
-          <plugin name="dummy" filename="dummyfile"></plugin>
-        </sensor>
-      </gazebo>
-   
+  <gazebo reference="rplidar_link">
+    <sensor name="rplidar" type="gpu_lidar">
+      <update_rate>10.0</update_rate>
+      <visualize>true</visualize>
+      <always_on>true</always_on>
+      <!-- <gz_frame_id>rplidar_link</gz_frame_id> -->
+      <topic>$(arg namespace)/scan</topic>
+      <lidar>
+        <scan>
+          <horizontal>
+            <samples>360</samples>
+            <resolution>1.0</resolution>
+            <min_angle>0.000</min_angle>
+            <max_angle>6.280000</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.164</min>
+          <max>20.0</max>
+          <resolution>0.01</resolution>
+        </range>
+      </lidar>
+    </sensor>
+  </gazebo>
+
   <gazebo reference="rplidar_joint">
     <preserveFixedJoint>true</preserveFixedJoint>
   </gazebo>
-  
-      <joint name="right_wheel_back_joint" type="continuous">
-        <parent link="base_link"/>
-        <child link="right_wheel_back"/>
-        <origin xyz="-0.2 -0.13 -0.1" rpy="-${pi/2} 0 0" />
-        <axis xyz="0 0 1"/>
-    </joint>
 
-    
+  <joint name="right_wheel_back_joint" type="continuous">
+    <parent link="base_link" />
+    <child link="right_wheel_back" />
+    <origin xyz="-0.2 -0.13 -0.1" rpy="-${pi/2} 0 0" />
+    <axis xyz="0 0 1" />
+  </joint>
 
 
-    <link name="right_wheel_back">
-        <visual>
-            <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
-            <geometry>
-                <mesh filename="package://forklift_controller/models/forklift/meshes/front_wheel_right.dae" scale="0.0025 0.0025 0.0025"/>
-                
-                <!--
-                <mesh filename="$(find forklift_controller)/models/forklift/meshes/front_wheel_right.dae" scale="0.002 0.002 0.002"/>
-                -->
-                </geometry>
-        </visual>
-        <collision>
-            <origin xyz="0 0 0" rpy="0 0 0"/>
-            <geometry>
-                <cylinder radius="0.08" length="0.02"/>
-            </geometry>
-        </collision>
-        <xacro:inertial_cylinder mass="5" length="0.02" radius="0.08">
-            <origin xyz="0 0 0" rpy="0 0 0"/>
-        </xacro:inertial_cylinder>
-    </link>
+  <link name="right_wheel_back">
+    <visual>
+      <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+      <geometry>
+        <mesh filename="package://forklift_controller/models/forklift/meshes/front_wheel_right.dae"
+          scale="0.0025 0.0025 0.0025" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <cylinder radius="0.08" length="0.02" />
+      </geometry>
+    </collision>
+    <xacro:inertial_cylinder mass="5" length="0.02" radius="0.08">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+    </xacro:inertial_cylinder>
+  </link>
 
 
-      <joint name="left_wheel_back_joint" type="continuous">
-        <parent link="base_link"/>
-        <child link="left_wheel_back"/>
-        <origin xyz="-0.2 0.13 -0.1" rpy="-${pi/2} 0 0" />
-        <axis xyz="0 0 1"/>
-    </joint>
+  <joint name="left_wheel_back_joint" type="continuous">
+    <parent link="base_link" />
+    <child link="left_wheel_back" />
+    <origin xyz="-0.2 0.13 -0.1" rpy="-${pi/2} 0 0" />
+    <axis xyz="0 0 1" />
+  </joint>
 
-    <link name="left_wheel_back">
-        <visual>
-            <origin xyz="0 0 0" rpy="-${pi/2} 0 0"/>
-            <geometry>
-              
-                <mesh filename="package://forklift_controller/models/forklift/meshes/front_wheel_right.dae" scale="0.0025 0.0025 0.0025"/>
-                 
-                  <!--
-                <mesh filename="$(find forklift_controller)/models/forklift/meshes/front_wheel_right.dae" scale="0.002 0.002 0.002"/>
-                 -->
-            </geometry>
-        </visual>
-        <collision>
-            <origin xyz="0 0 0" rpy="0 0 0"/>
-            <geometry>
-                <cylinder radius="0.08" length="0.02"/>
-            </geometry>
-        </collision>
-        <xacro:inertial_cylinder mass="5" length="0.02" radius="0.08">
-            <origin xyz="0 0 0" rpy="0 0 0"/>
-        </xacro:inertial_cylinder>
-    </link>
-    
-    <!--Make the back wheel almost frictionless in order to simulate free wheels-->
-    <gazebo reference="left_wheel_back">
-      <friction>
-        <ode>
-          <mu>1.01</mu>
-          <mu2>1.01</mu2>
-          <fdir1>0 0 1</fdir1>
-          <slip1>0</slip1>
-          <slip2>0</slip2>
-        </ode>
-      </friction>
-      <bounce>
-        <restitution_coefficient>0.0</restitution_coefficient>
-        <threshold>100000.0</threshold>
-      </bounce>
-      <contact>
-        <ode>
-          <soft_cfm>0.0</soft_cfm>
-          <soft_erp>0.2</soft_erp>
-          <kp>100000.0</kp>
-          <kd>1.0</kd>
-          <max_vel>100.0</max_vel>
-          <min_depth>0.001</min_depth>
-        </ode>
-      </contact>
-      </gazebo>
+  <link name="left_wheel_back">
+    <visual>
+      <origin xyz="0 0 0" rpy="-${pi/2} 0 0" />
+      <geometry>
 
-      <gazebo reference="left_wheel">
-        <friction>
-          <ode>
-            <mu>1.01</mu>
-            <mu2>1.01</mu2>
-            <fdir1>0 0 1</fdir1>
-            <slip1>0</slip1>
-            <slip2>0</slip2>
-          </ode>
-        </friction>
-        <bounce>
-          <restitution_coefficient>0.0</restitution_coefficient>
-          <threshold>100000.0</threshold>
-        </bounce>
-        <contact>
-          <ode>
-            <soft_cfm>0.0</soft_cfm>
-            <soft_erp>0.2</soft_erp>
-            <kp>100000.0</kp>
-            <kd>1.0</kd>
-            <max_vel>100.0</max_vel>
-            <min_depth>0.001</min_depth>
-          </ode>
-        </contact>
-      </gazebo>
+        <mesh filename="package://forklift_controller/models/forklift/meshes/front_wheel_right.dae"
+          scale="0.0025 0.0025 0.0025" />
 
-      <gazebo reference="right_wheel">
-        <friction>
-          <ode>
-            <mu>1.01</mu>
-            <mu2>1.01</mu2>
-            <fdir1>0 0 1</fdir1>
-            <slip1>0</slip1>
-            <slip2>0</slip2>
-          </ode>
-        </friction>
-        <bounce>
-          <restitution_coefficient>0.0</restitution_coefficient>
-          <threshold>100000.0</threshold>
-        </bounce>
-        <contact>
-          <ode>
-            <soft_cfm>0.0</soft_cfm>
-            <soft_erp>0.2</soft_erp>
-            <kp>100000.0</kp>
-            <kd>1.0</kd>
-            <max_vel>100.0</max_vel>
-            <min_depth>0.001</min_depth>
-          </ode>
-        </contact>
-      </gazebo>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <cylinder radius="0.08" length="0.02" />
+      </geometry>
+    </collision>
+    <xacro:inertial_cylinder mass="5" length="0.02" radius="0.08">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+    </xacro:inertial_cylinder>
+  </link>
 
-      <gazebo reference="right_wheel_back">
-        <friction>
-          <ode>
-            <mu>1.01</mu>
-            <mu2>1.01</mu2>
-            <fdir1>0 0 1</fdir1>
-            <slip1>0</slip1>
-            <slip2>0</slip2>
-          </ode>
-        </friction>
-        <bounce>
-          <restitution_coefficient>0.0</restitution_coefficient>
-          <threshold>100000.0</threshold>
-        </bounce>
-        <contact>
-          <ode>
-            <soft_cfm>0.0</soft_cfm>
-            <soft_erp>0.2</soft_erp>
-            <kp>100000.0</kp>
-            <kd>1.0</kd>
-            <max_vel>100.0</max_vel>
-            <min_depth>0.001</min_depth>
-          </ode>
-        </contact>
-      </gazebo>
-      
-      <gazebo reference="fork_plate_joint">
-        <disableFixedJointLumping>true</disableFixedJointLumping>
-      </gazebo>
+
+  <!--
+  <gazebo reference="fork_plate_joint">
+    <disableFixedJointLumping>true</disableFixedJointLumping>
+  </gazebo>
+  -->
 
 </robot>

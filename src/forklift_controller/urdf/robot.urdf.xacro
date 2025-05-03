@@ -1,50 +1,40 @@
 <?xml version="1.0"?>
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro"  name="forklift">
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="forklift">
 
-    <xacro:arg name="namespace" default=""/>
-    <xacro:include filename="robot_core.xacro" />
-    
-    <gazebo>
-      
-        <plugin
-        filename="gz-sim-diff-drive-system"
-        name="gz::sim::systems::DiffDrive">
+  <xacro:arg name="namespace" default="" />
+  <xacro:include filename="robot_core.xacro" />
 
-            <left_joint>left_wheel_joint</left_joint>
-            <left_joint>left_wheel_back_joint</left_joint>
-            <right_joint>right_wheel_joint</right_joint>
-            <right_joint>right_wheel_back_joint</right_joint>
-            <wheel_separation>0.26</wheel_separation>
-            <wheel_radius>0.07</wheel_radius>
-            <odom_publish_frequency>30</odom_publish_frequency>
-            <odom_topic>$(arg namespace)/odom</odom_topic>
-            <frame_id>odom</frame_id>
-            <tf_topic>$(arg namespace)/tf</tf_topic>
-            <topic>$(arg namespace)/cmd_vel</topic>
-            <child_frame_id>base_link</child_frame_id>
+  <gazebo>
 
-            <max_linear_acceleration>10</max_linear_acceleration>
-            <min_linear_acceleration>-10</min_linear_acceleration>
-            <max_angular_acceleration>20</max_angular_acceleration>
-            <min_angular_acceleration>-20</min_angular_acceleration>
-            <max_linear_velocity>0.5</max_linear_velocity>
-            <min_linear_velocity>-0.5</min_linear_velocity>
-            <max_angular_velocity>10</max_angular_velocity>
-            <min_angular_velocity>-10</min_angular_velocity>
-        </plugin>
-        
-        
-        
-        <!--
-        <plugin
-        filename="gz-sim-odometry-publisher-system"
-        name="gz::sim::systems::OdometryPublisher">
-            <odom_frame>base_link</odom_frame>
-            <odom_topic>$(arg namespace)/odometry</odom_topic>
-        </plugin>
-        
-      
-        
+    <plugin
+      filename="gz-sim-diff-drive-system"
+      name="gz::sim::systems::DiffDrive">
+
+      <left_joint>left_wheel_joint</left_joint>
+      <left_joint>left_wheel_back_joint</left_joint>
+      <right_joint>right_wheel_joint</right_joint>
+      <right_joint>right_wheel_back_joint</right_joint>
+      <wheel_separation>0.26</wheel_separation>
+      <wheel_radius>0.07</wheel_radius>
+      <odom_publish_frequency>30</odom_publish_frequency>
+      <odom_topic>$(arg namespace)/odom</odom_topic>
+      <frame_id>odom</frame_id>
+      <tf_topic>$(arg namespace)/tf</tf_topic>
+      <topic>$(arg namespace)/cmd_vel</topic>
+      <child_frame_id>base_link</child_frame_id>
+
+      <max_linear_acceleration>10</max_linear_acceleration>
+      <min_linear_acceleration>-10</min_linear_acceleration>
+      <max_angular_acceleration>20</max_angular_acceleration>
+      <min_angular_acceleration>-20</min_angular_acceleration>
+      <max_linear_velocity>0.5</max_linear_velocity>
+      <min_linear_velocity>-0.5</min_linear_velocity>
+      <max_angular_velocity>10</max_angular_velocity>
+      <min_angular_velocity>-10</min_angular_velocity>
+    </plugin>
+
+
+    <!--
         
         <plugin
             filename="gz-sim-pose-publisher-system"
@@ -55,25 +45,30 @@
             <publish_nested_model_pose>true</publish_nested_model_pose>
         </plugin>
         -->
-      
-        
 
-      <plugin filename="gz-sim-joint-state-publisher-system" name="gz::sim::systems::JointStatePublisher">
-        <joint_name>left_wheel_joint</joint_name>
-        <joint_name>right_wheel_joint</joint_name>
-        <joint_name>left_wheel_back_joint</joint_name>
-        <joint_name>right_wheel_back_joint</joint_name>
-        <topic>$(arg namespace)/joint_states</topic>
-      </plugin>
 
-      <!--
-      <plugin filename="gz-sim-joint-position-controller-system" name="gz::sim::systems::JointPositionController">
+    <plugin filename="gz-sim-joint-state-publisher-system"
+      name="gz::sim::systems::JointStatePublisher">
+      <joint_name>left_wheel_joint</joint_name>
+      <joint_name>right_wheel_joint</joint_name>
+      <joint_name>left_wheel_back_joint</joint_name>
+      <joint_name>right_wheel_back_joint</joint_name>
+      <joint_name>fork_attach_1_joint</joint_name>
+      <joint_name>fork_attach_2_joint</joint_name>
+      <joint_name>fork_1_joint</joint_name>
+      <joint_name>fork_2_joint</joint_name>
+      <topic>$(arg namespace)/joint_states</topic>
+    </plugin>
+
+    <!--
+      <plugin filename="gz-sim-joint-position-controller-system"
+    name="gz::sim::systems::JointPositionController">
         <joint_name>fork_plate_joint</joint_name>
         <topic>fork_control</topic>
         <initial_position>0.6</initial_position>
       </plugin>
       -->
 
-    </gazebo>  
-    
+  </gazebo>
+
 </robot>

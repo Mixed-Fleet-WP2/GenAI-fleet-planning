@@ -37,6 +37,8 @@ from launch.substitutions import LaunchConfiguration, TextSubstitution
 from nav2_common.launch import ParseMultiRobotPose
 from launch_ros.actions import Node
 from launch import LaunchContext
+#from launch_print import launch_print
+#https://stackoverflow.com/questions/57426715/import-modules-in-package-in-ros2
 
 def launch_print(context:LaunchContext, item:LaunchConfiguration):
 
@@ -192,14 +194,6 @@ def generate_launch_description():
         'forklift_2': {'x': -3.0, 'y': -1.6, 'z': 0.2}
         }
     
-    logs:Node = Node(
-         package='demo_nodes_cpp',
-         executable='talker',
-         output='screen', 
-         arguments=['--ros-args', '--log-level', 'debug']
-    )
-
-    
     # Define commands for launching the navigation instances
     bringup_cmd_group = []
     for robot_name in robots_list:
@@ -259,17 +253,16 @@ def generate_launch_description():
 
     
     set_env_vars_resources = AppendEnvironmentVariable(
-        'GZ_SIM_RESOURCE_PATH', os.path.join(pkg_root, 'models'))
+        'GZ_SIM_RESOURCE_PATH', os.path.abspath(os.path.join(pkg_root, '..')))
     set_env_vars_resources2 = AppendEnvironmentVariable(
             'GZ_SIM_RESOURCE_PATH',
             str(Path(os.path.join(sim_dir)).parent.resolve()))
-    
     
     # Create the launch description and populate
     #ld.add_action(logs)
     ld.add_action(set_env_vars_resources)
     ld.add_action(set_env_vars_resources2)
-    ld.add_action(LogInfo(msg=['GZ_SIM_RESOURCE_PATH=', os.path.join(pkg_root, 'models')]))
+    ld.add_action(LogInfo(msg=['GZ_SIM_RESOURCE_PATH=', os.path.abspath(os.path.join(pkg_root, '..'))]))
 
     # Declare the launch options
     ld.add_action(declare_world_cmd)
