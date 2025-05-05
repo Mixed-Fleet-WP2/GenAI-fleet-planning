@@ -85,14 +85,15 @@ def generate_launch_description():
     # Declare the launch arguments
     declare_world_cmd = DeclareLaunchArgument(
         'world',
+        default_value=os.path.join(pkg_root, 'worlds', 'warehouse.sdf'),
         #default_value=os.path.join(pkg_root, 'worlds', 'depot.sdf'),
-        default_value=os.path.join(sim_dir, 'worlds', 'depot.sdf'),
         description='Full path to world file to load',
     )
 
     declare_map_yaml_cmd = DeclareLaunchArgument(
         'map',
-        default_value=os.path.join(bringup_dir, 'maps', 'depot.yaml'),
+        #default_value=os.path.join(pkg_root, 'maps', 'depot.yaml'),
+        default_value=os.path.join(pkg_root, 'maps', 'warehouse.yaml'),
         description='Full path to map file to load',
     )
 

@@ -1,0 +1,813 @@
+[INFO] [launch]: All log files can be found below /home/elmeripk/.ros/log/2025-05-05-17-12-01-935531-DESKTOP-0Q572UO-45534
+[INFO] [launch]: Default logging verbosity is set to INFO
+THE VALUE OF THE ITEM IS:  /home/elmeripk/forklift_sim/install/forklift_controller/share/forklift_controller/config/nav2_config.yaml
+[INFO] [launch.user]: Launching namespace=forklift_1 init_pose={'x': 0.0, 'y': 0.0, 'z': 0.3}
+[INFO] [parameter_bridge-1]: process started with pid [45539]
+[INFO] [xacro-2]: process started with pid [45540]
+[INFO] [gazebo-3]: process started with pid [45541]
+[INFO] [gz-4]: process started with pid [45542]
+[INFO] [parameter_bridge-5]: process started with pid [45544]
+[INFO] [mqtt_client-6]: process started with pid [45545]
+[INFO] [parameter_bridge-7]: process started with pid [45546]
+[INFO] [create-8]: process started with pid [45547]
+[INFO] [robot_state_publisher-9]: process started with pid [45548]
+[INFO] [rviz2-10]: process started with pid [45549]
+[INFO] [map_server-11]: process started with pid [45550]
+[INFO] [amcl-12]: process started with pid [45551]
+[INFO] [lifecycle_manager-13]: process started with pid [45552]
+[INFO] [controller_server-14]: process started with pid [45553]
+[INFO] [smoother_server-15]: process started with pid [45554]
+[INFO] [planner_server-16]: process started with pid [45558]
+[INFO] [behavior_server-17]: process started with pid [45560]
+[INFO] [bt_navigator-18]: process started with pid [45562]
+[INFO] [waypoint_follower-19]: process started with pid [45578]
+[INFO] [velocity_smoother-20]: process started with pid [45594]
+[INFO] [collision_monitor-21]: process started with pid [45601]
+[INFO] [opennav_docking-22]: process started with pid [45604]
+[INFO] [lifecycle_manager-23]: process started with pid [45633]
+[INFO] [primitive_node-24]: process started with pid [45650]
+[INFO] [python3-25]: process started with pid [45651]
+[robot_state_publisher-9] [WARN] [1746454322.757977747] [kdl_parser]: The root link base_link has an inertia specified in the URDF, but KDL does not support a root link with an inertia.  As a workaround, you can add an extra dummy link to your URDF.
+[robot_state_publisher-9] [INFO] [1746454322.758087530] [forklift_1.robot_state_publisher]: Robot initialized
+[mqtt_client-6] [WARN] [1746454322.802881324] [forklift_1.mqtt_client]: Parameter 'broker.tls.enabled' not set, defaulting to '0'
+[mqtt_client-6] [WARN] [1746454322.802949465] [forklift_1.mqtt_client]: Parameter 'client.id' not set, defaulting to ''
+[mqtt_client-6] [WARN] [1746454322.802988031] [forklift_1.mqtt_client]: Client buffer can not be enabled when client ID is empty
+[mqtt_client-6] [WARN] [1746454322.803006989] [forklift_1.mqtt_client]: Parameter 'client.clean_session' not set, defaulting to '1'
+[mqtt_client-6] [WARN] [1746454322.803025579] [forklift_1.mqtt_client]: Parameter 'client.keep_alive_interval' not set, defaulting to '60.000000'
+[mqtt_client-6] [WARN] [1746454322.803034203] [forklift_1.mqtt_client]: Parameter 'client.max_inflight' not set, defaulting to '65535'
+[mqtt_client-6] [INFO] [1746454322.803051189] [forklift_1.mqtt_client]: Bridging ROS topic 'feedback' to MQTT topic 'feedback' 
+[mqtt_client-6] [INFO] [1746454322.803062640] [forklift_1.mqtt_client]: Bridging ROS topic '/cube_pos' to MQTT topic 'cube_pos' 
+[mqtt_client-6] [INFO] [1746454322.803073820] [forklift_1.mqtt_client]: Bridging MQTT topic 'forklift_1/move' to primitive ROS topic 'move'
+[mqtt_client-6] [INFO] [1746454322.803083526] [forklift_1.mqtt_client]: Bridging MQTT topic 'forklift_1/drop' to primitive ROS topic 'drop'
+[mqtt_client-6] [INFO] [1746454322.803093417] [forklift_1.mqtt_client]: Bridging MQTT topic 'forklift_1/pick_up' to primitive ROS topic 'pick_up'
+[mqtt_client-6] [INFO] [1746454322.803106503] [forklift_1.mqtt_client]: Bridging MQTT topic 'forklift_1/ping/ros' to primitive ROS topic 'ping/ros'
+[mqtt_client-6] [INFO] [1746454322.804072187] [forklift_1.mqtt_client]: Connecting to broker at 'tcp://localhost:1883' ...
+[amcl-12] [INFO] [1746454322.820016554] [forklift_1.amcl]: 
+[amcl-12] 	amcl lifecycle node launched. 
+[amcl-12] 	Waiting on external lifecycle transitions to activate
+[amcl-12] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[amcl-12] [INFO] [1746454322.820530167] [forklift_1.amcl]: Creating
+[INFO] [xacro-2]: process has finished cleanly [pid 45540]
+[lifecycle_manager-13] [INFO] [1746454322.829616007] [forklift_1.lifecycle_manager_localization]: Creating
+[planner_server-16] [INFO] [1746454322.831699213] [forklift_1.planner_server]: 
+[planner_server-16] 	planner_server lifecycle node launched. 
+[planner_server-16] 	Waiting on external lifecycle transitions to activate
+[planner_server-16] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[planner_server-16] [INFO] [1746454322.833216361] [forklift_1.planner_server]: Creating
+[create-8] [INFO] [1746454322.843796912] [forklift_1.ros_gz_sim]: Requesting list of world names.
+[lifecycle_manager-13] [INFO] [1746454322.854926825] [forklift_1.lifecycle_manager_localization]: [34m[1mCreating and initializing lifecycle service clients[0m[0m
+[planner_server-16] [INFO] [1746454322.865692408] [forklift_1.global_costmap.global_costmap]: 
+[planner_server-16] 	global_costmap lifecycle node launched. 
+[planner_server-16] 	Waiting on external lifecycle transitions to activate
+[planner_server-16] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[planner_server-16] [INFO] [1746454322.866231231] [forklift_1.global_costmap.global_costmap]: Creating Costmap
+[map_server-11] [INFO] [1746454322.871593023] [forklift_1.map_server]: 
+[map_server-11] 	map_server lifecycle node launched. 
+[map_server-11] 	Waiting on external lifecycle transitions to activate
+[map_server-11] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[map_server-11] [INFO] [1746454322.872935594] [forklift_1.map_server]: Creating
+[parameter_bridge-5] [INFO] [1746454322.903161009] [ros_gz_bridge]: Creating GZ->ROS Bridge: [/model/cube/pose (gz.msgs.Pose_V) -> /model/cube/pose (tf2_msgs/msg/TFMessage)] (Lazy 0)
+[bt_navigator-18] [INFO] [1746454322.904254904] [forklift_1.bt_navigator]: 
+[bt_navigator-18] 	bt_navigator lifecycle node launched. 
+[bt_navigator-18] 	Waiting on external lifecycle transitions to activate
+[bt_navigator-18] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[bt_navigator-18] [INFO] [1746454322.906624681] [forklift_1.bt_navigator]: Creating
+[smoother_server-15] [INFO] [1746454322.907651518] [forklift_1.smoother_server]: 
+[parameter_bridge-1] [INFO] [1746454322.908433578] [ros_gz_bridge]: Creating GZ->ROS Bridge: [/clock (gz.msgs.Clock) -> /clock (rosgraph_msgs/msg/Clock)] (Lazy 0)
+[smoother_server-15] 	smoother_server lifecycle node launched. 
+[smoother_server-15] 	Waiting on external lifecycle transitions to activate
+[smoother_server-15] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[mqtt_client-6] [INFO] [1746454322.915655908] [forklift_1.mqtt_client]: Connected to broker at 'tcp://localhost:1883'
+[mqtt_client-6] [INFO] [1746454322.915716325] [forklift_1.mqtt_client]: Subscribed MQTT topic 'forklift_1/drop'
+[mqtt_client-6] [INFO] [1746454322.915734536] [forklift_1.mqtt_client]: Subscribed MQTT topic 'forklift_1/move'
+[mqtt_client-6] [INFO] [1746454322.915749594] [forklift_1.mqtt_client]: Subscribed MQTT topic 'forklift_1/pick_up'
+[mqtt_client-6] [INFO] [1746454322.915767956] [forklift_1.mqtt_client]: Subscribed MQTT topic 'forklift_1/ping/ros'
+[smoother_server-15] [INFO] [1746454322.922303104] [forklift_1.smoother_server]: Creating smoother server
+[waypoint_follower-19] [INFO] [1746454322.926796682] [forklift_1.waypoint_follower]: 
+[waypoint_follower-19] 	waypoint_follower lifecycle node launched. 
+[waypoint_follower-19] 	Waiting on external lifecycle transitions to activate
+[waypoint_follower-19] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[waypoint_follower-19] [INFO] [1746454322.927413287] [forklift_1.waypoint_follower]: Creating
+[lifecycle_manager-23] [INFO] [1746454322.932426158] [forklift_1.lifecycle_manager_navigation]: Creating
+[behavior_server-17] [INFO] [1746454322.943936712] [forklift_1.behavior_server]: 
+[behavior_server-17] 	behavior_server lifecycle node launched. 
+[behavior_server-17] 	Waiting on external lifecycle transitions to activate
+[behavior_server-17] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[opennav_docking-22] [INFO] [1746454322.945338851] [forklift_1.docking_server]: 
+[opennav_docking-22] 	docking_server lifecycle node launched. 
+[opennav_docking-22] 	Waiting on external lifecycle transitions to activate
+[opennav_docking-22] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[opennav_docking-22] [INFO] [1746454322.945497731] [forklift_1.docking_server]: Creating docking_server
+[collision_monitor-21] [INFO] [1746454322.948587944] [forklift_1.collision_monitor]: 
+[collision_monitor-21] 	collision_monitor lifecycle node launched. 
+[collision_monitor-21] 	Waiting on external lifecycle transitions to activate
+[collision_monitor-21] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[lifecycle_manager-23] [INFO] [1746454322.950338813] [forklift_1.lifecycle_manager_navigation]: [34m[1mCreating and initializing lifecycle service clients[0m[0m
+[lifecycle_manager-13] [INFO] [1746454322.962882463] [forklift_1.lifecycle_manager_localization]: [34m[1mStarting managed nodes bringup...[0m[0m
+[lifecycle_manager-13] [INFO] [1746454322.963314459] [forklift_1.lifecycle_manager_localization]: [34m[1mConfiguring map_server[0m[0m
+[map_server-11] [INFO] [1746454322.963976965] [forklift_1.map_server]: Configuring
+[map_server-11] [INFO] [1746454322.964043080] [map_io]: Loading yaml file: /home/elmeripk/forklift_sim/install/forklift_controller/share/forklift_controller/maps/warehouse.yaml
+[map_server-11] [INFO] [1746454322.964391043] [map_io]: resolution: 0.03
+[map_server-11] [INFO] [1746454322.964403458] [map_io]: origin[0]: -15.1
+[map_server-11] [INFO] [1746454322.964407314] [map_io]: origin[1]: -25
+[map_server-11] [INFO] [1746454322.964424962] [map_io]: origin[2]: 0
+[map_server-11] [INFO] [1746454322.964433411] [map_io]: free_thresh: 0.1
+[map_server-11] [INFO] [1746454322.964436781] [map_io]: occupied_thresh: 0.65
+[map_server-11] [INFO] [1746454322.964440691] [map_io]: mode: trinary
+[map_server-11] [INFO] [1746454322.964444006] [map_io]: negate: 0
+[map_server-11] [INFO] [1746454322.964637628] [map_io]: Loading image_file: /home/elmeripk/forklift_sim/install/forklift_controller/share/forklift_controller/maps/warehouse.pgm
+[controller_server-14] [INFO] [1746454322.971853525] [forklift_1.controller_server]: 
+[controller_server-14] 	controller_server lifecycle node launched. 
+[controller_server-14] 	Waiting on external lifecycle transitions to activate
+[controller_server-14] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[controller_server-14] [INFO] [1746454322.981999329] [forklift_1.controller_server]: Creating controller server
+[velocity_smoother-20] [INFO] [1746454323.001667646] [forklift_1.velocity_smoother]: 
+[velocity_smoother-20] 	velocity_smoother lifecycle node launched. 
+[velocity_smoother-20] 	Waiting on external lifecycle transitions to activate
+[velocity_smoother-20] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[controller_server-14] [INFO] [1746454323.167754156] [forklift_1.local_costmap.local_costmap]: 
+[controller_server-14] 	local_costmap lifecycle node launched. 
+[controller_server-14] 	Waiting on external lifecycle transitions to activate
+[controller_server-14] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[controller_server-14] [INFO] [1746454323.169135959] [forklift_1.local_costmap.local_costmap]: Creating Costmap
+[map_server-11] [INFO] [1746454323.191022541] [map_io]: Read map /home/elmeripk/forklift_sim/install/forklift_controller/share/forklift_controller/maps/warehouse.pgm: 1006 X 1674 map @ 0.03 m/cell
+[lifecycle_manager-13] [INFO] [1746454323.205303913] [forklift_1.lifecycle_manager_localization]: [34m[1mConfiguring amcl[0m[0m
+[amcl-12] [INFO] [1746454323.205706454] [forklift_1.amcl]: Configuring
+[amcl-12] [INFO] [1746454323.205824438] [forklift_1.amcl]: initTransforms
+[amcl-12] [INFO] [1746454323.230294092] [forklift_1.amcl]: initPubSub
+[amcl-12] [INFO] [1746454323.242020677] [forklift_1.amcl]: Subscribed to map topic.
+[lifecycle_manager-13] [INFO] [1746454323.252015849] [forklift_1.lifecycle_manager_localization]: [34m[1mActivating map_server[0m[0m
+[map_server-11] [INFO] [1746454323.252347006] [forklift_1.map_server]: Activating
+[map_server-11] [INFO] [1746454323.255535763] [forklift_1.map_server]: Creating bond (map_server) to lifecycle manager.
+[amcl-12] [INFO] [1746454323.270730851] [forklift_1.amcl]: Received a 1006 X 1674 map @ 0.030 m/pix
+[lifecycle_manager-13] [INFO] [1746454323.365534853] [forklift_1.lifecycle_manager_localization]: Server map_server connected with bond.
+[lifecycle_manager-13] [INFO] [1746454323.365610772] [forklift_1.lifecycle_manager_localization]: [34m[1mActivating amcl[0m[0m
+[amcl-12] [INFO] [1746454323.366115963] [forklift_1.amcl]: Activating
+[amcl-12] [INFO] [1746454323.366213093] [forklift_1.amcl]: Creating bond (amcl) to lifecycle manager.
+[gazebo-3] D3D12: Removing Device.
+[lifecycle_manager-13] [INFO] [1746454323.477542908] [forklift_1.lifecycle_manager_localization]: Server amcl connected with bond.
+[lifecycle_manager-13] [INFO] [1746454323.477602653] [forklift_1.lifecycle_manager_localization]: [34m[1mManaged nodes are active[0m[0m
+[lifecycle_manager-13] [INFO] [1746454323.477614580] [forklift_1.lifecycle_manager_localization]: [34m[1mCreating bond timer...[0m[0m
+[parameter_bridge-7] [INFO] [1746454323.975644145] [forklift_1.ros_gz_bridge]: Creating GZ->ROS Bridge: [/forklift_1/joint_states (gz.msgs.Model) -> joint_states (sensor_msgs/msg/JointState)] (Lazy 0)
+[create-8] [INFO] [1746454324.168914431] [forklift_1.ros_gz_sim]: Entity creation successful.
+[parameter_bridge-7] [INFO] [1746454324.176684902] [forklift_1.ros_gz_bridge]: Creating GZ->ROS Bridge: [/forklift_1/odom (gz.msgs.Odometry) -> odom (nav_msgs/msg/Odometry)] (Lazy 0)
+[parameter_bridge-7] [INFO] [1746454324.180702701] [forklift_1.ros_gz_bridge]: Creating GZ->ROS Bridge: [/forklift_1/tf (gz.msgs.Pose_V) -> tf (tf2_msgs/msg/TFMessage)] (Lazy 0)
+[parameter_bridge-7] [INFO] [1746454324.184755092] [forklift_1.ros_gz_bridge]: Creating GZ->ROS Bridge: [/forklift_1/imu (gz.msgs.IMU) -> imu (sensor_msgs/msg/Imu)] (Lazy 0)
+[parameter_bridge-7] [INFO] [1746454324.189728350] [forklift_1.ros_gz_bridge]: Creating GZ->ROS Bridge: [/forklift_1/scan (gz.msgs.LaserScan) -> scan (sensor_msgs/msg/LaserScan)] (Lazy 0)
+[parameter_bridge-7] [INFO] [1746454324.192843203] [forklift_1.ros_gz_bridge]: Creating ROS->GZ Bridge: [cmd_vel (geometry_msgs/msg/Twist) -> /forklift_1/cmd_vel (gz.msgs.Twist)] (Lazy 0)
+[parameter_bridge-7] [INFO] [1746454324.195134103] [forklift_1.ros_gz_bridge]: Creating GZ->ROS Bridge: [/forklift_1/touched (gz.msgs.Boolean) -> touched (std_msgs/msg/Bool)] (Lazy 0)
+[parameter_bridge-7] [INFO] [1746454324.198190228] [forklift_1.ros_gz_bridge]: Creating GZ->ROS Bridge: [/model/cube/pose (gz.msgs.Pose_V) -> /cube_pos_gz (tf2_msgs/msg/TFMessage)] (Lazy 0)
+[lifecycle_manager-23] [INFO] [1746454324.251267497] [forklift_1.lifecycle_manager_navigation]: [34m[1mStarting managed nodes bringup...[0m[0m
+[lifecycle_manager-23] [INFO] [1746454324.251339972] [forklift_1.lifecycle_manager_navigation]: [34m[1mConfiguring controller_server[0m[0m
+[primitive_node-24] [INFO] [1746454324.252090204] [forklift_1.basic_navigator]: Publishing Initial Pose
+[controller_server-14] [INFO] [1746454324.257261203] [forklift_1.controller_server]: Configuring controller interface
+[controller_server-14] [INFO] [1746454324.257294580] [forklift_1.controller_server]: getting progress checker plugins..
+[controller_server-14] [INFO] [1746454324.257477477] [forklift_1.controller_server]: getting goal checker plugins..
+[controller_server-14] [INFO] [1746454324.257580057] [forklift_1.controller_server]: Controller frequency set to 20.0000Hz
+[controller_server-14] [INFO] [1746454324.257653896] [forklift_1.local_costmap.local_costmap]: Configuring
+[controller_server-14] [INFO] [1746454324.274395285] [forklift_1.local_costmap.local_costmap]: Using plugin "voxel_layer"
+[controller_server-14] [INFO] [1746454324.281131648] [forklift_1.local_costmap.local_costmap]: Subscribed to Topics: scan
+[INFO] [create-8]: process has finished cleanly [pid 45547]
+[controller_server-14] [INFO] [1746454324.305677254] [forklift_1.local_costmap.local_costmap]: Initialized plugin "voxel_layer"
+[controller_server-14] [INFO] [1746454324.305719124] [forklift_1.local_costmap.local_costmap]: Using plugin "inflation_layer"
+[controller_server-14] [INFO] [1746454324.308339397] [forklift_1.local_costmap.local_costmap]: Initialized plugin "inflation_layer"
+[controller_server-14] [INFO] [1746454324.344685806] [forklift_1.controller_server]: Created progress_checker : progress_checker of type nav2_controller::SimpleProgressChecker
+[controller_server-14] [INFO] [1746454324.345744633] [forklift_1.controller_server]: Controller Server has progress_checker  progress checkers available.
+[controller_server-14] [INFO] [1746454324.346632599] [forklift_1.controller_server]: Created goal checker : general_goal_checker of type nav2_controller::SimpleGoalChecker
+[controller_server-14] [INFO] [1746454324.348027581] [forklift_1.controller_server]: Controller Server has general_goal_checker  goal checkers available.
+[controller_server-14] [INFO] [1746454324.350388497] [forklift_1.controller_server]: Created controller : FollowPath of type dwb_core::DWBLocalPlanner
+[controller_server-14] [INFO] [1746454324.355270604] [forklift_1.controller_server]: Setting transform_tolerance to 0.200000
+[controller_server-14] [INFO] [1746454324.385373567] [forklift_1.controller_server]: Using critic "RotateToGoal" (dwb_critics::RotateToGoalCritic)
+[controller_server-14] [INFO] [1746454324.388250225] [forklift_1.controller_server]: Critic plugin initialized
+[controller_server-14] [INFO] [1746454324.388828090] [forklift_1.controller_server]: Using critic "Oscillation" (dwb_critics::OscillationCritic)
+[controller_server-14] [INFO] [1746454324.391468556] [forklift_1.controller_server]: Critic plugin initialized
+[controller_server-14] [INFO] [1746454324.392060927] [forklift_1.controller_server]: Using critic "BaseObstacle" (dwb_critics::BaseObstacleCritic)
+[controller_server-14] [INFO] [1746454324.393096442] [forklift_1.controller_server]: Critic plugin initialized
+[controller_server-14] [INFO] [1746454324.393670353] [forklift_1.controller_server]: Using critic "GoalAlign" (dwb_critics::GoalAlignCritic)
+[controller_server-14] [INFO] [1746454324.395389942] [forklift_1.controller_server]: Critic plugin initialized
+[controller_server-14] [INFO] [1746454324.395945003] [forklift_1.controller_server]: Using critic "PathAlign" (dwb_critics::PathAlignCritic)
+[controller_server-14] [INFO] [1746454324.397618052] [forklift_1.controller_server]: Critic plugin initialized
+[controller_server-14] [INFO] [1746454324.398209416] [forklift_1.controller_server]: Using critic "PathDist" (dwb_critics::PathDistCritic)
+[controller_server-14] [INFO] [1746454324.399358983] [forklift_1.controller_server]: Critic plugin initialized
+[controller_server-14] [INFO] [1746454324.399913069] [forklift_1.controller_server]: Using critic "GoalDist" (dwb_critics::GoalDistCritic)
+[controller_server-14] [INFO] [1746454324.401060491] [forklift_1.controller_server]: Critic plugin initialized
+[controller_server-14] [INFO] [1746454324.401108059] [forklift_1.controller_server]: Controller Server has FollowPath  controllers available.
+[gazebo-3] [1;32m[Msg] [0m[1;32mGazebo Sim GUI    v[0m[1;32m8.9.0[0m[1;32m[0m
+[gazebo-3] [1;36m[Dbg] [Application.cc:96] [0m[1;36mInitializing application.[0m[1;36m[0m
+[gazebo-3] [1;36m[Dbg] [Application.cc:170] [0m[1;36mQt using OpenGL graphics interface[0m[1;36m[0m
+[gazebo-3] [1;36m[GUI] [Dbg] [Application.cc:657] [0m[1;36mCreate main window[0m[1;36m[0m
+[gazebo-3] [1;36m[GUI] [Dbg] [PathManager.cc:68] [0m[1;36mRequesting resource paths through [[0m[1;36m/gazebo/resource_paths/get[0m[1;36m][0m[1;36m[0m
+[gazebo-3] [1;36m[GUI] [Dbg] [Gui.cc:355] [0m[1;36mGUI requesting list of world names. The server may be busy [0m[1;36mdownloading resources. Please be patient.[0m[1;36m[0m
+[gazebo-3] [1;36m[GUI] [Dbg] [Gui.cc:413] [0m[1;36mRequesting GUI from [[0m[1;36m/world/warehouse/gui/info[0m[1;36m]...[0m[1;36m[0m
+[gazebo-3] [1;36m[GUI] [Dbg] [PathManager.cc:57] [0m[1;36mReceived resource paths.[0m[1;36m[0m
+[gazebo-3] [1;36m[GUI] [Dbg] [GuiRunner.cc:149] [0m[1;36mRequesting initial state from [[0m[1;36m/world/warehouse/state[0m[1;36m]...[0m[1;36m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoading config [[0m[1;32m/home/elmeripk/.gz/sim/8/gui.config[0m[1;32m][0m[1;32m[0m
+[gazebo-3] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mMinimalScene[0m[1;36m][0m[1;36m[0m
+[gazebo-3] [1;36m[GUI] [Dbg] [MinimalScene.cc:802] [0m[1;36mCreating gz-rendering interface for OpenGL[0m[1;36m[0m
+[gazebo-3] [1;36m[GUI] [Dbg] [MinimalScene.cc:802] [0m[1;36mCreating gz-rendering interface for OpenGL[0m[1;36m[0m
+[gazebo-3] [1;36m[GUI] [Dbg] [MinimalScene.cc:986] [0m[1;36mCreating render thread interface for OpenGL[0m[1;36m[0m
+[gazebo-3] [1;36m[GUI] [Dbg] [MinimalScene.cc:802] [0m[1;36mCreating gz-rendering interface for OpenGL[0m[1;36m[0m
+[gazebo-3] [1;36m[GUI] [Dbg] [MinimalScene.cc:986] [0m[1;36mCreating render thread interface for OpenGL[0m[1;36m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32m3D View[0m[1;32m] to main window[0m[1;32m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mMinimalScene[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_gui_vendor/lib/gz-gui-8/plugins/libMinimalScene.so[0m[1;32m][0m[1;32m[0m
+[gazebo-3] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mEntityContextMenuPlugin[0m[1;36m][0m[1;36m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mCurrently tracking topic on [[0m[1;32m/gui/currently_tracked[0m[1;32m][0m[1;32m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mEntity Context Menu[0m[1;32m] to main window[0m[1;32m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mEntityContextMenuPlugin[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libEntityContextMenuPlugin.so[0m[1;32m][0m[1;32m[0m
+[gazebo-3] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mGzSceneManager[0m[1;36m][0m[1;36m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mScene Manager[0m[1;32m] to main window[0m[1;32m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mGzSceneManager[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libGzSceneManager.so[0m[1;32m][0m[1;32m[0m
+[gazebo-3] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mInteractiveViewControl[0m[1;36m][0m[1;36m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mCamera view controller topic advertised on [[0m[1;32m/gui/camera/view_control[0m[1;32m][0m[1;32m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mCamera reference visual topic advertised on [[0m[1;32m/gui/camera/view_control/reference_visual[0m[1;32m][0m[1;32m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mCamera view control sensitivity advertised on [[0m[1;32m/gui/camera/view_control/sensitivity[0m[1;32m][0m[1;32m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mInteractive view control[0m[1;32m] to main window[0m[1;32m[0m
+[lifecycle_manager-23] [INFO] [1746454324.421443725] [forklift_1.lifecycle_manager_navigation]: [34m[1mConfiguring smoother_server[0m[0m
+[smoother_server-15] [INFO] [1746454324.421814806] [forklift_1.smoother_server]: Configuring smoother server
+[smoother_server-15] [INFO] [1746454324.448573073] [forklift_1.smoother_server]: Created smoother : simple_smoother of type nav2_smoother::SimpleSmoother
+[smoother_server-15] [INFO] [1746454324.451435468] [forklift_1.smoother_server]: Smoother Server has simple_smoother  smoothers available.
+[lifecycle_manager-23] [INFO] [1746454324.464754152] [forklift_1.lifecycle_manager_navigation]: [34m[1mConfiguring planner_server[0m[0m
+[planner_server-16] [INFO] [1746454324.465097387] [forklift_1.planner_server]: Configuring
+[planner_server-16] [INFO] [1746454324.465158888] [forklift_1.global_costmap.global_costmap]: Configuring
+[planner_server-16] [INFO] [1746454324.484881416] [forklift_1.global_costmap.global_costmap]: Using plugin "static_layer"
+[planner_server-16] [INFO] [1746454324.491806407] [forklift_1.global_costmap.global_costmap]: Subscribing to the map topic (/forklift_1/map) with transient local durability
+[planner_server-16] [INFO] [1746454324.494423012] [forklift_1.global_costmap.global_costmap]: Initialized plugin "static_layer"
+[planner_server-16] [INFO] [1746454324.494465760] [forklift_1.global_costmap.global_costmap]: Using plugin "obstacle_layer"
+[planner_server-16] [INFO] [1746454324.497981712] [forklift_1.global_costmap.global_costmap]: Subscribed to Topics: scan
+[planner_server-16] [INFO] [1746454324.510467724] [forklift_1.global_costmap.global_costmap]: Initialized plugin "obstacle_layer"
+[planner_server-16] [INFO] [1746454324.510506528] [forklift_1.global_costmap.global_costmap]: Using plugin "inflation_layer"
+[planner_server-16] [INFO] [1746454324.512985071] [forklift_1.global_costmap.global_costmap]: Initialized plugin "inflation_layer"
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mInteractiveViewControl[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_gui_vendor/lib/gz-gui-8/plugins/libInteractiveViewControl.so[0m[1;32m][0m[1;32m[0m
+[gazebo-3] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mCameraTracking[0m[1;36m][0m[1;36m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mCamera tracking[0m[1;32m] to main window[0m[1;32m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mCameraTracking[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_gui_vendor/lib/gz-gui-8/plugins/libCameraTracking.so[0m[1;32m][0m[1;32m[0m
+[gazebo-3] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mMarkerManager[0m[1;36m][0m[1;36m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mListening to stats on [[0m[1;32m/world/warehouse/stats[0m[1;32m][0m[1;32m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mMarker Manager[0m[1;32m] to main window[0m[1;32m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mMarkerManager[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_gui_vendor/lib/gz-gui-8/plugins/libMarkerManager.so[0m[1;32m][0m[1;32m[0m
+[gazebo-3] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mSelectEntities[0m[1;36m][0m[1;36m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mSelect entities[0m[1;32m] to main window[0m[1;32m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mSelectEntities[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libSelectEntities.so[0m[1;32m][0m[1;32m[0m
+[gazebo-3] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mSpawn[0m[1;36m][0m[1;36m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mSpawn[0m[1;32m] to main window[0m[1;32m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mSpawn[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libSpawn.so[0m[1;32m][0m[1;32m[0m
+[gazebo-3] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mVisualizationCapabilities[0m[1;36m][0m[1;36m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mView as transparent service on [[0m[1;32m/gui/view/transparent[0m[1;32m][0m[1;32m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mView as wireframes service on [[0m[1;32m/gui/view/wireframes[0m[1;32m][0m[1;32m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mView center of mass service on [[0m[1;32m/gui/view/com[0m[1;32m][0m[1;32m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mView inertia service on [[0m[1;32m/gui/view/inertia[0m[1;32m][0m[1;32m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mView collisions service on [[0m[1;32m/gui/view/collisions[0m[1;32m][0m[1;32m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mView joints service on [[0m[1;32m/gui/view/joints[0m[1;32m][0m[1;32m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mView frames service on [[0m[1;32m/gui/view/frames[0m[1;32m][0m[1;32m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mVisualization capabilities[0m[1;32m] to main window[0m[1;32m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mVisualizationCapabilities[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libVisualizationCapabilities.so[0m[1;32m][0m[1;32m[0m
+[gazebo-3] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mWorldControl[0m[1;36m][0m[1;36m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mUsing world control service [[0m[1;32m/world/warehouse/control[0m[1;32m][0m[1;32m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mListening to stats on [[0m[1;32m/world/warehouse/stats[0m[1;32m][0m[1;32m[0m
+[gazebo-3] [1;36m[GUI] [Dbg] [WorldControl.cc:237] [0m[1;36mUsing an event to share WorldControl msgs with the server[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mWorld control[0m[1;32m] to main window[0m[1;32m[0m
+[planner_server-16] [INFO] [1746454324.558135992] [forklift_1.planner_server]: Created global planner plugin GridBased of type nav2_navfn_planner::NavfnPlanner
+[planner_server-16] [INFO] [1746454324.558184297] [forklift_1.planner_server]: Configuring plugin GridBased of type NavfnPlanner
+[planner_server-16] [INFO] [1746454324.559999005] [forklift_1.global_costmap.global_costmap]: StaticLayer: Resizing costmap to 1006 X 1674 at 0.030000 m/pix
+[planner_server-16] [INFO] [1746454324.560279831] [forklift_1.planner_server]: Planner Server has GridBased  planners available.
+[lifecycle_manager-23] [INFO] [1746454324.587726798] [forklift_1.lifecycle_manager_navigation]: [34m[1mConfiguring behavior_server[0m[0m
+[behavior_server-17] [INFO] [1746454324.588087241] [forklift_1.behavior_server]: Configuring
+[behavior_server-17] [INFO] [1746454324.604508097] [forklift_1.behavior_server]: Creating behavior plugin spin of type nav2_behaviors::Spin
+[behavior_server-17] [INFO] [1746454324.605751013] [forklift_1.behavior_server]: Creating behavior plugin backup of type nav2_behaviors::BackUp
+[behavior_server-17] [INFO] [1746454324.606939829] [forklift_1.behavior_server]: Creating behavior plugin drive_on_heading of type nav2_behaviors::DriveOnHeading
+[behavior_server-17] [INFO] [1746454324.608078746] [forklift_1.behavior_server]: Creating behavior plugin assisted_teleop of type nav2_behaviors::AssistedTeleop
+[behavior_server-17] [INFO] [1746454324.610329303] [forklift_1.behavior_server]: Creating behavior plugin wait of type nav2_behaviors::Wait
+[behavior_server-17] [INFO] [1746454324.620608735] [forklift_1.behavior_server]: Configuring spin
+[behavior_server-17] [INFO] [1746454324.640029258] [forklift_1.behavior_server]: Configuring backup
+[behavior_server-17] [INFO] [1746454324.653900984] [forklift_1.behavior_server]: Configuring drive_on_heading
+[behavior_server-17] [INFO] [1746454324.668941873] [forklift_1.behavior_server]: Configuring assisted_teleop
+[behavior_server-17] [INFO] [1746454324.688303592] [forklift_1.behavior_server]: Configuring wait
+[lifecycle_manager-23] [INFO] [1746454324.707491136] [forklift_1.lifecycle_manager_navigation]: [34m[1mConfiguring velocity_smoother[0m[0m
+[velocity_smoother-20] [INFO] [1746454324.707929604] [forklift_1.velocity_smoother]: Configuring velocity smoother
+[lifecycle_manager-23] [INFO] [1746454324.722654464] [forklift_1.lifecycle_manager_navigation]: [34m[1mConfiguring collision_monitor[0m[0m
+[collision_monitor-21] [INFO] [1746454324.722976925] [forklift_1.collision_monitor]: Configuring
+[collision_monitor-21] [INFO] [1746454324.744168772] [collision_monitor]: [scan]: Creating Scan
+[collision_monitor-21] [INFO] [1746454324.749099293] [collision_monitor]: [FootprintApproach]: Creating Polygon
+[collision_monitor-21] [INFO] [1746454324.749646240] [collision_monitor]: [FootprintApproach]: Polygon points are not defined. Using dynamic subscription instead.
+[collision_monitor-21] [INFO] [1746454324.754328963] [collision_monitor]: [FootprintApproach]: Making footprint subscriber on /local_costmap/published_footprint topic
+[lifecycle_manager-23] [INFO] [1746454324.770387350] [forklift_1.lifecycle_manager_navigation]: [34m[1mConfiguring bt_navigator[0m[0m
+[bt_navigator-18] [INFO] [1746454324.770740655] [forklift_1.bt_navigator]: Configuring
+[bt_navigator-18] [INFO] [1746454324.784457326] [forklift_1.bt_navigator]: Creating navigator id navigate_to_pose of type nav2_bt_navigator::NavigateToPoseNavigator
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mWorldControl[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_gui_vendor/lib/gz-gui-8/plugins/libWorldControl.so[0m[1;32m][0m[1;32m[0m
+[gazebo-3] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mWorldStats[0m[1;36m][0m[1;36m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mListening to stats on [[0m[1;32m/world/warehouse/stats[0m[1;32m][0m[1;32m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mWorld stats[0m[1;32m] to main window[0m[1;32m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mWorldStats[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_gui_vendor/lib/gz-gui-8/plugins/libWorldStats.so[0m[1;32m][0m[1;32m[0m
+[gazebo-3] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mShapes[0m[1;36m][0m[1;36m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mShapes[0m[1;32m] to main window[0m[1;32m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mShapes[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libShapes.so[0m[1;32m][0m[1;32m[0m
+[gazebo-3] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mLights[0m[1;36m][0m[1;36m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mLights[0m[1;32m] to main window[0m[1;32m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mLights[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libLights.so[0m[1;32m][0m[1;32m[0m
+[gazebo-3] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mTransformControl[0m[1;36m][0m[1;36m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mTransform control[0m[1;32m] to main window[0m[1;32m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mTransformControl[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libTransformControl.so[0m[1;32m][0m[1;32m[0m
+[gazebo-3] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mScreenshot[0m[1;36m][0m[1;36m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mScreenshot service on [[0m[1;32m/gui/screenshot[0m[1;32m][0m[1;32m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mScreenshot[0m[1;32m] to main window[0m[1;32m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mScreenshot[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_gui_vendor/lib/gz-gui-8/plugins/libScreenshot.so[0m[1;32m][0m[1;32m[0m
+[gazebo-3] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mCopyPaste[0m[1;36m][0m[1;36m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mCopy/Paste[0m[1;32m] to main window[0m[1;32m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mCopyPaste[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libCopyPaste.so[0m[1;32m][0m[1;32m[0m
+[gazebo-3] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mComponentInspector[0m[1;36m][0m[1;36m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mComponent inspector[0m[1;32m] to main window[0m[1;32m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mComponentInspector[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libComponentInspector.so[0m[1;32m][0m[1;32m[0m
+[gazebo-3] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mEntityTree[0m[1;36m][0m[1;36m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mCurrently tracking topic on [[0m[1;32m/gui/currently_tracked[0m[1;32m][0m[1;32m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mEntity tree[0m[1;32m] to main window[0m[1;32m[0m
+[mqtt_client-6] [INFO] [1746454324.820799569] [forklift_1.mqtt_client]: Subscribed ROS topic '/cube_pos' of type 'std_msgs/msg/String'
+[mqtt_client-6] [INFO] [1746454324.822066075] [forklift_1.mqtt_client]: Subscribed ROS topic 'feedback' of type 'std_msgs/msg/String'
+[rviz2-10] [INFO] [1746454324.838627329] [rviz2]: Stereo is NOT SUPPORTED
+[rviz2-10] [INFO] [1746454324.838764705] [rviz2]: OpenGl version: 4.6 (GLSL 4.6)
+[gazebo-3] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] file::/WorldStats/WorldStats.qml:53:3: QML RowLayout: Binding loop detected for property "x"[0m[1;33m[0m
+[rviz2-10] [INFO] [1746454324.887889483] [rviz2]: Stereo is NOT SUPPORTED
+[bt_navigator-18] [INFO] [1746454324.897152200] [forklift_1.bt_navigator]: Creating navigator id navigate_through_poses of type nav2_bt_navigator::NavigateThroughPosesNavigator
+[lifecycle_manager-23] [INFO] [1746454324.949526145] [forklift_1.lifecycle_manager_navigation]: [34m[1mConfiguring waypoint_follower[0m[0m
+[waypoint_follower-19] [INFO] [1746454324.949912361] [forklift_1.waypoint_follower]: Configuring
+[gazebo-3] libEGL warning: failed to open /dev/dri/renderD128: Permission denied
+[gazebo-3] 
+[gazebo-3] libEGL warning: failed to open /dev/dri/renderD128: Permission denied
+[gazebo-3] 
+[gazebo-3] libEGL warning: NEEDS EXTENSION: falling back to kms_swrast
+[gz-4] [1;33mWarning [Utils.cc:132][0m [/sdf/model[@name="forklift"]/link[@name="rplidar_link"]/sensor[@name="rplidar"]/gz_frame_id:<urdf-string>:L0]: XML Element[gz_frame_id], child of element[sensor], not defined in SDF. Copying[gz_frame_id] as children of [sensor].
+[waypoint_follower-19] [INFO] [1746454325.001804714] [forklift_1.waypoint_follower]: Created waypoint_task_executor : wait_at_waypoint of type nav2_waypoint_follower::WaitAtWaypoint
+[rviz2-10] [INFO] [1746454325.002321524] [forklift_1.rviz]: Subscribing to: /mobile_base/sensors/bumper_pointcloud
+[rviz2-10] 
+[lifecycle_manager-23] [INFO] [1746454325.003422119] [forklift_1.lifecycle_manager_navigation]: [34m[1mConfiguring docking_server[0m[0m
+[opennav_docking-22] [INFO] [1746454325.003858899] [forklift_1.docking_server]: Configuring docking_server
+[opennav_docking-22] [INFO] [1746454325.003975247] [forklift_1.docking_server]: Controller frequency set to 50.0000Hz
+[rviz2-10] [INFO] [1746454325.006105252] [forklift_1.rviz]: Subscribing to: /mobile_base/sensors/bumper_pointcloud
+[rviz2-10] 
+[opennav_docking-22] [INFO] [1746454325.064637835] [forklift_1.docking_server]: Created charging dock plugin simple_charging_dock of type opennav_docking::SimpleChargingDock
+[rviz2-10] [INFO] [1746454325.075260875] [forklift_1.rviz]: Subscribing to: /global_costmap/voxel_marked_cloud
+[rviz2-10] 
+[opennav_docking-22] [INFO] [1746454325.079439225] [forklift_1.docking_server]: Loading docks from parameter file.
+[opennav_docking-22] [INFO] [1746454325.080951574] [forklift_1.docking_server]: Docking Server has 1 dock types and 1 dock instances available.
+[lifecycle_manager-23] [INFO] [1746454325.084227572] [forklift_1.lifecycle_manager_navigation]: [34m[1mActivating controller_server[0m[0m
+[controller_server-14] [INFO] [1746454325.084484416] [forklift_1.controller_server]: Activating
+[controller_server-14] [INFO] [1746454325.084517229] [forklift_1.local_costmap.local_costmap]: Activating
+[controller_server-14] [INFO] [1746454325.084545970] [forklift_1.local_costmap.local_costmap]: Checking transform
+[controller_server-14] [INFO] [1746454325.084580560] [forklift_1.local_costmap.local_costmap]: Timed out waiting for transform from base_link to odom to become available, tf error: Invalid frame ID "odom" passed to canTransform argument target_frame - frame does not exist
+[rviz2-10] [INFO] [1746454325.127291380] [forklift_1.rviz]: Subscribing to: /local_costmap/voxel_marked_cloud
+[rviz2-10] 
+[rviz2-10] [INFO] [1746454325.202770531] [forklift_1.rviz]: Subscribing to: /mobile_base/sensors/bumper_pointcloud
+[rviz2-10] 
+[rviz2-10] [INFO] [1746454325.227497423] [forklift_1.rviz]: Subscribing to: /global_costmap/voxel_marked_cloud
+[rviz2-10] 
+[rviz2-10] [INFO] [1746454325.257759256] [forklift_1.rviz]: Subscribing to: /local_costmap/voxel_marked_cloud
+[rviz2-10] 
+[rviz2-10] [INFO] [1746454325.425440127] [forklift_1.nav2_rviz_selector_node]: Trying to load plugins...
+[rviz2-10] [INFO] [1746454325.513155170] [forklift_1.nav2_rviz_docking_panel_node]: Loading dock plugins
+[gz-4] libEGL warning: failed to open /dev/dri/renderD128: Permission denied
+[gz-4] 
+[gz-4] libEGL warning: failed to open /dev/dri/renderD128: Permission denied
+[gz-4] 
+[gz-4] libEGL warning: NEEDS EXTENSION: falling back to kms_swrast
+[controller_server-14] [INFO] [1746454325.584852514] [forklift_1.local_costmap.local_costmap]: Timed out waiting for transform from base_link to odom to become available, tf error: Invalid frame ID "odom" passed to canTransform argument target_frame - frame does not exist
+[rviz2-10] [INFO] [1746454325.695044658] [rviz2]: Trying to create a map of size 1006 x 1674 using 1 swatches
+[rviz2-10] [ERROR] [1746454325.711743937] [rviz2]: rviz/glsl120/indexed_8bit_image.vert
+[rviz2-10] rviz/glsl120/indexed_8bit_image.frag
+[rviz2-10]  GLSL link result : 
+[rviz2-10] active samplers with a different type refer to the same texture image unit
+[gazebo-3] [1;33m[GUI] [Wrn] [Ogre2RenderTarget.cc:668] [0m[1;33mAnti-aliasing level of '[0m[1;33m[0m[1;33m' [0m[1;33mis not supported; valid FSAA levels are: [0m[1;33m[ 0 4 ][0m[1;33m. Setting to 1[0m[1;33m[0m
+[controller_server-14] [INFO] [1746454326.085379210] [forklift_1.local_costmap.local_costmap]: Timed out waiting for transform from base_link to odom to become available, tf error: Invalid frame ID "odom" passed to canTransform argument target_frame - frame does not exist
+[controller_server-14] [INFO] [1746454326.584721391] [forklift_1.local_costmap.local_costmap]: Timed out waiting for transform from base_link to odom to become available, tf error: Invalid frame ID "odom" passed to canTransform argument target_frame - frame does not exist
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mEntityTree[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libEntityTree.so[0m[1;32m][0m[1;32m[0m
+[gazebo-3] [1;36m[GUI] [Dbg] [Application.cc:398] [0m[1;36mLoading window config[0m[1;36m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mUsing server control service [[0m[1;32m/server_control[0m[1;32m][0m[1;32m[0m
+[gazebo-3] [1;36m[GUI] [Dbg] [Application.cc:671] [0m[1;36mApplying config[0m[1;36m[0m
+[gazebo-3] [1;36m[GUI] [Dbg] [MinimalScene.cc:802] [0m[1;36mCreating gz-rendering interface for OpenGL[0m[1;36m[0m
+[gazebo-3] [1;36m[GUI] [Dbg] [MinimalScene.cc:986] [0m[1;36mCreating render thread interface for OpenGL[0m[1;36m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoading plugin [[0m[1;32mgz-rendering-ogre2[0m[1;32m][0m[1;32m[0m
+[gazebo-3] [1;36m[GUI] [Dbg] [MinimalScene.cc:749] [0m[1;36mCreate scene [[0m[1;36mscene[0m[1;36m][0m[1;36m[0m
+[gazebo-3] [1;36m[GUI] [Dbg] [MinimalScene.cc:1037] [0m[1;36mCreating texture node render interface for OpenGL[0m[1;36m[0m
+[gazebo-3] [1;36m[GUI] [Dbg] [TransformControl.cc:453] [0m[1;36mTransformControl plugin is using camera [[0m[1;36mscene::Camera(65527)[0m[1;36m][0m[1;36m[0m
+[gazebo-3] [1;36m[GUI] [Dbg] [Spawn.cc:308] [0m[1;36mSpawn plugin is using camera [[0m[1;36mscene::Camera(65527)[0m[1;36m][0m[1;36m[0m
+[gazebo-3] [1;36m[GUI] [Dbg] [SelectEntities.cc:452] [0m[1;36mSelectEntities plugin is using camera [[0m[1;36mscene::Camera(65527)[0m[1;36m][0m[1;36m[0m
+[gazebo-3] [1;36m[GUI] [Dbg] [MarkerManager.cc:169] [0m[1;36mAdvertise [0m[1;36m/marker[0m[1;36m/list service.[0m
+[gazebo-3] [1;36m[GUI] [Dbg] [MarkerManager.cc:179] [0m[1;36mAdvertise [0m[1;36m/marker[0m[1;36m/list.[0m
+[gazebo-3] [1;36m[GUI] [Dbg] [MarkerManager.cc:189] [0m[1;36mAdvertise [0m[1;36m/marker[0m[1;36m_array.[0m
+[gazebo-3] [1;36m[GUI] [Dbg] [CameraTracking.cc:205] [0m[1;36mCameraTrackingPrivate plugin is moving camera [[0m[1;36mscene::Camera(65527)[0m[1;36m][0m[1;36m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mMove to service on [[0m[1;32m/gui/move_to[0m[1;32m][0m[1;32m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mFollow service on [[0m[1;32m/gui/follow[0m[1;32m] (deprecated)[0m[1;32m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mTracking topic on [[0m[1;32m/gui/track[0m[1;32m][0m[1;32m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mTracking status topic on [[0m[1;32m/gui/currently_tracked[0m[1;32m][0m[1;32m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mMove to pose service on [[0m[1;32m/gui/move_to/pose[0m[1;32m][0m[1;32m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mCamera pose topic advertised on [[0m[1;32m/gui/camera/pose[0m[1;32m][0m[1;32m[0m
+[gazebo-3] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mFollow offset service on [[0m[1;32m/gui/follow/offset[0m[1;32m] (deprecated)[0m[1;32m[0m
+[gazebo-3] [1;36m[GUI] [Dbg] [InteractiveViewControl.cc:176] [0m[1;36mInteractiveViewControl plugin is moving camera [[0m[1;36mscene::Camera(65527)[0m[1;36m][0m[1;36m[0m
+[gazebo-3] [1;36m[GUI] [Dbg] [EntityContextMenuPlugin.cc:79] [0m[1;36mEntity context menu plugin is using camera [[0m[1;36mscene::Camera(65527)[0m[1;36m][0m[1;36m[0m
+[gazebo-3] [1;33mWarning [Utils.cc:132][0m [/sdf/model[@name="forklift"]/link[@name="rplidar_link"]/sensor[@name="rplidar"]/gz_frame_id:<data-string>:L470]: XML Element[gz_frame_id], child of element[sensor], not defined in SDF. Copying[gz_frame_id] as children of [sensor].
+[primitive_node-24] [INFO] [1746454326.832661147] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454326.833379302] [forklift_1.basic_navigator]: Publishing Initial Pose
+[amcl-12] [INFO] [1746454326.834146396] [forklift_1.amcl]: initialPoseReceived
+[amcl-12] [INFO] [1746454326.834306132] [forklift_1.amcl]: Setting pose (0.009000): 0.000 0.000 0.000
+[primitive_node-24] [INFO] [1746454326.834512018] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454326.835218939] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454326.835845684] [forklift_1.basic_navigator]: Publishing Initial Pose
+[amcl-12] [INFO] [1746454326.836361529] [forklift_1.amcl]: initialPoseReceived
+[amcl-12] [INFO] [1746454326.836428565] [forklift_1.amcl]: Setting pose (0.009000): 0.000 0.000 0.000
+[primitive_node-24] [INFO] [1746454326.836557761] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454326.836913957] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454326.837313551] [forklift_1.basic_navigator]: Publishing Initial Pose
+[amcl-12] [INFO] [1746454326.837644063] [forklift_1.amcl]: initialPoseReceived
+[amcl-12] [INFO] [1746454326.837677137] [forklift_1.amcl]: Setting pose (0.009000): 0.000 0.000 0.000
+[primitive_node-24] [INFO] [1746454326.838154072] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454326.838741352] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454326.839359549] [forklift_1.basic_navigator]: Publishing Initial Pose
+[amcl-12] [INFO] [1746454326.840613977] [forklift_1.amcl]: initialPoseReceived
+[amcl-12] [INFO] [1746454326.840678315] [forklift_1.amcl]: Setting pose (0.009000): 0.000 0.000 0.000
+[primitive_node-24] [INFO] [1746454326.841208081] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[gazebo-3] [1;33m[GUI] [Wrn] [Component.hh:172] [0m[1;33mTrying to deserialize component with data type [[0m[1;33mSt10shared_ptrIN3sdf3v147ElementEE[0m[1;33m], which doesn't have [0m[1;33m`operator>>`. Component will not be deserialized.[0m[1;33m[0m
+[controller_server-14] [INFO] [1746454327.084746111] [forklift_1.local_costmap.local_costmap]: Timed out waiting for transform from base_link to odom to become available, tf error: Invalid frame ID "odom" passed to canTransform argument target_frame - frame does not exist
+[controller_server-14] [INFO] [1746454327.584708307] [forklift_1.local_costmap.local_costmap]: Timed out waiting for transform from base_link to odom to become available, tf error: Invalid frame ID "odom" passed to canTransform argument target_frame - frame does not exist
+[primitive_node-24] [INFO] [1746454327.842876188] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454327.843295499] [forklift_1.basic_navigator]: Publishing Initial Pose
+[amcl-12] [INFO] [1746454328.013218997] [forklift_1.amcl]: createLaserObject
+[controller_server-14] [INFO] [1746454328.086790601] [forklift_1.local_costmap.local_costmap]: start
+[primitive_node-24] [INFO] [1746454328.158592655] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454328.159722960] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454328.160342349] [forklift_1.basic_navigator]: Publishing Initial Pose
+[primitive_node-24] [INFO] [1746454328.160963071] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454328.161923533] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454328.162510736] [forklift_1.basic_navigator]: Publishing Initial Pose
+[primitive_node-24] [INFO] [1746454328.163086457] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454328.167721480] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454328.168695614] [forklift_1.basic_navigator]: Publishing Initial Pose
+[primitive_node-24] [INFO] [1746454328.169705594] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454328.171342807] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454328.171720020] [forklift_1.basic_navigator]: Publishing Initial Pose
+[primitive_node-24] [INFO] [1746454328.172512176] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454328.175948386] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454328.177007917] [forklift_1.basic_navigator]: Publishing Initial Pose
+[primitive_node-24] [INFO] [1746454328.178033443] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454328.180851255] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454328.181515222] [forklift_1.basic_navigator]: Publishing Initial Pose
+[primitive_node-24] [INFO] [1746454328.183696782] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454328.184742317] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454328.185294096] [forklift_1.basic_navigator]: Publishing Initial Pose
+[primitive_node-24] [INFO] [1746454328.185884084] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454328.186965748] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454328.187505784] [forklift_1.basic_navigator]: Publishing Initial Pose
+[primitive_node-24] [INFO] [1746454328.188113820] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454328.189249650] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454328.189837016] [forklift_1.basic_navigator]: Publishing Initial Pose
+[primitive_node-24] [INFO] [1746454328.190423039] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454328.191993801] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454328.192597806] [forklift_1.basic_navigator]: Publishing Initial Pose
+[primitive_node-24] [INFO] [1746454328.193214173] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454328.195354345] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454328.196092336] [forklift_1.basic_navigator]: Publishing Initial Pose
+[primitive_node-24] [INFO] [1746454328.196578412] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454328.198080772] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454328.198622401] [forklift_1.basic_navigator]: Publishing Initial Pose
+[primitive_node-24] [INFO] [1746454328.199203549] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454328.200810634] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454328.201420512] [forklift_1.basic_navigator]: Publishing Initial Pose
+[primitive_node-24] [INFO] [1746454328.202042068] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454328.204195115] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454328.204799045] [forklift_1.basic_navigator]: Publishing Initial Pose
+[primitive_node-24] [INFO] [1746454328.205728481] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454328.207590699] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454328.208160364] [forklift_1.basic_navigator]: Publishing Initial Pose
+[primitive_node-24] [INFO] [1746454328.208790435] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454328.210621595] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454328.211133442] [forklift_1.basic_navigator]: Publishing Initial Pose
+[primitive_node-24] [INFO] [1746454328.211579316] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454328.213592884] [forklift_1.basic_navigator]: Setting initial pose
+[gazebo-3] [1;33mWarning [Utils.cc:132][0m [/sdf/model[@name="forklift"]/link[@name="rplidar_link"]/sensor[@name="rplidar"]/gz_frame_id:<data-string>:L470]: XML Element[gz_frame_id], child of element[sensor], not defined in SDF. Copying[gz_frame_id] as children of [sensor].
+[primitive_node-24] [INFO] [1746454328.214220626] [forklift_1.basic_navigator]: Publishing Initial Pose
+[primitive_node-24] [INFO] [1746454328.214919715] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454328.216560773] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454328.217045116] [forklift_1.basic_navigator]: Publishing Initial Pose
+[primitive_node-24] [INFO] [1746454328.217632352] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454328.219109352] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454328.219596338] [forklift_1.basic_navigator]: Publishing Initial Pose
+[primitive_node-24] [INFO] [1746454328.220206670] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454328.222584963] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454328.222982347] [forklift_1.basic_navigator]: Publishing Initial Pose
+[primitive_node-24] [INFO] [1746454328.223437754] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454328.225423318] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454328.225804907] [forklift_1.basic_navigator]: Publishing Initial Pose
+[primitive_node-24] [INFO] [1746454328.226249134] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454328.228900522] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454328.229406758] [forklift_1.basic_navigator]: Publishing Initial Pose
+[primitive_node-24] [INFO] [1746454328.230009052] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454328.232158202] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454328.233089588] [forklift_1.basic_navigator]: Publishing Initial Pose
+[primitive_node-24] [INFO] [1746454328.233604296] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454328.234939833] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454328.235474203] [forklift_1.basic_navigator]: Publishing Initial Pose
+[primitive_node-24] [INFO] [1746454328.236120566] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454328.237956591] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454328.238521012] [forklift_1.basic_navigator]: Publishing Initial Pose
+[primitive_node-24] [INFO] [1746454328.239165859] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454328.241008404] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454328.241481826] [forklift_1.basic_navigator]: Publishing Initial Pose
+[primitive_node-24] [INFO] [1746454328.241993836] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454328.244261868] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454328.244842571] [forklift_1.basic_navigator]: Publishing Initial Pose
+[primitive_node-24] [INFO] [1746454328.245449903] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454328.247120600] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454328.247648351] [forklift_1.basic_navigator]: Publishing Initial Pose
+[primitive_node-24] [INFO] [1746454328.248332610] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454328.249764858] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454328.250140793] [forklift_1.basic_navigator]: Publishing Initial Pose
+[primitive_node-24] [INFO] [1746454328.250710511] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454328.252939607] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454328.253243901] [forklift_1.basic_navigator]: Publishing Initial Pose
+[primitive_node-24] [INFO] [1746454328.253804347] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454328.256622299] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454328.257227324] [forklift_1.basic_navigator]: Publishing Initial Pose
+[primitive_node-24] [INFO] [1746454328.257847374] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454328.260060208] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454328.260840633] [forklift_1.basic_navigator]: Publishing Initial Pose
+[primitive_node-24] [INFO] [1746454328.261816370] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454328.262729577] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454328.263236268] [forklift_1.basic_navigator]: Publishing Initial Pose
+[primitive_node-24] [INFO] [1746454328.263727565] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454328.265352274] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454328.265927084] [forklift_1.basic_navigator]: Publishing Initial Pose
+[primitive_node-24] [INFO] [1746454328.266449569] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454328.268346324] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454328.268810116] [forklift_1.basic_navigator]: Publishing Initial Pose
+[primitive_node-24] [INFO] [1746454328.269312300] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454328.271289383] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454328.271780918] [forklift_1.basic_navigator]: Publishing Initial Pose
+[primitive_node-24] [INFO] [1746454328.272177132] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454328.274384941] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454328.274958484] [forklift_1.basic_navigator]: Publishing Initial Pose
+[primitive_node-24] [INFO] [1746454328.275604241] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454328.277598290] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454328.278193261] [forklift_1.basic_navigator]: Publishing Initial Pose
+[primitive_node-24] [INFO] [1746454328.278778212] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454328.282557140] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454328.283076615] [forklift_1.basic_navigator]: Publishing Initial Pose
+[primitive_node-24] [INFO] [1746454328.283979119] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454328.285117911] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454328.285748458] [forklift_1.basic_navigator]: Publishing Initial Pose
+[primitive_node-24] [INFO] [1746454328.286418330] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454328.287359547] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454328.287930225] [forklift_1.basic_navigator]: Publishing Initial Pose
+[primitive_node-24] [INFO] [1746454328.288518219] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[controller_server-14] [INFO] [1746454328.289119771] [forklift_1.controller_server]: Creating bond (controller_server) to lifecycle manager.
+[primitive_node-24] [INFO] [1746454328.290342657] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454328.290931138] [forklift_1.basic_navigator]: Publishing Initial Pose
+[primitive_node-24] [INFO] [1746454328.291468076] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454328.293726888] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454328.294235757] [forklift_1.basic_navigator]: Publishing Initial Pose
+[primitive_node-24] [INFO] [1746454328.294913212] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454328.297199172] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454328.297721377] [forklift_1.basic_navigator]: Publishing Initial Pose
+[primitive_node-24] [INFO] [1746454328.298274716] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454328.300237932] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454328.300685636] [forklift_1.basic_navigator]: Publishing Initial Pose
+[primitive_node-24] [INFO] [1746454328.301168537] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454328.303377018] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454328.303818407] [forklift_1.basic_navigator]: Publishing Initial Pose
+[primitive_node-24] [INFO] [1746454328.304297256] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454328.306632031] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454328.307168470] [forklift_1.basic_navigator]: Publishing Initial Pose
+[primitive_node-24] [INFO] [1746454328.307862327] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454328.309627533] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454328.310089711] [forklift_1.basic_navigator]: Publishing Initial Pose
+[primitive_node-24] [INFO] [1746454328.310638034] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454328.312659457] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454328.312943905] [forklift_1.basic_navigator]: Publishing Initial Pose
+[primitive_node-24] [INFO] [1746454328.313497016] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454328.315792207] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454328.316442893] [forklift_1.basic_navigator]: Publishing Initial Pose
+[primitive_node-24] [INFO] [1746454328.317067633] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454328.318780311] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454328.319251524] [forklift_1.basic_navigator]: Publishing Initial Pose
+[primitive_node-24] [INFO] [1746454328.319896554] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454328.322173945] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454328.322763738] [forklift_1.basic_navigator]: Publishing Initial Pose
+[primitive_node-24] [INFO] [1746454328.323354928] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454328.324815245] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454328.325254738] [forklift_1.basic_navigator]: Publishing Initial Pose
+[primitive_node-24] [INFO] [1746454328.325947143] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454328.327925754] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454328.328322402] [forklift_1.basic_navigator]: Publishing Initial Pose
+[primitive_node-24] [INFO] [1746454328.328666400] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[primitive_node-24] [INFO] [1746454328.331142786] [forklift_1.basic_navigator]: Setting initial pose
+[primitive_node-24] [INFO] [1746454328.331729902] [forklift_1.basic_navigator]: Publishing Initial Pose
+[amcl-12] [INFO] [1746454328.332254870] [forklift_1.amcl]: initialPoseReceived
+[amcl-12] [WARN] [1746454328.332403923] [forklift_1.amcl]: Failed to transform initial pose in time (Lookup would require extrapolation at time 0.414000, but only time 1.102000 is in the buffer, when looking up transform from frame [base_footprint] to frame [odom])
+[amcl-12] [INFO] [1746454328.332432479] [forklift_1.amcl]: Setting pose (0.414000): 0.000 0.000 0.000
+[primitive_node-24] [INFO] [1746454328.332439294] [forklift_1.basic_navigator]: Waiting for amcl_pose to be received
+[amcl-12] [INFO] [1746454328.333184934] [forklift_1.amcl]: initialPoseReceived
+[amcl-12] [WARN] [1746454328.333230726] [forklift_1.amcl]: Failed to transform initial pose in time (Lookup would require extrapolation at time 0.414000, but only time 1.102000 is in the buffer, when looking up transform from frame [base_footprint] to frame [odom])
+[amcl-12] [INFO] [1746454328.333245589] [forklift_1.amcl]: Setting pose (0.414000): 0.000 0.000 0.000
+[lifecycle_manager-23] [INFO] [1746454328.397680346] [forklift_1.lifecycle_manager_navigation]: Server controller_server connected with bond.
+[lifecycle_manager-23] [INFO] [1746454328.397742681] [forklift_1.lifecycle_manager_navigation]: [34m[1mActivating smoother_server[0m[0m
+[smoother_server-15] [INFO] [1746454328.398289903] [forklift_1.smoother_server]: Activating
+[smoother_server-15] [INFO] [1746454328.398334492] [forklift_1.smoother_server]: Creating bond (smoother_server) to lifecycle manager.
+[lifecycle_manager-23] [INFO] [1746454328.509696938] [forklift_1.lifecycle_manager_navigation]: Server smoother_server connected with bond.
+[lifecycle_manager-23] [INFO] [1746454328.509755686] [forklift_1.lifecycle_manager_navigation]: [34m[1mActivating planner_server[0m[0m
+[planner_server-16] [INFO] [1746454328.510219472] [forklift_1.planner_server]: Activating
+[planner_server-16] [INFO] [1746454328.510265383] [forklift_1.global_costmap.global_costmap]: Activating
+[planner_server-16] [INFO] [1746454328.510275242] [forklift_1.global_costmap.global_costmap]: Checking transform
+[planner_server-16] [INFO] [1746454328.510339342] [forklift_1.global_costmap.global_costmap]: Timed out waiting for transform from base_link to map to become available, tf error: Lookup would require extrapolation into the past.  Requested time 0.576000 but the earliest data is at time 1.102000, when looking up transform from frame [base_link] to frame [map]
+[amcl-12] [INFO] [1746454328.942128569] [forklift_1.amcl]: Message Filter dropping message: frame 'rplidar_link' at time 0.006 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[planner_server-16] [INFO] [1746454329.010718699] [forklift_1.global_costmap.global_costmap]: Timed out waiting for transform from base_link to map to become available, tf error: Lookup would require extrapolation into the past.  Requested time 1.044000 but the earliest data is at time 1.102000, when looking up transform from frame [base_link] to frame [map]
+[gazebo-3] [1;33m[GUI] [Wrn] [OBJLoader.cc:91] [0m[1;33mBoth `d` and `Tr` parameters defined for "Chair". Use the value of `d` for dissolve (line 8 in .mtl.)[0m
+[gazebo-3] [1;33m[0m
+[planner_server-16] [INFO] [1746454329.510919859] [forklift_1.global_costmap.global_costmap]: start
+[planner_server-16] [INFO] [1746454330.563753951] [forklift_1.planner_server]: Activating plugin GridBased of type NavfnPlanner
+[planner_server-16] [INFO] [1746454330.566974601] [forklift_1.planner_server]: Creating bond (planner_server) to lifecycle manager.
+[lifecycle_manager-23] [INFO] [1746454330.680050190] [forklift_1.lifecycle_manager_navigation]: Server planner_server connected with bond.
+[lifecycle_manager-23] [INFO] [1746454330.680111398] [forklift_1.lifecycle_manager_navigation]: [34m[1mActivating behavior_server[0m[0m
+[behavior_server-17] [INFO] [1746454330.680613549] [forklift_1.behavior_server]: Activating
+[behavior_server-17] [INFO] [1746454330.680661259] [forklift_1.behavior_server]: Activating spin
+[behavior_server-17] [INFO] [1746454330.680679339] [forklift_1.behavior_server]: Activating backup
+[behavior_server-17] [INFO] [1746454330.680688103] [forklift_1.behavior_server]: Activating drive_on_heading
+[behavior_server-17] [INFO] [1746454330.680696185] [forklift_1.behavior_server]: Activating assisted_teleop
+[behavior_server-17] [INFO] [1746454330.680732964] [forklift_1.behavior_server]: Activating wait
+[behavior_server-17] [INFO] [1746454330.680755442] [forklift_1.behavior_server]: Creating bond (behavior_server) to lifecycle manager.
+[lifecycle_manager-23] [INFO] [1746454330.793431414] [forklift_1.lifecycle_manager_navigation]: Server behavior_server connected with bond.
+[lifecycle_manager-23] [INFO] [1746454330.793486631] [forklift_1.lifecycle_manager_navigation]: [34m[1mActivating velocity_smoother[0m[0m
+[velocity_smoother-20] [INFO] [1746454330.794787034] [forklift_1.velocity_smoother]: Activating
+[velocity_smoother-20] [INFO] [1746454330.794938753] [forklift_1.velocity_smoother]: Creating bond (velocity_smoother) to lifecycle manager.
+[lifecycle_manager-23] [INFO] [1746454328.428395971] [forklift_1.lifecycle_manager_navigation]: Server velocity_smoother connected with bond.
+[lifecycle_manager-23] [INFO] [1746454328.428465910] [forklift_1.lifecycle_manager_navigation]: [34m[1mActivating collision_monitor[0m[0m
+[collision_monitor-21] [INFO] [1746454328.429019238] [forklift_1.collision_monitor]: Activating
+[collision_monitor-21] [INFO] [1746454328.429137439] [forklift_1.collision_monitor]: Creating bond (collision_monitor) to lifecycle manager.
+[lifecycle_manager-23] [INFO] [1746454328.543043977] [forklift_1.lifecycle_manager_navigation]: Server collision_monitor connected with bond.
+[lifecycle_manager-23] [INFO] [1746454328.543103332] [forklift_1.lifecycle_manager_navigation]: [34m[1mActivating bt_navigator[0m[0m
+[bt_navigator-18] [INFO] [1746454328.543672563] [forklift_1.bt_navigator]: Activating
+[bt_navigator-18] [INFO] [1746454328.671721295] [forklift_1.bt_navigator]: Creating bond (bt_navigator) to lifecycle manager.
+[lifecycle_manager-23] [INFO] [1746454328.782072460] [forklift_1.lifecycle_manager_navigation]: Server bt_navigator connected with bond.
+[lifecycle_manager-23] [INFO] [1746454328.782150958] [forklift_1.lifecycle_manager_navigation]: [34m[1mActivating waypoint_follower[0m[0m
+[waypoint_follower-19] [INFO] [1746454328.782725416] [forklift_1.waypoint_follower]: Activating
+[waypoint_follower-19] [INFO] [1746454328.782823467] [forklift_1.waypoint_follower]: Creating bond (waypoint_follower) to lifecycle manager.
+[lifecycle_manager-23] [INFO] [1746454328.888086044] [forklift_1.lifecycle_manager_navigation]: Server waypoint_follower connected with bond.
+[lifecycle_manager-23] [INFO] [1746454328.888148432] [forklift_1.lifecycle_manager_navigation]: [34m[1mActivating docking_server[0m[0m
+[opennav_docking-22] [INFO] [1746454328.888912065] [forklift_1.docking_server]: Activating docking_server
+[opennav_docking-22] [INFO] [1746454328.915453647] [forklift_1.docking_server]: Creating bond (docking_server) to lifecycle manager.
+[lifecycle_manager-23] [INFO] [1746454329.029228887] [forklift_1.lifecycle_manager_navigation]: Server docking_server connected with bond.
+[lifecycle_manager-23] [INFO] [1746454329.029302921] [forklift_1.lifecycle_manager_navigation]: [34m[1mManaged nodes are active[0m[0m
+[lifecycle_manager-23] [INFO] [1746454329.029325833] [forklift_1.lifecycle_manager_navigation]: [34m[1mCreating bond timer...[0m[0m
+[primitive_node-24] [INFO] [1746454331.864831817] [forklift_1.basic_navigator]: Nav2 is ready for use!
+[WARNING] [launch]: user interrupted with ctrl-c (SIGINT)
+[ERROR] [launch]: Caught exception in launch (see debug for traceback): [Errno 2] No such file or directory: '/tmp/nav2_9exmfs8b.sdf'
+[opennav_docking-22] [INFO] [1746454450.775066536] [rclcpp]: signal_handler(signum=2)
+[opennav_docking-22] [INFO] [1746454450.775226021] [forklift_1.docking_server]: Running Nav2 LifecycleNode rcl preshutdown (docking_server)
+[opennav_docking-22] [INFO] [1746454450.776039824] [forklift_1.docking_server]: Deactivating docking_server
+[velocity_smoother-20] [INFO] [1746454450.775078170] [rclcpp]: signal_handler(signum=2)
+[velocity_smoother-20] [INFO] [1746454450.775497361] [forklift_1.velocity_smoother]: Running Nav2 LifecycleNode rcl preshutdown (velocity_smoother)
+[velocity_smoother-20] [INFO] [1746454450.775678926] [forklift_1.velocity_smoother]: Deactivating
+[velocity_smoother-20] [INFO] [1746454450.775745431] [forklift_1.velocity_smoother]: Destroying bond (velocity_smoother) to lifecycle manager.
+[behavior_server-17] [INFO] [1746454450.775084171] [rclcpp]: signal_handler(signum=2)
+[behavior_server-17] [INFO] [1746454450.776139190] [forklift_1.behavior_server]: Running Nav2 LifecycleNode rcl preshutdown (behavior_server)
+[map_server-11] [INFO] [1746454450.775102924] [rclcpp]: signal_handler(signum=2)
+[map_server-11] [INFO] [1746454450.775465652] [forklift_1.map_server]: Running Nav2 LifecycleNode rcl preshutdown (map_server)
+[map_server-11] [INFO] [1746454450.775735627] [forklift_1.map_server]: Deactivating
+[map_server-11] [INFO] [1746454450.775811319] [forklift_1.map_server]: Destroying bond (map_server) to lifecycle manager.
+[lifecycle_manager-23] [INFO] [1746454450.775114996] [rclcpp]: signal_handler(signum=2)
+[lifecycle_manager-23] [INFO] [1746454450.776304739] [forklift_1.lifecycle_manager_navigation]: Running Nav2 LifecycleManager rcl preshutdown (lifecycle_manager_navigation)
+[primitive_node-24] Traceback (most recent call last):
+[planner_server-16] [INFO] [1746454450.775142605] [rclcpp]: signal_handler(signum=2)
+[planner_server-16] [INFO] [1746454450.776660210] [forklift_1.planner_server]: Running Nav2 LifecycleNode rcl preshutdown (planner_server)
+[planner_server-16] [INFO] [1746454450.776892225] [forklift_1.planner_server]: Deactivating
+[planner_server-16] [INFO] [1746454450.776944213] [forklift_1.global_costmap.global_costmap]: Deactivating
+[parameter_bridge-5] [INFO] [1746454450.775140841] [rclcpp]: signal_handler(signum=2)
+[parameter_bridge-7] [INFO] [1746454450.775144373] [rclcpp]: signal_handler(signum=2)
+[robot_state_publisher-9] [INFO] [1746454450.775150233] [rclcpp]: signal_handler(signum=2)
+[behavior_server-17] [INFO] [1746454450.776489391] [forklift_1.behavior_server]: Deactivating
+[behavior_server-17] [INFO] [1746454450.776613680] [forklift_1.behavior_server]: Destroying bond (behavior_server) to lifecycle manager.
+[lifecycle_manager-23] [INFO] [1746454450.776393149] [forklift_1.lifecycle_manager_navigation]: [34m[1mTerminating bond timer...[0m[0m
+[collision_monitor-21] [INFO] [1746454450.776247215] [rclcpp]: signal_handler(signum=2)
+[collision_monitor-21] [INFO] [1746454450.776613302] [forklift_1.collision_monitor]: Running Nav2 LifecycleNode rcl preshutdown (collision_monitor)
+[collision_monitor-21] [INFO] [1746454450.777142374] [forklift_1.collision_monitor]: Deactivating
+[collision_monitor-21] [INFO] [1746454450.777237273] [forklift_1.collision_monitor]: Destroying bond (collision_monitor) to lifecycle manager.
+[controller_server-14] [INFO] [1746454450.775247260] [rclcpp]: signal_handler(signum=2)
+[lifecycle_manager-13] [INFO] [1746454450.777365977] [rclcpp]: signal_handler(signum=2)
+[lifecycle_manager-13] [INFO] [1746454450.778630441] [forklift_1.lifecycle_manager_localization]: Running Nav2 LifecycleManager rcl preshutdown (lifecycle_manager_localization)
+[lifecycle_manager-13] [INFO] [1746454450.778668509] [forklift_1.lifecycle_manager_localization]: [34m[1mTerminating bond timer...[0m[0m
+[mqtt_client-6] [INFO] [1746454450.777636786] [rclcpp]: signal_handler(signum=2)
+[primitive_node-24]   File "/home/elmeripk/forklift_sim/install/forklift_controller/lib/forklift_controller/primitive_node", line 33, in <module>
+[primitive_node-24]     sys.exit(load_entry_point('forklift-controller==0.0.0', 'console_scripts', 'primitive_node')())
+[primitive_node-24]              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[primitive_node-24]   File "/home/elmeripk/forklift_sim/install/forklift_controller/lib/python3.12/site-packages/forklift_controller/primitive_node.py", line 281, in main
+[primitive_node-24]     rclpy.spin(node, executor=executor)
+[primitive_node-24]   File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/__init__.py", line 244, in spin
+[primitive_node-24]     executor.spin_once()
+[primitive_node-24]   File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/executors.py", line 899, in spin_once
+[primitive_node-24]     self._spin_once_impl(timeout_sec)
+[primitive_node-24]   File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/executors.py", line 878, in _spin_once_impl
+[primitive_node-24]     handler, entity, node = self.wait_for_ready_callbacks(
+[primitive_node-24]                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[primitive_node-24]   File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/executors.py", line 781, in wait_for_ready_callbacks
+[primitive_node-24]     return next(self._cb_iter)
+[primitive_node-24]            ^^^^^^^^^^^^^^^^^^^
+[primitive_node-24]   File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/executors.py", line 655, in _wait_for_ready_callbacks
+[primitive_node-24]     entity_count += waitable.get_num_entities()
+[primitive_node-24]   File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/waitable.py", line 42, in __add__
+[primitive_node-24]     setattr(result, attr, left + right)
+[primitive_node-24] KeyboardInterrupt
+[parameter_bridge-1] [INFO] [1746454450.777716562] [rclcpp]: signal_handler(signum=2)
+[waypoint_follower-19] [INFO] [1746454450.777930908] [rclcpp]: signal_handler(signum=2)
+[smoother_server-15] [INFO] [1746454450.777977025] [rclcpp]: signal_handler(signum=2)
+[smoother_server-15] [INFO] [1746454450.780907339] [forklift_1.smoother_server]: Running Nav2 LifecycleNode rcl preshutdown (smoother_server)
+[amcl-12] [INFO] [1746454450.778120207] [rclcpp]: signal_handler(signum=2)
+[amcl-12] [INFO] [1746454450.778540758] [forklift_1.amcl]: Running Nav2 LifecycleNode rcl preshutdown (amcl)
+[amcl-12] [INFO] [1746454450.778603299] [forklift_1.amcl]: Deactivating
+[amcl-12] [INFO] [1746454450.778695305] [forklift_1.amcl]: Destroying bond (amcl) to lifecycle manager.
+[rviz2-10] [INFO] [1746454450.778300255] [rclcpp]: signal_handler(signum=2)
+[bt_navigator-18] [INFO] [1746454450.779234572] [rclcpp]: signal_handler(signum=2)
+[bt_navigator-18] [INFO] [1746454450.779371860] [forklift_1.bt_navigator]: Running Nav2 LifecycleNode rcl preshutdown (bt_navigator)
+[bt_navigator-18] [INFO] [1746454450.779435733] [forklift_1.bt_navigator]: Deactivating
+[bt_navigator-18] [INFO] [1746454450.779470616] [forklift_1.bt_navigator]: Destroying bond (bt_navigator) to lifecycle manager.
+[smoother_server-15] [INFO] [1746454450.780995456] [forklift_1.smoother_server]: Deactivating
+[smoother_server-15] [INFO] [1746454450.781065135] [forklift_1.smoother_server]: Destroying bond (smoother_server) to lifecycle manager.
+[controller_server-14] [INFO] [1746454450.781868787] [forklift_1.controller_server]: Running Nav2 LifecycleNode rcl preshutdown (controller_server)
+[controller_server-14] [INFO] [1746454450.782006780] [forklift_1.controller_server]: Deactivating
+[controller_server-14] [INFO] [1746454450.782079102] [forklift_1.local_costmap.local_costmap]: Deactivating
+[waypoint_follower-19] [INFO] [1746454450.785919033] [forklift_1.waypoint_follower]: Running Nav2 LifecycleNode rcl preshutdown (waypoint_follower)
+[waypoint_follower-19] [INFO] [1746454450.786016478] [forklift_1.waypoint_follower]: Deactivating
+[waypoint_follower-19] [INFO] [1746454450.786052401] [forklift_1.waypoint_follower]: Destroying bond (waypoint_follower) to lifecycle manager.
+[map_server-11] [INFO] [1746454450.786370031] [forklift_1.map_server]: Cleaning up
+[map_server-11] [INFO] [1746454450.786639041] [forklift_1.map_server]: Destroying bond (map_server) to lifecycle manager.
+[velocity_smoother-20] [INFO] [1746454450.786515174] [forklift_1.velocity_smoother]: Cleaning up
+[velocity_smoother-20] [INFO] [1746454450.786545085] [forklift_1.velocity_smoother]: Destroying bond (velocity_smoother) to lifecycle manager.
+[amcl-12] [INFO] [1746454450.789124224] [forklift_1.amcl]: Cleaning up
+[collision_monitor-21] [INFO] [1746454450.789390473] [forklift_1.collision_monitor]: Cleaning up
+[collision_monitor-21] [INFO] [1746454450.789465677] [collision_monitor]: [FootprintApproach]: Destroying Polygon
+[collision_monitor-21] [INFO] [1746454450.789479576] [collision_monitor]: [scan]: Destroying Scan
+[bt_navigator-18] [INFO] [1746454450.790153705] [forklift_1.bt_navigator]: Cleaning up
+[smoother_server-15] [INFO] [1746454450.791678973] [forklift_1.smoother_server]: Cleaning up
+[collision_monitor-21] [INFO] [1746454450.793722155] [forklift_1.collision_monitor]: Destroying bond (collision_monitor) to lifecycle manager.
+[behavior_server-17] [INFO] [1746454450.794552878] [forklift_1.behavior_server]: Cleaning up
+[waypoint_follower-19] [INFO] [1746454450.796574030] [forklift_1.waypoint_follower]: Cleaning up
+[map_server-11] [INFO] [1746454450.796855586] [forklift_1.map_server]: Destroying
+[velocity_smoother-20] [INFO] [1746454450.797712547] [forklift_1.velocity_smoother]: Destroying
+[waypoint_follower-19] terminate called after throwing an instance of 'std::system_error'
+[waypoint_follower-19]   what():  Owner died
+[collision_monitor-21] [INFO] [1746454450.802560216] [forklift_1.collision_monitor]: Destroying
+[lifecycle_manager-13] [INFO] [1746454450.814479177] [forklift_1.lifecycle_manager_localization]: Destroying lifecycle_manager_localization
+[smoother_server-15] [INFO] [1746454450.821244389] [forklift_1.smoother_server]: Destroying bond (smoother_server) to lifecycle manager.
+[behavior_server-17] [INFO] [1746454450.832222542] [forklift_1.behavior_server]: Destroying bond (behavior_server) to lifecycle manager.
+[smoother_server-15] [INFO] [1746454450.835952343] [forklift_1.smoother_server]: Destroying
+[opennav_docking-22] [INFO] [1746454450.855798661] [forklift_1.docking_server]: Destroying bond (docking_server) to lifecycle manager.
+[amcl-12] [INFO] [1746454450.863417000] [forklift_1.amcl]: Destroying bond (amcl) to lifecycle manager.
+[opennav_docking-22] [INFO] [1746454450.868022123] [forklift_1.docking_server]: Cleaning up docking_server
+[amcl-12] [INFO] [1746454450.886111717] [forklift_1.amcl]: Destroying
+[controller_server-14] [INFO] [1746454450.887075462] [forklift_1.controller_server]: Destroying bond (controller_server) to lifecycle manager.
+[behavior_server-17] [INFO] [1746454450.887870630] [forklift_1.behavior_server]: Destroying
+[controller_server-14] [INFO] [1746454450.897527987] [forklift_1.controller_server]: Cleaning up
+[controller_server-14] [INFO] [1746454450.897725011] [forklift_1.local_costmap.local_costmap]: Cleaning up
+[INFO] [parameter_bridge-5]: process has finished cleanly [pid 45544]
+[INFO] [parameter_bridge-1]: process has finished cleanly [pid 45539]
+[opennav_docking-22] [INFO] [1746454450.937927166] [forklift_1.docking_server]: Destroying bond (docking_server) to lifecycle manager.
+[INFO] [parameter_bridge-7]: process has finished cleanly [pid 45546]
+[opennav_docking-22] [INFO] [1746454450.950847285] [forklift_1.docking_server]: Destroying
+[INFO] [velocity_smoother-20]: process has finished cleanly [pid 45594]
+[INFO] [robot_state_publisher-9]: process has finished cleanly [pid 45548]
+[controller_server-14] [INFO] [1746454450.977786114] [forklift_1.controller_server]: Destroying bond (controller_server) to lifecycle manager.
+[controller_server-14] [INFO] [1746454450.983252154] [forklift_1.local_costmap.local_costmap]: Destroying
+[INFO] [map_server-11]: process has finished cleanly [pid 45550]
+[INFO] [collision_monitor-21]: process has finished cleanly [pid 45601]
+[lifecycle_manager-23] [INFO] [1746454451.002396936] [forklift_1.lifecycle_manager_navigation]: Destroying lifecycle_manager_navigation
+[controller_server-14] [INFO] [1746454451.007571638] [forklift_1.controller_server]: Destroying
+[INFO] [lifecycle_manager-13]: process has finished cleanly [pid 45552]
+[bt_navigator-18] [INFO] [1746454451.034217364] [forklift_1.bt_navigator]: Completed Cleaning up
+[bt_navigator-18] [INFO] [1746454451.034312219] [forklift_1.bt_navigator]: Destroying bond (bt_navigator) to lifecycle manager.
+[bt_navigator-18] [INFO] [1746454451.048245260] [forklift_1.bt_navigator]: Destroying
+[rviz2-10] terminate called without an active exception
+[INFO] [behavior_server-17]: process has finished cleanly [pid 45560]
+[INFO] [mqtt_client-6]: process has finished cleanly [pid 45545]
+[INFO] [amcl-12]: process has finished cleanly [pid 45551]
+[INFO] [smoother_server-15]: process has finished cleanly [pid 45554]
+[INFO] [opennav_docking-22]: process has finished cleanly [pid 45604]
+[ERROR] [primitive_node-24]: process has died [pid 45650, exit code -2, cmd '/home/elmeripk/forklift_sim/install/forklift_controller/lib/forklift_controller/primitive_node forklift_1 --ros-args -r __ns:=/forklift_1 --params-file /tmp/launch_params_x47qpk_3 -r /tf:=tf -r /tf_static:=tf_static'].
+[planner_server-16] [INFO] [1746454451.111209825] [forklift_1.planner_server]: Deactivating plugin GridBased of type NavfnPlanner
+[planner_server-16] [INFO] [1746454451.111288063] [forklift_1.planner_server]: Destroying bond (planner_server) to lifecycle manager.
+[planner_server-16] [INFO] [1746454451.121887714] [forklift_1.planner_server]: Cleaning up
+[planner_server-16] [INFO] [1746454451.127038409] [forklift_1.global_costmap.global_costmap]: Cleaning up
+[INFO] [lifecycle_manager-23]: process has finished cleanly [pid 45633]
+[planner_server-16] [INFO] [1746454451.131115402] [forklift_1.planner_server]: Cleaning up plugin GridBased of type NavfnPlanner
+[planner_server-16] [INFO] [1746454451.131318081] [forklift_1.planner_server]: Destroying plugin GridBased of type NavfnPlanner
+[planner_server-16] [INFO] [1746454451.139104475] [forklift_1.planner_server]: Destroying bond (planner_server) to lifecycle manager.
+[planner_server-16] [INFO] [1746454451.142097801] [forklift_1.global_costmap.global_costmap]: Destroying
+[INFO] [controller_server-14]: process has finished cleanly [pid 45553]
+[planner_server-16] [INFO] [1746454451.148012346] [forklift_1.planner_server]: Destroying
+[INFO] [bt_navigator-18]: process has finished cleanly [pid 45562]
+[gazebo-3] [1;36m[GUI] [Dbg] [SignalHandler.cc:142] [0m[1;36mReceived signal[[0m[1;36m2[0m[1;36m].[0m
+[gazebo-3] [1;36m[GUI] [Dbg] [Gui.cc:535] [0m[1;36mShutting down gz-sim-gui[0m[1;36m[0m
+[gazebo-3] [1;36m[GUI] [Dbg] [Application.cc:237] [0m[1;36mTerminating application.[0m[1;36m[0m
+[gazebo-3] [1;36m[GUI] [Dbg] [MinimalScene.cc:841] [0m[1;36mDestroy scene [[0m[1;36mscene[0m[1;36m][0m[1;36m[0m
+[ERROR] [gazebo-3]: process has died [pid 45541, exit code -2, cmd 'ruby $(which gz) sim -v4 -g  --force-version 8'].
+[INFO] [planner_server-16]: process has finished cleanly [pid 45558]
+[ERROR] [waypoint_follower-19]: process has died [pid 45578, exit code -6, cmd '/opt/ros/jazzy/lib/nav2_waypoint_follower/waypoint_follower --ros-args --log-level info --ros-args -r __node:=waypoint_follower -r __ns:=/forklift_1 -p use_sim_time:=True --params-file /tmp/launch_params_d1oqdgvk -r /tf:=tf -r /tf_static:=tf_static'].
+[ERROR] [python3-25]: process[python3-25] failed to terminate '5' seconds after receiving 'SIGINT', escalating to 'SIGTERM'
+[INFO] [python3-25]: sending signal 'SIGTERM' to process[python3-25]
+[ERROR] [python3-25]: process has died [pid 45651, exit code -15, cmd 'python3 /home/elmeripk/forklift_sim/install/forklift_controller/share/forklift_controller/gui/GUI.py'].
+[ERROR] [gz-4]: process has died [pid 45542, exit code -11, cmd 'gz sim -r -s /tmp/nav2_afnma9b0.sdf'].
+[ERROR] [rviz2-10]: process has died [pid 45549, exit code -6, cmd '/opt/ros/jazzy/lib/rviz2/rviz2 -d /tmp/tmpmbcrfan0 --ros-args -r __ns:=/forklift_1 --params-file /tmp/launch_params_8kiydc8g -r /map:=map -r /tf:=tf -r /tf_static:=tf_static -r /goal_pose:=goal_pose -r /clicked_point:=clicked_point -r /initialpose:=initialpose'].
+[ERROR] [launch]: Caught exception in launch (see debug for traceback): [Errno 2] No such file or directory: '/tmp/nav2_9exmfs8b.sdf'

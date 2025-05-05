@@ -15,7 +15,8 @@ def define_models() -> list:
     for model_name in model_names:
         destination = f'share/{package_name}/models/{model_name}/meshes/'
         source = f'models/{model_name}/meshes/*'
-    
+
+        #Move one level up to get the sdf files
         sdf_folder_dest = os.path.dirname(os.path.dirname(destination))
         sdf_folder_src = os.path.dirname(os.path.dirname(source))
           
@@ -50,8 +51,8 @@ setup(
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='elmeripk',
-    maintainer_email='elmeripk@todo.todo',
+    maintainer='Elmeri Pohjois-Koivisto',
+    maintainer_email='elmeri.pohjois-koivisto@tuni.fi',
     description='TODO: Package description',
     license='TODO: License declaration',
     tests_require=['pytest'],
