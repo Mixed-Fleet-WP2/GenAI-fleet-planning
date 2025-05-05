@@ -217,7 +217,7 @@
       <update_rate>10.0</update_rate>
       <visualize>true</visualize>
       <always_on>true</always_on>
-      <!-- <gz_frame_id>rplidar_link</gz_frame_id> -->
+      <gz_frame_id>rplidar_link</gz_frame_id>
       <topic>$(arg namespace)/scan</topic>
       <lidar>
         <scan>

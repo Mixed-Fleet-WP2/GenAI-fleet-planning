@@ -189,7 +189,7 @@ def generate_launch_description():
     
     #robots_list = ParseMultiRobotPose('robots').value()
     robots_list = {
-        'forklift_1': {'x': 0.0, 'y': 0.0, 'z': 0.5}
+        'forklift_1': {'x': 0.0, 'y': 0.0, 'z': 0.3}
         }
     #'forklift_2': {'x': -3.0, 'y': -1.6, 'z': 0.2}
     
@@ -235,7 +235,7 @@ def generate_launch_description():
                         'use_robot_state_pub': use_robot_state_pub,
                         'x_pose': TextSubstitution(text=str(init_pose['x'])),
                         'y_pose': TextSubstitution(text=str(init_pose['y'])),
-                        'z_pose': TextSubstitution(text=str(0.15)),
+                        'z_pose': TextSubstitution(text=str(init_pose['z'])),
                         'roll': TextSubstitution(text=str(0.0)),
                         'pitch': TextSubstitution(text=str(0.0)),
                         'yaw': TextSubstitution(text=str(0.0)),

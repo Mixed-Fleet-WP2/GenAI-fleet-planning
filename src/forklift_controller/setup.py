@@ -7,7 +7,8 @@ package_name = 'forklift_controller'
 def define_models() -> list:
     """
     Utility function to define the models and their corresponding data files.
-    Needed because glob doesnt copy directories."""
+    Needed because glob doesnt copy directories.
+    """
     model_names = ["forklift", "box", "warehouse"]
     data_tuples = []
 
