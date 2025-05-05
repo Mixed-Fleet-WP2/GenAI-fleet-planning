@@ -85,15 +85,14 @@ def generate_launch_description():
     # Declare the launch arguments
     declare_world_cmd = DeclareLaunchArgument(
         'world',
-        #default_value=os.path.join(pkg_root, 'worlds', 'warehouse.sdf'),
-        default_value=os.path.join(sim_dir, 'worlds', 'warehouse.sdf'),
+        #default_value=os.path.join(pkg_root, 'worlds', 'depot.sdf'),
+        default_value=os.path.join(sim_dir, 'worlds', 'depot.sdf'),
         description='Full path to world file to load',
     )
 
     declare_map_yaml_cmd = DeclareLaunchArgument(
         'map',
-        #default_value=os.path.join(pkg_root, 'maps', 'warehouse.yaml'),
-        default_value=os.path.join(bringup_dir, 'maps', 'warehouse.yaml'),
+        default_value=os.path.join(bringup_dir, 'maps', 'depot.yaml'),
         description='Full path to map file to load',
     )
 
@@ -190,9 +189,9 @@ def generate_launch_description():
     
     #robots_list = ParseMultiRobotPose('robots').value()
     robots_list = {
-        'forklift_1': {'x': 0.0, 'y': 0.0, 'z': 0.2},
-        'forklift_2': {'x': -3.0, 'y': -1.6, 'z': 0.2}
+        'forklift_1': {'x': 0.0, 'y': 0.0, 'z': 0.5}
         }
+    #'forklift_2': {'x': -3.0, 'y': -1.6, 'z': 0.2}
     
     # Define commands for launching the navigation instances
     bringup_cmd_group = []
@@ -259,10 +258,9 @@ def generate_launch_description():
             str(Path(os.path.join(sim_dir)).parent.resolve()))
     
     # Create the launch description and populate
-    #ld.add_action(logs)
     ld.add_action(set_env_vars_resources)
     ld.add_action(set_env_vars_resources2)
-    ld.add_action(LogInfo(msg=['GZ_SIM_RESOURCE_PATH=', os.path.abspath(os.path.join(pkg_root, '..'))]))
+    #ld.add_action(LogInfo(msg=['GZ_SIM_RESOURCE_PATH=', os.path.abspath(os.path.join(pkg_root, '..'))]))
 
     # Declare the launch options
     ld.add_action(declare_world_cmd)

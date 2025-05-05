@@ -42,8 +42,6 @@ from launch.substitutions import LaunchConfiguration, PythonExpression
 from launch_ros.actions import Node
 from launch_ros.parameter_descriptions import ParameterValue
 
-
-
 def generate_launch_description():
     # Get the launch directory
     bringup_dir = get_package_share_directory('nav2_bringup')
@@ -102,7 +100,7 @@ def generate_launch_description():
 
     declare_map_yaml_cmd = DeclareLaunchArgument(
         'map',
-        default_value=os.path.join(pkg_root, 'maps', 'warehouse.yaml'),
+        default_value=os.path.join(pkg_root, 'maps', 'depot.yaml'),
     )
 
     declare_use_sim_time_cmd = DeclareLaunchArgument(
@@ -165,7 +163,7 @@ def generate_launch_description():
     declare_world_cmd = DeclareLaunchArgument(
         'world',
         #default_value=os.path.join(pkg_root, 'worlds', 'empty.world'),
-        default_value=os.path.join(sim_dir, 'worlds', 'warehouse.sdf'),
+        default_value=os.path.join(sim_dir, 'worlds', 'depot.sdf'),
         description='Full path to world file to load',
     )
 
@@ -197,7 +195,7 @@ def generate_launch_description():
         output='screen',
         parameters=[
             {'use_sim_time': use_sim_time, 'robot_description': ParameterValue(
-                parsed_urdf, value_type=str)}, #This was required because the colon in urdf was not being parsed correctly as this was considreded yaml
+                parsed_urdf, value_type=str)}, #This was required because the colcon in urdf was not being parsed correctly as this was considreded yaml
         ],
         remappings=remappings,
     )
@@ -288,7 +286,7 @@ def generate_launch_description():
         package="forklift_controller",
         namespace=namespace,
         remappings=remappings,
-        executable="primitive_node", #Corresponds to a name in setup.py
+        executable="primitive_node", 
         parameters=[{'namespace': namespace,
                     'x_pose': pose['x'],
                     'y_pose': pose['y'],

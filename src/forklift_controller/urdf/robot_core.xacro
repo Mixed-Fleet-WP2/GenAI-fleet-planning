@@ -100,9 +100,7 @@
     <limit effort="110" lower="0" upper="0.6" velocity="0.5" />
   </joint>
 
-  <xacro:fork id="1" mass="15" scale="1" fork_attach_offsets="0.01 -0.05 -0.03">
-
-  </xacro:fork>
+  <xacro:fork id="1" mass="15" scale="1" fork_attach_offsets="0.01 -0.05 -0.03"></xacro:fork>
   <xacro:fork id="2" mass="15" scale="1" fork_attach_offsets="0.01 0.05 -0.03"></xacro:fork>
 
 
