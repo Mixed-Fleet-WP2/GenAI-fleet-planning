@@ -12,7 +12,7 @@
     <child link="${name}" />
     <origin xyz="${x} ${y} ${z}" rpy="-${pi/2} 0 ${roll}" />
     <origin xyz="${x} ${y} ${z}" rpy="-${pi/2}} 0 ${roll}" />
-    <axis xyz="0 0 1" />
+    <axis xyz="0 0 -1" />
   </joint>
 
   <link name="${name}">

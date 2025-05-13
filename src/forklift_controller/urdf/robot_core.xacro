@@ -22,29 +22,27 @@
 
   <xacro:property name="fork_mass" value="15" />
 
-  <link name="base_footprint">
-    <inertial>
-      <mass value="0.0001" />
-      <origin xyz="0 0 0" />
-      <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001" />
-    </inertial>
-    <visual>
-      <origin rpy="0 0 0" xyz="0 0 0" />
-      <geometry>
-        <box size="0.001 0.001 0.001" />
-      </geometry>
-    </visual>
-  </link>
+  <!--See: https://github.com/ros-navigation/navigation2_tutorials/blob/rolling/sam_bot_description/src/description/sam_bot_description.urdf -->
+  <!--From nav2 docs: 
+  "We will also be using the box_inertia macro we defined before to add some inertial properties 
+  to our base_link. The kdl_parser package used in robot_state_publisher
+  doesn’t like inertial properties being specified in the root link, 
+  in this case the base_link, to combat this we will be including them in the base_footprint instead.
+  Include the following code snippet within <link name="base_footprint"> tag of base_footprint in our URDF." 
+  -->
 
+  <link name="base_footprint">
+    <xacro:inertial_box mass="50" x="${base_length}" y="${base_width}" z="${base_height}">
+      <origin xyz="-0.1 0 ${0.35+0.25}" rpy="0 0 0" />
+    </xacro:inertial_box>
+  </link>
 
   <joint name="base_link_joint" type="fixed">
     <parent link="base_link" />
     <child link="base_footprint" />
     <!--Set the base_footprint down to wheel axis level + half the wheel radius to be exactly at the bottom-->
     <origin xyz="0 0 -${0.35+0.25}" rpy="0 0 0" />
-
   </joint>
-
 
   <link name="base_link">
     <visual>
@@ -54,13 +52,12 @@
       </geometry>
     </visual>
     <collision>
+      <origin xyz="0 0 0" />
       <geometry>
         <mesh filename="package://forklift_controller/models/forklift/meshes/body_correct_scale.dae"/>
       </geometry>
     </collision>
-    <xacro:inertial_box mass="50" x="${base_length}" y="${base_width}" z="${base_height}">
-      <origin xyz="-0.1 0 0" rpy="0 0 0" />
-    </xacro:inertial_box>
+    
   </link>
 
   <xacro:property name="plate_width" value="0.885"/>
@@ -99,8 +96,8 @@
   <xacro:fork id="1" mass="15" scale="1" fork_attach_offsets="0.05 0.2 -0.35"></xacro:fork>
   <xacro:fork id="2" mass="15" scale="1" fork_attach_offsets="0.05 -0.2 -0.35"></xacro:fork>
 
-  <xacro:wheel name="right_wheel" mass="5" scale="1" x="0.8" y="-0.4" z="-0.35" roll="0"></xacro:wheel>
-  <xacro:wheel name="right_wheel_back" mass="5" scale="1" x="-0.65" y="-0.4" z="-0.35" roll="0"></xacro:wheel>
+  <xacro:wheel name="right_wheel" mass="5" scale="1" x="0.8" y="-0.4" z="-0.35" roll="${pi}"></xacro:wheel>
+  <xacro:wheel name="right_wheel_back" mass="5" scale="1" x="-0.65" y="-0.4" z="-0.35" roll="${pi}"></xacro:wheel>
   <xacro:wheel name="left_wheel" mass="5" scale="1" x="0.8" y="0.4" z="-0.35" roll="${pi}"></xacro:wheel>
   <xacro:wheel name="left_wheel_back" mass="5" scale="1" x="-0.65" y="0.4" z="-0.35" roll="${pi}"></xacro:wheel>
   

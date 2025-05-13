@@ -20,14 +20,13 @@ from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import AppendEnvironmentVariable, LogInfo
 from launch.actions import DeclareLaunchArgument
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import LaunchConfiguration, TextSubstitution
 from launch.substitutions.command import Command
 from launch.substitutions.find_executable import FindExecutable
 from launch_ros.actions import Node
 from launch.actions import OpaqueFunction, RegisterEventHandler
 from launch.event_handlers import OnShutdown
 from tempfile import NamedTemporaryFile, _TemporaryFileWrapper
-
 
 import yaml
 
@@ -198,6 +197,18 @@ def generate_launch_description():
         on_shutdown=[
             OpaqueFunction(function=lambda _: os.remove(mqtt_config_temp_file.name))
         ]))
+    
+    joint_gui = Node(
+        package='joint_state_publisher_gui',
+        executable='joint_state_publisher_gui',
+        namespace=namespace,
+        output='screen',
+        parameters=[{
+            'use_sim_time': True,
+        }]
+    )
+
+    #ld.add_action(joint_gui)
 
 
     spawn_model = Node(
@@ -210,7 +221,7 @@ def generate_launch_description():
             '-string', Command([
                 FindExecutable(name='xacro'), ' ', 'namespace:=',
                 LaunchConfiguration('namespace'), ' ', robot_sdf]),
-            '-x', pose['x'], '-y', pose['y'], '-z', pose['z'],
+            '-x', pose['x'], '-y', TextSubstitution(text="2.0"), '-z', pose['z'],
             '-R', pose['R'], '-P', pose['P'], '-Y', pose['Y']
             ]
     )

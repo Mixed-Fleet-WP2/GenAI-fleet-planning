@@ -191,7 +191,7 @@ def generate_launch_description():
     
     #robots_list = ParseMultiRobotPose('robots').value()
     robots_list = {
-        'forklift_1': {'x': 0.0, 'y': 0.0, 'z': 0.6}
+        'forklift_1': {'x': 0.0, 'y': 2.0, 'z': 0.6}
         }
     #'forklift_2': {'x': -3.0, 'y': -1.6, 'z': 0.2}
     
