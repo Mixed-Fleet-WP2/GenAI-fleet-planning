@@ -99,8 +99,7 @@ def generate_launch_description():
 
     declare_params_file_cmd = DeclareLaunchArgument(
         'params_file',
-        default_value=os.path.join(
-            pkg_root, 'config', 'nav2_config.yaml'
+        default_value=os.path.join(pkg_root, 'config', 'bigger_nav.yaml'
         ),
         description='Full path to the ROS2 parameters file to use for all launched nodes',
     )
@@ -119,7 +118,9 @@ def generate_launch_description():
 
     declare_rviz_config_file_cmd = DeclareLaunchArgument(
         'rviz_config',
-        default_value=os.path.join(bringup_dir, 'rviz', 'nav2_namespaced_view.rviz'),
+        default_value=os.path.join(pkg_root, 'config', 'map_config.rviz.yaml'),
+        #default_value=os.path.join(pkg_root, 'config', 'config.rviz.yaml'),
+        #default_value=os.path.join(bringup_dir, 'rviz', 'nav2_namespaced_view.rviz'),
         description='Full path to the RVIZ config file to use.',
     )
 
@@ -190,7 +191,7 @@ def generate_launch_description():
     
     #robots_list = ParseMultiRobotPose('robots').value()
     robots_list = {
-        'forklift_1': {'x': 0.0, 'y': 0.0, 'z': 0.3}
+        'forklift_1': {'x': 0.0, 'y': 0.0, 'z': 0.6}
         }
     #'forklift_2': {'x': -3.0, 'y': -1.6, 'z': 0.2}
     
@@ -261,7 +262,6 @@ def generate_launch_description():
     # Create the launch description and populate
     ld.add_action(set_env_vars_resources)
     ld.add_action(set_env_vars_resources2)
-    #ld.add_action(LogInfo(msg=['GZ_SIM_RESOURCE_PATH=', os.path.abspath(os.path.join(pkg_root, '..'))]))
 
     # Declare the launch options
     ld.add_action(declare_world_cmd)
