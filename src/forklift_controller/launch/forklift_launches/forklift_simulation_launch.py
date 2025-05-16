@@ -90,7 +90,7 @@ def generate_launch_description():
 
     declare_use_namespace_cmd = DeclareLaunchArgument(
         'use_namespace',
-        default_value='false',
+        default_value='true',
         description='Whether to apply a namespace to the navigation stack',
     )
 
@@ -123,7 +123,7 @@ def generate_launch_description():
 
     declare_use_composition_cmd = DeclareLaunchArgument(
         'use_composition',
-        default_value='False',
+        default_value='True',
         description='Whether to use composed bringup',
     )
 

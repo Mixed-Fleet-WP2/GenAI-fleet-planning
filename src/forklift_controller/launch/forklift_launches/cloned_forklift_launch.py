@@ -118,9 +118,9 @@ def generate_launch_description():
 
     declare_rviz_config_file_cmd = DeclareLaunchArgument(
         'rviz_config',
-        default_value=os.path.join(pkg_root, 'config', 'map_config.rviz.yaml'),
+        #default_value=os.path.join(pkg_root, 'config', 'map_config.rviz.yaml'),
         #default_value=os.path.join(pkg_root, 'config', 'config.rviz.yaml'),
-        #default_value=os.path.join(bringup_dir, 'rviz', 'nav2_namespaced_view.rviz'),
+        default_value=os.path.join(bringup_dir, 'rviz', 'nav2_namespaced_view.rviz'),
         description='Full path to the RVIZ config file to use.',
     )
 
@@ -252,7 +252,8 @@ def generate_launch_description():
 
         bringup_cmd_group.append(group)
 
-    
+    #This points to /forklift_sim/install/forklift_controller/share/
+    #Because we go up one directory to get to the share directory
     set_env_vars_resources = AppendEnvironmentVariable(
         'GZ_SIM_RESOURCE_PATH', os.path.abspath(os.path.join(pkg_root, '..')))
     set_env_vars_resources2 = AppendEnvironmentVariable(
@@ -283,7 +284,7 @@ def generate_launch_description():
     ld.add_action(declare_mqtt_config)
     ld.add_action(bridge_cube_pose)
 
-    ld.add_action(OpaqueFunction(function=launch_print, args=[params_file]))
+    #ld.add_action(OpaqueFunction(function=launch_print, args=[params_file]))
 
     for cmd in bringup_cmd_group:
         ld.add_action(cmd)

@@ -177,9 +177,7 @@ def generate_launch_description():
         namespace=namespace,
         parameters=[
             {
-                'config_file': os.path.join(
-                    pkg_root, 'config', 'turtlebot3_waffle_bridge.yaml'
-                ),
+                'config_file': os.path.join(pkg_root, 'config', 'turtlebot3_waffle_bridge.yaml'),
                 'expand_gz_topic_names': True,
                 'use_sim_time': True,
             }
@@ -208,7 +206,7 @@ def generate_launch_description():
         }]
     )
 
-    #ld.add_action(joint_gui)
+    ld.add_action(joint_gui)
 
 
     spawn_model = Node(
@@ -216,12 +214,13 @@ def generate_launch_description():
         executable='create',
         output='screen',
         namespace=namespace,
+        parameters=[{'use_sim_time':True}],
         arguments=[
             '-name', robot_name,
             '-string', Command([
                 FindExecutable(name='xacro'), ' ', 'namespace:=',
                 LaunchConfiguration('namespace'), ' ', robot_sdf]),
-            '-x', pose['x'], '-y', TextSubstitution(text="2.0"), '-z', pose['z'],
+            '-x', pose['x'], '-y', pose['y'], '-z', pose['z'],
             '-R', pose['R'], '-P', pose['P'], '-Y', pose['Y']
             ]
     )
