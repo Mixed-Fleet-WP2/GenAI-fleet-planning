@@ -88,7 +88,7 @@
   <joint name="fork_plate_joint" type="prismatic">
     <parent link="base_link" />
     <child link="fork_plate" />
-    <origin xyz="1.25 0 0.25" rpy="0 0 0" />
+    <origin xyz="1.25 0 0.09" rpy="0 0 0" />
     <axis xyz="0 0 1" />
     <limit effort="110" lower="-0.15" upper="0.6" velocity="0.5" />
   </joint>

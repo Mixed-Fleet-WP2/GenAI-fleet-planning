@@ -9,21 +9,26 @@ def define_models() -> list:
     Utility function to define the models and their corresponding data files.
     Needed because glob doesnt copy directories.
     """
-    model_names = ["forklift", "box", "warehouse"]
+    model_names = ["forklift", "pallet"]
     data_tuples = []
 
     for model_name in model_names:
+        #Copy the meshes first
         destination = f'share/{package_name}/models/{model_name}/meshes/'
         source = f'models/{model_name}/meshes/*'
 
-        #Move one level up to get the sdf files
+        # Copy the files from source to destination
+        data_tuples.append((destination, glob(source)))
+
+        #Move one level up to get the sdf files aka models/model_name
+
         sdf_folder_dest = os.path.dirname(os.path.dirname(destination))
         sdf_folder_src = os.path.dirname(os.path.dirname(source))
           
-        #Copy the sdf files that are in the meshes' parent directory
+        #Copy the sdf and model.config files
         data_tuples.append((sdf_folder_dest, glob(f"{sdf_folder_src}/*.sdf")))
-        # Copy the files from source to destination
-        data_tuples.append((destination, glob(source)))
+        data_tuples.append((sdf_folder_dest, glob(f"{sdf_folder_src}/model.config")))
+        
     return data_tuples
 
 

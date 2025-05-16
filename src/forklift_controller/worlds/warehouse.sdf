@@ -62,8 +62,8 @@
 
     <!--Old tutorial but still valid: https://classic.gazebosim.org/tutorials?tut=add_laser-->
     <include>
-      <uri>model://forklift_controller/worlds/pallet.sdf</uri>
-      <pose>-1.0 0 0.2 0 0 0</pose>
+      <uri>model://forklift_controller/models/pallet</uri>
+      <pose>2.9 2 0.1 0 0 1.57</pose>
     </include>
 
     <!-- Pallet Box Mobile -->
