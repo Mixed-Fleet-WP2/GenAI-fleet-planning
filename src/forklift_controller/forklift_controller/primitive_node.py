@@ -1,6 +1,6 @@
 import rclpy
 from rclpy.node import Node
-from geometry_msgs.msg import PoseStamped
+from geometry_msgs.msg import PoseStamped, Pose
 from std_msgs.msg import Bool
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.callback_groups import ReentrantCallbackGroup
@@ -21,6 +21,7 @@ from utils import move_object_to_point, reset_contact_sensor, get_pos_as_other_c
 
 CUBE_WIDTH = 0.1
 FORK_LENGTH = 0.3
+MODELS = ["pallet_1"]
 
 class PrimitiveNode(Node):
     
@@ -43,6 +44,7 @@ class PrimitiveNode(Node):
         #https://roboticsbackend.com/rclpy-params-tutorial-get-set-ros2-params-with-python/#Get_params_one_by_one
         namespace_p, x_pose_p, y_pose_p, z_pose_p, roll_p, pitch_p, yaw_p = self.get_parameters(['namespace','x_pose','y_pose','z_pose','roll','pitch','yaw'])
 
+        
          # Retrieve parameters
         self.__namespace = namespace_p.get_parameter_value().string_value
         self.__x_pose = x_pose_p.get_parameter_value().double_value
@@ -64,11 +66,19 @@ class PrimitiveNode(Node):
         self.create_subscription(String, 'pick_up', self.pick_up_callback, 10, callback_group=self.subscription_cb_group)
         self.create_subscription(String, 'drop', self.drop_callback, 10, callback_group=self.subscription_cb_group)
         self.feedback_publisher = self.create_publisher(String, 'feedback', 10, callback_group=self.publisher_cb_group)
-        self.cube_pos_publisher = self.create_publisher(String, '/cube_pos', 10, callback_group=self.publisher_cb_group)
+        
+        self.model_sub_and_pubs = {}
+
+
+        
         
         #Subscribe to the gazebo topic where the cube is published
-        self.subscription = self.create_subscription(TFMessage,'/cube_pos_gz', self.cube_pose_callback, 10)
-        
+        for model in MODELS:
+            self.model_sub_and_pubs[model] = {}
+
+            pose_subscriber = self.create_subscription(Pose, f'/model/{model}/pose', self.cube_pose_callback, 10)
+            pose_publisher = self.create_publisher(String, '/cube_pos', 10, callback_group=self.publisher_cb_group)
+
         self.__navigator = None
         self.__init_nav()
 
@@ -240,18 +250,6 @@ class PrimitiveNode(Node):
                 # Some navigation timeout to demo cancellation
                 if Duration.from_msg(feedback.navigation_time) > Duration(seconds=600.0):
                     self.__navigator.cancelTask()
-
-                """
-                # Some navigation request change to demo preemption
-                if Duration.from_msg(feedback.navigation_time) > Duration(seconds=18.0):
-                    goal_pose = PoseStamped()
-                    goal_pose.header.frame_id = 'map'
-                    goal_pose.header.stamp = self.navigator.get_clock().now().to_msg()
-                    goal_pose.pose.position.x = 0.0
-                    goal_pose.pose.position.y = 0.0
-                    goal_pose.pose.orientation.w = 1.0
-                    self.navigator.goToPose(goal_pose)
-                """
 
         # Do something depending on the return code
         result = self.__navigator.getResult()
