@@ -177,7 +177,7 @@ def generate_launch_description():
         namespace=namespace,
         parameters=[
             {
-                'config_file': os.path.join(pkg_root, 'config', 'turtlebot3_waffle_bridge.yaml'),
+                'config_file': os.path.join(pkg_root, 'config', 'forklift_ros_gz_bridge.yaml'),
                 'expand_gz_topic_names': True,
                 'use_sim_time': True,
             }

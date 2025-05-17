@@ -49,14 +49,21 @@
       <topic>$(arg namespace)/joint_states</topic>
     </plugin>
 
-    <!--
+    
       <plugin filename="gz-sim-joint-position-controller-system"
     name="gz::sim::systems::JointPositionController">
         <joint_name>fork_plate_joint</joint_name>
-        <topic>fork_control</topic>
-        <initial_position>0.6</initial_position>
+        <initial_position>0.0</initial_position>
+        <topic>$(arg namespace)/fork_control</topic>
+        <p_gain>4000000</p_gain>
+        <i_gain>2000</i_gain>
+        <d_gain>5000</d_gain>
+        <i_min>-2000</i_min>
+        <i_max>2000</i_max>
+        <cmd_min>-80000</cmd_min>
+        <cmd_max>120000</cmd_max>
       </plugin>
-      -->
+    
 
   </gazebo>
 

@@ -62,20 +62,10 @@
 
     <!--Old tutorial but still valid: https://classic.gazebosim.org/tutorials?tut=add_laser-->
     <include>
+      <!--In order for gazebo to find this, an appropriate mode.config must exist-->
       <uri>model://forklift_controller/models/pallet</uri>
       <pose>2.9 2 0.1 0 0 1.57</pose>
     </include>
-
-    <!-- Pallet Box Mobile -->
-    <!--
-    <include>
-      <uri>
-        https://fuel.gazebosim.org/1.0/MovAi/models/pallet_box_mobile
-      </uri>
-      <name>pallet_box_0</name>
-      <pose>-4 12 0.01 0 0 0</pose>
-      <static>true</static>
-    </include> -->
 
     <!-- Shelves -->
     <include>
