@@ -164,8 +164,7 @@ def generate_launch_description():
     # Declare the launch arguments
     declare_world_cmd = DeclareLaunchArgument(
         'world',
-        #default_value=os.path.join(pkg_root, 'worlds', 'empty.world'),
-        default_value=os.path.join(sim_dir, 'worlds', 'depot.sdf'),
+        default_value=os.path.join(sim_dir, 'worlds', 'warehouse.sdf'),
         description='Full path to world file to load',
     )
 

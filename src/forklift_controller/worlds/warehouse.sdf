@@ -64,7 +64,8 @@
     <include>
       <!--In order for gazebo to find this, an appropriate mode.config must exist-->
       <uri>model://forklift_controller/models/pallet</uri>
-      <pose>2.9 2 0.1 0 0 1.57</pose>
+      <name>pallet_1</name>
+      <pose>11.0 -5.0 0.1 0 0 0</pose>
     </include>
 
     <!-- Shelves -->

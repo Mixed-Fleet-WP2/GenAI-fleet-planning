@@ -49,3 +49,9 @@
   ros_type_name: "tf2_msgs/msg/TFMessage"
   gz_type_name: "gz.msgs.Pose_V"
   direction: GZ_TO_ROS
+
+- ros_topic_name: "/model/pallet_1/pose"
+  gz_type_name: "gz.msgs.Pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  direction: GZ_TO_ROS
+
