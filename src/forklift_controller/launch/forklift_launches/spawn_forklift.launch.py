@@ -196,19 +196,6 @@ def generate_launch_description():
             OpaqueFunction(function=lambda _: os.remove(mqtt_config_temp_file.name))
         ]))
     
-    joint_gui = Node(
-        package='joint_state_publisher_gui',
-        executable='joint_state_publisher_gui',
-        namespace=namespace,
-        output='screen',
-        parameters=[{
-            'use_sim_time': True,
-        }]
-    )
-
-    ld.add_action(joint_gui)
-
-
     spawn_model = Node(
         package='ros_gz_sim',
         executable='create',

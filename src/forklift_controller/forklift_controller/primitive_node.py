@@ -84,6 +84,7 @@ class PrimitiveNode(Node):
 
     
     def cube_pose_callback(self, msg):
+        return
         #Immediately forward the message to the mqtt bridge
         #Convert the message to an ordered dictionary
         msg_to_fwd = rosidl_runtime_py.convert.message_to_ordereddict(msg)
