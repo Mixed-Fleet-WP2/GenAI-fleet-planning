@@ -7,6 +7,8 @@ import json
 import threading
 import re
 
+MODELS = ["pallet_1"]
+
 class Controller():
 
     def __init__(self, robots_in_network=[{"type":"Toyota 02-8FGF15","name":"forklift_1"},
@@ -33,7 +35,12 @@ class Controller():
         self.cube_pos_y = None
 
         self.mqtt_client.subscribe([("feedback", 2)])
-        self.mqtt_client.subscribe([("cube_pos", 2)])
+
+        for model in MODELS:
+            print(f"SUBSCRIBING {model}_pos", flush=True)
+            self.mqtt_client.subscribe([(f"{model}_pos", 2)])
+
+        
         self.mqtt_client.subscribe([("test", 2)])
         self.mqtt_client.on_message =self.on_message
 
@@ -51,6 +58,17 @@ class Controller():
         self.mqtt_client.loop_stop()
         self.mqtt_client.disconnect()
     
+    def __process_mqtt_msg(self, msg):
+        start = msg.payload.find(b'{')
+        end = msg.payload.rfind(b'}') + 1
+        if start == -1 or end == -1:
+            raise ValueError("JSON not found in payload")
+        
+        raw_payload = msg.payload[start:end]
+        decoded_message = raw_payload.decode('utf-8')
+        print(f"Decoded message: {decoded_message}", flush=True)
+        return json.loads(decoded_message)
+    """
     def __process_mqtt_msg(self, msg: mqtt.MQTTMessage, debug: bool = False):
         decoded_message = str(msg.payload.decode('utf-8'))
         # Remove control characters from the message
@@ -68,6 +86,7 @@ class Controller():
             print(f"JSON decode error: {e}", flush=True)
             payload = None
         return payload
+    """
     
     def get_object_positions(self):
         """
@@ -109,12 +128,19 @@ class Controller():
 
 
     def on_message(self, client, userdata, message:mqtt.MQTTMessage):
-        if message.topic == "cube_pos":
+
+        print(f"Received message: {message.topic}: {message.payload}", flush=True)
+
+        #Position messages names are always in the format <model>_pos
+        if re.search(r".*_pos", message.topic) != None:
+            #The first group (group 0) is the whole match, the second group (group 1) is the model name
+            model_name = re.search(r"(.*)_pos", message.topic).group(1)
+            #print(f"Received position message for {model_name}: {message.payload}", flush=True)
             pos_dict = self.__process_mqtt_msg(message)
-            self.object_positions["cube"] = pos_dict
+            self.object_positions[model_name] = pos_dict
             return
-        
-        
+        else:
+            print(f"Received message: {message.topic}: {message.payload}", flush=True)
         
         payload = self.__process_mqtt_msg(message, debug=True)
 

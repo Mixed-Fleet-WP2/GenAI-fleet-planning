@@ -60,6 +60,7 @@ class PrimitiveNode(Node):
         #Callbacks inside Reentrant groups may be executed in parallel, but things outside cannot not
         self.subscription_cb_group = ReentrantCallbackGroup()
         self.publisher_cb_group = ReentrantCallbackGroup()
+        self.pose_subscriber_cb_group = ReentrantCallbackGroup()
 
         self.create_subscription(String, "move", self.move_callback, 10, callback_group=self.subscription_cb_group)
         self.create_subscription(Bool, "touched", self.__detect_contact, 10)
@@ -70,30 +71,28 @@ class PrimitiveNode(Node):
         self.model_sub_and_pubs = {}
 
 
-        
-        
         #Subscribe to the gazebo topic where the cube is published
         for model in MODELS:
-            self.model_sub_and_pubs[model] = {}
+            
+            def pose_callback(msg, publisher, logger=self.get_logger()):
+                #logger.info(f"Received pose message for {model}: {msg}")
+                #Immediately forward the message to the mqtt bridge
+                #Convert the message to an ordered dictionary
+                msg_to_fwd = rosidl_runtime_py.convert.message_to_ordereddict(msg)
+                msg_as_string = json.dumps(msg_to_fwd)
+                msg = String()
+                msg.data = msg_as_string
+                #logger.info(f"Forwarding pose {msg_as_string} to mqtt bridge")
+                publisher.publish(msg)
 
-            pose_subscriber = self.create_subscription(Pose, f'/model/{model}/pose', self.cube_pose_callback, 10)
-            pose_publisher = self.create_publisher(String, '/cube_pos', 10, callback_group=self.publisher_cb_group)
+
+            pose_publisher = self.create_publisher(String, f'/{model}_pos', 10, callback_group=self.publisher_cb_group)
+            self.create_subscription(Pose, f'/model/{model}/pose', lambda msg: pose_callback(msg, pose_publisher), 10, callback_group=self.pose_subscriber_cb_group)
+      
 
         self.__navigator = None
         self.__init_nav()
 
-    
-    def cube_pose_callback(self, msg):
-        return
-        #Immediately forward the message to the mqtt bridge
-        #Convert the message to an ordered dictionary
-        msg_to_fwd = rosidl_runtime_py.convert.message_to_ordereddict(msg)
-        msg_as_string = json.dumps(msg_to_fwd)
-        msg = String()
-        #self.get_logger().info(f"Message to forward: {msg_as_string}")
-        msg.data = msg_as_string
-        self.cube_pos_publisher.publish(msg)
-        
     def move_callback(self, msg):
         
         self.get_logger().info(f"The type of the msg is {type(msg)}")

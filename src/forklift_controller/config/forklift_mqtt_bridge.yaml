@@ -30,11 +30,11 @@
       ros2mqtt:
         ros_topics: 
           - feedback
-          - /cube_pos
+          - /pallet_1_pos
         feedback:
           mqtt_topic: feedback
-        /cube_pos:
-          mqtt_topic: cube_pos
+        /pallet_1_pos:
+          mqtt_topic: pallet_1_pos
       mqtt2ros:
         mqtt_topics: 
           - move
