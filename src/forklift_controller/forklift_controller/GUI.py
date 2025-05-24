@@ -26,7 +26,8 @@ LLAMA_MODELS = ["llama3.1-405b","llama3.1-70b","llama3.1-8b","llama3-70b","llama
 COMMON_PROMPT = """You control a fleet of robots and have access to following commands:
                 - pick_up(object): makes a robot pick up an object specified as a string. Returns nothing
                 - move(x,y): makes a robot move to the specified coordinates. Takes two integers, returns
-                - drop(object): makes the robot drop an object in front of it, specified as a string. Returns nothing\n\n
+                - drop(object): makes the robot drop an object in front of it, specified as a string. Returns nothing
+                - move_fork(z): makes the forklift move its fork to specified height, specified as a float between 0.0-0.5. Returns nothing\n\n
                 """
 
 TASK_PROMPT = "\n\nYour tasks is: {task}"
@@ -249,7 +250,7 @@ class GUI:
             args:dict = command["args"]
             uuid = command["uuid"]
             prereguisites = command.get("prerequisite", None)
-
+            print(f"Executing command {command_name} on {executing_robot} with args {args} and uuid {uuid} and prerequisities {prereguisites}", flush=True)
             thread = Thread(target=self.controller.run_action, args=(executing_robot, command_name, args, uuid, prereguisites), daemon=True)
             thread.start()
             #thread.join()

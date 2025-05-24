@@ -1,7 +1,7 @@
 import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import PoseStamped, Pose
-from std_msgs.msg import Bool
+from std_msgs.msg import Bool, Float64
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.callback_groups import ReentrantCallbackGroup
 from tf2_msgs.msg import TFMessage
@@ -67,7 +67,8 @@ class PrimitiveNode(Node):
         self.create_subscription(String, 'pick_up', self.pick_up_callback, 10, callback_group=self.subscription_cb_group)
         self.create_subscription(String, 'drop', self.drop_callback, 10, callback_group=self.subscription_cb_group)
         self.feedback_publisher = self.create_publisher(String, 'feedback', 10, callback_group=self.publisher_cb_group)
-        
+        self.create_subscription(String, 'move_fork', self.fork_move_callback, 10, callback_group=self.subscription_cb_group)
+        self.fork_movement_publisher = self.create_publisher(Float64, 'fork_control', 10, callback_group=self.publisher_cb_group)
         self.model_sub_and_pubs = {}
 
 
@@ -92,6 +93,23 @@ class PrimitiveNode(Node):
 
         self.__navigator = None
         self.__init_nav()
+
+    def fork_move_callback(self, msg:String):
+        self.get_logger().info(f"Received fork move command: {msg.data}")
+        try:
+            data = json.loads(msg.data)
+            z = float(data["args"]["z"])
+            action_id = int(data["action_id"])
+            msg = Float64()
+            msg.data = z
+            self.fork_movement_publisher.publish(msg)
+            self.get_logger().info(f"Fork moved to {z} with action_id {action_id}")
+
+            #TODO: Implement watch of joint state to know when the fork has moved to
+            #the desired position and then publish the feedback
+
+        except Exception as e:
+            self.get_logger().error(f"Error in fork move callback: {e}")
 
     def move_callback(self, msg):
         
@@ -168,12 +186,34 @@ class PrimitiveNode(Node):
         # Wait for navigation to fully activate, since autostarting nav2
         self.__navigator.waitUntilNav2Active()
 
+    def pallet_resting_pose(self):
+
+        #This gets the origin of the joint wrt to map, not the origin of the frame,
+        #this we need to offset it by the halft the fork length
+        fork_length = 1.0
+        half_fork_length = fork_length / 2
+        x, y, z, orient_x, orient_y, orient_z, orient_w = get_pos_as_other_coord_frame(self, 'map', 'fork_1')
+        x2, y2, z2, orient_x2, orient_y2, orient_z2, orient_w2 = get_pos_as_other_coord_frame(self, 'map', 'fork_2')
+        center = (y + y2) / 2
+
+        original_q = [orient_x, orient_y, orient_z, orient_w]
+
+        yaw_90_q = tf_transformations.quaternion_from_euler(0, 0, 1.5708)  # [x, y, z, w]
+
+        new_q = tf_transformations.quaternion_multiply(yaw_90_q, original_q)
+
+        # Unpack the rotated quaternion
+        new_orient_x, new_orient_y, new_orient_z, new_orient_w = new_q
+
+        return x+half_fork_length-0.1, center, z + 0.2, new_orient_x, new_orient_y, new_orient_z, new_orient_w
+
     def pick_up(self, object, action_id:int):
  
-        x, y, z, orient_x, orient_y, orient_z, orient_w = get_pos_as_other_coord_frame(self, 'map', 'fork_1')
-        
-        move_object_to_point(object, x+0.55, y-0.05, z+0.1, orient_x, orient_y, orient_z, orient_w)
-        self.get_logger().info("PICKING UP")
+        # Get the position of the pallet
+        x, center, z, new_orient_x, new_orient_y, new_orient_z, new_orient_w = self.pallet_resting_pose()
+
+        # Use the new orientation when moving the object
+        move_object_to_point(object, x, center, z + 0.2, new_orient_x, new_orient_y, new_orient_z, new_orient_w)
         payload = MqttPayload("success", action_id, {"success": "Pick up succeeded"})
         payload_as_string = str(payload)
         msg = String()
@@ -182,16 +222,12 @@ class PrimitiveNode(Node):
         self.feedback_publisher.publish(msg)
 
     def drop(self, object, action_id:int):
-    
-        x, y, z, orient_x, orient_y, orient_z, orient_w = get_pos_as_other_coord_frame(self, 'map', 'fork_1')
-
-        #The transformation origin is the joint where the fork is attached to the forklift
-        # The fork is 0.3 meters long and the cube is 0.2 meters wide
-        # so in order to drop the cube in front of the fork, we need to move it 0.4 meters  
-        # in the x axis (i.e. the fork length + the half of the cube width where the origin is)     
-        pos_from_fork_start_to_end = x + FORK_LENGTH + CUBE_WIDTH
-
-        move_object_to_point(object, pos_from_fork_start_to_end, y+0.05, z+0.1, orient_x, orient_y, orient_z, orient_w)
+        fork_length_half = 1.0 / 2
+        pallet_length = 0.8
+        # Get the position of the pallet (we know that pallet rests at the top of the forks)
+        x, y, z, orient_x, orient_y, orient_z, orient_w = self.pallet_resting_pose()    
+        pallet_length_half = pallet_length / 2
+        move_object_to_point(object, x+fork_length_half+pallet_length_half, y, z+0.06, orient_x, orient_y, orient_z, orient_w)
         payload = MqttPayload("success", action_id, {"success": "Drop succeeded"})
         payload_as_string = str(payload)
         msg = String()

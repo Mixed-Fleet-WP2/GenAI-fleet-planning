@@ -37,7 +37,7 @@ class Controller():
         self.mqtt_client.subscribe([("feedback", 2)])
 
         for model in MODELS:
-            print(f"SUBSCRIBING {model}_pos", flush=True)
+            #print(f"SUBSCRIBING {model}_pos", flush=True)
             self.mqtt_client.subscribe([(f"{model}_pos", 2)])
 
         
@@ -59,6 +59,9 @@ class Controller():
         self.mqtt_client.disconnect()
     
     def __process_mqtt_msg(self, msg):
+        #A hacky way to extract JSON from the payload but
+        # something is wrong with the payload when it goes
+        # through the MQTT broker and mqqtt-ros2-bridge
         start = msg.payload.find(b'{')
         end = msg.payload.rfind(b'}') + 1
         if start == -1 or end == -1:
@@ -66,27 +69,8 @@ class Controller():
         
         raw_payload = msg.payload[start:end]
         decoded_message = raw_payload.decode('utf-8')
-        print(f"Decoded message: {decoded_message}", flush=True)
+        #print(f"Decoded message: {decoded_message}", flush=True)
         return json.loads(decoded_message)
-    """
-    def __process_mqtt_msg(self, msg: mqtt.MQTTMessage, debug: bool = False):
-        decoded_message = str(msg.payload.decode('utf-8'))
-        # Remove control characters from the message
-        #cleaned_message = re.sub(r'[\x00-\x1F\x7F]', '', decoded_message)
-        cleaned_message = re.sub(r'^[^\{]+', '', decoded_message)
-        cleaned_message = re.sub(r'[^\}]+$', '', cleaned_message)
-        
-        if debug:
-            print(f"Received message: {msg.payload}", flush=True)
-            print(f"Decoded message: {decoded_message}", flush=True)
-            print(f"Cleaned message: {cleaned_message}", flush=True)
-        try:
-            payload = json.loads(cleaned_message)
-        except json.JSONDecodeError as e:
-            print(f"JSON decode error: {e}", flush=True)
-            payload = None
-        return payload
-    """
     
     def get_object_positions(self):
         """
@@ -113,23 +97,22 @@ class Controller():
         object_positions = {}
 
         for object in self.object_positions:
+            print(f"Processing position for {object}", flush=True)
             object_positions[object] = {}
-            object_positions[object]['x'] = self.object_positions[object]['transforms'][1]['transform']['translation']['x']
-            object_positions[object]['y'] = self.object_positions[object]['transforms'][1]['transform']['translation']['y']
-            object_positions[object]['z'] = self.object_positions[object]['transforms'][1]['transform']['translation']['z']
+            print(self.object_positions, flush=True)
+            object_positions[object]['x'] = self.object_positions[object]['position']['x']
+            object_positions[object]['y'] = self.object_positions[object]['position']['y']
+            object_positions[object]['z'] = self.object_positions[object]['position']['z']
 
-            object_positions[object]['quaternion_x'] = self.object_positions[object]['transforms'][1]['transform']['rotation']['x']
-            object_positions[object]['quaternion_y'] = self.object_positions[object]['transforms'][1]['transform']['rotation']['y']
-            object_positions[object]['quaternion_z'] = self.object_positions[object]['transforms'][1]['transform']['rotation']['z']
-            object_positions[object]['quaternion_w'] = self.object_positions[object]['transforms'][1]['transform']['rotation']['w']
+            object_positions[object]['quaternion_x'] = self.object_positions[object]['orientation']['x']
+            object_positions[object]['quaternion_y'] = self.object_positions[object]['orientation']['y']
+            object_positions[object]['quaternion_z'] = self.object_positions[object]['orientation']['z']
+            object_positions[object]['quaternion_w'] = self.object_positions[object]['orientation']['w']
         
         return object_positions
     
 
-
     def on_message(self, client, userdata, message:mqtt.MQTTMessage):
-
-        print(f"Received message: {message.topic}: {message.payload}", flush=True)
 
         #Position messages names are always in the format <model>_pos
         if re.search(r".*_pos", message.topic) != None:
@@ -142,7 +125,7 @@ class Controller():
         else:
             print(f"Received message: {message.topic}: {message.payload}", flush=True)
         
-        payload = self.__process_mqtt_msg(message, debug=True)
+        payload = self.__process_mqtt_msg(message)
 
         if "error" in payload:
             print(f"Received error: {payload['error']}", flush=True)
@@ -179,7 +162,7 @@ class Controller():
         payload_as_string = json.dumps(payload)
 
         if not prereqs:
-            print("No prerequisites, publishing immediately")
+            print("No prerequisites, publishing immediately", flush=True)
             self.mqtt_client.publish(f"{robot}/{action_name}", payload_as_string, qos=2)
             return
 

@@ -30,7 +30,7 @@ def move_object_to_point(object, x, y, z, orient_x=0, orient_y=0, orient_z=0, or
 
     cmd = [
         "gz", "service",
-        "-s", "/world/depot/set_pose",
+        "-s", "/world/warehouse/set_pose",
         "--reqtype", "gz.msgs.Pose",
         "--reptype", "gz.msgs.Boolean",
         "--timeout", "300",
