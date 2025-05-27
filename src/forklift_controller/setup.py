@@ -42,7 +42,7 @@ setup(
         ('share/' + package_name, ['package.xml']),
         ('share/' + package_name + '/urdf', glob('urdf/*')),
         ('share/' + package_name + '/launch', glob('launch/forklift_launches/*')),
-        ('share/' + package_name + '/launch', ['launch/rviz_launch.py']),
+	    ('share/' + package_name + '/launch', glob('launch/*.py')),
         ('share/' + package_name + '/worlds', glob('worlds/*.*')),
         ('share/'+package_name+'/config', glob('config/*')),
         ('share/' + package_name + '/maps/', glob('maps/*')),
@@ -65,6 +65,7 @@ setup(
         'console_scripts': [
             'fork_node = forklift_controller.fork_node:main',
             'primitive_node = forklift_controller.primitive_node:main',
+            'drone_node = forklift_controller.drone_node:main'
         ],
     },
 )

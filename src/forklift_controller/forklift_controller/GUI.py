@@ -257,19 +257,9 @@ class GUI:
 
 def main(args=None):
 
-    #rclpy.init(args=args)
-
-    #https://robotics.stackexchange.com/questions/106026/ros2-multi-nodes-each-on-a-thread-in-same-process
-    #executor = MultiThreadedExecutor()
-
     root = tk.Tk()
     app = GUI(root)
 
-    #Separate thread for the ROS2 node, so that the gui can run in the main thread
-    #spin_thread = Thread(target=executor.spin, daemon=True)
-    #spin_thread.start()
-
-    #root.protocol("WM_DELETE_WINDOW", lambda: on_closing(root, spin_thread, executor))
     root.protocol("WM_DELETE_WINDOW", lambda: on_closing(root))
     root.mainloop()
 
