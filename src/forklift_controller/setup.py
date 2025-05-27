@@ -9,16 +9,22 @@ def define_models() -> list:
     Utility function to define the models and their corresponding data files.
     Needed because glob doesnt copy directories.
     """
-    model_names = ["forklift", "pallet"]
+    model_names = os.listdir("./models")
     data_tuples = []
 
     for model_name in model_names:
+
         #Copy the meshes first
         destination = f'share/{package_name}/models/{model_name}/meshes/'
         source = f'models/{model_name}/meshes/*'
 
         # Copy the files from source to destination
         data_tuples.append((destination, glob(source)))
+
+        #Copy materials if applicable (glob(materials_source) returns empty list if no materials)
+        materials_source = f'models/{model_name}/materials/textures/*'
+        materials_destination = f'share/{package_name}/models/{model_name}/materials/textures/'
+        data_tuples.append((materials_destination, glob(materials_source)))
 
         #Move one level up to get the sdf files aka models/model_name
 
@@ -30,6 +36,7 @@ def define_models() -> list:
         data_tuples.append((sdf_folder_dest, glob(f"{sdf_folder_src}/model.config")))
         
     return data_tuples
+
 
 
 setup(
@@ -46,13 +53,13 @@ setup(
         ('share/' + package_name + '/worlds', glob('worlds/*.*')),
         ('share/'+package_name+'/config', glob('config/*')),
         ('share/' + package_name + '/maps/', glob('maps/*')),
-        *define_models(),
         #In the future, move the forklift.py to the lib directory?
         (('share/' + package_name + '/gui', ['forklift_controller/GUI.py'])),
         (('share/' + package_name + '/gui', ['forklift_controller/controller.py'])),
         (('share/' + package_name + '/gui', ['forklift_controller/robots.xml'])),
         (('lib/' + package_name, ['forklift_controller/utils.py'])),
         (('lib/' + package_name, ['forklift_controller/MqttPayload.py'])),
+        *define_models()
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -60,12 +67,11 @@ setup(
     maintainer_email='elmeri.pohjois-koivisto@tuni.fi',
     description='TODO: Package description',
     license='TODO: License declaration',
-    tests_require=['pytest'],
+    #tests_require=['pytest'],
     entry_points={
         'console_scripts': [
             'fork_node = forklift_controller.fork_node:main',
             'primitive_node = forklift_controller.primitive_node:main',
-            'drone_node = forklift_controller.drone_node:main'
         ],
     },
 )
