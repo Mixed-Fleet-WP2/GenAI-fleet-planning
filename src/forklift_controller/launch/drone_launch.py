@@ -89,7 +89,7 @@ def generate_launch_description():
     
     # Get the launch directory
     pkg_root = get_package_share_directory('forklift_controller')
-    robot_sdf = os.path.join(pkg_root, 'models', 'x500', 'model.sdf')
+    robot_sdf = os.path.join(pkg_root, 'models', 'x500_vision', 'model.sdf')
 
    
     # At the moment there is a bug where processes started with shell=True are not shut down by launch
@@ -124,6 +124,13 @@ def generate_launch_description():
             '-x', TextSubstitution(text=str(0.0)), '-y', TextSubstitution(text=str(0.0)), '-z', TextSubstitution(text=str(0.0)),
             '-R', TextSubstitution(text=str(0.0)), '-P', TextSubstitution(text=str(0.0)), '-Y', TextSubstitution(text=str(0.0))
             ]
+    )
+
+    drone_controller = Node(
+        package='forklift_controller',
+        executable='drone_controller',
+        parameters=[{'use_sim_time':True}],
+        namespace=''
     )
 
     shutdown_handler = RegisterEventHandler(
@@ -169,6 +176,8 @@ def generate_launch_description():
     ld.add_action(gazebo_client)
     ld.add_action(spawn_model)
     ld.add_action(shutdown_handler)
+
+    ld.add_action(drone_controller)
 
 
 
