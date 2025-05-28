@@ -1,6 +1,6 @@
-#FORKLIFT AI SIMULATION USING ROS2 AND GAZEBO HARMONIC
+# FORKLIFT AI SIMULATION USING ROS2 AND GAZEBO HARMONIC
 
-##Credits
+## Credits
 
 Model used:
 
@@ -11,7 +11,7 @@ to be used as individual meshes in the urdf. The forks were removed and replaced
 
 The cardboard model used by Open Robotics. If you use the model, cite as following:
 
-@online{GazeboFuel-german-Cardboard-Box,
+<cite> @online{GazeboFuel-german-Cardboard-Box,
 	title={Cardboard Box},
 	organization={Open Robotics},
 	date={2018},
@@ -20,3 +20,4 @@ The cardboard model used by Open Robotics. If you use the model, cite as followi
 	author={german},
 	url={https://fuel.gazebosim.org/1.0/german/models/Cardboard Box},
 }
+</cite>
