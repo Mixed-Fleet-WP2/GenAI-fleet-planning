@@ -17,6 +17,8 @@ from launch.substitutions import LaunchConfiguration, TextSubstitution, LocalSub
 from launch_ros.actions import Node
 from launch.events import Shutdown
 from launch.events.process import ProcessExited
+from launch.substitutions import EqualsSubstitution
+from launch.conditions import IfCondition
 
 
 def cancel_launch(event:ProcessExited, *args):
@@ -75,6 +77,7 @@ def generate_launch_description():
         cmd=['python3', px4_launch_file, use_gz],
         output='screen',
         shell=False,
+        #https://github.com/ros2/launch/blob/e1d12d595f2a7af7341fd685ea53ad302ea49d60/launch/launch/conditions/launch_configuration_equals.py#L54
     )
 
     #https://robotics.stackexchange.com/questions/89531/how-to-exit-from-a-ros2-lifecycle-launch-script
@@ -101,7 +104,8 @@ def generate_launch_description():
             cmd=['gz','sim','-v4', '-g', '--force-version', '8'],
             name='gazebo',
             output='screen',
-            shell=False
+            shell=False,
+            condition=IfCondition(EqualsSubstitution(use_gz, True))
         )
 
     world = os.path.join(pkg_root, 'worlds', 'default.sdf')
@@ -109,7 +113,8 @@ def generate_launch_description():
     # -s flag means server only
     gazebo_server = ExecuteProcess(
         cmd=['gz', 'sim', '-r', '-s', world],
-        output='screen'
+        output='screen',
+        condition=IfCondition(EqualsSubstitution(use_gz, True))
     )
 
     spawn_model = Node(

@@ -227,32 +227,14 @@ def generate_launch_description():
         }.items(),
     )
 
-     # The SDF file for the world is a xacro file because we wanted to
-    # conditionally load the SceneBroadcaster plugin based on wheter we're
-    # running in headless mode. But currently, the Gazebo command line doesn't
-    # take SDF strings for worlds, so the output of xacro needs to be saved into
-    # a temporary file and passed to Gazebo.
-    world_sdf = tempfile.mktemp(prefix='nav2_', suffix='.sdf')
-    world_sdf_xacro = ExecuteProcess(
-        cmd=['xacro', '-o', world_sdf, ['headless:=', headless], world],
-        condition=IfCondition(PythonExpression(
-        #If the upper level launch file has launched the simulation backend, we dont launch it again
-        #in order to use only one simualtion instance for multiple robots
-        [use_simulator, ' and not ', headless])),)
-    
     gazebo_server = ExecuteProcess(
-        cmd=['gz', 'sim', '-r', '-s', world_sdf],
+        cmd=['gz', 'sim', '-r', '-s', world],
         output='screen',
         condition=IfCondition(PythonExpression(
         #If the upper level launch file has launched the simulation backend, we dont launch it again
         #in order to use only one simualtion instance for multiple robots
         [use_simulator, ' and not ', headless])),
     )
-
-    remove_temp_sdf_file = RegisterEventHandler(event_handler=OnShutdown(
-        on_shutdown=[
-            OpaqueFunction(function=lambda _: os.remove(world_sdf))
-        ]))
 
     gazebo_client = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -333,10 +315,9 @@ def generate_launch_description():
 
     #These are related to spawning in gazebo
     # Add the actions to start gazebo, robots and simulations
-    ld.add_action(world_sdf_xacro)
     ld.add_action(gazebo_client)
     ld.add_action(gazebo_server)
-    ld.add_action(remove_temp_sdf_file)
+
 
     ld.add_action(execution_node_action)
     ld.add_action(declare_mqtt_config)

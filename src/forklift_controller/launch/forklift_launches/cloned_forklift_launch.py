@@ -141,33 +141,25 @@ def generate_launch_description():
         description="Config file for the mqtt client"
     )
 
-    # The SDF file for the world is a xacro file because we wanted to
-    # conditionally load the SceneBroadcaster plugin based on wheter we're
-    # running in headless mode. But currently, the Gazebo command line doesn't
-    # take SDF strings for worlds, so the output of xacro needs to be saved into
-    # a temporary file and passed to Gazebo.
-    world_sdf = tempfile.mktemp(prefix='nav2_', suffix='.sdf')
-    world_sdf_xacro = ExecuteProcess(
-        cmd=['xacro', '-o', world_sdf, ['headless:=', 'false'], world])
-    
+ 
     gazebo_server = ExecuteProcess(
-        cmd=['gz', 'sim', '-r', '-s', world_sdf],
+        cmd=['gz', 'sim', '-r', '-s', world],
         output='screen'
     )
 
-    remove_temp_sdf_file = RegisterEventHandler(event_handler=OnShutdown(
-        on_shutdown=[
-            OpaqueFunction(function=lambda _: os.remove(world_sdf))
-        ]))
 
-    gazebo_client = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(get_package_share_directory('ros_gz_sim'),
-                         'launch',
-                         'gz_sim.launch.py')
-        ),
-        launch_arguments={'gz_args': ['-v4 -g ']}.items(),
-    )
+    # At the moment there is a bug where processes started with shell=True are not shut down by launch
+    # this is why the launch file from ros_gz_sim package is not used
+
+    # See: https://github.com/ros2/launch/issues/757
+    # and https://github.com/ros2/launch/issues/545
+    gazebo_client = ExecuteProcess(
+            cmd=['gz','sim','-v4', '-g', '--force-version', '8'],
+            name='gazebo',
+            output='screen',
+            shell=False
+        )
+
 
     #Bridge clock only once, see: https://github.com/gazebosim/ros_gz/issues/591
     bridge_clock = Node(
@@ -277,15 +269,11 @@ def generate_launch_description():
     ld.add_action(bridge_clock)
 
     # Add the actions to start gazebo, robots and simulations
-    ld.add_action(world_sdf_xacro)
     ld.add_action(gazebo_client)
     ld.add_action(gazebo_server)
-    ld.add_action(remove_temp_sdf_file)
 
     ld.add_action(declare_mqtt_config)
     ld.add_action(bridge_cube_pose)
-
-    #ld.add_action(OpaqueFunction(function=launch_print, args=[params_file]))
 
     for cmd in bringup_cmd_group:
         ld.add_action(cmd)

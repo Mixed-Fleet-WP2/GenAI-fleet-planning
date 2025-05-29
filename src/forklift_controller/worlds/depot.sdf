@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
 <sdf version="1.6" xmlns:xacro="http://www.ros.org/wiki/xacro" xmlns:experimental="http://sdformat.org/schemas/experimental">
-  <xacro:arg name="headless" default="true"/>
   <world name="depot">
     <scene>
       <grid>false</grid>
@@ -19,12 +18,10 @@
       filename="gz-sim-user-commands-system"
       name="gz::sim::systems::UserCommands">
     </plugin>
-  <xacro:unless value="$(arg headless)">
     <plugin
       filename="gz-sim-scene-broadcaster-system"
       name="gz::sim::systems::SceneBroadcaster">
     </plugin>
-  </xacro:unless>
     <plugin
       filename="gz-sim-sensors-system"
       name="gz::sim::systems::Sensors">
@@ -52,63 +49,6 @@
       </experimental:params>
 
     </include>
-
-    <model name="cube">
-
-       <plugin
-            filename="gz-sim-pose-publisher-system"
-            name="gz::sim::systems::PosePublisher">
-            <publish_link_pose>true</publish_link_pose>
-            <publish_collision_pose>false</publish_collision_pose>
-            <publish_visual_pose>false</publish_visual_pose>
-            <publish_nested_model_pose>true</publish_nested_model_pose>
-            <use_pose_vector_msg>true</use_pose_vector_msg>
-            <update_frequency>0.5</update_frequency> <!-- Hz, this means that pose is published every 2s-->
-        </plugin>
-
-
-      <pose>13 1.25 0.5 0 0 0</pose>
-      <!--<static>true</static>-->
-        <link name="link">
-        <inertial>
-          <mass>1.0</mass>
-          <inertia> <!-- inertias are tricky to compute -->
-            <!-- http://gazebosim.org/tutorials?tut=inertia&cat=build_robot -->
-            <ixx>0.083</ixx>       <!-- for a box: ixx = 0.083 * mass * (y*y + z*z) -->
-            <ixy>0.0</ixy>         <!-- for a box: ixy = 0 -->
-            <ixz>0.0</ixz>         <!-- for a box: ixz = 0 -->
-            <iyy>0.083</iyy>       <!-- for a box: iyy = 0.083 * mass * (x*x + z*z) -->
-            <iyz>0.0</iyz>         <!-- for a box: iyz = 0 -->
-            <izz>0.083</izz>       <!-- for a box: izz = 0.083 * mass * (x*x + y*y) -->
-          </inertia>
-        </inertial>
-        <collision name="collision">
-          <geometry>
-            <box>
-              <size>0.2 0.2 0.2</size>
-            </box>
-          </geometry>
-        </collision>
-        <visual name="visual">
-          <pose>0 0 -0.1 0 0 0</pose>  <!-- shift upward by half the height -->
-          <geometry>
-          <mesh>
-            <uri>model://box/meshes/cardboard_box.dae</uri>
-            <scale> 0.503727584 0.503727584 0.503727584 </scale>
-            <!-- <scale>1.25931896 1.007455168 0.755591376</scale> -->
-          </mesh>
-        </geometry>
-        <!--
-          <geometry>
-            <box>
-              <size>0.2 0.2 0.2</size>
-            </box>
-          </geometry>
-          -->
-        </visual>
-      </link>
-    </model>
-
 
   </world>
 </sdf>
