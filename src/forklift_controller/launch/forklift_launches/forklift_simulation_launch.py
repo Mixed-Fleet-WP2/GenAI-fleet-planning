@@ -48,6 +48,7 @@ def generate_launch_description():
     launch_dir = os.path.join(bringup_dir, 'launch')
     pkg_root = get_package_share_directory('forklift_controller')
     sim_dir = get_package_share_directory('nav2_minimal_tb4_sim')
+    nav_launch_dir = get_package_share_directory('nav2_launch')
 
     # Create the launch configuration variables
     slam = LaunchConfiguration('slam')
@@ -213,7 +214,7 @@ def generate_launch_description():
     )
 
     bringup_cmd = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(os.path.join(pkg_root, 'launch', 'bringup_launch.py')),
+        PythonLaunchDescriptionSource(os.path.join(nav_launch_dir, 'launch', 'bringup_launch.py')),
         launch_arguments={
             'namespace': namespace,
             'use_namespace': use_namespace,
