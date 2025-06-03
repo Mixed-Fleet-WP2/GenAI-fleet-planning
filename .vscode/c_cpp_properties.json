@@ -9,7 +9,8 @@
                 "/home/elmeripk/forklift_sim/install/movement_interface/include/**",
                 "/opt/ros/jazzy/include/**",
                 "/usr/include/**",
-                "${workspaceFolder}/install/px4_msgs/include/px4_msgs"
+                "${workspaceFolder}/install/px4_msgs/include/px4_msgs",
+                "/opt/ros/jazzy/include/geometry_msgs"
             ],
             "name": "ROS",
             "intelliSenseMode": "gcc-arm64",

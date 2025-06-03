@@ -159,7 +159,7 @@ def generate_launch_description():
     )
 
     # Get the launch directory
-    #robot_sdf = os.path.join(pkg_share, 'models', 'x500_vision', 'model.sdf')
+    #robot_sdf = os.path.join(pkg_share, 'models', 'x500_lidar_2d', 'model.sdf')
     robot_sdf = os.path.join(pkg_share, 'models', 'x3', 'model.sdf')
     bringup_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(os.path.join(nav_launch_dir, 'launch', 'bringup_launch.py')),
@@ -182,7 +182,8 @@ def generate_launch_description():
     # See: https://github.com/ros2/launch/issues/757
     # and https://github.com/ros2/launch/issues/545
     gazebo_client = ExecuteProcess(
-            cmd=['gz','sim','-v4', '-g', '--force-version', '8', '--render-engine', 'ogre'],
+            #cmd=['gz','sim','-v4', '-g', '--force-version', '8', '--render-engine', 'ogre'],
+            cmd=['gz','sim','-v4', '-g', '--force-version', '8'],
             name='gazebo',
             output='screen',
             shell=False,
