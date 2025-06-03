@@ -4,7 +4,7 @@
     
 
     <pose>0 0 0.053302 0 0 0</pose>
-    <link name='X3/base_link'>
+    <link name='base_link'>
       <pose frame=''>0 0 0 0 -0 0</pose>
       <inertial>
         <pose frame=''>0 0 0 0 -0 0</pose>
@@ -18,7 +18,7 @@
           <izz>0.0977</izz>
         </inertia>
       </inertial>
-      <collision name='X3/base_link_inertia_collision'>
+      <collision name='base_link_inertia_collision'>
         <pose frame=''>0 0 0 0 -0 0</pose>
         <geometry>
           <box>
@@ -26,7 +26,7 @@
           </box>
         </geometry>
       </collision>
-      <visual name='X3/base_link_inertia_visual'>
+      <visual name='base_link_inertia_visual'>
         <pose frame=''>0 0 0 0 -0 0</pose>
         <geometry>
           <mesh>
@@ -43,7 +43,7 @@
         </material>
       </visual>
     </link>
-    <link name='X3/rotor_0'>
+    <link name='rotor_0'>
       <pose frame=''>0.13 -0.22 0.023 0 -0 0</pose>
       <inertial>
         <pose frame=''>0 0 0 0 -0 0</pose>
@@ -57,7 +57,7 @@
           <izz>4.26041e-05</izz>
         </inertia>
       </inertial>
-      <collision name='X3/rotor_0_collision'>
+      <collision name='rotor_0_collision'>
         <pose frame=''>0 0 0 0 -0 0</pose>
         <geometry>
           <cylinder>
@@ -74,7 +74,7 @@
           </friction>
         </surface>
       </collision>
-      <visual name='X3/rotor_0_visual'>
+      <visual name='rotor_0_visual'>
         <pose frame=''>0 0 0 0 -0 0</pose>
         <geometry>
           <mesh>
@@ -93,9 +93,9 @@
       <gravity>1</gravity>
       <velocity_decay/>
     </link>
-    <joint name='X3/rotor_0_joint' type='revolute'>
-      <child>X3/rotor_0</child>
-      <parent>X3/base_link</parent>
+    <joint name='rotor_0_joint' type='revolute'>
+      <child>rotor_0</child>
+      <parent>base_link</parent>
       <axis>
         <xyz>0 0 1</xyz>
         <limit>
@@ -109,7 +109,7 @@
         <use_parent_model_frame>1</use_parent_model_frame>
       </axis>
     </joint>
-    <link name='X3/rotor_1'>
+    <link name='rotor_1'>
       <pose frame=''>-0.13 0.2 0.023 0 -0 0</pose>
       <inertial>
         <pose frame=''>0 0 0 0 -0 0</pose>
@@ -123,7 +123,7 @@
           <izz>4.26041e-05</izz>
         </inertia>
       </inertial>
-      <collision name='X3/rotor_1_collision'>
+      <collision name='rotor_1_collision'>
         <pose frame=''>0 0 0 0 -0 0</pose>
         <geometry>
           <cylinder>
@@ -140,7 +140,7 @@
           </friction>
         </surface>
       </collision>
-      <visual name='X3/rotor_1_visual'>
+      <visual name='rotor_1_visual'>
         <pose frame=''>0 0 0 0 -0 0</pose>
         <geometry>
           <mesh>
@@ -158,9 +158,9 @@
       <gravity>1</gravity>
       <velocity_decay/>
     </link>
-    <joint name='X3/rotor_1_joint' type='revolute'>
-      <child>X3/rotor_1</child>
-      <parent>X3/base_link</parent>
+    <joint name='rotor_1_joint' type='revolute'>
+      <child>rotor_1</child>
+      <parent>base_link</parent>
       <axis>
         <xyz>0 0 1</xyz>
         <limit>
@@ -174,7 +174,7 @@
         <use_parent_model_frame>1</use_parent_model_frame>
       </axis>
     </joint>
-    <link name='X3/rotor_2'>
+    <link name='rotor_2'>
       <pose frame=''>0.13 0.22 0.023 0 -0 0</pose>
       <inertial>
         <pose frame=''>0 0 0 0 -0 0</pose>
@@ -188,7 +188,7 @@
           <izz>4.26041e-05</izz>
         </inertia>
       </inertial>
-      <collision name='X3/rotor_2_collision'>
+      <collision name='rotor_2_collision'>
         <pose frame=''>0 0 0 0 -0 0</pose>
         <geometry>
           <cylinder>
@@ -205,7 +205,7 @@
           </friction>
         </surface>
       </collision>
-      <visual name='X3/rotor_2_visual'>
+      <visual name='rotor_2_visual'>
         <pose frame=''>0 0 0 0 -0 0</pose>
         <geometry>
           <mesh>
@@ -223,9 +223,9 @@
       <gravity>1</gravity>
       <velocity_decay/>
     </link>
-    <joint name='X3/rotor_2_joint' type='revolute'>
-      <child>X3/rotor_2</child>
-      <parent>X3/base_link</parent>
+    <joint name='rotor_2_joint' type='revolute'>
+      <child>rotor_2</child>
+      <parent>base_link</parent>
       <axis>
         <xyz>0 0 1</xyz>
         <limit>
@@ -239,7 +239,7 @@
         <use_parent_model_frame>1</use_parent_model_frame>
       </axis>
     </joint>
-    <link name='X3/rotor_3'>
+    <link name='rotor_3'>
       <pose frame=''>-0.13 -0.2 0.023 0 -0 0</pose>
       <inertial>
         <pose frame=''>0 0 0 0 -0 0</pose>
@@ -253,7 +253,7 @@
           <izz>4.26041e-05</izz>
         </inertia>
       </inertial>
-      <collision name='X3/rotor_3_collision'>
+      <collision name='rotor_3_collision'>
         <pose frame=''>0 0 0 0 -0 0</pose>
         <geometry>
           <cylinder>
@@ -270,7 +270,7 @@
           </friction>
         </surface>
       </collision>
-      <visual name='X3/rotor_3_visual'>
+      <visual name='rotor_3_visual'>
         <pose frame=''>0 0 0 0 -0 0</pose>
         <geometry>
           <mesh>
@@ -288,9 +288,9 @@
       <gravity>1</gravity>
       <velocity_decay/>
     </link>
-    <joint name='X3/rotor_3_joint' type='revolute'>
-      <child>X3/rotor_3</child>
-      <parent>X3/base_link</parent>
+    <joint name='rotor_3_joint' type='revolute'>
+      <child>rotor_3</child>
+      <parent>base_link</parent>
       <axis>
         <xyz>0 0 1</xyz>
         <limit>
@@ -310,17 +310,17 @@
       <pose>0 0 0.02 0 0 0</pose>
     </include>
     <joint name="LidarJoint" type="fixed">
-      <parent>X3/base_link</parent>
+      <parent>base_link</parent>
       <child>link</child>
-      <pose relative_to="X3/base_link">0 0 0 0 0 0</pose>
+      <pose relative_to="base_link">0 0 0 0 0 0</pose>
     </joint>
 
      <plugin
         filename="gz-sim-multicopter-motor-model-system"
         name="gz::sim::systems::MulticopterMotorModel">
         <robotNamespace>drone</robotNamespace>
-        <jointName>X3/rotor_0_joint</jointName>
-        <linkName>X3/rotor_0</linkName>
+        <jointName>rotor_0_joint</jointName>
+        <linkName>rotor_0</linkName>
         <turningDirection>ccw</turningDirection>
         <timeConstantUp>0.0125</timeConstantUp>
         <timeConstantDown>0.025</timeConstantDown>
@@ -339,8 +339,8 @@
         filename="gz-sim-multicopter-motor-model-system"
         name="gz::sim::systems::MulticopterMotorModel">
         <robotNamespace>drone</robotNamespace>
-        <jointName>X3/rotor_1_joint</jointName>
-        <linkName>X3/rotor_1</linkName>
+        <jointName>rotor_1_joint</jointName>
+        <linkName>rotor_1</linkName>
         <turningDirection>ccw</turningDirection>
         <timeConstantUp>0.0125</timeConstantUp>
         <timeConstantDown>0.025</timeConstantDown>
@@ -359,8 +359,8 @@
         filename="gz-sim-multicopter-motor-model-system"
         name="gz::sim::systems::MulticopterMotorModel">
         <robotNamespace>X3</robotNamespace>
-        <jointName>X3/rotor_2_joint</jointName>
-        <linkName>X3/rotor_2</linkName>
+        <jointName>rotor_2_joint</jointName>
+        <linkName>rotor_2</linkName>
         <turningDirection>cw</turningDirection>
         <timeConstantUp>0.0125</timeConstantUp>
         <timeConstantDown>0.025</timeConstantDown>
@@ -379,8 +379,8 @@
         filename="gz-sim-multicopter-motor-model-system"
         name="gz::sim::systems::MulticopterMotorModel">
         <robotNamespace>X3</robotNamespace>
-        <jointName>X3/rotor_3_joint</jointName>
-        <linkName>X3/rotor_3</linkName>
+        <jointName>rotor_3_joint</jointName>
+        <linkName>rotor_3</linkName>
         <turningDirection>cw</turningDirection>
         <timeConstantUp>0.0125</timeConstantUp>
         <timeConstantDown>0.025</timeConstantDown>
@@ -401,7 +401,7 @@
         <robotNamespace>X3</robotNamespace>
         <commandSubTopic>gazebo/command/twist</commandSubTopic>
         <enableSubTopic>enable</enableSubTopic>
-        <comLinkName>X3/base_link</comLinkName>
+        <comLinkName>base_link</comLinkName>
         <velocityGain>2.7 2.7 2.7</velocityGain>
         <attitudeGain>2 3 0.15</attitudeGain>
         <angularRateGain>0.4 0.52 0.18</angularRateGain>
@@ -409,25 +409,25 @@
 
         <rotorConfiguration>
           <rotor>
-            <jointName>X3/rotor_0_joint</jointName>
+            <jointName>rotor_0_joint</jointName>
             <forceConstant>8.54858e-06</forceConstant>
             <momentConstant>0.016</momentConstant>
             <direction>1</direction>
           </rotor>
           <rotor>
-            <jointName>X3/rotor_1_joint</jointName>
+            <jointName>rotor_1_joint</jointName>
             <forceConstant>8.54858e-06</forceConstant>
             <momentConstant>0.016</momentConstant>
             <direction>1</direction>
           </rotor>
           <rotor>
-            <jointName>X3/rotor_2_joint</jointName>
+            <jointName>rotor_2_joint</jointName>
             <forceConstant>8.54858e-06</forceConstant>
             <momentConstant>0.016</momentConstant>
             <direction>-1</direction>
           </rotor>
           <rotor>
-            <jointName>X3/rotor_3_joint</jointName>
+            <jointName>rotor_3_joint</jointName>
             <forceConstant>8.54858e-06</forceConstant>
             <momentConstant>0.016</momentConstant>
             <direction>-1</direction>
