@@ -1,3 +1,5 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
 <sdf version='1.6'>
   <model name='x3'>
 
@@ -31,7 +33,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://x3/meshes/x3.dae</uri>
+            <uri>model://drone_cpp/models/x3/meshes/x3.dae</uri>
           </mesh>
         </geometry>
         <material>
@@ -79,7 +81,7 @@
         <geometry>
           <mesh>
             <scale>0.1 0.1 0.1</scale>
-            <uri>model://x3/meshes/propeller_ccw.dae</uri>
+            <uri>model://drone_cpp/models/x3/meshes/propeller_ccw.dae</uri>
           </mesh>
         </geometry>
         <material>
@@ -102,10 +104,12 @@
           <lower>-1e+16</lower>
           <upper>1e+16</upper>
         </limit>
+        <!--
         <dynamics>
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
+        -->
         <use_parent_model_frame>1</use_parent_model_frame>
       </axis>
     </joint>
@@ -145,7 +149,7 @@
         <geometry>
           <mesh>
             <scale>0.1 0.1 0.1</scale>
-            <uri>model://x3/meshes/propeller_ccw.dae</uri>
+            <uri>model://drone_cpp/models/x3/meshes/propeller_ccw.dae</uri>
           </mesh>
         </geometry>
         <material>
@@ -167,10 +171,12 @@
           <lower>-1e+16</lower>
           <upper>1e+16</upper>
         </limit>
+        <!--
         <dynamics>
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
+        -->
         <use_parent_model_frame>1</use_parent_model_frame>
       </axis>
     </joint>
@@ -210,7 +216,7 @@
         <geometry>
           <mesh>
             <scale>0.1 0.1 0.1</scale>
-            <uri>model://x3/meshes/propeller_cw.dae</uri>
+            <uri>model://drone_cpp/models/x3/meshes/propeller_cw.dae</uri>
           </mesh>
         </geometry>
         <material>
@@ -232,10 +238,12 @@
           <lower>-1e+16</lower>
           <upper>1e+16</upper>
         </limit>
+        <!--
         <dynamics>
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
+        -->
         <use_parent_model_frame>1</use_parent_model_frame>
       </axis>
     </joint>
@@ -275,7 +283,7 @@
         <geometry>
           <mesh>
             <scale>0.1 0.1 0.1</scale>
-            <uri>model://x3/meshes/propeller_cw.dae</uri>
+            <uri>model://drone_cpp/models/x3/meshes/propeller_cw.dae</uri>
           </mesh>
         </geometry>
         <material>
@@ -297,16 +305,18 @@
           <lower>-1e+16</lower>
           <upper>1e+16</upper>
         </limit>
+        <!--
         <dynamics>
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
+        -->
         <use_parent_model_frame>1</use_parent_model_frame>
       </axis>
     </joint>
       
       <include merge='true'>
-      <uri>model://lidar_2d_v2</uri>
+      <uri>model://drone_cpp/models/lidar_2d_v2</uri>
       <pose>0 0 0.02 0 0 0</pose>
     </include>
     <joint name="LidarJoint" type="fixed">
@@ -318,7 +328,7 @@
      <plugin
         filename="gz-sim-multicopter-motor-model-system"
         name="gz::sim::systems::MulticopterMotorModel">
-        <robotNamespace>drone</robotNamespace>
+        <robotNamespace>X3</robotNamespace>
         <jointName>rotor_0_joint</jointName>
         <linkName>rotor_0</linkName>
         <turningDirection>ccw</turningDirection>
@@ -338,7 +348,7 @@
       <plugin
         filename="gz-sim-multicopter-motor-model-system"
         name="gz::sim::systems::MulticopterMotorModel">
-        <robotNamespace>drone</robotNamespace>
+        <robotNamespace>X3</robotNamespace>
         <jointName>rotor_1_joint</jointName>
         <linkName>rotor_1</linkName>
         <turningDirection>ccw</turningDirection>

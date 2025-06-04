@@ -16,6 +16,7 @@
   <depend>rclcpp</depend>
   <depend>rclpy</depend>
   <depend>px4_msgs</depend>
+  <depend>sdformat_urdf</depend>
 
   <export>
     <build_type>ament_cmake</build_type>

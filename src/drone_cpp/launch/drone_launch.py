@@ -1,6 +1,6 @@
 import os
 
-from ament_index_python.packages import get_package_share_directory
+from ament_index_python.packages import get_package_share_directory, get_package_prefix
 from launch import LaunchDescription
 from launch.actions import (
     AppendEnvironmentVariable,
@@ -13,6 +13,8 @@ from launch.actions import (
     IncludeLaunchDescription
 )
 
+from launch.substitutions.command import Command
+from launch_ros.parameter_descriptions import ParameterValue
 from launch.event_handlers import OnShutdown, OnProcessExit, OnProcessIO
 
 from launch.substitutions import (LaunchConfiguration,
@@ -27,8 +29,10 @@ from launch.events.process import ProcessExited, ProcessIO
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 
-def cancel_launch(event:ProcessExited, *args):
+def cancel_launch(event:ProcessExited, context, *args):
     
+    print(args[0])
+    print(args[1])
     return_code = event.returncode
 
     if return_code == 1:
@@ -56,6 +60,7 @@ def generate_launch_description():
     use_composition  = LaunchConfiguration('use_composition')
     use_respawn  = LaunchConfiguration('use_respawn')
     map_yaml_file = LaunchConfiguration('map_yaml_file')
+    use_rviz = LaunchConfiguration('use_rviz')
 
     declare_px4_airframe = DeclareLaunchArgument(
         name='px4_airframe',
@@ -83,13 +88,13 @@ def generate_launch_description():
 
     declare_namespace = DeclareLaunchArgument(
         name='namespace',
-        default_value='',
+        default_value='drone_1',
         description='Namespace for the drone'
     )
 
     declare_use_namespace = DeclareLaunchArgument(
         name='use_namespace',
-        default_value='False',
+        default_value='True',
         description="Whether to use namespace for the drone"
 
     )
@@ -135,6 +140,12 @@ def generate_launch_description():
         default_value='',
         description='Absolute path to the map yaml file'
     )
+
+    declare_use_rviz = DeclareLaunchArgument(
+        name='use_rviz',
+        default_value='True',
+        description="Whether to use rviz"
+    )
  
     px4_launch_file = 'drone_cpp.px4_build'
 
@@ -154,7 +165,7 @@ def generate_launch_description():
     handler = RegisterEventHandler(
         OnProcessExit(
             target_action=px4_launch,
-            on_exit=cancel_launch
+            on_exit=lambda e, context: cancel_launch(e)
         )
     )
 
@@ -199,11 +210,17 @@ def generate_launch_description():
         condition=IfCondition(EqualsSubstitution(use_gz, True))
     )
 
+    # This command returns the parsed sdf as a string
+
+    # How to pass arguments to xacro: 
+    # https://robotics.stackexchange.com/questions/85348/pass-parameters-to-xacro-from-launch-file-or-otherwise
+    #parsed_sdf= Command(['xacro', ' ', robot_sdf, ' namespace:=', namespace])
+    
     spawn_model = Node(
         package='ros_gz_sim',
         executable='create',
         output='screen',
-        namespace='',
+        namespace=namespace,
         parameters=[{'use_sim_time':True}],
         arguments=[
             '-name', 'drone',
@@ -211,6 +228,52 @@ def generate_launch_description():
             '-x', TextSubstitution(text=str(2.0)), '-y', TextSubstitution(text=str(0.0)), '-z', TextSubstitution(text=str(0.0)),
             '-R', TextSubstitution(text=str(0.0)), '-P', TextSubstitution(text=str(0.0)), '-Y', TextSubstitution(text=str(0.0))
             ]
+    )
+    """
+    run_robot_state_publisher = Node(
+        package='robot_state_publisher',
+        executable='robot_state_publisher',
+        name='robot_state_publisher',
+        namespace=namespace,
+        output='screen',
+        parameters=[
+            {'use_sim_time': use_sim_time, 'robot_description': ParameterValue(
+                parsed_sdf, value_type=str)}, # This was required because the robot_state_publisher was trying to parse the string as yaml. This was a problem
+            # when the file included comments
+        ],
+        remappings=[('/tf', 'tf'), ('/tf_static', 'tf_static')],
+    )
+    """
+
+    #Bridge clock only once, see: https://github.com/gazebosim/ros_gz/issues/591
+    bridge_clock = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        parameters=[{'use_sim_time':True}],
+        arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock'],
+      )
+    
+    bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        namespace=namespace,
+        parameters=[
+            {
+                'config_file': os.path.join(pkg_share, 'config', 'drone_ros_gz_bridge.yaml'),
+                'expand_gz_topic_names': True,
+                'use_sim_time': True,
+            }
+        ],
+        output='screen',
+    )
+
+
+    launch_rviz = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(os.path.join(nav_launch_dir, "launch", "rviz_launch.py")),
+        launch_arguments={
+            'namespace': namespace,
+            'use_sim_time':use_sim_time
+        }.items(),
     )
 
     drone_controller = Node(
@@ -231,16 +294,14 @@ def generate_launch_description():
 
     #This points to /forklift_sim/install/forklift_controller/share/
     #Because we go up one directory to get to the share directory
-    set_env_vars_resources = AppendEnvironmentVariable(
-        'GZ_SIM_RESOURCE_PATH', os.path.abspath(os.path.join(pkg_share, '..')))
-    
-    set_env_vars_resources2 = AppendEnvironmentVariable(
-        'GZ_SIM_RESOURCE_PATH', os.path.join(pkg_share, 'models'))
-    
-    
 
+    #This is so package:// and model:// is resolved in sdf files
+    #Basically what we set here is one of the paths possible
+    #for model:// or package://
+    set_env_vars_resources3 = AppendEnvironmentVariable(
+        'GZ_SIM_RESOURCE_PATH', os.path.join(get_package_prefix('drone_cpp'), 'share'))
+    
     ld = LaunchDescription()
-
 
     ld.add_action(declare_use_gz)
     ld.add_action(declare_px4_path)
@@ -264,20 +325,23 @@ def generate_launch_description():
     ld.add_action(declare_use_composition)
     ld.add_action(declare_use_respawn)
     ld.add_action(declare_map_yaml_file)
+    ld.add_action(declare_use_rviz)
     
 
-    ld.add_action(set_env_vars_resources)
-    ld.add_action(set_env_vars_resources2)
+    #ld.add_action(set_env_vars_resources)
+    #ld.add_action(set_env_vars_resources2)
+    ld.add_action(set_env_vars_resources3)
     ld.add_action(gazebo_server)
     ld.add_action(gazebo_client)
     ld.add_action(spawn_model)
     ld.add_action(shutdown_handler)
+    ld.add_action(launch_rviz)
+    #ld.add_action(run_robot_state_publisher)
+    ld.add_action(bridge_clock)
+    ld.add_action(bridge)
     #ld.add_action(drone_controller)
 
     #ld.add_action(bringup_cmd)
-
-
-
 
     return ld
 

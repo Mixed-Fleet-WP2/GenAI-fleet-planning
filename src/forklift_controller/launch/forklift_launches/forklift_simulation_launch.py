@@ -197,7 +197,7 @@ def generate_launch_description():
         output='screen',
         parameters=[
             {'use_sim_time': use_sim_time, 'robot_description': ParameterValue(
-                parsed_urdf, value_type=str)}, #This was required because the colcon in urdf was not being parsed correctly as this was considreded yaml
+                parsed_urdf, value_type=str)}, #This was required because the colcon in urdf was not being parsed correctly as this was considered yaml
         ],
         remappings=remappings,
     )

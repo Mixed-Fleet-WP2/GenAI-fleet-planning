@@ -47,8 +47,11 @@ install(DIRECTORY
   DESTINATION share/${PROJECT_NAME}/
 )
 
+install(DIRECTORY
+  config
+  DESTINATION share/${PROJECT_NAME})
 
-# Used for installing programs not built with cmake
+# Used for installing programs not built with cmake (ie python nodes)
 install(PROGRAMS
   scripts/drone.py
   DESTINATION
