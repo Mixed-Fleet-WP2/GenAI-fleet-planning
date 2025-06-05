@@ -1,4 +1,5 @@
 #include "drone_tf_publisher.hpp"
+#include <iostream>
 
 DroneTfPublisher::DroneTfPublisher(const std::string& node_name) : 
     rclcpp::Node(node_name){
@@ -6,6 +7,7 @@ DroneTfPublisher::DroneTfPublisher(const std::string& node_name) :
     odometry_subscription_ = this->create_subscription<nav_msgs::msg::Odometry>(
         "odom", 10,
         std::bind(&DroneTfPublisher::publish_transform, this, std::placeholders::_1));
+    tf_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(*this);
 
 }
 
@@ -22,8 +24,8 @@ void DroneTfPublisher::publish_transform(const nav_msgs::msg::Odometry &msg){
     t.child_frame_id = "base_footprint";
 
     // https://docs.ros2.org/foxy/api/nav_msgs/msg/Odometry.html
-    double drone_pos_x = msg.pose.pose.position.x;
-    double drone_pos_y = msg.pose.pose.position.y;
+    //double drone_pos_x = msg.pose.pose.position.x;
+    //double drone_pos_y = msg.pose.pose.position.y;
     double drone_pos_z = msg.pose.pose.position.z;
 
     t.transform.translation.x = 0.0;
@@ -61,7 +63,7 @@ void DroneTfPublisher::publish_transform(const nav_msgs::msg::Odometry &msg){
     t.transform.rotation.y = q.y();
     t.transform.rotation.z = q.z();
     t.transform.rotation.w =  q.w();
-
+    //RCLCPP_INFO(this->get_logger(), "Got here");
     tf_broadcaster_->sendTransform(t);
 
 }

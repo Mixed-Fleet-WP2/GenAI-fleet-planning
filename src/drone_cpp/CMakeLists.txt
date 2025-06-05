@@ -35,6 +35,7 @@ ament_target_dependencies(drone_tf_publisher rclcpp geometry_msgs tf2_ros nav_ms
 # When a relative path is given, it is interpreted relative to the value of the CMAKE_INSTALL_PREFIX variable.
 # (in ros2 case, the CMAKE_INSTALL_PREFIX is set by colcon)
 install(TARGETS drone_node DESTINATION lib/${PROJECT_NAME})
+install(TARGETS drone_tf_publisher DESTINATION lib/${PROJECT_NAME})
 
 # Install launch files.
 install(DIRECTORY

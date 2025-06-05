@@ -18,15 +18,15 @@
   gz_type_name: "gz.msgs.LaserScan"
   direction: GZ_TO_ROS
 
-# - topic_name: "odom"
-#   ros_type_name: "nav_msgs/msg/Odometry"
-#   gz_type_name: "gz.msgs.Odometry"
-#   direction: GZ_TO_ROS
+- topic_name: "odom"
+  ros_type_name: "nav_msgs/msg/Odometry"
+  gz_type_name: "gz.msgs.Odometry"
+  direction: GZ_TO_ROS
 
-# - topic_name: "tf"
-#   ros_type_name: "tf2_msgs/msg/TFMessage"
-#   gz_type_name: "gz.msgs.Pose_V"
-#   direction: GZ_TO_ROS
+- topic_name: "tf"
+  ros_type_name: "tf2_msgs/msg/TFMessage"
+  gz_type_name: "gz.msgs.Pose_V"
+  direction: GZ_TO_ROS
 
 # # replace imu_bridge - check gz topic name
 # - topic_name: "imu"

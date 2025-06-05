@@ -62,6 +62,9 @@ def generate_launch_description():
     map_yaml_file = LaunchConfiguration('map_yaml_file')
     use_rviz = LaunchConfiguration('use_rviz')
 
+
+    remappings = [('/tf', 'tf'), ('/tf_static', 'tf_static')]
+
     declare_px4_airframe = DeclareLaunchArgument(
         name='px4_airframe',
         default_value='4001',
@@ -178,7 +181,7 @@ def generate_launch_description():
             'namespace': namespace,
             'use_namespace': use_namespace,
             'slam': slam,
-            'map': map_yaml_file,
+            #'map': map_yaml_file,
             'use_sim_time': use_sim_time,
             'params_file': nav_params_file,
             'autostart': autostart,
@@ -201,7 +204,7 @@ def generate_launch_description():
             condition=IfCondition(EqualsSubstitution(use_gz, True))
         )
 
-    world = os.path.join(pkg_share, 'worlds', 'default.sdf')
+    world = os.path.join(pkg_share, 'worlds', 'warehouse.sdf')
     
     # -s flag means server only
     gazebo_server = ExecuteProcess(
@@ -225,7 +228,7 @@ def generate_launch_description():
         arguments=[
             '-name', 'drone',
             '-string', parsed_sdf,
-            '-x', TextSubstitution(text=str(2.0)), '-y', TextSubstitution(text=str(0.0)), '-z', TextSubstitution(text=str(0.0)),
+            '-x', TextSubstitution(text=str(0.0)), '-y', TextSubstitution(text=str(0.0)), '-z', TextSubstitution(text=str(0.0)),
             '-R', TextSubstitution(text=str(0.0)), '-P', TextSubstitution(text=str(0.0)), '-Y', TextSubstitution(text=str(0.0))
             ]
     )
@@ -238,7 +241,7 @@ def generate_launch_description():
         arguments=[
             '-name', 'drone',
             '-file', robot_sdf,
-            '-x', TextSubstitution(text=str(2.0)), '-y', TextSubstitution(text=str(0.0)), '-z', TextSubstitution(text=str(0.0)),
+            '-x', TextSubstitution(text=str(0.0)), '-y', TextSubstitution(text=str(0.0)), '-z', TextSubstitution(text=str(0.0)),
             '-R', TextSubstitution(text=str(0.0)), '-P', TextSubstitution(text=str(0.0)), '-Y', TextSubstitution(text=str(0.0))
             ]
     )
@@ -254,7 +257,7 @@ def generate_launch_description():
                 parsed_sdf, value_type=str)}, # This was required because the robot_state_publisher was trying to parse the string as yaml. This was a problem
             # when the file included comments
         ],
-        remappings=[('/tf', 'tf'), ('/tf_static', 'tf_static')],
+        remappings=remappings,
     )
     
 
@@ -278,6 +281,15 @@ def generate_launch_description():
             }
         ],
         output='screen',
+    )
+
+    drone_footprint_broadcaster = Node(
+        package='drone_cpp',
+        executable='drone_tf_publisher',
+        name='drone_broadcaster',
+        namespace=namespace,
+        parameters=[{'use_sim_time': True}],
+        remappings=remappings
     )
 
 
@@ -311,9 +323,11 @@ def generate_launch_description():
     #This is so package:// and model:// is resolved in sdf files
     #Basically what we set here is one of the paths possible
     #for model:// or package://
-    set_env_vars_resources3 = AppendEnvironmentVariable(
+    set_env_vars_resources = AppendEnvironmentVariable(
         'GZ_SIM_RESOURCE_PATH', os.path.join(get_package_prefix('drone_cpp'), 'share'))
-    
+    set_env_vars_resources2 = AppendEnvironmentVariable(
+        'GZ_SIM_RESOURCE_PATH', os.path.join(get_package_prefix('forklift_controller'), 'share'))
+
     ld = LaunchDescription()
 
     ld.add_action(declare_use_gz)
@@ -341,9 +355,9 @@ def generate_launch_description():
     ld.add_action(declare_use_rviz)
     
 
-    #ld.add_action(set_env_vars_resources)
-    #ld.add_action(set_env_vars_resources2)
-    ld.add_action(set_env_vars_resources3)
+    ld.add_action(set_env_vars_resources)
+    ld.add_action(set_env_vars_resources2)
+    #ld.add_action(set_env_vars_resources3)
     ld.add_action(gazebo_server)
     ld.add_action(gazebo_client)
     
@@ -354,11 +368,12 @@ def generate_launch_description():
     ld.add_action(bridge)
     #ld.add_action(drone_controller)
 
-    #ld.add_action(bringup_cmd)
+    ld.add_action(bringup_cmd)
     #ld.add_action(spawn_model_file)
 
     ld.add_action(spawn_model)
     ld.add_action(run_robot_state_publisher)
+    ld.add_action(drone_footprint_broadcaster)
 
     return ld
 

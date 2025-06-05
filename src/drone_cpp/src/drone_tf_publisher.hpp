@@ -1,5 +1,6 @@
 #ifndef DRONE_TF_PUBLISHER_HH
 #define DRONE_TF_PUBLISHER_HH
+
 #include <string>
 #include <memory>
 
@@ -9,6 +10,9 @@
 #include <nav_msgs/msg/odometry.hpp>
 #include "tf2/LinearMath/Quaternion.h"
 #include "tf2/LinearMath/Matrix3x3.h"
+
+//## From the ros2 docs:
+//(https://docs.ros.org/en/jazzy/How-To-Guides/Ament-CMake-Documentation.html#adding-targets)
 
 // https://docs.ros.org/en/humble/Tutorials/Intermediate/Tf2/Writing-A-Tf2-Broadcaster-Cpp.html
 class DroneTfPublisher : public rclcpp::Node {
@@ -22,7 +26,5 @@ class DroneTfPublisher : public rclcpp::Node {
         rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odometry_subscription_;
         std::unique_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
 };
-
-
 
 #endif
