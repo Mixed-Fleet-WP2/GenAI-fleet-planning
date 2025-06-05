@@ -9,7 +9,7 @@
       <diffuse>0 0 0 1</diffuse>
     </xacro:macro>
 
-    <link name="base_footprint"></link>
+    <!-- <link name="base_footprint"></link> -->
 
     <link name='base_link'>
       <pose frame=''>0 0 0 0 -0 0</pose>
@@ -61,10 +61,12 @@
       </visual>
     </link>
 
+    <!--
     <joint name='base_link_joint' type='fixed'>
       <child>base_link</child>
       <parent>base_footprint</parent>
     </joint>
+    -->
 
     <!--Order
     of this matters, the first inserted link becomes the canonical link which we want the base link

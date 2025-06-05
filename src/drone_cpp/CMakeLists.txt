@@ -12,6 +12,9 @@ find_package(rclcpp REQUIRED)
 find_package(rclpy REQUIRED)
 find_package(px4_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(tf2 REQUIRED)
+find_package(nav_msgs REQUIRED)
+find_package(tf2_ros REQUIRED)
 
 # https://roboticsbackend.com/ros2-package-for-both-python-and-cpp-nodes/
 
@@ -19,10 +22,12 @@ find_package(geometry_msgs REQUIRED)
 # together into a target named according to first param)
 
 add_executable(drone_node src/drone.cpp)
+add_executable(drone_tf_publisher src/drone_tf_publisher.cpp)
 
 # Add necessary dependecies to the target (specified as first argument)
 #https://docs.ros.org/en/foxy/How-To-Guides/Ament-CMake-Documentation.html#adding-dependencies
 ament_target_dependencies(drone_node rclcpp px4_msgs geometry_msgs)
+ament_target_dependencies(drone_tf_publisher rclcpp geometry_msgs tf2_ros nav_msgs tf2)
 
 
 # This installs the target named drone_node to directory specified after DESTINATION

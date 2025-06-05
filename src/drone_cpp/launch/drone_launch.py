@@ -171,7 +171,7 @@ def generate_launch_description():
 
     # Get the launch directory
     #robot_sdf = os.path.join(pkg_share, 'models', 'x500_lidar_2d', 'model.sdf')
-    robot_sdf = os.path.join(pkg_share, 'models', 'x3', 'model.sdf')
+    robot_sdf = os.path.join(pkg_share, 'models', 'x3_urdf_convr', 'model.sdf')
     bringup_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(os.path.join(nav_launch_dir, 'launch', 'bringup_launch.py')),
         launch_arguments={
@@ -214,9 +214,22 @@ def generate_launch_description():
 
     # How to pass arguments to xacro: 
     # https://robotics.stackexchange.com/questions/85348/pass-parameters-to-xacro-from-launch-file-or-otherwise
-    #parsed_sdf= Command(['xacro', ' ', robot_sdf, ' namespace:=', namespace])
+    parsed_sdf= Command(['xacro', ' ', robot_sdf, ' namespace:=', namespace])
     
     spawn_model = Node(
+        package='ros_gz_sim',
+        executable='create',
+        output='screen',
+        namespace=namespace,
+        parameters=[{'use_sim_time':True}],
+        arguments=[
+            '-name', 'drone',
+            '-string', parsed_sdf,
+            '-x', TextSubstitution(text=str(2.0)), '-y', TextSubstitution(text=str(0.0)), '-z', TextSubstitution(text=str(0.0)),
+            '-R', TextSubstitution(text=str(0.0)), '-P', TextSubstitution(text=str(0.0)), '-Y', TextSubstitution(text=str(0.0))
+            ]
+    )
+    spawn_model_file = Node(
         package='ros_gz_sim',
         executable='create',
         output='screen',
@@ -229,7 +242,7 @@ def generate_launch_description():
             '-R', TextSubstitution(text=str(0.0)), '-P', TextSubstitution(text=str(0.0)), '-Y', TextSubstitution(text=str(0.0))
             ]
     )
-    """
+    
     run_robot_state_publisher = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
@@ -243,7 +256,7 @@ def generate_launch_description():
         ],
         remappings=[('/tf', 'tf'), ('/tf_static', 'tf_static')],
     )
-    """
+    
 
     #Bridge clock only once, see: https://github.com/gazebosim/ros_gz/issues/591
     bridge_clock = Node(
@@ -333,15 +346,19 @@ def generate_launch_description():
     ld.add_action(set_env_vars_resources3)
     ld.add_action(gazebo_server)
     ld.add_action(gazebo_client)
-    ld.add_action(spawn_model)
+    
     ld.add_action(shutdown_handler)
     ld.add_action(launch_rviz)
-    #ld.add_action(run_robot_state_publisher)
+    
     ld.add_action(bridge_clock)
     ld.add_action(bridge)
     #ld.add_action(drone_controller)
 
     #ld.add_action(bringup_cmd)
+    #ld.add_action(spawn_model_file)
+
+    ld.add_action(spawn_model)
+    ld.add_action(run_robot_state_publisher)
 
     return ld
 

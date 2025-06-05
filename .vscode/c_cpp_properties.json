@@ -10,7 +10,10 @@
                 "/opt/ros/jazzy/include/**",
                 "/usr/include/**",
                 "${workspaceFolder}/install/px4_msgs/include/px4_msgs",
-                "/opt/ros/jazzy/include/geometry_msgs"
+                "/opt/ros/jazzy/include/geometry_msgs",
+                "/opt/ros/jazzy/include/std_msgs",
+                "/opt/ros/jazzy/include/nav_msgs",
+                "${workspaceFolder}/src/drone_cpp/include"
             ],
             "name": "ROS",
             "intelliSenseMode": "gcc-arm64",
