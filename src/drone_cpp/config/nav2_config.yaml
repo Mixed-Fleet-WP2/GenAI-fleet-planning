@@ -101,7 +101,7 @@ controller_server:
       min_vel_y: 0.0
       max_vel_x: 1.0
       max_vel_y: 0.0
-      max_vel_theta: 0.75 #Increase or decrease this value to change the speed of the robot (rotation)
+      max_vel_theta: 0.3 #Increase or decrease this value to change the speed of the robot (rotation)
       min_speed_xy: 0.0 
       max_speed_xy: 0.75  #Increase or decrease this value to change the speed of the robot
       min_speed_theta: 0.0
@@ -291,7 +291,7 @@ velocity_smoother:
     smoothing_frequency: 20.0
     scale_velocities: False
     feedback: "OPEN_LOOP"
-    max_velocity: [0.75, 0.0, 0.75] #These should be the same as the DWB parameters
+    max_velocity: [0.75, 0.0, 0.3] #These should be the same as the DWB parameters
     min_velocity: [-0.26, 0.0, -1.0]
     max_accel: [2.5, 0.0, 3.2]
     max_decel: [-2.5, 0.0, -3.2]
