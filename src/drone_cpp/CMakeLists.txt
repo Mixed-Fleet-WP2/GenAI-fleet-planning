@@ -15,6 +15,8 @@ find_package(geometry_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(nav_msgs REQUIRED)
 find_package(tf2_ros REQUIRED)
+find_package(nav2_msgs REQUIRED)
+find_package(rclcpp_components)
 
 # https://roboticsbackend.com/ros2-package-for-both-python-and-cpp-nodes/
 
@@ -28,8 +30,8 @@ add_executable(drone_controller src/drone_controller.cpp)
 #https://docs.ros.org/en/foxy/How-To-Guides/Ament-CMake-Documentation.html#adding-dependencies
 ament_target_dependencies(drone_node rclcpp px4_msgs geometry_msgs)
 ament_target_dependencies(drone_tf_publisher rclcpp geometry_msgs tf2_ros nav_msgs tf2)
-ament_target_dependencies(drone_controller rclcpp std_msgs tf2_ros)
-target_include_directories(drone_controller PUBLIC src/include)
+ament_target_dependencies(drone_controller rclcpp std_msgs tf2_ros nav2_msgs rclcpp_components)
+target_include_directories(drone_controller PUBLIC include/drone_cpp)
 
 # This installs the target named drone_node to directory specified after DESTINATION
 # the directory is a relative path relative to. From cmake docs:
@@ -37,6 +39,7 @@ target_include_directories(drone_controller PUBLIC src/include)
 # (in ros2 case, the CMAKE_INSTALL_PREFIX is set by colcon)
 install(TARGETS drone_node DESTINATION lib/${PROJECT_NAME})
 install(TARGETS drone_tf_publisher DESTINATION lib/${PROJECT_NAME})
+install(TARGETS drone_controller DESTINATION lib/${PROJECT_NAME})
 
 # Install launch files.
 install(DIRECTORY

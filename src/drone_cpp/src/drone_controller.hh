@@ -1,5 +1,5 @@
-#ifndef DRONE_CONTROLLER.HH
-#define DRONE_CONTROLLER.HH
+#ifndef DRONE_CONTROLLER_HH
+#define DRONE_CONTROLLER_HH
 
 #include <chrono>
 #include <functional>
@@ -24,10 +24,10 @@ using PoseStampedMsg = geometry_msgs::msg::PoseStamped;
 using NavToPoseAction = nav2_msgs::action::NavigateToPose;
 using NavToPoseGoalHandle = rclcpp_action::ClientGoalHandle<NavToPoseAction>;
 
-class DroneController:rclcpp::Node{
+class DroneController: public rclcpp::Node{
 
     public:
-        DroneController(const std::string &node_name);
+        DroneController();
         //Needed to resolve compatibility error with the base destructor
         // needs to be taken care of some other way in the future??
         ~DroneController() noexcept;

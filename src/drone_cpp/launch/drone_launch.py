@@ -303,7 +303,7 @@ def generate_launch_description():
 
     drone_controller = Node(
         package='drone_cpp',
-        executable='drone_node',
+        executable='drone_controller',
         parameters=[{'use_sim_time':True}],
         namespace=''
     )
@@ -366,7 +366,7 @@ def generate_launch_description():
     
     ld.add_action(bridge_clock)
     ld.add_action(bridge)
-    #ld.add_action(drone_controller)
+    ld.add_action(drone_controller)
 
     ld.add_action(bringup_cmd)
     #ld.add_action(spawn_model_file)

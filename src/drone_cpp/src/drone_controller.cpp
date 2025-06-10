@@ -1,17 +1,16 @@
 #include "drone_controller.hh"
 
-explicit DroneController::DroneController(const std::string &node_name) :
-    Node(node_name){
+DroneController::DroneController() :
+    Node("drone_node"){
 
     callback_group_ = create_callback_group(
         rclcpp::CallbackGroupType::MutuallyExclusive,
         false);
     
-    callback_group_executor_.add_callback_group(callback_group_, 
-        get_node_base_interface());
+    callback_group_executor_.add_callback_group(callback_group_, get_node_base_interface());
 
     nav_to_pose_client_ = rclcpp_action::create_client<NavToPoseAction>(
-        this, // Get the node info by passing this
+        this, // Pass a reference to the node
         "navigate_to_pose", //This is defined by the nav2 launch system already,
         callback_group_
     );
@@ -28,22 +27,33 @@ explicit DroneController::DroneController(const std::string &node_name) :
 
 }
 
+DroneController::~DroneController(){
+
+}
 
 void DroneController::move_to_pose_callback(
     const std::shared_ptr<std_msgs::msg::String> msg){
-
-    const std::string &msg_str = msg->data;
-    json json_object = json::parse(msg_str);
-
-    for (const auto& key : json_object){
-
-        if (json_object[key].is_number_float()){
-            // https://cplusplus.com/reference/string/stof/
-            float arg_as_float = json_object[key];
-        }else{
-            RCLCPP_ERROR(get_logger(),"The argument of json was not a float!");
+    
+    try {
+        const std::string &msg_str = msg->data;
+        json json_object = json::parse(msg_str);
+        json args_object = json_object["args"];
+        RCLCPP_INFO(get_logger(), "GOT HERE");
+        //https://json.nlohmann.me/features/iterators/#access-object-keys-during-iteration
+        for (const auto& elem : args_object.items() ){
+            if (elem.value().is_number_float()){
+                // https://cplusplus.com/reference/string/stof/
+                float arg_as_float = elem.value();
+                RCLCPP_INFO(get_logger(), "The value is %f", arg_as_float);
+            }else{
+                RCLCPP_ERROR(get_logger(),"The argument of json was not a float!");
+            }
         }
+    }catch (int errorCode){
+        
     }
+
+    
 };
 
 void DroneController::nav_result_callback(
@@ -82,6 +92,12 @@ void DroneController::nav_goal_acknowledged_callback(const std::shared_ptr<NavTo
 }
 
 void DroneController::navigate_to_pose(const Position &pos){
+
+    if (!nav_to_pose_client_->wait_for_action_server(std::chrono::seconds(10))){
+        RCLCPP_ERROR(this->get_logger(), "Action server not available after waiting");
+        return;
+    }
+
     // Action definition can be seen from:
     // https://github.com/ros-navigation/navigation2/blob/main/nav2_msgs/action/NavigateToPose.action
     PoseStampedMsg goal_msg;
@@ -113,4 +129,17 @@ void DroneController::navigate_to_pose(const Position &pos){
     
 
 };
+
+
+int main(int argc, char * argv[])
+{
+  rclcpp::init(argc, argv);
+  rclcpp::spin(std::make_shared<DroneController>());
+  rclcpp::shutdown();
+  return 0;
+}
+
+//#include "rclcpp_components/register_node_macro.hpp"
+
+//RCLCPP_COMPONENTS_REGISTER_NODE(DroneController)
 
