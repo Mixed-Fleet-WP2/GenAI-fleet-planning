@@ -55,6 +55,7 @@ setup(
         ('share/' + package_name + '/maps/', glob('maps/*')),
         #In the future, move the forklift.py to the lib directory?
         (('share/' + package_name + '/gui', ['forklift_controller/GUI.py'])),
+        (('share/' + package_name + '/gui', ['forklift_controller/sv.tcl'])),
         (('share/' + package_name + '/gui', ['forklift_controller/controller.py'])),
         (('share/' + package_name + '/gui', ['forklift_controller/robots.xml'])),
         (('lib/' + package_name, ['forklift_controller/utils.py'])),

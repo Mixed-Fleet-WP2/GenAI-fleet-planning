@@ -5,15 +5,16 @@ import tkinter as tk
 import requests
 import os
 import re
+from tkinter import ttk
 
 from rclpy.executors import MultiThreadedExecutor
-
 
 from controller import Controller
 from dotenv import load_dotenv
 
-#path_to_env = os.path.expanduser('~/.forklift_controller/.env')
 load_dotenv()
+
+SCRIPT_PATH = os.path.realpath(__file__)
 
 CLAUDE_API_KEY = os.getenv('CLAUDE_API_KEY')
 OPEN_AI_API_KEY = os.getenv('OPEN_AI_API_KEY')
@@ -99,7 +100,10 @@ class GUI:
                             }
                         }
 
-        
+        self.style_ = ttk.Style(master=root)
+        #https://github.com/rdbende/Sun-Valley-ttk-theme/blob/main/sv_ttk/__init__.py#L16
+        #https://stackoverflow.com/questions/4934806/how-can-i-find-scripts-directory
+        self.style_.tk.call("source", str(os.path.join(SCRIPT_PATH, 'sv.tcl')))
         self.json_instructions = {}
 
         self.controller:Controller = Controller()
@@ -263,14 +267,7 @@ def main(args=None):
     root.protocol("WM_DELETE_WINDOW", lambda: on_closing(root))
     root.mainloop()
 
-#def on_closing(root, spin_thread:Thread, executor:MultiThreadedExecutor):
 def on_closing(root):
-    # Stop executor's spinning thread
-    #executor.shutdown()
-    #spin_thread.join() 
-
-    #rclpy.shutdown()
-
     root.destroy()
 
 if __name__ == '__main__':

@@ -23,12 +23,13 @@ find_package(tf2_ros REQUIRED)
 
 add_executable(drone_node src/drone.cpp)
 add_executable(drone_tf_publisher src/drone_tf_publisher.cpp)
-
+add_executable(drone_controller src/drone_controller.cpp)
 # Add necessary dependecies to the target (specified as first argument)
 #https://docs.ros.org/en/foxy/How-To-Guides/Ament-CMake-Documentation.html#adding-dependencies
 ament_target_dependencies(drone_node rclcpp px4_msgs geometry_msgs)
 ament_target_dependencies(drone_tf_publisher rclcpp geometry_msgs tf2_ros nav_msgs tf2)
-
+ament_target_dependencies(drone_controller rclcpp std_msgs tf2_ros)
+target_include_directories(drone_controller PUBLIC src/include)
 
 # This installs the target named drone_node to directory specified after DESTINATION
 # the directory is a relative path relative to. From cmake docs:
