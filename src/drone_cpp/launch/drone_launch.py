@@ -20,7 +20,8 @@ from launch.event_handlers import OnShutdown, OnProcessExit, OnProcessIO
 from launch.substitutions import (LaunchConfiguration,
     TextSubstitution,
     LocalSubstitution,
-    EqualsSubstitution
+    EqualsSubstitution,
+    PathJoinSubstitution
 )
 
 from launch_ros.actions import Node
@@ -206,29 +207,6 @@ def generate_launch_description():
         }.items(),
     )
    
-    # At the moment there is a bug where processes started with shell=True are not shut down by launch
-    # this is why the launch file from ros_gz_sim package is not used
-
-    # See: https://github.com/ros2/launch/issues/757
-    # and https://github.com/ros2/launch/issues/545
-    gazebo_client = ExecuteProcess(
-            #cmd=['gz','sim','-v4', '-g', '--force-version', '8', '--render-engine', 'ogre'],
-            cmd=['gz','sim','-v4', '-g', '--force-version', '8'],
-            name='gazebo',
-            output='screen',
-            shell=False,
-            condition=IfCondition(EqualsSubstitution(use_gz, True))
-        )
-
-    world = os.path.join(pkg_share, 'worlds', 'warehouse.sdf')
-    
-    # -s flag means server only
-    gazebo_server = ExecuteProcess(
-        cmd=['gz', 'sim', '-r', '-s', world],
-        output='screen',
-        condition=IfCondition(EqualsSubstitution(use_gz, True))
-    )
-
     # This command returns the parsed sdf as a string
 
     # How to pass arguments to xacro: 
@@ -350,9 +328,6 @@ def generate_launch_description():
     
     ld.add_action(set_env_vars_resources)
  
-    ld.add_action(gazebo_server)
-    ld.add_action(gazebo_client)
-    
     ld.add_action(shutdown_handler)
 
     ld.add_action(bridge)

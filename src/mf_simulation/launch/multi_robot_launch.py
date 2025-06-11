@@ -40,7 +40,7 @@ from launch.actions import (
 )
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration, TextSubstitution
+from launch.substitutions import LaunchConfiguration, TextSubstitution, PathJoinSubstitution
 from launch_ros.actions import Node
 
 
@@ -110,8 +110,11 @@ def generate_launch_description():
         arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock'],
       )
 
+    text = PathJoinSubstitution(robots_file)
+    print(text, flush=True)
     with open(robots_file, "r") as file:
         robots = yaml.safe_load(file)
+        print(robot, flush=True)
     
     # At the moment there is a bug where processes started with shell=True are not shut down by launch
     # this is why the launch file from ros_gz_sim package is not used
