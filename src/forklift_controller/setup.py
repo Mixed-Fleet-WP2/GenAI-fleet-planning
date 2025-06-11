@@ -42,6 +42,7 @@ def define_models() -> list:
 setup(
     name=package_name,
     version='0.0.0',
+    #https://robotics.stackexchange.com/questions/97841/including-a-python-module-in-a-ros2-package
     packages=find_packages(exclude=['test']),
     data_files=[
         #Eka on destination, toinen on source
