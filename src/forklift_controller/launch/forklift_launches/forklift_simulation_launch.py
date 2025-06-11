@@ -251,20 +251,19 @@ def generate_launch_description():
     )
     
 
-    gz_robot = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(pkg_root, 'launch', 'spawn_forklift.launch.py')),
-        launch_arguments={'namespace': namespace,
-                          'use_sim_time': use_sim_time,
-                          'robot_name': robot_name,
-                          'robot_sdf': robot_sdf,
-                          'x_pose': pose['x'],
-                          'y_pose': pose['y'],
-                          'z_pose': pose['z'],
-                          'roll': pose['R'],
-                          'pitch': pose['P'],
-                          'yaw': pose['Y'],
-                            'mqtt_config': mqtt_config}.items())
+    spawn_model = Node(
+        package='ros_gz_sim',
+        executable='create',
+        output='screen',
+        namespace=namespace,
+        parameters=[{'use_sim_time':True}],
+        arguments=[
+            '-name', 'drone',
+            '-string', parsed_urdf,
+            '-x', pose['x'], '-y', pose['y'], '-z', pose['z'],
+            '-R', pose['R'], '-P', pose['P'], '-Y', pose['Y']
+            ]
+    )
     
     execution_node_action = Node(
         package="forklift_controller",
@@ -307,7 +306,7 @@ def generate_launch_description():
     ld.add_action(declare_robot_sdf_cmd)
     ld.add_action(declare_use_respawn_cmd)
 
-    ld.add_action(gz_robot)
+    ld.add_action(spawn_model)
 
     # Add the actions to launch all of the navigation nodes
     ld.add_action(start_robot_state_publisher_cmd)

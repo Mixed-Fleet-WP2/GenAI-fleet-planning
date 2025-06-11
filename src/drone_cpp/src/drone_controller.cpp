@@ -38,7 +38,7 @@ void DroneController::move_to_pose_callback(
         const std::string &msg_str = msg->data;
         json json_object = json::parse(msg_str);
         json args_object = json_object["args"];
-        RCLCPP_INFO(get_logger(), "GOT HERE");
+        // How to iterate over json object
         //https://json.nlohmann.me/features/iterators/#access-object-keys-during-iteration
         for (const auto& elem : args_object.items() ){
             if (elem.value().is_number_float()){

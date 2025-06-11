@@ -66,7 +66,7 @@ class PrimitiveNode(Node):
         self.create_subscription(Bool, "touched", self.__detect_contact, 10)
         self.create_subscription(String, 'pick_up', self.pick_up_callback, 10, callback_group=self.subscription_cb_group)
         self.create_subscription(String, 'drop', self.drop_callback, 10, callback_group=self.subscription_cb_group)
-        self.feedback_publisher = self.create_publisher(String, 'feedback', 10, callback_group=self.publisher_cb_group)
+        self.feedback_publisher = self.create_publisher(String, '/feedback', 10, callback_group=self.publisher_cb_group)
         self.create_subscription(String, 'move_fork', self.fork_move_callback, 10, callback_group=self.subscription_cb_group)
         self.fork_movement_publisher = self.create_publisher(Float64, 'fork_control', 10, callback_group=self.publisher_cb_group)
         self.model_sub_and_pubs = {}

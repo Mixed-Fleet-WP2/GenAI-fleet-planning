@@ -1,0 +1,17 @@
+robots:
+  - name: drone_1
+    package: "drone_cpp"
+    type: "drone"
+    start_position: [3.0, 0, 0]
+    gz_bridge_config: "drone_ros_gz_bridge.yaml"
+    nav2_config: "forklift_nav2_config.yaml"
+    launch_file: "drone_launch.py"
+  # - name: forklift_1
+  #   package: "forklift_controller"
+  #   type: "forklift"
+  #   start_position: [0, 0, 0]
+  #   # roll, pitch, yaw in radians
+  #   start_orientation: [0, 0, 0]
+  #   gz_bridge_config: "forklift_ros_gz_bridge.yaml"
+  #   nav2_config: "forklift_nav2_config.yaml"
+  #   launch_file: "forklift_simulation.launch.py"

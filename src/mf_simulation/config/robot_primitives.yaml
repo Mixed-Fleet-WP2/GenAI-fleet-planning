@@ -1,0 +1,26 @@
+#Primitives for the robots in the simulation
+
+drone:
+  primitives:
+    move:
+      args: ["x", "y", "z"]
+      args_type: ["float", "float", "float"]
+      description: "Move the drone to a specified position in 3D space."
+forklift:
+  primitives:
+    move:
+      args: ["x", "y"]
+      args_type: ["float", "float"]
+      description: "Move the forklift to a specified position in 2D space."
+    drop:
+      args: []
+      args_type: []
+      description: "Drop a currently held object."
+    pick_up:
+      args: ["object"]
+      args_type: ["string"]
+      description: "Pick up an object by its name."
+    move_fork:
+      args: ["height"]
+      args_type: ["float"]
+      description: "Move the forklift's fork to a specified height."
