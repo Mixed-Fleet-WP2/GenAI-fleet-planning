@@ -12,6 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Modifications Copyright (c) 2025 Elmeri Pohjois-Koivisto Tampere University
+# This file has been modified from its original version by removing
+# unused code (mainly concerning docking services)
+
+
+
 import os
 
 from ament_index_python.packages import get_package_share_directory
