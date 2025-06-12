@@ -56,7 +56,7 @@
           <mesh>
             <scale>1 1 1</scale>
             <!--model resolves to the share directory-->
-            <uri>model://forklift_controller/models/pallet/meshes/pallet.dae</uri>
+            <uri>model://pallet/meshes/pallet.dae</uri>
           </mesh>
         </geometry>
       </visual>

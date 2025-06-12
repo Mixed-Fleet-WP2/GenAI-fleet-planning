@@ -31,6 +31,8 @@ from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.descriptions import ParameterFile
 from nav2_common.launch import ReplaceString, RewrittenYaml
+from mf_simulation.utils.launch_utils import launch_print
+
 
 def cancel_launch(event:ProcessExited, context, *args):
     
@@ -335,7 +337,8 @@ def generate_launch_description():
     ld.add_action(drone_controller)
 
     ld.add_action(bringup_cmd)
-    
+
+    ld.add_action(launch_print(namespace))    
 
     ld.add_action(spawn_model)
     ld.add_action(run_robot_state_publisher)

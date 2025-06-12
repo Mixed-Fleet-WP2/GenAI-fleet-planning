@@ -4,40 +4,7 @@ import os
 
 package_name = 'forklift_controller'
 
-def define_models() -> list:
-    """
-    Utility function to define the models and their corresponding data files.
-    Needed because glob doesnt copy directories.
-    """
-    model_names = os.listdir("./models")
-    data_tuples = []
-
-    for model_name in model_names:
-
-        #Copy the meshes first
-        destination = f'share/{package_name}/models/{model_name}/meshes/'
-        source = f'models/{model_name}/meshes/*'
-
-        # Copy the files from source to destination
-        data_tuples.append((destination, glob(source)))
-
-        #Copy materials if applicable (glob(materials_source) returns empty list if no materials)
-        materials_source = f'models/{model_name}/materials/textures/*'
-        materials_destination = f'share/{package_name}/models/{model_name}/materials/textures/'
-        data_tuples.append((materials_destination, glob(materials_source)))
-
-        #Move one level up to get the sdf files aka models/model_name
-
-        sdf_folder_dest = os.path.dirname(os.path.dirname(destination))
-        sdf_folder_src = os.path.dirname(os.path.dirname(source))
-          
-        #Copy the sdf and model.config files
-        data_tuples.append((sdf_folder_dest, glob(f"{sdf_folder_src}/*.sdf")))
-        data_tuples.append((sdf_folder_dest, glob(f"{sdf_folder_src}/model.config")))
-        
-    return data_tuples
-
-
+from build_utils import setup_models
 
 setup(
     name=package_name,
@@ -45,7 +12,7 @@ setup(
     #https://robotics.stackexchange.com/questions/97841/including-a-python-module-in-a-ros2-package
     packages=find_packages(exclude=['test']),
     data_files=[
-        #Eka on destination, toinen on source
+        # First is destination, the other source
         ('share/ament_index/resource_index/packages', ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
         ('share/' + package_name + '/urdf', glob('urdf/*')),
@@ -60,14 +27,16 @@ setup(
         (('share/' + package_name + '/gui', ['forklift_controller/controller.py'])),
         (('lib/' + package_name, ['forklift_controller/utils.py'])),
         (('lib/' + package_name, ['forklift_controller/MqttPayload.py'])),
-        *define_models()
+        # How to get the directory where the executing script is
+        # https://stackoverflow.com/questions/4934806/how-can-i-find-scripts-directory
+        *setup_models(package_name, os.path.dirname(os.path.realpath(__file__)))
     ],
     install_requires=['setuptools'],
     zip_safe=True,
     maintainer='Elmeri Pohjois-Koivisto',
     maintainer_email='elmeri.pohjois-koivisto@tuni.fi',
     description='TODO: Package description',
-    license='TODO: License declaration',
+    license='MIT License',
     #tests_require=['pytest'],
     entry_points={
         'console_scripts': [

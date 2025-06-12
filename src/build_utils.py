@@ -2,7 +2,11 @@ from glob import glob
 import os
 import sys
 
-def setup_models(package_name, curr_dir:str="models", data_tuples=None):
+
+#https://stackoverflow.com/questions/141291/how-to-list-only-top-level-directories-in-python
+
+# Path prefix: absolute path to the parent folder of curr_dir
+def setup_models(package_name, path_prefix, curr_dir:str="models", data_tuples=None):
 
     # If we were to define the default as data_tuples=[]
     # and modified it inside the function, it would
@@ -11,21 +15,31 @@ def setup_models(package_name, curr_dir:str="models", data_tuples=None):
     if data_tuples == None:
         data_tuples = []
 
+    #print(path_prefix, file=sys.stderr, flush=True)
+    source_path = os.path.join(path_prefix, curr_dir)
+    print(source_path, file=sys.stderr, flush=True)
+
     try:
-        children_files = [f for f in glob(f'{curr_dir}/*') if os.path.isfile(f)]
+        # Get files inside the folder (without any path prefixes, just plain names)
+        # and add the current dir as prefix
+        children_files = [os.path.join(curr_dir, f) for f in os.listdir(source_path) if os.path.isfile(os.path.join(source_path, f))]
 
         # Install the files to the current path (if the directory contains them):
         if children_files:
-            #print("File copied")
             data_tuples.append((f'share/{package_name}/{curr_dir}', children_files))
 
         # Recursively do the same for the children directories
         # because setup tools cannot copy directories
-        # ! curr_dir prefix remains !
-        children_dirs = [f for f in glob(f'{curr_dir}/*') if os.path.isdir(f)]
         
+        # Get folders inside the folder (without any path prefixes, just plain names)
+        # and add the current dir as prefix
+        children_dirs = [os.path.join(curr_dir, f) for f in os.listdir(source_path) if os.path.isdir(os.path.join(source_path, f))]
+        print("HERE", file=sys.stderr, flush=True)
+        print(children_dirs, file=sys.stderr, flush=True)
         for dir_path in children_dirs:
-            setup_models(dir_path, data_tuples)
+            
+            setup_models(package_name, path_prefix, dir_path, data_tuples)
+        #print(data_tuples, file=sys.stderr, flush=True)
         return data_tuples
     except Exception as e:
         print(e, file=sys.stderr, flush=True)
