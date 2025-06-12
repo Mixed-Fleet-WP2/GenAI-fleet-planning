@@ -12,6 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Modifications Copyright (c) 2025 Elmeri Pohjois-Koivisto Tampere University
+# This file has been modified from its original version by modifying the launch
+# configuration default values and removing comments
+
 import os
 
 from ament_index_python.packages import get_package_share_directory
@@ -51,19 +55,8 @@ def generate_launch_description():
     log_level = LaunchConfiguration('log_level')
     use_localization = LaunchConfiguration('use_localization')
     
-
-    # Map fully qualified names to relative ones so the node's namespace can be prepended.
-    # In case of the transforms (tf), currently, there doesn't seem to be a better alternative
-    # https://github.com/ros/geometry2/issues/32
-    # https://github.com/ros/robot_state_publisher/pull/30
-    # TODO(orduno) Substitute with `PushNodeRemapping`
-    #              https://github.com/ros2/launch_ros/issues/56
     remappings = [('/tf', 'tf'), ('/tf_static', 'tf_static')]
 
-    # Only it applys when `use_namespace` is True.
-    # '<robot_namespace>' keyword shall be replaced by 'namespace' launch argument
-    # in config file 'nav2_multirobot_params.yaml' as a default & example.
-    # User defined config file should contain '<robot_namespace>' keyword for the replacements.
     params_file = ReplaceString(
         source_file=params_file,
         replacements={'<robot_namespace>': ('/', namespace)},
@@ -204,7 +197,6 @@ def generate_launch_description():
     # Create the launch description and populate
     ld = LaunchDescription()
 
-    # Set environment variables
     ld.add_action(stdout_linebuf_envvar)
 
     # Declare the launch options
@@ -220,7 +212,6 @@ def generate_launch_description():
     ld.add_action(declare_log_level_cmd)
     ld.add_action(declare_use_localization_cmd)
 
-    # Add the actions to launch all of the navigation nodes
     ld.add_action(bringup_cmd_group)
 
     return ld

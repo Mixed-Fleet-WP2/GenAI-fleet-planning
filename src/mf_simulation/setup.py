@@ -1,25 +1,8 @@
 from setuptools import find_packages, setup
 from glob import glob
-import os
-
 package_name = 'mf_simulation'
 
-def setup_models():
-    #https://stackoverflow.com/questions/141291/how-to-list-only-top-level-directories-in-python
-    #Get the top-level model directories
-    model_dirnames = next(os.walk('./models'))[1]
-    model_dirname_paths = [f"models/{model_dir}" for model_dir in model_dirnames]
-    
-    # Retrieve the files from directory (.config and .sdf)
-    for model_path in model_dirname_paths:
-        children_files = [f for f in glob(f'{model_path}/*', recursive=True) if os.path.isfile(f)]
-        nested_dirs = next(os.walk(model_path))[1]
-        print(nested_dirs)
-
-    #TODO: COPY MESHES
- 
-
-setup_models()
+from build_utils import setup_models
 
 setup(
     name=package_name,
@@ -33,7 +16,7 @@ setup(
         (f'share/{package_name}/config', glob('config/*')),
         (f'share/{package_name}/maps', glob('maps/*')),
         (f'share/{package_name}/worlds', glob('worlds/*')),
-        (f"share")
+        *setup_models(package_name)
     ],
     install_requires=['setuptools'],
     zip_safe=True,

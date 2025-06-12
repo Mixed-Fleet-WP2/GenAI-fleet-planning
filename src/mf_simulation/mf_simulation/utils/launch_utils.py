@@ -4,6 +4,7 @@ import yaml
 from launch.actions import (
     GroupAction,
     IncludeLaunchDescription,
+    OpaqueFunction
 )
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
@@ -76,4 +77,8 @@ def create_robot_instances(context, *args, **kwargs):
         nav_instances_cmds.append(group)
             
     return nav_instances_cmds
+
+def launch_print(launch_item:LaunchConfiguration):
+
+    return OpaqueFunction(function=lambda context: print(launch_item.perform(context)))
 
