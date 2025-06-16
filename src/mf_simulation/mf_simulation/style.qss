@@ -1,0 +1,31 @@
+QPushButton{
+    border: ;
+    padding: 10px;
+    font-family: "Ubuntu";
+    font-weight: 600;
+    margin: 0px;
+}
+
+*{
+    font-size: 12px;
+    font-family: "Ubuntu";
+}
+
+QPushButton:hover{
+    background-color: #F4AA90;
+}
+
+QPlainTextEdit{
+    font-family: "Ubuntu Mono";
+    font-size: 16px;
+    font-weight: 400;
+}
+
+QPushButton[active="true"] {
+    background-color: #E95420;
+}
+
+QPushButton {
+    background-color: none;
+    color: black;
+}

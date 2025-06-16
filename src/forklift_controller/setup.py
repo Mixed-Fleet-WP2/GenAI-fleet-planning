@@ -21,10 +21,6 @@ setup(
         ('share/' + package_name + '/worlds', glob('worlds/*.*')),
         ('share/'+package_name+'/config', glob('config/*')),
         ('share/' + package_name + '/maps/', glob('maps/*')),
-        #In the future, move the forklift.py to the lib directory?
-        (('share/' + package_name + '/gui', ['forklift_controller/GUI.py'])),
-        (('share/' + package_name + '/gui', ['forklift_controller/sv.tcl'])),
-        (('share/' + package_name + '/gui', ['forklift_controller/controller.py'])),
         (('lib/' + package_name, ['forklift_controller/utils.py'])),
         (('lib/' + package_name, ['forklift_controller/MqttPayload.py'])),
         # How to get the directory where the executing script is
