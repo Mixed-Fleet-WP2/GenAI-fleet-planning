@@ -15,7 +15,9 @@ def create_robot_instances(context, *args, **kwargs):
     
     robots_file_path = LaunchConfiguration('robots_file').perform(context)
     map_yaml_file = LaunchConfiguration('map').perform(context)
+    print("THIS IS THE MAP", map_yaml_file, flush=True)
     autostart = LaunchConfiguration('autostart').perform(context)
+    print("AUTOSTART", autostart, flush=True)
     rviz_config_file = LaunchConfiguration('rviz_config').perform(context)
     use_rviz = LaunchConfiguration('use_rviz').perform(context)
     
@@ -24,12 +26,9 @@ def create_robot_instances(context, *args, **kwargs):
     with open(robots_file_path, "r") as file:
         robots:list[dict] = yaml.safe_load(file)["robots"]
 
-    # Define commands for launching the navigation instances
     nav_instances_cmds = []
     
     for robot in robots:
-        # Get robot-specific configuration
-        print(robots, flush=True)
         robot_name = robot["name"]
         robot_package = robot["package"]
         launch_file = robot["launch_file"]
@@ -38,8 +37,8 @@ def create_robot_instances(context, *args, **kwargs):
         start_orient = robot.get("starting_orientation", [0.0, 0.0, 0.0])
         
         pkg = get_package_share_directory(robot_package)
+
         nav2_params_file = os.path.join(pkg, 'config', nav2_config)
-        print(nav2_params_file, flush=True)
         
         group = GroupAction([  
             IncludeLaunchDescription(

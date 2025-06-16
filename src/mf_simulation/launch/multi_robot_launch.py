@@ -1,14 +1,16 @@
 import os
-from ament_index_python.packages import get_package_share_directory
+from ament_index_python.packages import get_package_share_directory, get_package_prefix, get_packages_with_prefixes
 import yaml
 from launch import LaunchDescription
 from launch.actions import (
     AppendEnvironmentVariable,
     DeclareLaunchArgument,
     ExecuteProcess,
+    LogInfo,
     OpaqueFunction,
+    GroupAction,
 )
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import LaunchConfiguration, EnvironmentVariable
 from launch_ros.actions import Node
 from mf_simulation.utils.launch_utils import create_robot_instances, launch_print
 
@@ -43,7 +45,7 @@ def generate_launch_description():
     
     declare_autostart_cmd = DeclareLaunchArgument(
         'autostart',
-        default_value='false',
+        default_value='true',
         description='Automatically startup the stacks',
     )
     
@@ -97,12 +99,25 @@ def generate_launch_description():
         output='screen',
     )
     
+ 
     set_env_vars_resources = AppendEnvironmentVariable(
         'GZ_SIM_RESOURCE_PATH', os.path.join(pkg_share, 'models'))
+  
+    # set_env_vars_resources1 = AppendEnvironmentVariable(
+    #     'GZ_SIM_RESOURCE_PATH', os.path.join(get_package_prefix('drone_cpp'), 'share'))
+    
+    pkgs = get_packages_with_prefixes()
     
     # Create the launch description and populate
     ld = LaunchDescription()
+
+    for pkg in pkgs:
+        pkg_prefix = pkgs[pkg]
+        resource_path = os.path.join(pkg_prefix, 'share')
+        ld.add_action(AppendEnvironmentVariable(
+        'GZ_SIM_RESOURCE_PATH', resource_path))
     
+    #https://robotics.stackexchange.com/questions/98997/ros2-foxy-python-launch-argument-scope-when-nesting-launch-files
      # Declare the launch options
     ld.add_action(declare_world_cmd)
     ld.add_action(declare_map_yaml_cmd)
@@ -119,10 +134,7 @@ def generate_launch_description():
     
     ld.add_action(bridge_clock)
     
-   
-    
     # Use OpaqueFunction to create robot instances after resolving the YAML path
     ld.add_action(OpaqueFunction(function=create_robot_instances))
-    ld.add_action(launch_print(map_yaml_file))
     
     return ld

@@ -1,4 +1,19 @@
 <?xml version='1.0' encoding='ASCII'?>
+  
+  <!-- 
+
+  Warehouse model adapted from Warehouse-model by MovAI
+
+  Link to the original model: https://app.gazebosim.org/MovAi/fuel/models/Warehouse
+
+  Changes made: Added system plugins to support different sensors. Added additional
+  models like a pallet to complement the simulation environment.
+
+  License: Creative Commons Attribution 4.0 International
+  Lisence link: https://creativecommons.org/licenses/by/4.0/
+
+  -->
+
 <sdf version='1.7'>
   <world name='warehouse'>
     <physics name="1ms" type="ode">

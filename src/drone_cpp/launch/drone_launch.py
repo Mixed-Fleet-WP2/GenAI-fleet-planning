@@ -21,7 +21,8 @@ from launch.substitutions import (LaunchConfiguration,
     TextSubstitution,
     LocalSubstitution,
     EqualsSubstitution,
-    PathJoinSubstitution
+    PathJoinSubstitution,
+    EnvironmentVariable
 )
 
 from launch_ros.actions import Node
@@ -36,8 +37,6 @@ from mf_simulation.utils.launch_utils import launch_print
 
 def cancel_launch(event:ProcessExited, context, *args):
     
-    print(args[0])
-    print(args[1])
     return_code = event.returncode
 
     if return_code == 1:
@@ -299,8 +298,13 @@ def generate_launch_description():
     # This is why the path must be one higher
     set_env_vars_resources = AppendEnvironmentVariable(
         'GZ_SIM_RESOURCE_PATH', os.path.join(get_package_prefix('drone_cpp'), 'share'))
+    
+    
 
     ld = LaunchDescription()
+    ld.add_action(LogInfo(msg=EnvironmentVariable(name='GZ_SIM_RESOURCE_PATH')))
+
+    #ld.add_action(launch_print(os.path.join(get_package_prefix('drone_cpp'), 'share')))
 
     ld.add_action(declare_use_gz)
     ld.add_action(declare_px4_path)
@@ -337,8 +341,6 @@ def generate_launch_description():
     ld.add_action(drone_controller)
 
     ld.add_action(bringup_cmd)
-
-    ld.add_action(launch_print(namespace))    
 
     ld.add_action(spawn_model)
     ld.add_action(run_robot_state_publisher)

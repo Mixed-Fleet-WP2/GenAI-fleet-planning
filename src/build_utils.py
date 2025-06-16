@@ -14,9 +14,7 @@ def setup_models(package_name, path_prefix, curr_dir:str="models", data_tuples=N
     if data_tuples == None:
         data_tuples = []
 
-    #print(path_prefix, file=sys.stderr, flush=True)
     source_path = os.path.join(path_prefix, curr_dir)
-    print(source_path, file=sys.stderr, flush=True)
 
     try:
         # Get files inside the folder (without any path prefixes, just plain names)
