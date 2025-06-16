@@ -1,4 +1,7 @@
-from PySide6.QtWidgets import QApplication, QWidget, QMainWindow, QHBoxLayout, QVBoxLayout, QPushButton, QPlainTextEdit
+from PySide6.QtWidgets import (
+    QApplication, QWidget, QMainWindow, QHBoxLayout, QVBoxLayout,
+    QPushButton, QPlainTextEdit, QStackedLayout
+)
 from PySide6.QtGui import QFont
 import json
 import os
@@ -8,12 +11,7 @@ UBUNTU_ORANGE = "#E95420"
 class Interface(QMainWindow):
     def __init__(self):
         super().__init__()
-
         self.setWindowTitle("LLM Planner")
-
-        self.current_task = "a"
-        self.complete_prompt_ = "b"
-        self.llm_response_ = "c"
 
         widget = QWidget()
         layout = QHBoxLayout()
@@ -23,48 +21,48 @@ class Interface(QMainWindow):
         views_layout = QVBoxLayout()
         views_layout.setContentsMargins(0, 0, 0, 0)
         views_layout.setSpacing(0)
-    
+
         code_font = QFont("Ubuntu Mono", 12, QFont.DemiBold)
         main_font = QFont("Ubuntu", 12, QFont.DemiBold)
 
-        content = {"name": "Elmer","age": 29,"email": "elmer@example.com", "is_active": True, "roles": ["admin", "user"]}
-        formatted = json.dumps(content, indent=2)
-        self.main_content_ = QPlainTextEdit(formatted)
-        self.main_content_.setFont(code_font)
+        self.editors = {"Task":QPlainTextEdit("a"),
+                        "View full prompt":QPlainTextEdit("b"),
+                        "LLM response": QPlainTextEdit("c")}
+            
+        # Stack layout to switch between editors
+        self.stack = QStackedLayout()
+        for view_name in self.editors:
+            editor = self.editors[view_name]
+            self.stack.addWidget(editor)
+            editor.setReadOnly(True)
 
-        self.main_content_layout_ = QVBoxLayout()
-        self.main_content_layout_.addWidget(self.main_content_)
+        # Buttons to switch views
+        self.buttons = {}
+        for i, (label, editor) in enumerate(self.editors.items()):
+            btn = QPushButton(label)
+            btn.clicked.connect(lambda _, idx=i, b=btn: self.switch_view(idx, b))
+            views_layout.addWidget(btn)
+            self.buttons[label] = btn
 
-        view_btns = [(QPushButton("Task"), self.current_task),
-                    (QPushButton("View full prompt"), self.complete_prompt_),
-                    (QPushButton("LLM response"), self.llm_response_)]
-        
-        for button, content in view_btns:
-            # This has to be done this way because button and btn_name are late-bound
-            # and when lambda is executed, all the instances get the values
-            # of the last iteration
-            button.clicked.connect(lambda _, b=button, c=content: self.handle_view_change(b, c))
-            views_layout.addWidget(button)
-        
-        # Works because python dicts are ordered
-        self.active_btn = view_btns[0][0]
+        self.active_btn = self.buttons["Task"]
         self.active_btn.setStyleSheet(f"background-color: {UBUNTU_ORANGE};")
-
-        layout.addLayout(views_layout)
 
         views_layout.addStretch()
         views_layout.addWidget(QPushButton("Send a request to LLM"))
 
-        layout.addLayout(self.main_content_layout_)
+        layout.addLayout(views_layout)
+
+        content_container = QWidget()
+        content_container.setLayout(self.stack)
+        layout.addWidget(content_container)
+
         widget.setLayout(layout)
         widget.setFont(main_font)
+        self.setCentralWidget(widget)
 
-        # Set the central widget of the Window.
-        self.setCentralWidget(widget)  # Use the instance, not the class
-
-    def handle_view_change(self, button:QPushButton, content:str):
+    def switch_view(self, index: int, button: QPushButton):
+        self.stack.setCurrentIndex(index)
         self.active_btn.setStyleSheet("background-color: none;")
-        self.main_content_.setPlainText(content)
         button.setStyleSheet(f"background-color: {UBUNTU_ORANGE};")
         self.active_btn = button
 
@@ -79,6 +77,6 @@ if __name__ == "__main__":
         app.setStyleSheet(_style)
 
     window = Interface()
-    window.resize(600,400)
+    window.resize(600, 400)
     window.show()
     app.exec()
