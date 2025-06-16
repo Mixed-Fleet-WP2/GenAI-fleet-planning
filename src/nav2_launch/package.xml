@@ -3,9 +3,9 @@
 <package format="3">
   <name>nav2_launch</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="elmeripeekoo@gmail.com">elmeripk</maintainer>
-  <license>TODO: License declaration</license>
+  <description>Package for launching the nav2 instances used by the simulation environment of the Mixed Fleet-project</description>
+  <maintainer email="elmeripeekoo@gmail.com">Elmeri Pohjois-Koivisto</maintainer>
+  <license>Apache-2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 

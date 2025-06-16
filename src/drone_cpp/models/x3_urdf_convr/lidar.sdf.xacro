@@ -1,4 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
+  
+  <!-- 
+ 
+  Lidar model adapted from Lidar 2d v2-model by OpenRobotics
+
+  Link to the original model: https://app.gazebosim.org/OpenRobotics/fuel/models/Lidar%202d%20v2
+
+  Changes made: converted the original sdf to support xacro format and
+  changed model:// references into package:// to support texture
+  rendering in rviz2.
+
+  License: Creative Commons Attribution 4.0 International
+  Lisence link: https://creativecommons.org/licenses/by/4.0/
+
+  -->
+
 <sdf version='1.6' xmlns:xacro="http://www.ros.org/wiki/xacro">
 
   <link name="link">

@@ -1,4 +1,3 @@
-from glob import glob
 import os
 import sys
 
@@ -34,8 +33,6 @@ def setup_models(package_name, path_prefix, curr_dir:str="models", data_tuples=N
         # Get folders inside the folder (without any path prefixes, just plain names)
         # and add the current dir as prefix
         children_dirs = [os.path.join(curr_dir, f) for f in os.listdir(source_path) if os.path.isdir(os.path.join(source_path, f))]
-        print("HERE", file=sys.stderr, flush=True)
-        print(children_dirs, file=sys.stderr, flush=True)
         for dir_path in children_dirs:
             
             setup_models(package_name, path_prefix, dir_path, data_tuples)

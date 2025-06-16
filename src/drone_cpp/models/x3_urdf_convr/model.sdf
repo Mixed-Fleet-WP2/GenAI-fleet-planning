@@ -1,4 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
+  
+<!-- 
+
+  Drone model adapted from X3 UAV-model by OpenRobotics
+
+  Link to the original model: https://app.gazebosim.org/OpenRobotics/fuel/models/X3%20UAV
+
+  Changes made: converted the original sdf to support xacro format and
+  replaced the textures with plain color materials. Also included
+  a lidar and removed textures and meshes that were not utilized from
+  the model directory.
+
+  License: Creative Commons Attribution 4.0 International
+  Lisence link: https://creativecommons.org/licenses/by/4.0/
+
+  -->
+
 <sdf version='1.6'>
   <model name='x3_urdf_convr' xmlns:xacro="http://www.ros.org/wiki/xacro">
 

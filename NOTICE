@@ -2,7 +2,8 @@ __This project is licensed under the MIT License.__
 
 It includes components licensed under the Apache License 2.0:
   - Package: nav2_launch
-
+It includes components licensed under the Creative Commons Attribution 4.0 International
+ - Models inside drone_cpp package
 
 ## Third-Party Licenses
 
