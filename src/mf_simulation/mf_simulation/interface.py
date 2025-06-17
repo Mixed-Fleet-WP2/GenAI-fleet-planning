@@ -1,72 +1,133 @@
-from PySide6.QtWidgets import (
-    QApplication, QWidget, QMainWindow, QHBoxLayout, QVBoxLayout,
-    QPushButton, QPlainTextEdit, QStackedLayout
-)
-from PySide6.QtGui import QFont
+from PySide6.QtWidgets import (QApplication,
+                            QWidget, 
+                            QMainWindow,
+                            QHBoxLayout, 
+                            QVBoxLayout,
+                            QPushButton, 
+                            QPlainTextEdit, 
+                            QStackedLayout,
+                            QComboBox,
+                            QGridLayout,
+                            QLabel
+    )
 import json
 import os
+
+from combo_box import ComboBox
+
+from llm_utils import MODELS
 
 UBUNTU_ORANGE = "#E95420"
 
 class Interface(QMainWindow):
+    
     def __init__(self):
         super().__init__()
         self.setWindowTitle("LLM Planner")
 
         widget = QWidget()
-        layout = QHBoxLayout()
-        layout.setSpacing(0)
-        layout.setContentsMargins(0, 0, 0, 0)
+        
+        self.active_btn_ = None
 
-        views_layout = QVBoxLayout()
-        views_layout.setContentsMargins(0, 0, 0, 0)
-        views_layout.setSpacing(0)
+        views = {"Edit task":QPlainTextEdit(""),
+                "View full prompt":QPlainTextEdit(""),
+                "View LLM response": QPlainTextEdit("")}
 
-        code_font = QFont("Ubuntu Mono", 12, QFont.DemiBold)
-        main_font = QFont("Ubuntu", 12, QFont.DemiBold)
+        self.dropdown_widget_ = self.create_dropdown_group()
+        self.main_view_widget_ = self.create_views(views)
+        self.control_widget_ = self.create_controls(views)
+        self.current_model_ = None
+        
+        content_layout = QHBoxLayout()
+        content_layout.addWidget(self.control_widget_)
+        content_layout.addWidget(self.main_view_widget_)
 
-        self.editors = {"Task":QPlainTextEdit("a"),
-                        "View full prompt":QPlainTextEdit("b"),
-                        "LLM response": QPlainTextEdit("c")}
-            
-        # Stack layout to switch between editors
-        self.stack = QStackedLayout()
-        for view_name in self.editors:
-            editor = self.editors[view_name]
-            self.stack.addWidget(editor)
-            editor.setReadOnly(True)
-
-        # Buttons to switch views
-        self.buttons = {}
-        for i, (label, editor) in enumerate(self.editors.items()):
-            btn = QPushButton(label)
-            btn.clicked.connect(lambda _, idx=i, b=btn: self.switch_view(idx, b))
-            views_layout.addWidget(btn)
-            self.buttons[label] = btn
-
-        self.active_btn = self.buttons["Task"]
-        self.active_btn.setStyleSheet(f"background-color: {UBUNTU_ORANGE};")
-
-        views_layout.addStretch()
-        views_layout.addWidget(QPushButton("Send a request to LLM"))
-
-        layout.addLayout(views_layout)
-
-        content_container = QWidget()
-        content_container.setLayout(self.stack)
-        layout.addWidget(content_container)
-
-        widget.setLayout(layout)
-        widget.setFont(main_font)
+        main_layout = QGridLayout()
+        # Start row, start col, row span, col span
+        main_layout.addWidget(self.dropdown_widget_, 0, 0, 1, 2)
+        main_layout.addWidget(self.control_widget_, 1, 0)
+        main_layout.addWidget(self.main_view_widget_, 1, 1)
+        main_layout.setContentsMargins(0,0,0,0)
+        main_layout.setSpacing(0)
+        
+        widget.setLayout(main_layout)
         self.setCentralWidget(widget)
 
+    def create_dropdown_group(self):
+        dropdown_widget = QWidget()
+        dropdown_widget_layout = QHBoxLayout()
+        dropdown_widget.setLayout(dropdown_widget_layout)
+        dropdown_widget_layout.setContentsMargins(0,0,0,0)
+        dropdown_widget_layout.setSpacing(0)
+
+        selected_model_label = QLabel("No model selected")
+
+        for model in MODELS:
+            dropdown = ComboBox(placeholderText=model)
+            dropdown.activated.connect(lambda _, dropdown=dropdown, label=selected_model_label: self.switch_model(dropdown, label))
+            dropdown.addItems(MODELS[model])
+            dropdown_widget_layout.addWidget(dropdown)
+
+        dropdown_widget_layout.addStretch()
+        dropdown_widget_layout.addWidget(selected_model_label)
+
+        return dropdown_widget
+
+    def create_views(self, views:dict[str, QPlainTextEdit]):
+
+        main_view_widget = QWidget()
+        stack = QStackedLayout()
+        main_view_widget.setLayout(stack)
+
+        # Stack layout to switch between editors
+        # See: https://www.tutorialspoint.com/pyqt/pyqt_qstackedlayout.htm
+        
+        for view_name in views:
+            editor = views[view_name]
+            editor.setProperty('code', 'true')
+            stack.addWidget(editor)
+            editor.setReadOnly(True)
+        
+        # Set the task view as default view and enable it
+        views["Edit task"].setReadOnly(False)
+        
+        return main_view_widget
+
+    def create_controls(self, views:dict[str, QPlainTextEdit]):
+        # Buttons to switch views
+        control_widget = QWidget()
+        control_widget_layout = QVBoxLayout()
+        control_widget_layout.setSpacing(5)
+        control_widget_layout.setContentsMargins(2,2,2,2)
+        control_widget.setLayout(control_widget_layout)
+        control_widget_layout.addStretch()
+
+        buttons = {}
+        for i, (label, _) in enumerate(views.items()):
+            btn = QPushButton(label)
+            btn.clicked.connect(lambda _, idx=i, b=btn: self.switch_view(idx, b))
+            control_widget_layout.addWidget(btn)
+            buttons[label] = btn
+        
+        control_widget_layout.addWidget(QPushButton("Send a request to LLM"))
+
+        self.active_btn_:QPushButton = buttons["Edit task"]
+        self.active_btn_.setStyleSheet(f"background-color: {UBUNTU_ORANGE};")
+        
+        return control_widget
+
     def switch_view(self, index: int, button: QPushButton):
-        self.stack.setCurrentIndex(index)
-        self.active_btn.setStyleSheet("background-color: none;")
+
+        self.main_view_widget_.layout().setCurrentIndex(index)
+        self.active_btn_.setStyleSheet("background-color: none;")
         button.setStyleSheet(f"background-color: {UBUNTU_ORANGE};")
-        self.active_btn = button
-
-
+        self.active_btn_ = button
+    
+    def switch_model(self, dropdown:QComboBox, label:QLabel):
+        model = dropdown.currentText()
+        self.current_model_ = model
+        label.setText(f"Selected model: {model}")
+    
 if __name__ == "__main__":
     app = QApplication([])
 

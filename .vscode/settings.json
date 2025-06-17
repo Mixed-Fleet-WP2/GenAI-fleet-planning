@@ -8,7 +8,8 @@
     "python.analysis.extraPaths": [
         "/home/elmeripk/robots/install/test_bot_controller/lib/python3.12/site-packages",
         "/home/elmeripk/robots/src/install/test_bot_controller/lib/python3.12/site-packages",
-        "/opt/ros/jazzy/lib/python3.12/site-packages"
+        "/opt/ros/jazzy/lib/python3.12/site-packages",
+        "./src/mf_simulation/mf_simulation"
     ],
 
     "urdf-visualizer.packages": {
