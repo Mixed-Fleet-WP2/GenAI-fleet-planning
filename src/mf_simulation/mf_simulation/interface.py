@@ -15,7 +15,7 @@ import os
 
 from combo_box import ComboBox
 
-from llm_utils import MODELS
+from llm_utils import MODELS, generate_plan
 
 UBUNTU_ORANGE = "#E95420"
 
@@ -29,14 +29,14 @@ class Interface(QMainWindow):
         
         self.active_btn_ = None
 
-        views = {"Edit task":QPlainTextEdit(""),
-                "View full prompt":QPlainTextEdit(""),
-                "View LLM response": QPlainTextEdit("")}
+        self.views_ = {"Edit task":QPlainTextEdit(""),
+                    "View full prompt":QPlainTextEdit(""),
+                    "View LLM response": QPlainTextEdit("")}
 
-        self.dropdown_widget_ = self.create_dropdown_group()
-        self.main_view_widget_ = self.create_views(views)
-        self.control_widget_ = self.create_controls(views)
         self.current_model_ = None
+        self.dropdown_widget_ = self.create_dropdown_group()
+        self.main_view_widget_ = self.create_views()
+        self.control_widget_ = self.create_controls()
         
         content_layout = QHBoxLayout()
         content_layout.addWidget(self.control_widget_)
@@ -73,7 +73,7 @@ class Interface(QMainWindow):
 
         return dropdown_widget
 
-    def create_views(self, views:dict[str, QPlainTextEdit]):
+    def create_views(self):
 
         main_view_widget = QWidget()
         stack = QStackedLayout()
@@ -82,18 +82,18 @@ class Interface(QMainWindow):
         # Stack layout to switch between editors
         # See: https://www.tutorialspoint.com/pyqt/pyqt_qstackedlayout.htm
         
-        for view_name in views:
-            editor = views[view_name]
+        for view_name in self.views_:
+            editor = self.views_[view_name]
             editor.setProperty('code', 'true')
             stack.addWidget(editor)
             editor.setReadOnly(True)
         
         # Set the task view as default view and enable it
-        views["Edit task"].setReadOnly(False)
+        self.views_["Edit task"].setReadOnly(False)
         
         return main_view_widget
 
-    def create_controls(self, views:dict[str, QPlainTextEdit]):
+    def create_controls(self):
         # Buttons to switch views
         control_widget = QWidget()
         control_widget_layout = QVBoxLayout()
@@ -103,13 +103,15 @@ class Interface(QMainWindow):
         control_widget_layout.addStretch()
 
         buttons = {}
-        for i, (label, _) in enumerate(views.items()):
+        for i, (label, _) in enumerate(self.views_.items()):
             btn = QPushButton(label)
             btn.clicked.connect(lambda _, idx=i, b=btn: self.switch_view(idx, b))
             control_widget_layout.addWidget(btn)
             buttons[label] = btn
         
-        control_widget_layout.addWidget(QPushButton("Send a request to LLM"))
+        init_button = QPushButton("Send a request to LLM")
+        control_widget_layout.addWidget(init_button)
+        init_button.clicked.connect(lambda _: generate_plan(self.views_["Edit task"].toPlainText(), self.current_model_))
 
         self.active_btn_:QPushButton = buttons["Edit task"]
         self.active_btn_.setStyleSheet(f"background-color: {UBUNTU_ORANGE};")
@@ -117,7 +119,6 @@ class Interface(QMainWindow):
         return control_widget
 
     def switch_view(self, index: int, button: QPushButton):
-
         self.main_view_widget_.layout().setCurrentIndex(index)
         self.active_btn_.setStyleSheet("background-color: none;")
         button.setStyleSheet(f"background-color: {UBUNTU_ORANGE};")
