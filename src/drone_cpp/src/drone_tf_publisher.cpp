@@ -1,8 +1,8 @@
 #include "drone_tf_publisher.hpp"
 #include <iostream>
 
-DroneTfPublisher::DroneTfPublisher(const std::string& node_name) : 
-    rclcpp::Node(node_name){
+DroneTfPublisher::DroneTfPublisher() : 
+    rclcpp::Node("default"){
     
     odometry_subscription_ = this->create_subscription<nav_msgs::msg::Odometry>(
         "odom", 10,
@@ -71,7 +71,7 @@ void DroneTfPublisher::publish_transform(const nav_msgs::msg::Odometry &msg){
 int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
-  rclcpp::spin(std::make_shared<DroneTfPublisher>("drone_1"));
+  rclcpp::spin(std::make_shared<DroneTfPublisher>());
   rclcpp::shutdown();
   return 0;
 }

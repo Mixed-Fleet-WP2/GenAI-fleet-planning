@@ -17,7 +17,7 @@
 // https://docs.ros.org/en/humble/Tutorials/Intermediate/Tf2/Writing-A-Tf2-Broadcaster-Cpp.html
 class DroneTfPublisher : public rclcpp::Node {
     public:
-        DroneTfPublisher(const std::string& node_name);
+        DroneTfPublisher();
 
     private:
         // Could also be: std::shared_ptr<nav_msgs::msg::Odometry>

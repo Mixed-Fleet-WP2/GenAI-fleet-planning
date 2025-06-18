@@ -1,7 +1,10 @@
 #include "drone_controller.hh"
+#include "conversion_utils.hpp"
 
 DroneController::DroneController() :
-    Node("drone_node"){
+    Node("default_name"){
+    
+    node_name_ = this->get_name();
 
     callback_group_ = create_callback_group(
         rclcpp::CallbackGroupType::MutuallyExclusive,
@@ -22,8 +25,19 @@ DroneController::DroneController() :
         }
     );
 
+    odom_subsciber_ = create_subscription<OdomMsg>(
+        "odom", 10,
+        [this](const std::shared_ptr<OdomMsg> msg){
+            this->odom_received_callback(msg);
+        }
+    );
+
     feedback_publisher_ = this->create_publisher<std_msgs::msg::String>(
         "feedback", 10);
+    
+    status_publisher_ = this->create_publisher<std_msgs::msg::String>("/robot_state_updates", 10);
+
+    current_pos_ = {};
 
 }
 
@@ -53,6 +67,36 @@ void DroneController::move_to_pose_callback(
         
     }
 
+    
+}
+void DroneController::odom_received_callback(const std::shared_ptr<OdomMsg> msg) {
+
+    // https://docs.ros2.org/foxy/api/std_msgs/msg/Header.html
+    // Since gazebo clock is used, the timestamp is relative to simulation start
+    auto timestamp = msg->header.stamp.sec;
+    auto [roll, pitch, yaw] = quaternion_to_euler(msg->pose.pose.orientation.x,msg->pose.pose.orientation.y,
+                                        msg->pose.pose.orientation.z, msg->pose.pose.orientation.w);
+    
+    auto x = static_cast<float>(msg->pose.pose.position.x);
+    auto y = static_cast<float>(msg->pose.pose.position.y);
+    auto z = static_cast<float>(msg->pose.pose.position.z);
+                      
+    current_pos_ = {x,y,z,roll,pitch,yaw};
+    current_pos_.round();
+
+    // https://json.nlohmann.me/features/arbitrary_types/
+    
+    // Construct the json payload that is sent to the "database"
+    json status = {};
+    status["robot_name"] = node_name_;
+    status["robot_status"] = "online";
+    status["robot_position"] = {current_pos_.x, current_pos_.y, current_pos_.z}; //Fixed size
+    status["timestamp"] = timestamp;
+
+    auto stringified_status = status.dump();
+    auto message = std_msgs::msg::String();
+    message.data = stringified_status;
+    status_publisher_->publish(message);
     
 };
 
@@ -130,6 +174,19 @@ void DroneController::navigate_to_pose(const Position &pos){
 
 };
 
+/**
+ * Round the value of the Position to one decimal place
+ */
+void DroneController::Position::round() {
+    // https://www.reddit.com/r/cpp_questions/comments/173uhmq/how_do_i_round_a_double_to_one_decimal/
+    x = std::round(x*10) / 10;
+    y = std::round(y*10) / 10;
+    z = std::round(z*10) / 10;
+    angular_x = std::round(angular_x*10) / 10;
+    angular_y = std::round(angular_y*10) / 10;
+    angular_z = std::round(angular_z*10) / 10;
+
+}
 
 int main(int argc, char * argv[])
 {
@@ -139,7 +196,5 @@ int main(int argc, char * argv[])
   return 0;
 }
 
-//#include "rclcpp_components/register_node_macro.hpp"
 
-//RCLCPP_COMPONENTS_REGISTER_NODE(DroneController)
 

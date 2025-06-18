@@ -476,6 +476,8 @@
       <robot_base_frame>base_link</robot_base_frame>
       <!--This will be namespaced by ros2 system and nav2 expects this to be of the form namespace/odom (namespace is optional)-->
       <odom_frame>odom</odom_frame>
+      <!--Publish odom ten times a second-->
+      <odom_publish_frequency>10</odom_publish_frequency>
     </plugin>
 
     <plugin filename="gz-sim-joint-state-publisher-system"

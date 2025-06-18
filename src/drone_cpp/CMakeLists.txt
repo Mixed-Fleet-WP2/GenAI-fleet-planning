@@ -57,11 +57,11 @@ install(DIRECTORY
   DESTINATION share/${PROJECT_NAME})
 
 # Used for installing programs not built with cmake (ie python nodes)
-install(PROGRAMS
-  scripts/drone.py
-  DESTINATION
-  lib/${PROJECT_NAME}
-)
+# install(PROGRAMS
+#   scripts/drone.py
+#   DESTINATION
+#   lib/${PROJECT_NAME}
+# )
 
 # Installs the python modules from folder PROJECT_NAME into the install folder's
 # site packages

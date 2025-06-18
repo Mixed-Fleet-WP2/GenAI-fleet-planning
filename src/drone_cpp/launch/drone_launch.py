@@ -273,12 +273,14 @@ def generate_launch_description():
         remappings=remappings
     )
 
-
+    # https://robotics.stackexchange.com/questions/99879/ros2-launch-how-to-concatenate-launchconfiguration-with-string
     drone_controller = Node(
         package='drone_cpp',
+        name=namespace,
+        #name=[namespace, TextSubstitution(text="_node")],
         executable='drone_controller',
         parameters=[{'use_sim_time':True}],
-        namespace=''
+        namespace=namespace
     )
 
     shutdown_handler = RegisterEventHandler(

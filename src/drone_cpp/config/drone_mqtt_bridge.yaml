@@ -31,11 +31,16 @@
       ros2mqtt:
         ros_topics: 
           - feedback
+          - /robot_state_updates
           - /pallet_1_pos
         feedback:
           mqtt_topic: feedback
         /pallet_1_pos:
           mqtt_topic: pallet_1_pos
+        /robot_state_updates:
+          mqtt_topic: robot_state_updates
+          ros_type: std_msgs/msg/String
+          primitive: true
       mqtt2ros:
         mqtt_topics: 
           - <robot_namespace>/move
