@@ -2,12 +2,14 @@ import json
 from threading import Thread
 import os
 
-from rclpy.executors import MultiThreadedExecutor
 import yaml
 from controller import Controller
 from dotenv import load_dotenv
 from jinja2 import Environment, PackageLoader, FileSystemLoader
-
+from database import Database
+from pydantic import BaseModel
+from typing import Union, TypedDict, Dict, NewType, Any, Optional
+from openai import OpenAI
 
 
 SCRIPT_PATH = os.path.realpath(os.path.dirname(__file__))
@@ -25,31 +27,76 @@ MODELS = {"Open AI" : OPEN_AI_MODELS,
          "Meta": ["llama3-70b-8192", "llama3-8b-8192", "llama-3.3-70b-versatile", "llama-3.1-8b-instant"]
         }
 
-def populate_template(task:str):
-    template_dir = os.path.abspath(os.path.join(SCRIPT_PATH, "templates"))
-    # https://jinja.palletsprojects.com/en/stable/api/#jinja2.FileSystemLoader
-    env = Environment(
-        #loader=PackageLoader("mf_simulation")
-        loader = FileSystemLoader(template_dir)
-    )
-    template = env.get_template("prompt.yaml")
 
-    # https://jinja.palletsprojects.com/en/stable/api/#jinja2.Template.render
-    robot_abilities_path = os.path.abspath(os.path.join(SCRIPT_PATH, "..", "config", "robot_primitives.yaml"))
-    with open(robot_abilities_path) as f:
-        robot_abilities = yaml.dump(yaml.safe_load(f), default_flow_style=None, indent=2)
-        # None == If a mapping or sequence consist only of scalars it will use "Flow Style", otherwise "Block Style"
-        # See: https://stackoverflow.com/questions/56542746/read-and-dump-bracket-list-from-and-to-yaml-with-python
+# See example: # https://docs.pydantic.dev/2.3/usage/types/dicts_mapping/#typeddict
+ActionID = NewType("ActionID", int)
 
-    ready = template.render(robot_types=robot_abilities,
-                            task_description=task
-                            
-                            )
-    print(ready)
+class Action(BaseModel):
+    action_id: ActionID
+    executing_robot: str
+    command: str
+    command_arguments: list[Optional[str]]
+    prerequisites: list[int]
+    reasoning: str
+
+class Plan(BaseModel):
+    actions: list[Action]
+
+
+class PromptGenerator():
+
+    def __init__(self):
+        self.db = Database()
+        template_dir = os.path.abspath(os.path.join(SCRIPT_PATH, "templates"))
+        # https://jinja.palletsprojects.com/en/stable/api/#jinja2.FileSystemLoader
+        self.env = Environment(
+            #loader=PackageLoader("mf_simulation")
+            loader = FileSystemLoader(template_dir)
+        )
+        self.template_ = self.env.get_template("prompt.jinja")
+        self.robot_abilities_path_ = os.path.abspath(os.path.join(SCRIPT_PATH,
+                                                                 "..",
+                                                                "config", 
+                                                                "robot_primitives.yaml"))
+
+        self.open_ai_client = OpenAI(api_key=os.getenv('OPEN_AI_API_KEY'))
+
+    def populate_template_(self, task:str):
+    
+        with open(self.robot_abilities_path_ ) as f:
+            robot_abilities = yaml.dump(yaml.safe_load(f), default_flow_style=None, indent=2)
+            # None == If a mapping or sequence consist only of scalars it will use "Flow Style", otherwise "Block Style"
+            # See: https://stackoverflow.com/questions/56542746/read-and-dump-bracket-list-from-and-to-yaml-with-python
+
+        robot_states = yaml.dump(self.db.get_state(), default_flow_style=None, indent=2)
+
+        filled_template = self.template_.render(robot_types=robot_abilities,
+                                      task_description=task,
+                                      robot_states = robot_states,
+                                      object_positions="No objects currently in the environment")
+        
+        return filled_template
 
    
-def generate_plan(task, model):
-    populate_template(task)
+    def generate_plan(self, task, model="gpt-4o-mini"):
+        filled_template = self.populate_template_(task)
+        if model in OPEN_AI_MODELS:
+            print(f"Generating plan with ")
+            response = self.send_open_ai_request(filled_template, model)
+            res_json = response.model_dump()
+            with open("test.json", "w") as f:
+                json.dump(res_json, f, indent=2)
 
-def send_open_ai_request(task, model):
-    pass
+
+    def send_open_ai_request(self, content, model):
+        
+        res = self.open_ai_client.responses.parse(
+            model=model,
+            input=[
+                {"role": "system", "content": "You are a central controller responsible for managing a multi-robot system."},
+                {"role": "user",
+                 "content": content}
+            ],
+            text_format=Plan
+        )
+        return res.output_parsed

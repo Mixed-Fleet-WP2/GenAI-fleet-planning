@@ -1,0 +1,16 @@
+{
+  "actions": [
+    {
+      "action_id": 1,
+      "executing_robot": "drone_1",
+      "command": "move",
+      "command_arguments": [
+        "1",
+        "1",
+        "0"
+      ],
+      "prerequisites": [],
+      "reasoning": "The drone needs to move to the target position (1,1) in 3D space while maintaining its height at 0."
+    }
+  ]
+}

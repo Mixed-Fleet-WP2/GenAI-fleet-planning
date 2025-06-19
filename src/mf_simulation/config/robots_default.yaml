@@ -1,5 +1,5 @@
 robots:
-  - name: drone_133
+  - name: drone_1
     package: "drone_cpp"
     type: "drone"
     starting_position: [0.0, 0, 0]

@@ -15,7 +15,7 @@ import os
 
 from combo_box import ComboBox
 
-from llm_utils import MODELS, generate_plan
+from llm_utils import MODELS, PromptGenerator
 
 UBUNTU_ORANGE = "#E95420"
 
@@ -23,6 +23,9 @@ class Interface(QMainWindow):
     
     def __init__(self):
         super().__init__()
+
+        self.prompt_generator_ = PromptGenerator()
+
         self.setWindowTitle("LLM Planner")
 
         widget = QWidget()
@@ -33,7 +36,7 @@ class Interface(QMainWindow):
                     "View full prompt":QPlainTextEdit(""),
                     "View LLM response": QPlainTextEdit("")}
 
-        self.current_model_ = None
+        self.current_model_ = "gpt-4o-mini"
         self.dropdown_widget_ = self.create_dropdown_group()
         self.main_view_widget_ = self.create_views()
         self.control_widget_ = self.create_controls()
@@ -111,7 +114,10 @@ class Interface(QMainWindow):
         
         init_button = QPushButton("Send a request to LLM")
         control_widget_layout.addWidget(init_button)
-        init_button.clicked.connect(lambda _: generate_plan(self.views_["Edit task"].toPlainText(), self.current_model_))
+        init_button.clicked.connect(lambda _: self.prompt_generator_.generate_plan(
+                                            self.views_["Edit task"].toPlainText(),
+                                            self.current_model_,
+                                            ))
 
         self.active_btn_:QPushButton = buttons["Edit task"]
         self.active_btn_.setStyleSheet(f"background-color: {UBUNTU_ORANGE};")

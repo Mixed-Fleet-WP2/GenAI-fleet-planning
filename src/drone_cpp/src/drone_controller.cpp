@@ -88,10 +88,11 @@ void DroneController::odom_received_callback(const std::shared_ptr<OdomMsg> msg)
     
     // Construct the json payload that is sent to the "database"
     json status = {};
-    status["robot_name"] = node_name_;
-    status["robot_status"] = "online";
-    status["robot_position"] = {current_pos_.x, current_pos_.y, current_pos_.z}; //Fixed size
-    status["timestamp"] = timestamp;
+    status[node_name_] = {
+        {"robot_status", "online"},
+        {"robot_position", {current_pos_.x, current_pos_.y, current_pos_.z}},
+        {"timestamp", timestamp}
+    };
 
     auto stringified_status = status.dump();
     auto message = std_msgs::msg::String();
