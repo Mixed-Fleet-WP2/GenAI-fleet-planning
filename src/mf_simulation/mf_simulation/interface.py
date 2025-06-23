@@ -60,7 +60,7 @@ class Interface(QMainWindow):
         self.threadpool = QThreadPool()
         self.prompt_generator_ = PromptGenerator()
 
-        self.setWindowTitle("LLM Planner")
+        self.setWindowTitle("LLM Planner v3")
 
         widget = QWidget()
         
@@ -73,10 +73,11 @@ class Interface(QMainWindow):
         self.current_model_ = "gpt-4o-mini"
 
         self.current_format_ = Formats.JSON
-        self.format_mode_button_ = QPushButton(self.current_format_.value)
+        self.plan_ = ""
+        
         self.status_text_ = QLabel("")
         self.status_text_.setProperty("class", "status-text")
-        self.format_mode_button_.clicked.connect(self.switch_format_)
+        
         self.dropdown_widget_ = self.create_dropdown_group()
         self.main_view_widget_ = self.create_views()
         self.control_widget_ = self.create_controls()
@@ -114,7 +115,6 @@ class Interface(QMainWindow):
             dropdown_widget_layout.addWidget(dropdown)
 
         dropdown_widget_layout.addStretch()
-        dropdown_widget_layout.addWidget(self.format_mode_button_)
         dropdown_widget_layout.addWidget(selected_model_label)
 
         return dropdown_widget
@@ -146,19 +146,26 @@ class Interface(QMainWindow):
         # Buttons to switch views
         control_widget = QWidget()
         control_widget_layout = QVBoxLayout()
-        control_widget_layout.setSpacing(5)
-        control_widget_layout.setContentsMargins(2,2,2,2)
+        control_widget_layout.setSpacing(0)
+        control_widget_layout.setContentsMargins(0,0,0,0)
         control_widget.setLayout(control_widget_layout)
-        control_widget_layout.addStretch()
-        control_widget_layout.addWidget(self.status_text_)
-
+        
         buttons = {}
         for i, (label, _) in enumerate(self.views_.items()):
             btn = QPushButton(label)
             btn.clicked.connect(lambda _, idx=i, b=btn: self.switch_view(idx, b))
             control_widget_layout.addWidget(btn)
             buttons[label] = btn
+            btn.setProperty("class", "view-control")
         
+        control_widget_layout.addStretch()
+
+        control_widget_layout.addWidget(self.status_text_)
+
+        format_mode_button = QPushButton(f"Toggle format (current: {self.current_format_.value})")
+        format_mode_button.clicked.connect(lambda _, btn=format_mode_button: self.switch_format_(btn))
+        control_widget_layout.addWidget(format_mode_button)
+
         init_button = QPushButton("Send a request to LLM")
         control_widget_layout.addWidget(init_button)
         init_button.clicked.connect(self.generate_ai_plan)
@@ -194,20 +201,27 @@ class Interface(QMainWindow):
     
     def update_gui(self, result):
         prompt, plan = result
+        self.plan_ = plan
+
+        # Reformat for GUI only
+        print(self.current_format_)
+        plan_formatted = self.prompt_generator_.return_formatted(self.current_format_.value)
+
         self.views_["View full prompt"].setPlainText(prompt)
-        self.views_["View LLM response"].setPlainText(plan)
+        self.views_["View LLM response"].setPlainText(plan_formatted)
+        
         # Make the status text dissappear
         self.status_text_.setText("Done!")
         timer = QTimer(self)
         timer.timeout.connect(lambda label=self.status_text_: label.setText(""))
         timer.start(2000)
 
-    def switch_format_(self):
+    def switch_format_(self, btn: QPushButton):
         self.current_format_ = (Formats.JSON
                      if self.current_format_ is Formats.YAML
                      else Formats.YAML)
         
-        self.format_mode_button_.setText(self.current_format_.value)
+        btn.setText(f"Toggle format (current: {self.current_format_.value})")
         plan = self.prompt_generator_.return_formatted(
             self.current_format_.value)
         

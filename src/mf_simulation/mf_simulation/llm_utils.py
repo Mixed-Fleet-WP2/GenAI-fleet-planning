@@ -119,7 +119,7 @@ class PromptGenerator():
         )
         return res.output_parsed
 
-    def return_formatted(self, format: str) -> tuple[str, str]:
+    def return_formatted(self, format: str = "json") -> str:
         """
         Return the llm prompt and plan in json or yaml format
 
@@ -127,7 +127,7 @@ class PromptGenerator():
             format: format to return either 'json' or 'yaml'
         
         Returns:
-            Json or yaml formatted tuple containing the prompt and plan (in this order)
+            Json or yaml formatted string of the current plan
         """
         if format == "json":
             return self.plan_json_
