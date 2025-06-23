@@ -17,12 +17,6 @@ class Controller():
    
         self.received_feedback = None
         
-        #Move a cube to a random position, should be maybe allocated
-        #to launch file in the future
-        self.connections = {}
-        self.cube_pos_x = None
-        self.cube_pos_y = None
-
         self.mqtt_client.subscribe([("feedback", 2)])
 
         for model in MODELS:

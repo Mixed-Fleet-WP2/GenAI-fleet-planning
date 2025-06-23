@@ -4,7 +4,6 @@ from PySide6.QtWidgets import (QApplication,
                             QHBoxLayout, 
                             QVBoxLayout,
                             QPushButton, 
-                            QPlainTextEdit, 
                             QStackedLayout,
                             QComboBox,
                             QGridLayout,
@@ -19,6 +18,7 @@ import os
 
 from combo_box import ComboBox
 from llm_utils import MODELS, PromptGenerator
+from controller_v2 import Controller
 
 # Save this for the gu
 
@@ -59,6 +59,7 @@ class Interface(QMainWindow):
 
         self.threadpool = QThreadPool()
         self.prompt_generator_ = PromptGenerator()
+        self.controller_ = Controller()
 
         self.setWindowTitle("LLM Planner v3")
 
@@ -82,10 +83,6 @@ class Interface(QMainWindow):
         self.main_view_widget_ = self.create_views()
         self.control_widget_ = self.create_controls()
         
-        content_layout = QHBoxLayout()
-        content_layout.addWidget(self.control_widget_)
-        content_layout.addWidget(self.main_view_widget_)
-
         main_layout = QGridLayout()
         # Start row, start col, row span, col span
         main_layout.addWidget(self.dropdown_widget_, 0, 0, 1, 2)
@@ -170,6 +167,11 @@ class Interface(QMainWindow):
         control_widget_layout.addWidget(init_button)
         init_button.clicked.connect(self.generate_ai_plan)
 
+        execute_button = QPushButton("Execute plan")
+        control_widget_layout.addWidget(execute_button)
+        execute_button.clicked.connect(self.execute_plan_)
+
+
         self.active_btn_:QPushButton = buttons["Edit task"]
         self.active_btn_.setStyleSheet(f"background-color: {UBUNTU_ORANGE};")
         
@@ -226,6 +228,10 @@ class Interface(QMainWindow):
             self.current_format_.value)
         
         self.views_["View LLM response"].setPlainText(plan)
+    
+    def execute_plan_(self):
+        pass
+
 
 if __name__ == "__main__":
     app = QApplication([])
