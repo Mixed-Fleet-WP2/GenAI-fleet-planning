@@ -8,22 +8,56 @@ from PySide6.QtWidgets import (QApplication,
                             QStackedLayout,
                             QComboBox,
                             QGridLayout,
-                            QLabel
+                            QLabel,
+                            QTextEdit
     )
-import json
+
+
+from PySide6.QtCore import QTimer, QThread, QRunnable, QThreadPool, Slot, Signal, QObject, Qt
+
 import os
 
 from combo_box import ComboBox
-
 from llm_utils import MODELS, PromptGenerator
 
+# Save this for the gu
+
 UBUNTU_ORANGE = "#E95420"
+
+from enum import Enum
+
+class WorkerSignals(QObject):
+    result_signal = Signal(tuple)
+
+# https://www.pythonguis.com/tutorials/multithreading-pyside6-applications-qthreadpool/
+class Worker(QRunnable):
+   
+    def __init__(self, fn, *args, **kwargs):
+        super().__init__()
+        self.fn = fn
+        self.args = args
+        self.kwargs = kwargs
+        self.signals = WorkerSignals()
+
+    # Override the run method
+    # https://www.pythonguis.com/faq/what-does-slot-do/
+    # Solot decorator is only necessary with threads
+    @Slot()
+    def run(self):
+        result = self.fn(*self.args, **self.kwargs)
+        self.signals.result_signal.emit(result)
+
+
+class Formats(Enum):
+    JSON = "json"
+    YAML = "yaml"
 
 class Interface(QMainWindow):
     
     def __init__(self):
         super().__init__()
 
+        self.threadpool = QThreadPool()
         self.prompt_generator_ = PromptGenerator()
 
         self.setWindowTitle("LLM Planner")
@@ -32,11 +66,17 @@ class Interface(QMainWindow):
         
         self.active_btn_ = None
 
-        self.views_ = {"Edit task":QPlainTextEdit(""),
-                    "View full prompt":QPlainTextEdit(""),
-                    "View LLM response": QPlainTextEdit("")}
-
+        self.views_ = {"Edit task":QTextEdit(""),
+                    "View full prompt":QTextEdit(""),
+                    "View LLM response": QTextEdit("")}
+        
         self.current_model_ = "gpt-4o-mini"
+
+        self.current_format_ = Formats.JSON
+        self.format_mode_button_ = QPushButton(self.current_format_.value)
+        self.status_text_ = QLabel("")
+        self.status_text_.setProperty("class", "status-text")
+        self.format_mode_button_.clicked.connect(self.switch_format_)
         self.dropdown_widget_ = self.create_dropdown_group()
         self.main_view_widget_ = self.create_views()
         self.control_widget_ = self.create_controls()
@@ -64,14 +104,17 @@ class Interface(QMainWindow):
         dropdown_widget_layout.setSpacing(0)
 
         selected_model_label = QLabel("No model selected")
-
+        
         for model in MODELS:
             dropdown = ComboBox(placeholderText=model)
-            dropdown.activated.connect(lambda _, dropdown=dropdown, label=selected_model_label: self.switch_model(dropdown, label))
+            dropdown.activated.connect(lambda _,
+                dropdown=dropdown,
+                label=selected_model_label: self.switch_model(dropdown, label))
             dropdown.addItems(MODELS[model])
             dropdown_widget_layout.addWidget(dropdown)
 
         dropdown_widget_layout.addStretch()
+        dropdown_widget_layout.addWidget(self.format_mode_button_)
         dropdown_widget_layout.addWidget(selected_model_label)
 
         return dropdown_widget
@@ -87,6 +130,9 @@ class Interface(QMainWindow):
         
         for view_name in self.views_:
             editor = self.views_[view_name]
+            # editor.setLineWrapMode(QTextEdit.WidgetWidth)
+            # editor.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+            # editor.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
             editor.setProperty('code', 'true')
             stack.addWidget(editor)
             editor.setReadOnly(True)
@@ -104,6 +150,7 @@ class Interface(QMainWindow):
         control_widget_layout.setContentsMargins(2,2,2,2)
         control_widget.setLayout(control_widget_layout)
         control_widget_layout.addStretch()
+        control_widget_layout.addWidget(self.status_text_)
 
         buttons = {}
         for i, (label, _) in enumerate(self.views_.items()):
@@ -114,10 +161,7 @@ class Interface(QMainWindow):
         
         init_button = QPushButton("Send a request to LLM")
         control_widget_layout.addWidget(init_button)
-        init_button.clicked.connect(lambda _: self.prompt_generator_.generate_plan(
-                                            self.views_["Edit task"].toPlainText(),
-                                            self.current_model_,
-                                            ))
+        init_button.clicked.connect(self.generate_ai_plan)
 
         self.active_btn_:QPushButton = buttons["Edit task"]
         self.active_btn_.setStyleSheet(f"background-color: {UBUNTU_ORANGE};")
@@ -135,6 +179,40 @@ class Interface(QMainWindow):
         self.current_model_ = model
         label.setText(f"Selected model: {model}")
     
+    def generate_ai_plan(self):
+
+        self.status_text_.setText("Generating...")
+
+        worker = Worker(self.prompt_generator_.generate_plan,
+            self.views_["Edit task"].toPlainText(),
+            self.current_model_,
+            self.current_format_.value)
+        
+        worker.signals.result_signal.connect(self.update_gui)
+
+        self.threadpool.start(worker)
+    
+    def update_gui(self, result):
+        prompt, plan = result
+        self.views_["View full prompt"].setPlainText(prompt)
+        self.views_["View LLM response"].setPlainText(plan)
+        # Make the status text dissappear
+        self.status_text_.setText("Done!")
+        timer = QTimer(self)
+        timer.timeout.connect(lambda label=self.status_text_: label.setText(""))
+        timer.start(2000)
+
+    def switch_format_(self):
+        self.current_format_ = (Formats.JSON
+                     if self.current_format_ is Formats.YAML
+                     else Formats.YAML)
+        
+        self.format_mode_button_.setText(self.current_format_.value)
+        plan = self.prompt_generator_.return_formatted(
+            self.current_format_.value)
+        
+        self.views_["View LLM response"].setPlainText(plan)
+
 if __name__ == "__main__":
     app = QApplication([])
 

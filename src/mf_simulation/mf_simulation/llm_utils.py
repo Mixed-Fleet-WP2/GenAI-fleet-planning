@@ -61,6 +61,9 @@ class PromptGenerator():
 
         self.open_ai_client = OpenAI(api_key=os.getenv('OPEN_AI_API_KEY'))
 
+        self.plan_json_ = ""
+        self.plan_yaml_ = ""
+
     def populate_template_(self, task:str):
     
         with open(self.robot_abilities_path_ ) as f:
@@ -78,16 +81,31 @@ class PromptGenerator():
         return filled_template
 
    
-    def generate_plan(self, task, model="gpt-4o-mini"):
-        filled_template = self.populate_template_(task)
+    def generate_plan(self, task: str, model: str="gpt-4o-mini", format: str="json") -> tuple[str, str]:
+        """
+        Generate an action plan for available robots using an llm that
+        attempts to achieve a given task. 
+
+        Args:
+            task: task to generate the plan for
+            model: llm model to use
+            format: format to return the prompt and plan in
+        
+        Returns:
+            Json or yaml formatted tuple containing the prompt and plan (in this order)
+        """
+
+        prompt = self.populate_template_(task)
+        
+  
         if model in OPEN_AI_MODELS:
-            print(f"Generating plan with ")
-            response = self.send_open_ai_request(filled_template, model)
-            res_json = response.model_dump()
-            with open("test.json", "w") as f:
-                json.dump(res_json, f, indent=2)
-
-
+            response = self.send_open_ai_request(prompt, model)
+        
+        res_obj = response.model_dump()
+        self.plan_json_ = json.dumps(res_obj, indent=2)
+        self.plan_yaml_ = yaml.dump(res_obj, indent=2)
+        return prompt, self.return_formatted(format)
+            
     def send_open_ai_request(self, content, model):
         
         res = self.open_ai_client.responses.parse(
@@ -100,3 +118,18 @@ class PromptGenerator():
             text_format=Plan
         )
         return res.output_parsed
+
+    def return_formatted(self, format: str) -> tuple[str, str]:
+        """
+        Return the llm prompt and plan in json or yaml format
+
+        Args:
+            format: format to return either 'json' or 'yaml'
+        
+        Returns:
+            Json or yaml formatted tuple containing the prompt and plan (in this order)
+        """
+        if format == "json":
+            return self.plan_json_
+        else:
+            return self.plan_yaml_
