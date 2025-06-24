@@ -1,31 +1,13 @@
 cmake_minimum_required(VERSION 3.8)
-project(state_bridge)
+project(mf_utils)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
-
-
 # find dependencies
 find_package(ament_cmake REQUIRED)
-find_package(rclcpp REQUIRED)
-find_package(geometry_msgs REQUIRED)
-find_package(std_msgs)
-find_package(tf2_msgs)
-find_package(mf_utils)
-
-add_executable(state_bridge src/state_bridge.cpp)
-
-ament_target_dependencies(state_bridge rclcpp geometry_msgs std_msgs tf2_msgs mf_utils)
-#target_include_directories(state_bridge PUBLIC ${UTILS_DIR})
-
-
-install(DIRECTORY
-  launch config
-  DESTINATION share/${PROJECT_NAME}
-)
-
+find_package(tf2 REQUIRED)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -38,5 +20,30 @@ if(BUILD_TESTING)
   set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
 endif()
+
+add_library(mf_utils INTERFACE)
+
+target_include_directories(mf_utils
+  INTERFACE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+)
+
+
+ament_target_dependencies(mf_utils INTERFACE tf2)
+
+ament_export_targets(mf_utils HAS_LIBRARY_TARGET)
+ament_export_dependencies(tf2)
+
+install(
+  DIRECTORY include/
+  DESTINATION include
+)
+
+install(
+  TARGETS mf_utils
+  EXPORT mf_utils
+  INCLUDES DESTINATION include
+)
 
 ament_package()
