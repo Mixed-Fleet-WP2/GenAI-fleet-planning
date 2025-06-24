@@ -10,12 +10,14 @@
 #include "geometry_msgs/msg/twist.hpp"
 #include "tf2_ros/transform_broadcaster.h"
 #include "std_msgs/msg/string.hpp"
-#include "json.hpp"
 #include "nav2_msgs/action/navigate_to_pose.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "nav2_msgs/action/navigate_to_pose.hpp"
 #include "geometry_msgs/msg/pose_stamped.hpp"
 #include "nav_msgs/msg/odometry.hpp"
+#include "types.hpp"
+#include "utils.hpp"
+#include "json.hpp"
 
 using json = nlohmann::json;
 
@@ -37,16 +39,7 @@ class DroneController: public rclcpp::Node{
         
         std::string node_name_ = "";
 
-        struct Position{
-            float x;
-            float y;
-            float z;
-            float angular_x;
-            float angular_y;
-            float angular_z;
-            void round();
-
-        };
+        
 
         rclcpp_action::Client<NavToPoseAction>::SharedPtr nav_to_pose_client_;
         rclcpp::CallbackGroup::SharedPtr callback_group_;

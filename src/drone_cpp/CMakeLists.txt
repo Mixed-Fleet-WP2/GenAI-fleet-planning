@@ -17,6 +17,7 @@ find_package(nav_msgs REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(nav2_msgs REQUIRED)
 find_package(rclcpp_components)
+find_package(std_msgs)
 
 # https://roboticsbackend.com/ros2-package-for-both-python-and-cpp-nodes/
 
@@ -30,16 +31,33 @@ add_executable(drone_controller src/drone_controller.cpp)
 #https://docs.ros.org/en/foxy/How-To-Guides/Ament-CMake-Documentation.html#adding-dependencies
 ament_target_dependencies(drone_node rclcpp px4_msgs geometry_msgs)
 ament_target_dependencies(drone_tf_publisher rclcpp geometry_msgs tf2_ros nav_msgs tf2)
-ament_target_dependencies(drone_controller rclcpp std_msgs tf2_ros nav2_msgs rclcpp_components)
-target_include_directories(drone_controller PUBLIC include/drone_cpp)
+ament_target_dependencies(drone_controller rclcpp std_msgs tf2_ros nav2_msgs rclcpp_components tf2)
+# Include utilities
+
+# https://stackoverflow.com/questions/29688115/how-do-i-check-if-an-environment-variable-is-set-in-cmake
+if (NOT DEFINED ENV{UTILS_DIR})
+  # https://stackoverflow.com/questions/7035734/how-do-i-get-the-parent-directory-path-of-a-path-in-cmake
+
+  # Get the path of the current project i.e. where
+  # this CMakeLists resides. Then get its parent directory
+  # and store in WS_SRC. This is the src directory of the whole ROS2 workspace
+  cmake_path(GET CMAKE_SOURCE_DIR PARENT_PATH WS_SRC)
+  # Append utils directory to the workspace source directory
+  # and this becomes the final directory
+  cmake_path(APPEND_STRING WS_SRC "/utils" OUTPUT_VARIABLE UTILS_DIR)
+  message("DEFININING")
+else()
+  message("ALREADY DEFINED")
+endif()
+
+target_include_directories(drone_controller PUBLIC ${UTILS_DIR})
 
 # This installs the target named drone_node to directory specified after DESTINATION
 # the directory is a relative path relative to. From cmake docs:
 # When a relative path is given, it is interpreted relative to the value of the CMAKE_INSTALL_PREFIX variable.
 # (in ros2 case, the CMAKE_INSTALL_PREFIX is set by colcon)
-install(TARGETS drone_node DESTINATION lib/${PROJECT_NAME})
-install(TARGETS drone_tf_publisher DESTINATION lib/${PROJECT_NAME})
-install(TARGETS drone_controller DESTINATION lib/${PROJECT_NAME})
+install(TARGETS drone_node drone_tf_publisher drone_controller DESTINATION lib/${PROJECT_NAME})
+
 
 # Install launch files.
 install(DIRECTORY

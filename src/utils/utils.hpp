@@ -16,7 +16,7 @@ std::tuple<float, float, float> quaternion_to_euler(float x, float y, float z, f
     double roll = 0.0;
     double pitch = 0.0;
     double yaw = 0.0;
-    // Get euler from the matrix
+    // Get euler from the matrix by passing references and populating
     matrix.getRPY(roll, pitch, yaw);
 
     return {static_cast<float>(roll), static_cast<float>(pitch), static_cast<float>(yaw)};

@@ -15,9 +15,7 @@ def create_robot_instances(context, *args, **kwargs):
     
     robots_file_path = LaunchConfiguration('robots_file').perform(context)
     map_yaml_file = LaunchConfiguration('map').perform(context)
-    print("THIS IS THE MAP", map_yaml_file, flush=True)
     autostart = LaunchConfiguration('autostart').perform(context)
-    print("AUTOSTART", autostart, flush=True)
     rviz_config_file = LaunchConfiguration('rviz_config').perform(context)
     use_rviz = LaunchConfiguration('use_rviz').perform(context)
     

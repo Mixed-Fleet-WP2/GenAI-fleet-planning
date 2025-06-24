@@ -1,10 +1,10 @@
 #include "state_bridge.hpp"
 
-StateBridge::StateBridge() : rclcpp::Node("default_name") 
+StateBridge::StateBridge() : rclcpp::Node("state_bridge") 
 {
     pose_publisher_ = this->create_publisher<std_msgs::msg::String>("object_positions", 10);
     pose_subscriber_ = this->create_subscription<tf2_msgs::msg::TFMessage>(
-        "object_positions", 10, [this](const tf2_msgs::msg::TFMessage::SharedPtr msg) {
+        "/object_state_updates", 10, [this](const tf2_msgs::msg::TFMessage::SharedPtr msg) {
             this->pose_callback(msg);
         }
     );
@@ -12,11 +12,47 @@ StateBridge::StateBridge() : rclcpp::Node("default_name")
 
 void StateBridge::pose_callback(const tf2_msgs::msg::TFMessage::SharedPtr msg)
 {   
-    // The object poses are publisher by gazebos PosePublisher
+    // The object poses are published by gazebos PosePublisher
     // In this case, the Pose_V type of gazebo is bridged to tf message type
     // in order to get the object name, which is the child_frame_id of the first (and only) transform
     std::string object_name;
-    if (!msg->transforms.empty()) {
-        object_name = msg->transforms[0].child_frame_id;
-    }
+    auto content = msg->transforms[0];
+    object_name = content.child_frame_id;
+
+    auto [roll, pitch, yaw] = quaternion_to_euler(
+        content.transform.rotation.x,
+        content.transform.rotation.y,
+        content.transform.rotation.z,
+        content.transform.rotation.w
+    );
+
+    Position position = {
+        static_cast<float>(content.transform.translation.x),
+        static_cast<float>(content.transform.translation.y),
+        static_cast<float>(content.transform.translation.z),
+        roll,
+        pitch,
+        yaw
+        
+    };
+
+    position.round();
+
+    // Construct the json payload that is sent to the "database"
+    json payload = {};
+    // See types.hpp for the to_json and from_json functions
+    payload[object_name] = position;
+    auto stringified_payload = payload.dump();
+    auto message = std_msgs::msg::String();
+    message.data = stringified_payload;
+    pose_publisher_->publish(message);
+
+}
+
+int main(int argc, char * argv[])
+{
+  rclcpp::init(argc, argv);
+  rclcpp::spin(std::make_shared<StateBridge>());
+  rclcpp::shutdown();
+  return 0;
 }

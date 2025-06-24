@@ -1,5 +1,5 @@
 #include "drone_controller.hh"
-#include "conversion_utils.hpp"
+
 
 DroneController::DroneController() :
     Node("default_name"){
@@ -174,20 +174,6 @@ void DroneController::navigate_to_pose(const Position &pos){
     
 
 };
-
-/**
- * Round the value of the Position to one decimal place
- */
-void DroneController::Position::round() {
-    // https://www.reddit.com/r/cpp_questions/comments/173uhmq/how_do_i_round_a_double_to_one_decimal/
-    x = std::round(x*10) / 10;
-    y = std::round(y*10) / 10;
-    z = std::round(z*10) / 10;
-    angular_x = std::round(angular_x*10) / 10;
-    angular_y = std::round(angular_y*10) / 10;
-    angular_z = std::round(angular_z*10) / 10;
-
-}
 
 int main(int argc, char * argv[])
 {

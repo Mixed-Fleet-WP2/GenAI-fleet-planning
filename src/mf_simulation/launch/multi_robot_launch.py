@@ -1,6 +1,5 @@
 import os
 from ament_index_python.packages import get_package_share_directory, get_package_prefix, get_packages_with_prefixes
-import yaml
 from launch import LaunchDescription
 from launch.actions import (
     AppendEnvironmentVariable,
@@ -9,14 +8,23 @@ from launch.actions import (
     LogInfo,
     OpaqueFunction,
     GroupAction,
+    IncludeLaunchDescription
 )
-from launch.substitutions import LaunchConfiguration, EnvironmentVariable
+from launch.substitutions import LaunchConfiguration, EnvironmentVariable, PathJoinSubstitution
 from launch_ros.actions import Node
 from mf_simulation.utils.launch_utils import create_robot_instances, launch_print
+from launch.launch_description_sources import get_launch_description_from_python_launch_file, PythonLaunchDescriptionSource
+
 
 def generate_launch_description():
     # Get the launch directory
     nav_launch_dir = get_package_share_directory('nav2_launch')
+    state_bridge_launch_dir = os.path.join(
+        get_package_share_directory('state_bridge'), 'launch')
+    
+    state_bridge_launch_decription = get_launch_description_from_python_launch_file(
+        os.path.join(state_bridge_launch_dir, 'state_bridge_launch.py'))
+
     launch_dir = os.path.join(nav_launch_dir, 'launch')
     pkg_share = get_package_share_directory('mf_simulation')
     
@@ -133,6 +141,12 @@ def generate_launch_description():
     ld.add_action(gazebo_client)
     
     ld.add_action(bridge_clock)
+
+    # ld.add_action(IncludeLaunchDescription(PythonLaunchDescriptionSource([
+    #     PathJoinSubstitution([state_bridge_launch_dir])
+    # ])))
+
+    ld.add_action(IncludeLaunchDescription(state_bridge_launch_decription))
     
     # Use OpaqueFunction to create robot instances after resolving the YAML path
     ld.add_action(OpaqueFunction(function=create_robot_instances))

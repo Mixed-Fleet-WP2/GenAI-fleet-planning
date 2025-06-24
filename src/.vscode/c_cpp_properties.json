@@ -5,7 +5,9 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "/opt/ros/jazzy/include/**",
-                "/opt/ros/jazzy/include/nav_msgs"
+                "/opt/ros/jazzy/include/nav_msgs",
+                "${workspaceFolder}",
+                "${workspaceFolder}/utils/*"
             ],
             "defines": [],
             "compilerPath": "/usr/lib/ccache/gcc",

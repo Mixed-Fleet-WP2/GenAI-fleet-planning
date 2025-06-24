@@ -4,14 +4,15 @@
 #include "geometry_msgs/msg/pose.hpp"
 #include "std_msgs/msg/string.hpp"
 #include "rclcpp/rclcpp.hpp"
-#include "json.hpp"
 #include "tf2_msgs/msg/tf_message.hpp"
+#include "utils.hpp"
+#include "types.hpp"
+#include "json.hpp"
+
 
 class StateBridge : public rclcpp::Node {
 public:
     StateBridge();
-    // Destructor
-    ~StateBridge();
 private:
     rclcpp::Publisher<std_msgs::msg::String>::SharedPtr pose_publisher_;
     rclcpp::Subscription<tf2_msgs::msg::TFMessage>::SharedPtr pose_subscriber_;
