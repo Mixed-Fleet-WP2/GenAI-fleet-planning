@@ -23,9 +23,12 @@ endif()
 
 add_library(mf_utils INTERFACE)
 
+# This directive populates INTERFACE_INCLUDE_DIRECTORIES which is a list of include directory requirements
+# https://cmake.org/cmake/help/latest/prop_tgt/INTERFACE_INCLUDE_DIRECTORIES.html#prop_tgt:INTERFACE_INCLUDE_DIRECTORIES
 target_include_directories(mf_utils
   INTERFACE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    # Where the users of the library should look for headers after install
     $<INSTALL_INTERFACE:include>
 )
 
@@ -40,10 +43,21 @@ install(
   DESTINATION include
 )
 
+# From CMAKE docs
+
+#INCLUDES DESTINATION
+ # This option specifies a list of directories which will be added to the
+ # INTERFACE_INCLUDE_DIRECTORIES target property of the <targets>
+ # when exported by the install(EXPORT) command.
+
+ #Thus, the generator INSTALL_INTERFACE already 
+ # does this and it is commented out here
+
 install(
   TARGETS mf_utils
   EXPORT mf_utils
-  INCLUDES DESTINATION include
+  # From Cmake docs: 
+  #INCLUDES DESTINATION include
 )
 
 ament_package()
