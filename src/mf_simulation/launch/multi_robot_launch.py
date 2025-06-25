@@ -22,6 +22,7 @@ def generate_launch_description():
     state_bridge_launch_dir = os.path.join(
         get_package_share_directory('state_bridge'), 'launch')
     
+
     state_bridge_launch_decription = get_launch_description_from_python_launch_file(
         os.path.join(state_bridge_launch_dir, 'state_bridge_launch.py'))
 
@@ -146,7 +147,12 @@ def generate_launch_description():
     #     PathJoinSubstitution([state_bridge_launch_dir])
     # ])))
 
-    ld.add_action(IncludeLaunchDescription(state_bridge_launch_decription))
+    if (not state_bridge_launch_decription):
+        print("AAAAAA", flush=True)
+        print(state_bridge_launch_decription, flush=True)
+    
+    ld.add_action(state_bridge_launch_decription)
+    #ld.add_action(IncludeLaunchDescription(state_bridge_launch_decription))
     
     # Use OpaqueFunction to create robot instances after resolving the YAML path
     ld.add_action(OpaqueFunction(function=create_robot_instances))

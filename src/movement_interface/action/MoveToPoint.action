@@ -1,6 +1,0 @@
-string x
-string y
----
-bool success
----
-float64[] curr_pos

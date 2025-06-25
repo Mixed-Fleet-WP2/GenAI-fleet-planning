@@ -28,20 +28,10 @@
   gz_type_name: "gz.msgs.Pose_V"
   direction: GZ_TO_ROS
 
-- topic_name: "/model/pallet_1/pose"
-  ros_type_name: "tf2_msgs/msg/TFMessage"
-  gz_type_name: "gz.msgs.Pose_V"
-  direction: GZ_TO_ROS
-
 # # replace imu_bridge - check gz topic name
 # - topic_name: "imu"
 #   ros_type_name: "sensor_msgs/msg/Imu"
 #   gz_type_name: "gz.msgs.IMU"
 #   direction: GZ_TO_ROS
 
-# #This topic is not namespaced by ros2 because it is absolute
-# - ros_topic_name: "/model/pallet_1/pose"
-#   gz_type_name: "gz.msgs.Pose"
-#   ros_type_name: "geometry_msgs/msg/Pose"
-#   direction: GZ_TO_ROS
 

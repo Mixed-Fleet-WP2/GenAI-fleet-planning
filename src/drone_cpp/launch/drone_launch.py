@@ -223,7 +223,7 @@ def generate_launch_description():
         arguments=[
             '-name', 'drone',
             '-string', parsed_sdf,
-            '-x', TextSubstitution(text=str(0.0)), '-y', TextSubstitution(text=str(0.0)), '-z', TextSubstitution(text=str(0.0)),
+            '-x', TextSubstitution(text=str(3.0)), '-y', TextSubstitution(text=str(0.0)), '-z', TextSubstitution(text=str(0.0)),
             '-R', TextSubstitution(text=str(0.0)), '-P', TextSubstitution(text=str(0.0)), '-Y', TextSubstitution(text=str(0.0))
             ]
     )

@@ -43,9 +43,3 @@
   gz_type_name: "gz.msgs.Boolean"
   direction: GZ_TO_ROS
 
-#This topic is not namespaced by ros2 because it is absolute
-- ros_topic_name: "/model/pallet_1/pose"
-  gz_type_name: "gz.msgs.Pose"
-  ros_type_name: "geometry_msgs/msg/Pose"
-  direction: GZ_TO_ROS
-

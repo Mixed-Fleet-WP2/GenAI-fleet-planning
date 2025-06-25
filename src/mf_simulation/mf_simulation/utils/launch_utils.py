@@ -31,7 +31,7 @@ def create_robot_instances(context, *args, **kwargs):
         robot_package = robot["package"]
         launch_file = robot["launch_file"]
         nav2_config = robot["nav2_config"]
-        start_pos = robot.get("starting_position", [0.0, 0.0, 0.0])
+        start_pos = robot.get("starting_position", [3.0, 0.0, 0.0])
         start_orient = robot.get("starting_orientation", [0.0, 0.0, 0.0])
         
         pkg = get_package_share_directory(robot_package)
