@@ -31,6 +31,9 @@ add_executable(drone_controller src/drone_controller.cpp)
 ament_target_dependencies(drone_tf_publisher rclcpp geometry_msgs tf2_ros nav_msgs tf2)
 ament_target_dependencies(drone_controller rclcpp std_msgs tf2_ros nav2_msgs rclcpp_components tf2 mf_utils)
 
+# Add non ament-compliant utils
+target_link_libraries(drone_controller mf_utils)
+
 
 # This installs the target named drone_node to directory specified after DESTINATION
 # the directory is a relative path relative to. From cmake docs:

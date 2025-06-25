@@ -17,8 +17,15 @@ find_package(mf_utils)
 
 add_executable(state_bridge src/state_bridge.cpp)
 
-ament_target_dependencies(state_bridge rclcpp geometry_msgs std_msgs tf2_msgs mf_utils)
-#target_include_directories(state_bridge PUBLIC ${UTILS_DIR})
+ament_target_dependencies(state_bridge rclcpp geometry_msgs std_msgs tf2_msgs)
+
+# Add non-ament utils
+target_link_libraries(state_bridge mf_utils)
+
+install(TARGETS 
+  state_bridge
+  DESTINATION lib/${PROJECT_NAME}
+)
 
 
 install(DIRECTORY
