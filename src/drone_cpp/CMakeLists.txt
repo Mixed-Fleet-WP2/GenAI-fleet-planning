@@ -24,7 +24,6 @@ find_package(mf_utils)
 # Define an executable target (cmake compiles and links the object files
 # together into a target named according to first param)
 
-add_executable(drone_node src/drone.cpp)
 add_executable(drone_tf_publisher src/drone_tf_publisher.cpp)
 add_executable(drone_controller src/drone_controller.cpp)
 # Add necessary dependecies to the target (specified as first argument)
@@ -37,7 +36,7 @@ ament_target_dependencies(drone_controller rclcpp std_msgs tf2_ros nav2_msgs rcl
 # the directory is a relative path relative to. From cmake docs:
 # When a relative path is given, it is interpreted relative to the value of the CMAKE_INSTALL_PREFIX variable.
 # (in ros2 case, the CMAKE_INSTALL_PREFIX is set by colcon)
-install(TARGETS drone_node drone_tf_publisher drone_controller DESTINATION lib/${PROJECT_NAME})
+install(TARGETS drone_tf_publisher drone_controller DESTINATION lib/${PROJECT_NAME})
 
 
 # Install launch files.
