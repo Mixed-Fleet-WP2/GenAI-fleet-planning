@@ -106,6 +106,16 @@ def generate_launch_description():
         output='screen',
         shell=False,
     )
+
+    interface_path = get_package_prefix('mf_simulation') + '/lib/python3.12/site-packages/mf_simulation/interface/interface.py'
+
+    start_interface = ExecuteProcess(
+        cmd=['python3', interface_path],
+        name='mf_simulation_interface',
+        output='screen',
+        shell=False,
+    )
+
     
     # # -s flag means server only
     # gazebo_server = ExecuteProcess(
@@ -207,6 +217,7 @@ def generate_launch_description():
     ld.add_action(gz_bridge)
     ld.add_action(gazebo_server)
     ld.add_action(gazebo_client)
+    ld.add_action(start_interface)
     
 
     # Use OpaqueFunction to create robot instances after resolving the YAML path

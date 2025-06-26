@@ -50,8 +50,8 @@ class PromptGenerator():
         template_dir = os.path.abspath(os.path.join(SCRIPT_PATH, "templates"))
         # https://jinja.palletsprojects.com/en/stable/api/#jinja2.FileSystemLoader
         self.env = Environment(
-            #loader=PackageLoader("mf_simulation")
-            loader = FileSystemLoader(template_dir)
+            loader=PackageLoader("mf_simulation.interface")
+            #loader = FileSystemLoader(template_dir)
         )
         self.template_ = self.env.get_template("prompt.jinja")
         self.robot_abilities_path_ = os.path.abspath(os.path.join(SCRIPT_PATH,
@@ -71,12 +71,13 @@ class PromptGenerator():
             # None == If a mapping or sequence consist only of scalars it will use "Flow Style", otherwise "Block Style"
             # See: https://stackoverflow.com/questions/56542746/read-and-dump-bracket-list-from-and-to-yaml-with-python
 
-        robot_states = yaml.dump(self.db.get_state(), default_flow_style=None, indent=2)
+        robot_states = yaml.dump(self.db.get_robot_states(), default_flow_style=None, indent=2)
+        object_states = yaml.dump(self.db.get_object_states(), default_flow_style=None, indent=2)
 
         filled_template = self.template_.render(robot_types=robot_abilities,
                                       task_description=task,
-                                      robot_states = robot_states,
-                                      object_positions="No objects currently in the environment")
+                                      robot_states=robot_states,
+                                      object_states=object_states)
         
         return filled_template
 
