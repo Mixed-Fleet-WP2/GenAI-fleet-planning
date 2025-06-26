@@ -12,7 +12,9 @@
 
 class StateBridge : public rclcpp::Node {
 public:
-    StateBridge();
+    // Use default values for options as default
+    // https://docs.ros2.org/dashing/api/rclcpp/classrclcpp_1_1NodeOptions.html
+    StateBridge(const rclcpp::NodeOptions & option = rclcpp::NodeOptions());
 private:
     rclcpp::Publisher<std_msgs::msg::String>::SharedPtr pose_publisher_;
     rclcpp::Subscription<tf2_msgs::msg::TFMessage>::SharedPtr pose_subscriber_;

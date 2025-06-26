@@ -11,20 +11,20 @@ from launch.actions import (
     IncludeLaunchDescription
 )
 from launch.substitutions import LaunchConfiguration, EnvironmentVariable, PathJoinSubstitution
-from launch_ros.actions import Node
+from launch_ros.actions import Node, LoadComposableNodes
 from mf_simulation.utils.launch_utils import create_robot_instances, launch_print
 from launch.launch_description_sources import get_launch_description_from_python_launch_file, PythonLaunchDescriptionSource
+from ros_gz_bridge.actions import RosGzBridge
+from ros_gz_sim.actions import GzServer
+from launch_ros.descriptions import ComposableNode
 
 
 def generate_launch_description():
     # Get the launch directory
     nav_launch_dir = get_package_share_directory('nav2_launch')
-    state_bridge_launch_dir = os.path.join(
-        get_package_share_directory('state_bridge'), 'launch')
     
-
-    state_bridge_launch_decription = get_launch_description_from_python_launch_file(
-        os.path.join(state_bridge_launch_dir, 'state_bridge_launch.py'))
+    global_mqtt_config_file = LaunchConfiguration('mqtt_config_file')
+    global_gz_bridge_config_file = LaunchConfiguration('gz_bridge_config')
 
     launch_dir = os.path.join(nav_launch_dir, 'launch')
     pkg_share = get_package_share_directory('mf_simulation')
@@ -81,14 +81,19 @@ def generate_launch_description():
         default_value=os.path.join(pkg_share, 'config', 'robots_default.yaml'),
         description='Full path to robots configuration YAML file'
     )
-    
-    # Bridge clock only once, see: https://github.com/gazebosim/ros_gz/issues/591
-    bridge_clock = Node(
-        package='ros_gz_bridge',
-        executable='parameter_bridge',
-        parameters=[{'use_sim_time': True}],
-        arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock'],
+
+
+    declare_global_mqtt_config_file = DeclareLaunchArgument(
+        name="mqtt_config_file",
+        default_value=os.path.join(pkg_share, 'config', 'state_bridge_mqtt_bridge.yaml')
     )
+
+    declare_global_gz_bridge_path = DeclareLaunchArgument(
+        name="gz_bridge_config",
+        default_value=os.path.join(pkg_share, 'config', 'state_bridge_ros_gz_bridge.yaml'),
+        description="Path to gz bridge configuration"
+    )
+    
     
     # At the moment there is a bug where processes started with shell=True are not shut down by launch
     # this is why the launch file from ros_gz_sim package is not used
@@ -102,19 +107,70 @@ def generate_launch_description():
         shell=False,
     )
     
-    # -s flag means server only
-    gazebo_server = ExecuteProcess(
-        cmd=['gz', 'sim', '-r', '-s', world],
-        output='screen',
+    # # -s flag means server only
+    # gazebo_server = ExecuteProcess(
+    #     cmd=['gz', 'sim', '-r', '-s', world],
+    #     output='screen',
+    # )
+
+    simulation_container = Node(
+        name='sim_env_container',
+        package='rclcpp_components',
+        executable='component_container',
+        output='both'
     )
-    
- 
+
+    # See https://github.com/gazebosim/ros_gz/blob/bba6783a85955e2719a0d11468d9a8a79223b0a7/ros_gz_sim/launch/ros_gz_sim.launch.py#L22 
+    # for example of using GzServer action
+
+    # GZServer implementation:
+    # https://github.com/gazebosim/ros_gz/blob/bba6783a85955e2719a0d11468d9a8a79223b0a7/ros_gz_sim/ros_gz_sim/actions/gzserver.py#L236
+    gazebo_server = GzServer(
+        world_sdf_file=world,
+        container_name='sim_env_container',
+        create_own_container=str(False),
+        use_composition= str(True),
+    )
+
+    # RosGzBridge implementation:
+    # https://github.com/gazebosim/ros_gz/blob/bba6783a85955e2719a0d11468d9a8a79223b0a7/ros_gz_bridge/ros_gz_bridge/actions/ros_gz_bridge.py#L267
+
+    # The node internally loads itself to the specified container so no need to make it below
+    gz_bridge = RosGzBridge(
+        bridge_name="global_gz_bridge",
+        config_file=global_gz_bridge_config_file,
+        container_name="sim_env_container",
+        create_own_container=str(False),
+        use_composition=str(True)
+    )
+
+    # https://docs.ros.org/en/jazzy/How-To-Guides/Launching-composable-nodes.html
+
+    # Load the the node that bridges gz->ros->mqtt into the same process
+    load_composable_nodes = LoadComposableNodes(
+        target_container='sim_env_container',
+        composable_node_descriptions=[
+            ComposableNode(
+                package='mqtt_client',
+                plugin='mqtt_client::MqttClient',
+                name='global_mqtt_client',
+                parameters=[global_mqtt_config_file],
+                extra_arguments=[{'use_intra_process_comms': True}],
+            ),
+            ComposableNode(
+                package='state_bridge',
+                plugin='StateBridge',
+                name='state_bridge_component',
+                parameters=[{'use_sim_time': True}],
+                extra_arguments=[{'use_intra_process_comms': True}],
+            ),
+        ]
+    )
+
     set_env_vars_resources = AppendEnvironmentVariable(
         'GZ_SIM_RESOURCE_PATH', os.path.join(pkg_share, 'models'))
   
-    # set_env_vars_resources1 = AppendEnvironmentVariable(
-    #     'GZ_SIM_RESOURCE_PATH', os.path.join(get_package_prefix('drone_cpp'), 'share'))
-    
+
     pkgs = get_packages_with_prefixes()
     
     # Create the launch description and populate
@@ -128,6 +184,10 @@ def generate_launch_description():
     
     #https://robotics.stackexchange.com/questions/98997/ros2-foxy-python-launch-argument-scope-when-nesting-launch-files
      # Declare the launch options
+
+    ld.add_action(declare_global_mqtt_config_file)
+    ld.add_action(declare_global_gz_bridge_path)
+    
     ld.add_action(declare_world_cmd)
     ld.add_action(declare_map_yaml_cmd)
     ld.add_action(declare_use_rviz_cmd)
@@ -137,23 +197,18 @@ def generate_launch_description():
     ld.add_action(declare_robots_file)
     ld.add_action(set_env_vars_resources)
 
+    ld.add_action(simulation_container)
+
     # Add Gazebo processes
+    #ld.add_action(state_bridge)
+
+    ld.add_action(load_composable_nodes)
+
+    ld.add_action(gz_bridge)
     ld.add_action(gazebo_server)
     ld.add_action(gazebo_client)
     
-    ld.add_action(bridge_clock)
 
-    # ld.add_action(IncludeLaunchDescription(PythonLaunchDescriptionSource([
-    #     PathJoinSubstitution([state_bridge_launch_dir])
-    # ])))
-
-    if (not state_bridge_launch_decription):
-        print("AAAAAA", flush=True)
-        print(state_bridge_launch_decription, flush=True)
-    
-    ld.add_action(state_bridge_launch_decription)
-    #ld.add_action(IncludeLaunchDescription(state_bridge_launch_decription))
-    
     # Use OpaqueFunction to create robot instances after resolving the YAML path
     ld.add_action(OpaqueFunction(function=create_robot_instances))
     
