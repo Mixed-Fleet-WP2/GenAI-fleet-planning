@@ -23,8 +23,8 @@ if(IS_COMPOSED)
   add_library(state_bridge SHARED src/state_bridge.cpp)
   
   rclcpp_components_register_node(state_bridge
-    PLUGIN "StateBridge"
-    EXECUTABLE state_bridge_component
+    PLUGIN "state_bridge::StateBridge"
+    EXECUTABLE state_bridge_exec
   )
 
   ament_target_dependencies(state_bridge rclcpp_components)

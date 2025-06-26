@@ -159,8 +159,8 @@ def generate_launch_description():
             ),
             ComposableNode(
                 package='state_bridge',
-                plugin='StateBridge',
-                name='state_bridge_component',
+                plugin='state_bridge::StateBridge',
+                name='state_bridge_exec',
                 parameters=[{'use_sim_time': True}],
                 extra_arguments=[{'use_intra_process_comms': True}],
             ),

@@ -1,6 +1,10 @@
 #include "state_bridge.hpp"
 
+// In theory, this ros node could be replaced with pure Gazebo node
+// but the bridge must run anyway for the clock
+// https://gazebosim.org/api/transport/12/messages.html
 
+using namespace state_bridge;
 
 StateBridge::StateBridge(const rclcpp::NodeOptions & option) : rclcpp::Node("state_bridge", option) 
 {   
@@ -52,8 +56,8 @@ void StateBridge::pose_callback(const tf2_msgs::msg::TFMessage::SharedPtr msg)
 
 }
 
-// https://docs.ros.org/en/jazzy/Tutorials/Intermediate/Writing-a-Composable-Node.html
 
+// https://docs.ros.org/en/jazzy/Tutorials/Intermediate/Writing-a-Composable-Node.html
 #ifndef IS_COMPOSED
 
 int main(int argc, char * argv[])
@@ -66,5 +70,6 @@ int main(int argc, char * argv[])
 
 #else
     #include <rclcpp_components/register_node_macro.hpp>
-    RCLCPP_COMPONENTS_REGISTER_NODE(StateBridge)
+    //Namespace is needed here despite using namespace because macros are expanded before namespaces are checked
+    RCLCPP_COMPONENTS_REGISTER_NODE(state_bridge::StateBridge)
 #endif
