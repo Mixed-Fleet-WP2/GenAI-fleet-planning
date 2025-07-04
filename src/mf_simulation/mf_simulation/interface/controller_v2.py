@@ -2,8 +2,12 @@ import paho.mqtt.client as mqtt
 import json
 import threading
 import re
+from pydantic import BaseModel
+from typing import Optional
 
-MODELS = ["pallet_1"]
+class ExecutableAction(BaseModel):
+    action_id: int
+    args: dict[list[Optional[str]]]
 
 class Controller():
 
@@ -18,9 +22,6 @@ class Controller():
         self.received_feedback = None
         
         self.mqtt_client.subscribe([("feedback", 2)])
-
-        for model in MODELS:
-            self.mqtt_client.subscribe([(f"{model}_pos", 2)])
 
         self.mqtt_client.on_message = self.on_message
 
@@ -63,6 +64,9 @@ class Controller():
             print(f"Marking action {action_id} as completed.")
             self.completed_tasks.add(action_id)
             self.condition.notify_all()  # Notify all threads waiting on preconditions
+
+    def run_plan():
+        print("HYE")
 
 
     def run_action(self, robot:str, action_name:str, args:dict, uuid, prereqs:list = None):

@@ -3,8 +3,16 @@
 
 #include <cmath>
 #include "json.hpp"
+#include <vector>
+#include <unordered_map>
+#include <string>
 
 using json = nlohmann::json;
+
+struct ExecutableAction{
+    int action_id;
+    std::unordered_map<std::string, std::string> args;
+};
 
 struct Position{
     float x;
@@ -50,6 +58,11 @@ void from_json(const json& j, Position& p) {
     j.at("roll").get_to(p.roll);
     j.at("pitch").get_to(p.pitch);
     j.at("yaw").get_to(p.yaw);
+}
+
+void from_json(const json& j, ExecutableAction& e) {
+    j.at("action_id").get_to(e.action_id);
+    j.at("args").get_to(e.args);
 }
 
 #endif

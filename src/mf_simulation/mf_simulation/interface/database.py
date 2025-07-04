@@ -1,5 +1,4 @@
 import paho.mqtt.client as mqtt
-import base64
 from pydantic import BaseModel, RootModel
 import json
 from typing import Literal

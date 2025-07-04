@@ -82,7 +82,7 @@ class PromptGenerator():
         return filled_template
 
    
-    def generate_plan(self, task: str, model: str="gpt-4o-mini", format: str="json") -> tuple[str, str]:
+    def generate_plan(self, task: str, model: str="gpt-4o-mini") -> tuple[str, str]:
         """
         Generate an action plan for available robots using an llm that
         attempts to achieve a given task. 
@@ -103,9 +103,8 @@ class PromptGenerator():
             response = self.send_open_ai_request(prompt, model)
         
         res_obj = response.model_dump()
-        self.plan_json_ = json.dumps(res_obj, indent=2)
-        self.plan_yaml_ = yaml.dump(res_obj, indent=2)
-        return prompt, self.return_formatted(format)
+       
+        return prompt, response
             
     def send_open_ai_request(self, content, model):
         
@@ -120,17 +119,4 @@ class PromptGenerator():
         )
         return res.output_parsed
 
-    def return_formatted(self, format: str = "json") -> str:
-        """
-        Return the llm prompt and plan in json or yaml format
 
-        Args:
-            format: format to return either 'json' or 'yaml'
-        
-        Returns:
-            Json or yaml formatted string of the current plan
-        """
-        if format == "json":
-            return self.plan_json_
-        else:
-            return self.plan_yaml_

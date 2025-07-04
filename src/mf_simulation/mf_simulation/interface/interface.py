@@ -12,13 +12,17 @@ from PySide6.QtWidgets import (QApplication,
     )
 
 
-from PySide6.QtCore import QTimer, QThread, QRunnable, QThreadPool, Slot, Signal, QObject, Qt
+from PySide6.QtCore import QTimer, QRunnable, QThreadPool, Slot, Signal, QObject
 
 import os
 
-from combo_box import ComboBox
-from llm_utils import MODELS, PromptGenerator
-from controller_v2 import Controller
+from mf_simulation.interface.combo_box import ComboBox
+from mf_simulation.interface.llm_utils import MODELS, PromptGenerator, Plan
+from mf_simulation.interface.controller_v2 import Controller
+import threading
+import json
+import yaml
+
 
 # Save this for the gu
 
@@ -74,8 +78,11 @@ class Interface(QMainWindow):
         self.current_model_ = "gpt-4o-mini"
 
         self.current_format_ = Formats.JSON
-        self.plan_ = ""
-        
+        self.plan_ = None
+        self.plan_string_ = ""
+        self.plan_json_ = ""
+        self.plan_yaml_ = ""
+
         self.status_text_ = QLabel("")
         self.status_text_.setProperty("class", "status-text")
         
@@ -194,8 +201,7 @@ class Interface(QMainWindow):
 
         worker = Worker(self.prompt_generator_.generate_plan,
             self.views_["Edit task"].toPlainText(),
-            self.current_model_,
-            self.current_format_.value)
+            self.current_model_,)
         
         worker.signals.result_signal.connect(self.update_gui)
 
@@ -203,10 +209,13 @@ class Interface(QMainWindow):
     
     def update_gui(self, result):
         prompt, plan = result
-        self.plan_ = plan
+        self.plan_: Plan = plan
+
+        # Cache the plan in different formats
+        self.plan_json_ = json.dumps(plan, indent=2)
+        self.plan_yaml_ = yaml.dump(plan, indent=2)
 
         # Reformat for GUI only
-        print(self.current_format_)
         plan_formatted = self.prompt_generator_.return_formatted(self.current_format_.value)
 
         self.views_["View full prompt"].setPlainText(prompt)
@@ -220,7 +229,7 @@ class Interface(QMainWindow):
 
     def switch_format_(self, btn: QPushButton):
         self.current_format_ = (Formats.JSON
-                     if self.current_format_ is Formats.YAML
+                     if self.current_format_ == Formats.YAML
                      else Formats.YAML)
         
         btn.setText(f"Toggle format (current: {self.current_format_.value})")
@@ -229,10 +238,35 @@ class Interface(QMainWindow):
         
         self.views_["View LLM response"].setPlainText(plan)
     
+    def plan_callback():
+        print("DONE")
+
     def execute_plan_(self):
-        pass
+        
+        if not self.plan_:
+            return
 
+        worker = Worker(self.controller_.run_plan, self.plan_)
+        
+        worker.signals.result_signal.connect(self.update_gui)
 
+        self.threadpool.start(worker)
+
+    def return_formatted(self, format: str = "json") -> str:
+        """
+        Return the llm prompt and plan in json or yaml format
+
+        Args:
+            format: format to return either 'json' or 'yaml'
+
+        Returns:
+            Json or yaml formatted string of the current plan
+        """
+        if format == "json":
+            return self.plan_json_
+        else:
+            return self.plan_yaml_
+        
 if __name__ == "__main__":
     app = QApplication([])
 
