@@ -1,6 +1,6 @@
 #include "drone_controller.hh"
 
-
+//https://robotics.stackexchange.com/questions/107697/turtlebot4-nav2-how-to-call-action-navigatetopose-from-node-in-cpp
 DroneController::DroneController() :
     Node("default_name"){
     
@@ -50,24 +50,19 @@ void DroneController::move_to_pose_callback(
     
     try {
         const std::string &msg_str = msg->data;
-        json json_object = json::parse(msg_str);
-        json args_object = json_object["args"];
-        // How to iterate over json object
-        //https://json.nlohmann.me/features/iterators/#access-object-keys-during-iteration
-        for (const auto& elem : args_object.items() ){
-            if (elem.value().is_number_float()){
-                // https://cplusplus.com/reference/string/stof/
-                float arg_as_float = elem.value();
-                RCLCPP_INFO(get_logger(), "The value is %f", arg_as_float);
-            }else{
-                RCLCPP_ERROR(get_logger(),"The argument of json was not a float!");
-            }
-        }
-    }catch (int errorCode){
         
+        if (json::accept(msg_str)){
+            RCLCPP_ERROR_STREAM(get_logger(), "Received invalid json of the format: " + msg_str);
+        }
+
+        json json_object = json::parse(msg_str);
+        ExecutableAction action = json_object.template get<ExecutableAction>();
+
+        
+    }catch (json::type_error &e){
+        RCLCPP_ERROR_STREAM(get_logger(), e.what());
     }
 
-    
 }
 void DroneController::odom_received_callback(const std::shared_ptr<OdomMsg> msg) {
 

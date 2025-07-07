@@ -1,3 +1,4 @@
+#type: ignore
 from setuptools import find_packages, setup
 from glob import glob
 import sys
@@ -14,9 +15,9 @@ from build_utils import setup_models
 setup(
     name=package_name,
     version='0.0.0',
-    packages=find_packages(exclude=["test"]),  # Exclude templates
+    packages=find_packages(exclude=["test"]),
     package_data={
-        "mf_simulation.interface": ["*.qss", "templates/*.jinja", ".env"],
+        "mf_simulation.interface": ["*.qss", "templates/*.jinja", ".env", "*.yaml"],
     },
     # Surpress warnings about templates/ being treated as a package
     include_package_data=False,

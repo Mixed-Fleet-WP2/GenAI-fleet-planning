@@ -14,6 +14,20 @@ struct ExecutableAction{
     std::unordered_map<std::string, std::string> args;
 };
 
+//https://json.nlohmann.me/features/arbitrary_types/
+//OR
+//https://json.nlohmann.me/features/arbitrary_types/#simplify-your-life-with-macros
+
+
+// void from_json(const json& j, ExecutableAction& e){
+//     j.at("action_id").get_to(e.action_id);
+//     j.at("args").get_to(e.args);
+
+
+// }
+
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ExecutableAction, action_id, args);
+
 struct Position{
     float x;
     float y;
@@ -38,7 +52,6 @@ void Position::round() {
 
 }
 
-//https://json.nlohmann.me/features/arbitrary_types/
 
 void to_json(json& j, const Position& p) {
     j = json{ 
@@ -60,9 +73,5 @@ void from_json(const json& j, Position& p) {
     j.at("yaw").get_to(p.yaw);
 }
 
-void from_json(const json& j, ExecutableAction& e) {
-    j.at("action_id").get_to(e.action_id);
-    j.at("args").get_to(e.args);
-}
 
 #endif

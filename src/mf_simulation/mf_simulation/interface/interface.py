@@ -8,7 +8,8 @@ from PySide6.QtWidgets import (QApplication,
                             QComboBox,
                             QGridLayout,
                             QLabel,
-                            QTextEdit
+                            QTextEdit,
+                            QLayout
     )
 
 
@@ -16,13 +17,13 @@ from PySide6.QtCore import QTimer, QRunnable, QThreadPool, Slot, Signal, QObject
 
 import os
 
+from enum import Enum
 from mf_simulation.interface.combo_box import ComboBox
-from mf_simulation.interface.llm_utils import MODELS, PromptGenerator, Plan
-from mf_simulation.interface.controller_v2 import Controller
-import threading
-import json
-import yaml
+from mf_simulation.interface.llm_utils import PromptGenerator, Plan, MODELS, AIModel, ClaudeModel
 
+from mf_simulation.interface.controller_v2 import Controller
+import traceback
+import sys
 
 # Save this for the gu
 
@@ -32,6 +33,7 @@ from enum import Enum
 
 class WorkerSignals(QObject):
     result_signal = Signal(tuple)
+    error = Signal(tuple)
 
 # https://www.pythonguis.com/tutorials/multithreading-pyside6-applications-qthreadpool/
 class Worker(QRunnable):
@@ -48,8 +50,13 @@ class Worker(QRunnable):
     # Solot decorator is only necessary with threads
     @Slot()
     def run(self):
-        result = self.fn(*self.args, **self.kwargs)
-        self.signals.result_signal.emit(result)
+        try:
+            result = self.fn(*self.args, **self.kwargs)
+            self.signals.result_signal.emit(result)
+        except:
+            #traceback.print_exc()
+            value = sys.exc_info()[1]
+            self.signals.error.emit(value)
 
 
 class Formats(Enum):
@@ -69,26 +76,23 @@ class Interface(QMainWindow):
 
         widget = QWidget()
         
-        self.active_btn_ = None
-
         self.views_ = {"Edit task":QTextEdit(""),
                     "View full prompt":QTextEdit(""),
                     "View LLM response": QTextEdit("")}
         
-        self.current_model_ = "gpt-4o-mini"
+        self.current_model_: AIModel = ClaudeModel.CLAUDE_3_5_HAIKU
 
         self.current_format_ = Formats.JSON
-        self.plan_ = None
-        self.plan_string_ = ""
-        self.plan_json_ = ""
-        self.plan_yaml_ = ""
-
+        self.plan_: None | Plan = None
+    
         self.status_text_ = QLabel("")
+        self.status_text_.setWordWrap(True)
+        self.status_text_.setMaximumWidth(125)
         self.status_text_.setProperty("class", "status-text")
         
         self.dropdown_widget_ = self.create_dropdown_group()
         self.main_view_widget_ = self.create_views()
-        self.control_widget_ = self.create_controls()
+        self.control_widget_, self.active_btn_ = self.create_controls()
         
         main_layout = QGridLayout()
         # Start row, start col, row span, col span
@@ -110,12 +114,17 @@ class Interface(QMainWindow):
 
         selected_model_label = QLabel("No model selected")
         
-        for model in MODELS:
-            dropdown = ComboBox(placeholderText=model)
+        for provider in MODELS:
+
+            dropdown = ComboBox(placeholderText=provider)
             dropdown.activated.connect(lambda _,
                 dropdown=dropdown,
                 label=selected_model_label: self.switch_model(dropdown, label))
-            dropdown.addItems(MODELS[model])
+            provider_models = MODELS[provider]
+
+            for model in provider_models:
+                dropdown.addItem(model.plain_name, model)
+
             dropdown_widget_layout.addWidget(dropdown)
 
         dropdown_widget_layout.addStretch()
@@ -154,7 +163,7 @@ class Interface(QMainWindow):
         control_widget_layout.setContentsMargins(0,0,0,0)
         control_widget.setLayout(control_widget_layout)
         
-        buttons = {}
+        buttons: dict[str, QPushButton] = {}
         for i, (label, _) in enumerate(self.views_.items()):
             btn = QPushButton(label)
             btn.clicked.connect(lambda _, idx=i, b=btn: self.switch_view(idx, b))
@@ -178,22 +187,30 @@ class Interface(QMainWindow):
         control_widget_layout.addWidget(execute_button)
         execute_button.clicked.connect(self.execute_plan_)
 
+        active_btn: QPushButton = buttons["Edit task"]
 
-        self.active_btn_:QPushButton = buttons["Edit task"]
-        self.active_btn_.setStyleSheet(f"background-color: {UBUNTU_ORANGE};")
+        active_btn.setStyleSheet(f"background-color: {UBUNTU_ORANGE};")
         
-        return control_widget
+        return control_widget, active_btn
 
     def switch_view(self, index: int, button: QPushButton):
-        self.main_view_widget_.layout().setCurrentIndex(index)
+        
+        stack_layout: QLayout| None = self.main_view_widget_.layout()
+        if not stack_layout or not isinstance(stack_layout, QStackedLayout):
+            return
+
+        stack_layout.setCurrentIndex(index)
+        
         self.active_btn_.setStyleSheet("background-color: none;")
         button.setStyleSheet(f"background-color: {UBUNTU_ORANGE};")
         self.active_btn_ = button
     
     def switch_model(self, dropdown:QComboBox, label:QLabel):
-        model = dropdown.currentText()
-        self.current_model_ = model
-        label.setText(f"Selected model: {model}")
+        model_name = dropdown.currentText()
+        model = dropdown.currentData()
+        self.current_model_ : AIModel = model
+        print("CURRENT MODEL ", model, flush=True)
+        label.setText(f"Selected model: {model_name}")
     
     def generate_ai_plan(self):
 
@@ -204,28 +221,29 @@ class Interface(QMainWindow):
             self.current_model_,)
         
         worker.signals.result_signal.connect(self.update_gui)
+        worker.signals.error.connect(self.display_error)
 
         self.threadpool.start(worker)
     
-    def update_gui(self, result):
+    def update_gui(self, result: tuple[str, Plan]):
         prompt, plan = result
-        self.plan_: Plan = plan
-
-        # Cache the plan in different formats
-        self.plan_json_ = json.dumps(plan, indent=2)
-        self.plan_yaml_ = yaml.dump(plan, indent=2)
-
-        # Reformat for GUI only
-        plan_formatted = self.prompt_generator_.return_formatted(self.current_format_.value)
+        self.plan_ = plan
 
         self.views_["View full prompt"].setPlainText(prompt)
-        self.views_["View LLM response"].setPlainText(plan_formatted)
-        
+        self.views_["View LLM response"].setPlainText(
+            self.plan_.to_format(self.current_format_.value))
+               
         # Make the status text dissappear
         self.status_text_.setText("Done!")
         timer = QTimer(self)
         timer.timeout.connect(lambda label=self.status_text_: label.setText(""))
         timer.start(2000)
+    
+    def display_error(self, err_msg: Exception):
+        self.status_text_.setText(str(err_msg))
+        timer = QTimer(self)
+        timer.timeout.connect(lambda label=self.status_text_: label.setText(""))
+        timer.start(8000)
 
     def switch_format_(self, btn: QPushButton):
         self.current_format_ = (Formats.JSON
@@ -233,40 +251,29 @@ class Interface(QMainWindow):
                      else Formats.YAML)
         
         btn.setText(f"Toggle format (current: {self.current_format_.value})")
-        plan = self.prompt_generator_.return_formatted(
-            self.current_format_.value)
+
+        if not self.plan_:
+            return
         
-        self.views_["View LLM response"].setPlainText(plan)
+        self.views_["View LLM response"].setPlainText(
+            self.plan_.to_format(self.current_format_.value))
     
-    def plan_callback():
+    def plan_callback(self):
         print("DONE")
 
     def execute_plan_(self):
         
+        # Prevent executing if user presses execute without plan
         if not self.plan_:
             return
 
         worker = Worker(self.controller_.run_plan, self.plan_)
         
         worker.signals.result_signal.connect(self.update_gui)
+        worker.signals.error.connect(self.display_error)
 
         self.threadpool.start(worker)
 
-    def return_formatted(self, format: str = "json") -> str:
-        """
-        Return the llm prompt and plan in json or yaml format
-
-        Args:
-            format: format to return either 'json' or 'yaml'
-
-        Returns:
-            Json or yaml formatted string of the current plan
-        """
-        if format == "json":
-            return self.plan_json_
-        else:
-            return self.plan_yaml_
-        
 if __name__ == "__main__":
     app = QApplication([])
 

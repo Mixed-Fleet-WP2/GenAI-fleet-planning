@@ -1,3 +1,5 @@
+# type: ignore
+
 import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import PoseStamped, Pose
@@ -15,7 +17,6 @@ from MqttPayload import MqttPayload
 import json
 #https://answers.ros.org/question/409120/
 import rosidl_runtime_py
-
 
 from utils import move_object_to_point, reset_contact_sensor, get_pos_as_other_coord_frame
 

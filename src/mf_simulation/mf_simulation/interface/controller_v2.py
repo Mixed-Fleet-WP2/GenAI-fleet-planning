@@ -1,13 +1,13 @@
 import paho.mqtt.client as mqtt
 import json
 import threading
-import re
 from pydantic import BaseModel
 from typing import Optional
+from mf_simulation.interface.llm_utils import Plan
 
 class ExecutableAction(BaseModel):
     action_id: int
-    args: dict[list[Optional[str]]]
+    args: dict[str, list[Optional[str]]]
 
 class Controller():
 
@@ -38,17 +38,9 @@ class Controller():
     
     def on_message(self, client, userdata, message:mqtt.MQTTMessage):
 
-        #Position messages names are always in the format <model>_pos
-        if re.search(r".*_pos", message.topic) != None:
-            #The first group (group 0) is the whole match, the second group (group 1) is the model name
-            model_name = re.search(r"(.*)_pos", message.topic).group(1)
-            pos_dict = json.loads(message.payload)
-            self.object_positions[model_name] = pos_dict
-            return
-        else:
-            print(f"Received message: {message.topic}: {message.payload}", flush=True)
+        print(f"Received message: {message.topic}: {message.payload}", flush=True)
         
-        payload = self.__process_mqtt_msg(message)
+        payload = message.payload
 
         if "error" in payload:
             print(f"Received error: {payload['error']}", flush=True)
@@ -65,8 +57,8 @@ class Controller():
             self.completed_tasks.add(action_id)
             self.condition.notify_all()  # Notify all threads waiting on preconditions
 
-    def run_plan():
-        print("HYE")
+    def run_plan(self, plan: Plan):
+        pass
 
 
     def run_action(self, robot:str, action_name:str, args:dict, uuid, prereqs:list = None):
