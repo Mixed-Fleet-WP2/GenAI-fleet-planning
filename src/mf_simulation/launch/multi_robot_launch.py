@@ -1,14 +1,13 @@
 import os
-from ament_index_python.packages import get_package_share_directory, get_package_prefix, get_packages_with_prefixes
+from ament_index_python.packages import get_package_share_directory, get_packages_with_prefixes, get_package_prefix
 from launch import LaunchDescription
 from launch.actions import (
     AppendEnvironmentVariable,
     DeclareLaunchArgument,
     ExecuteProcess,
-    LogInfo,
     OpaqueFunction,
     GroupAction,
-    IncludeLaunchDescription
+    IncludeLaunchDescription,
 )
 from launch.substitutions import LaunchConfiguration, EnvironmentVariable, PathJoinSubstitution
 from launch_ros.actions import Node, LoadComposableNodes
@@ -17,6 +16,7 @@ from launch.launch_description_sources import get_launch_description_from_python
 from ros_gz_bridge.actions import RosGzBridge
 from ros_gz_sim.actions import GzServer
 from launch_ros.descriptions import ComposableNode
+from launch.event_handlers import OnShutdown
 
 
 def generate_launch_description():
@@ -107,21 +107,13 @@ def generate_launch_description():
         shell=False,
     )
 
-    interface_path = get_package_prefix('mf_simulation') + '/lib/python3.12/site-packages/mf_simulation/interface/interface.py'
 
     start_interface = ExecuteProcess(
-        cmd=['python3', interface_path],
+        cmd=['ros2', 'run', 'mf_simulation', 'interface'],
         name='mf_simulation_interface',
         output='screen',
         shell=False,
     )
-
-    
-    # # -s flag means server only
-    # gazebo_server = ExecuteProcess(
-    #     cmd=['gz', 'sim', '-r', '-s', world],
-    #     output='screen',
-    # )
 
     simulation_container = Node(
         name='sim_env_container',
@@ -180,14 +172,13 @@ def generate_launch_description():
     set_env_vars_resources = AppendEnvironmentVariable(
         'GZ_SIM_RESOURCE_PATH', os.path.join(pkg_share, 'models'))
   
-
-    pkgs = get_packages_with_prefixes()
     
     # Create the launch description and populate
     ld = LaunchDescription()
 
-    for pkg in pkgs:
-        pkg_prefix = pkgs[pkg]
+    PKGS = ["forklift_controller", "drone_cpp"]
+    for pkg in PKGS:
+        pkg_prefix = get_package_prefix(pkg)
         resource_path = os.path.join(pkg_prefix, 'share')
         ld.add_action(AppendEnvironmentVariable(
         'GZ_SIM_RESOURCE_PATH', resource_path))
@@ -208,9 +199,6 @@ def generate_launch_description():
     ld.add_action(set_env_vars_resources)
 
     ld.add_action(simulation_container)
-
-    # Add Gazebo processes
-    #ld.add_action(state_bridge)
 
     ld.add_action(load_composable_nodes)
 

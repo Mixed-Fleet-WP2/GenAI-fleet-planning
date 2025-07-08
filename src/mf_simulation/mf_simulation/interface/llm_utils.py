@@ -3,14 +3,14 @@ import os
 import yaml
 from dotenv import load_dotenv
 from jinja2 import Environment, PackageLoader
-from database import Database
+from mf_simulation.interface.database import Database
 from pydantic import BaseModel, ValidationError
-from typing import NewType, Any, Optional
+from typing import NewType, Any, Optional, Literal, Final
 from openai import OpenAI
 from anthropic import Anthropic
 from anthropic.types import Message, ContentBlock
 from enum import Enum
-from typing import Literal
+from types import MappingProxyType
 
 class LLMModel(Enum):
     def __init__(self, plain_name:str, model_name:str):
@@ -47,13 +47,13 @@ load_dotenv(API_KEY_ENV_PATH)
 
 STRUCTURAL_NOT_SUPPORTED = ["gpt-3.5-turbo"]
 
-type AIModel = GPTModel | ClaudeModel | LLamaModel
+AIModel = GPTModel | ClaudeModel | LLamaModel
 
-MODELS: dict[str, list[AIModel]] = {
+MODELS: MappingProxyType[Literal["OpenAI", "Claude", "LLama"], list[AIModel]] = MappingProxyType({
     "OpenAI": list(GPTModel),
     "Claude": list(ClaudeModel),
-    "LLama": list(LLamaModel)
-}
+    "LLama": list(LLamaModel),
+})
 
 
 LLM_ROLE = "You are a central controller responsible for managing a multi-robot system."
@@ -67,7 +67,7 @@ class LLMError(Exception):
 ActionID = NewType("ActionID", int)
 
 class Action(BaseModel):
-    action_id: ActionID
+    action_id: int
     executing_robot: str
     command: str
     command_arguments: list[Optional[str]]
@@ -200,8 +200,6 @@ class PromptGenerator():
             
     def __send_anthtropic_request(self, content:str, model:str) -> Plan:
         
-        print("GENERATING PLAN", flush=True)
-
         #https://docs.pydantic.dev/latest/concepts/json_schema/#generating-json-schema
         plan_schema: dict[str, Any] = Plan.model_json_schema()
 
@@ -221,8 +219,8 @@ class PromptGenerator():
             )
 
             res_content: ContentBlock = res.content[0]
-            if res_content.type == "text":
-                plan:str = res_content.text
+            if res_content.type == "tool_use":
+                plan = res_content.input
             else:
                 raise LLMError("Error parsing response from Anthropic API")
 
@@ -234,10 +232,10 @@ class PromptGenerator():
         except Exception as e:
             raise LLMError("Error trying to get response from Anthropic API", e)
 
-    def __validate_output(self, output: str):
+    def __validate_output(self, output: object):
         
         try:
-            return Plan.model_validate_json(output)
+            return Plan.model_validate(output)
         except ValidationError:
             raise
             

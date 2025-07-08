@@ -1,13 +1,11 @@
 #type: ignore
 from setuptools import find_packages, setup
 from glob import glob
-import sys
+
 import os
 package_name = 'mf_simulation'
-# Add the build_utils.py to path
+
 # https://stackoverflow.com/questions/3108285/in-python-script-how-do-i-set-pythonpath
-#sys.path.append(os.path.abspath('../'))
-#print(sys.path, file=sys.stderr, flush=True)
 from build_utils import setup_models
 # Get directory of this file
 #https://stackoverflow.com/questions/4934806/how-can-i-find-scripts-directory
@@ -42,6 +40,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            'interface = mf_simulation.interface.interface:main'
         ],
     },
 )

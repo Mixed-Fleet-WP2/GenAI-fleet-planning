@@ -93,6 +93,9 @@ void DroneController::odom_received_callback(const std::shared_ptr<OdomMsg> msg)
     auto message = std_msgs::msg::String();
     message.data = stringified_status;
     status_publisher_->publish(message);
+
+    const std::map<std::string, int> test = { {"jee", 2} };
+
     
 };
 

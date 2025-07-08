@@ -1,3 +1,8 @@
+import sys
+
+print("THE USED INTERPRETER IS ", sys.executable, flush=True)
+print("KHYL")
+
 from PySide6.QtWidgets import (QApplication,
                             QWidget, 
                             QMainWindow,
@@ -16,14 +21,15 @@ from PySide6.QtWidgets import (QApplication,
 from PySide6.QtCore import QTimer, QRunnable, QThreadPool, Slot, Signal, QObject
 
 import os
+import signal
 
 from enum import Enum
 from mf_simulation.interface.combo_box import ComboBox
-from mf_simulation.interface.llm_utils import PromptGenerator, Plan, MODELS, AIModel, ClaudeModel
+from mf_simulation.interface.llm_utils import PromptGenerator, Plan, GPTModel, ClaudeModel, LLamaModel, MODELS
 
 from mf_simulation.interface.controller_v2 import Controller
-import traceback
-import sys
+
+
 
 # Save this for the gu
 
@@ -54,7 +60,6 @@ class Worker(QRunnable):
             result = self.fn(*self.args, **self.kwargs)
             self.signals.result_signal.emit(result)
         except:
-            #traceback.print_exc()
             value = sys.exc_info()[1]
             self.signals.error.emit(value)
 
@@ -80,7 +85,7 @@ class Interface(QMainWindow):
                     "View full prompt":QTextEdit(""),
                     "View LLM response": QTextEdit("")}
         
-        self.current_model_: AIModel = ClaudeModel.CLAUDE_3_5_HAIKU
+        self.current_model_: GPTModel | ClaudeModel | LLamaModel = ClaudeModel.CLAUDE_SONNET_4
 
         self.current_format_ = Formats.JSON
         self.plan_: None | Plan = None
@@ -112,10 +117,9 @@ class Interface(QMainWindow):
         dropdown_widget_layout.setContentsMargins(0,0,0,0)
         dropdown_widget_layout.setSpacing(0)
 
-        selected_model_label = QLabel("No model selected")
+        selected_model_label = QLabel(self.current_model_.plain_name)
         
         for provider in MODELS:
-
             dropdown = ComboBox(placeholderText=provider)
             dropdown.activated.connect(lambda _,
                 dropdown=dropdown,
@@ -208,8 +212,7 @@ class Interface(QMainWindow):
     def switch_model(self, dropdown:QComboBox, label:QLabel):
         model_name = dropdown.currentText()
         model = dropdown.currentData()
-        self.current_model_ : AIModel = model
-        print("CURRENT MODEL ", model, flush=True)
+        self.current_model_ : GPTModel | ClaudeModel | LLamaModel = model
         label.setText(f"Selected model: {model_name}")
     
     def generate_ai_plan(self):
@@ -274,9 +277,18 @@ class Interface(QMainWindow):
 
         self.threadpool.start(worker)
 
-if __name__ == "__main__":
+
+def main(args=None):
+    
     app = QApplication([])
 
+    # The event loop blocks regular KeyboardInterrupts so signals are used instead
+    #https://stackoverflow.com/questions/4938723/what-is-the-correct-way-to-make-my-pyqt-application-quit-when-killed-from-the-co
+
+    # SIG_DFL means that kernel handles the signal
+    # https://stackoverflow.com/questions/33922223/what-exactly-sig-dfl-do
+    signal.signal(signal.SIGINT, signal.SIG_DFL)
+    
     interface_path = os.path.abspath(os.path.dirname(__file__))
     stylesheet_path = os.path.join(interface_path, "style.qss")
     with open(stylesheet_path, "r") as f:
@@ -287,3 +299,11 @@ if __name__ == "__main__":
     window.resize(600, 400)
     window.show()
     app.exec()
+
+    
+
+if __name__ == "__main__":
+    main()
+
+
+    

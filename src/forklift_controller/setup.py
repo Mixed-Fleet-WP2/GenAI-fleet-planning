@@ -1,3 +1,4 @@
+# type: ignore
 from setuptools import find_packages, setup
 from glob import glob
 import os
@@ -38,7 +39,6 @@ setup(
         'console_scripts': [
             'fork_node = forklift_controller.fork_node:main',
             'primitive_node = forklift_controller.primitive_node:main',
-            'drone_controller = forklift_controller.drone_controller:main'
         ],
     },
 )
