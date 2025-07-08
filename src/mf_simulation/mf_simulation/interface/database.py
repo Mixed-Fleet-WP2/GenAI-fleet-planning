@@ -1,12 +1,26 @@
 import paho.mqtt.client as mqtt
+from paho.mqtt.enums import CallbackAPIVersion
 from pydantic import BaseModel, RootModel
 import json
 from typing import Literal
+from enum import Enum
 
+class Position(BaseModel):
+    x: float
+    y: float
+    z: float
+    roll: float
+    pitch: float
+    yaw: float
+
+class RobotStatus(Enum):
+    ONLINE = "ONLINE"
+    OFFLINE = "OFFLINE"
+    UNKNOWN = "UNKNOWN"
 
 class RobotState(BaseModel):
     robot_position: list[float]
-    robot_status: Literal["online", "offline"]
+    robot_status: RobotStatus
     timestamp: int
 
 class ObjectState(BaseModel):
@@ -27,7 +41,7 @@ class ObjectStateUpdate(RootModel):
 class Database():
     def __init__(self):
         
-        self.mqtt_client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
+        self.mqtt_client = mqtt.Client(CallbackAPIVersion.VERSION2)
         self.mqtt_client.on_connect = self.__on_connect
         self.mqtt_client.on_message = self.__on_message
         self.mqtt_client.connect("localhost", 1883, 60)
@@ -48,6 +62,8 @@ class Database():
         try:
             payload = msg.payload.decode('utf-8')
             if msg.topic == "robot_state_updates":
+                print("THE PAYLOAD IS", payload, flush=True)
+
                 state = RobotStateUpdate.model_validate_json(payload).model_dump()
                 # https://docs.python.org/3/library/stdtypes.html#dict.update
                 self.robot_state_data_.update(state)

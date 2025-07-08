@@ -68,7 +68,7 @@ void DroneController::odom_received_callback(const std::shared_ptr<OdomMsg> msg)
 
     // https://docs.ros2.org/foxy/api/std_msgs/msg/Header.html
     // Since gazebo clock is used, the timestamp is relative to simulation start
-    auto timestamp = msg->header.stamp.sec;
+    int32_t timestamp = msg->header.stamp.sec;
     auto [roll, pitch, yaw] = quaternion_to_euler(msg->pose.pose.orientation.x,msg->pose.pose.orientation.y,
                                         msg->pose.pose.orientation.z, msg->pose.pose.orientation.w);
     
@@ -82,20 +82,20 @@ void DroneController::odom_received_callback(const std::shared_ptr<OdomMsg> msg)
     // https://json.nlohmann.me/features/arbitrary_types/
     
     // Construct the json payload that is sent to the "database"
-    json status = {};
-    status[node_name_] = {
-        {"robot_status", "online"},
-        {"robot_position", {current_pos_.x, current_pos_.y, current_pos_.z}},
-        {"timestamp", timestamp}
-    };
+    
+    RobotState state = {};
+    state.robot_position = current_pos_;
+    state.robot_status = RobotStatus(ONLINE);
+    state.timestamp = timestamp;
 
+    json status = {};
+    status[node_name_] = {state};
+
+    RCLCPP_INFO_STREAM(get_logger(), "RECEIVED_ODOM");
     auto stringified_status = status.dump();
     auto message = std_msgs::msg::String();
     message.data = stringified_status;
     status_publisher_->publish(message);
-
-    const std::map<std::string, int> test = { {"jee", 2} };
-
     
 };
 

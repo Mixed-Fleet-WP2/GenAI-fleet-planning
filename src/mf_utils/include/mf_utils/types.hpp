@@ -28,6 +28,12 @@ struct ExecutableAction{
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ExecutableAction, action_id, args);
 
+enum RobotStatus {
+    ONLINE = 1,
+    OFFLINE = 0,
+    UNKNOWN = -1
+};
+
 struct Position{
     float x;
     float y;
@@ -37,6 +43,20 @@ struct Position{
     float yaw;
     void round();
 };
+
+struct RobotState {
+    Position robot_position;
+    RobotStatus robot_status;
+    int32_t timestamp;
+};
+
+NLOHMANN_JSON_SERIALIZE_ENUM(RobotStatus, {
+    {ONLINE, "ONLINE"},
+    {OFFLINE, "OFFLINE"},
+    {UNKNOWN, "UNKNOWN"}
+})
+
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(RobotState, robot_position, robot_status, timestamp);
 
 /**
  * Round the value of the Position to one decimal place

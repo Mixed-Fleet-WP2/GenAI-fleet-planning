@@ -53,7 +53,7 @@ class Worker(QRunnable):
 
     # Override the run method
     # https://www.pythonguis.com/faq/what-does-slot-do/
-    # Solot decorator is only necessary with threads
+    # Slot decorator is only necessary with threads
     @Slot()
     def run(self):
         try:
@@ -85,14 +85,14 @@ class Interface(QMainWindow):
                     "View full prompt":QTextEdit(""),
                     "View LLM response": QTextEdit("")}
         
-        self.current_model_: GPTModel | ClaudeModel | LLamaModel = ClaudeModel.CLAUDE_SONNET_4
+        self.current_model_: GPTModel | ClaudeModel | LLamaModel = ClaudeModel.CLAUDE_3_7_SONNET
 
         self.current_format_ = Formats.JSON
         self.plan_: None | Plan = None
     
         self.status_text_ = QLabel("")
         self.status_text_.setWordWrap(True)
-        self.status_text_.setMaximumWidth(125)
+        self.status_text_.setMaximumWidth(150)
         self.status_text_.setProperty("class", "status-text")
         
         self.dropdown_widget_ = self.create_dropdown_group()
@@ -117,7 +117,7 @@ class Interface(QMainWindow):
         dropdown_widget_layout.setContentsMargins(0,0,0,0)
         dropdown_widget_layout.setSpacing(0)
 
-        selected_model_label = QLabel(self.current_model_.plain_name)
+        selected_model_label = QLabel(f"Current model: {self.current_model_.plain_name}")
         
         for provider in MODELS:
             dropdown = ComboBox(placeholderText=provider)
