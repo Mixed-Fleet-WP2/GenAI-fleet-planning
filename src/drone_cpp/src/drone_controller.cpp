@@ -87,11 +87,10 @@ void DroneController::odom_received_callback(const std::shared_ptr<OdomMsg> msg)
     state.robot_position = current_pos_;
     state.robot_status = RobotStatus(ONLINE);
     state.timestamp = timestamp;
-
+    
     json status = {};
-    status[node_name_] = {state};
-
-    RCLCPP_INFO_STREAM(get_logger(), "RECEIVED_ODOM");
+    status[node_name_] = state;
+    
     auto stringified_status = status.dump();
     auto message = std_msgs::msg::String();
     message.data = stringified_status;

@@ -1,8 +1,5 @@
 import sys
 
-print("THE USED INTERPRETER IS ", sys.executable, flush=True)
-print("KHYL")
-
 from PySide6.QtWidgets import (QApplication,
                             QWidget, 
                             QMainWindow,
@@ -14,6 +11,7 @@ from PySide6.QtWidgets import (QApplication,
                             QGridLayout,
                             QLabel,
                             QTextEdit,
+                            QPlainTextEdit,
                             QLayout
     )
 
@@ -28,6 +26,7 @@ from mf_simulation.interface.combo_box import ComboBox
 from mf_simulation.interface.llm_utils import PromptGenerator, Plan, GPTModel, ClaudeModel, LLamaModel, MODELS
 
 from mf_simulation.interface.controller_v2 import Controller
+from typing import cast
 
 
 
@@ -60,7 +59,7 @@ class Worker(QRunnable):
             result = self.fn(*self.args, **self.kwargs)
             self.signals.result_signal.emit(result)
         except:
-            value = sys.exc_info()[1]
+            value = cast(BaseException, sys.exc_info()[1])
             self.signals.error.emit(value)
 
 
@@ -90,26 +89,28 @@ class Interface(QMainWindow):
         self.current_format_ = Formats.JSON
         self.plan_: None | Plan = None
     
-        self.status_text_ = QLabel("")
-        self.status_text_.setWordWrap(True)
-        self.status_text_.setMaximumWidth(150)
-        self.status_text_.setProperty("class", "status-text")
-        
         self.dropdown_widget_ = self.create_dropdown_group()
         self.main_view_widget_ = self.create_views()
         self.control_widget_, self.active_btn_ = self.create_controls()
-        
+        self.__feedback_widget, self.feedback_area = self.create_feedback_section()
+
         main_layout = QGridLayout()
         # Start row, start col, row span, col span
         main_layout.addWidget(self.dropdown_widget_, 0, 0, 1, 2)
         main_layout.addWidget(self.control_widget_, 1, 0)
         main_layout.addWidget(self.main_view_widget_, 1, 1)
+        main_layout.addWidget(self.__feedback_widget, 2, 0, 1, 2)
         main_layout.setContentsMargins(0,0,0,0)
         main_layout.setSpacing(0)
+
+        main_layout.setRowStretch(1, 70)
+        main_layout.setRowStretch(2, 20)
+
         
         widget.setLayout(main_layout)
         self.setCentralWidget(widget)
-
+        self.write_feedback("GGG")
+   
     def create_dropdown_group(self):
         dropdown_widget = QWidget()
         dropdown_widget_layout = QHBoxLayout()
@@ -147,10 +148,6 @@ class Interface(QMainWindow):
         
         for view_name in self.views_:
             editor = self.views_[view_name]
-            # editor.setLineWrapMode(QTextEdit.WidgetWidth)
-            # editor.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-            # editor.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-            editor.setProperty('code', 'true')
             stack.addWidget(editor)
             editor.setReadOnly(True)
         
@@ -158,6 +155,20 @@ class Interface(QMainWindow):
         self.views_["Edit task"].setReadOnly(False)
         
         return main_view_widget
+
+    def create_feedback_section(self):
+        feedback_widget = QWidget()
+        feedback_widget_layout = QVBoxLayout()
+        feedback_widget.setLayout(feedback_widget_layout)
+
+        feedback_label = QLabel("Status")
+        feedback_section = QPlainTextEdit()
+        feedback_section.setEnabled(False)
+
+        feedback_widget_layout.addWidget(feedback_label)
+        feedback_widget_layout.addWidget(feedback_section)
+
+        return feedback_widget, feedback_section
 
     def create_controls(self):
         # Buttons to switch views
@@ -176,8 +187,6 @@ class Interface(QMainWindow):
             btn.setProperty("class", "view-control")
         
         control_widget_layout.addStretch()
-
-        control_widget_layout.addWidget(self.status_text_)
 
         format_mode_button = QPushButton(f"Toggle format (current: {self.current_format_.value})")
         format_mode_button.clicked.connect(lambda _, btn=format_mode_button: self.switch_format_(btn))
@@ -217,14 +226,14 @@ class Interface(QMainWindow):
     
     def generate_ai_plan(self):
 
-        self.status_text_.setText("Generating...")
+        self.write_feedback("Generating...")
 
         worker = Worker(self.prompt_generator_.generate_plan,
             self.views_["Edit task"].toPlainText(),
             self.current_model_,)
         
         worker.signals.result_signal.connect(self.update_gui)
-        worker.signals.error.connect(self.display_error)
+        worker.signals.error.connect(lambda exception: self.write_feedback(str(exception)))
 
         self.threadpool.start(worker)
     
@@ -237,16 +246,11 @@ class Interface(QMainWindow):
             self.plan_.to_format(self.current_format_.value))
                
         # Make the status text dissappear
-        self.status_text_.setText("Done!")
-        timer = QTimer(self)
-        timer.timeout.connect(lambda label=self.status_text_: label.setText(""))
-        timer.start(2000)
+        self.feedback_area.appendPlainText("Done")
     
-    def display_error(self, err_msg: Exception):
-        self.status_text_.setText(str(err_msg))
-        timer = QTimer(self)
-        timer.timeout.connect(lambda label=self.status_text_: label.setText(""))
-        timer.start(8000)
+    def write_feedback(self, text:str = "test"):
+        #https://stackoverflow.com/questions/13559990/how-to-append-text-to-qplaintextedit-without-adding-newline-and-keep-scroll-at
+        self.feedback_area.appendPlainText(text)
 
     def switch_format_(self, btn: QPushButton):
         self.current_format_ = (Formats.JSON
@@ -273,7 +277,7 @@ class Interface(QMainWindow):
         worker = Worker(self.controller_.run_plan, self.plan_)
         
         worker.signals.result_signal.connect(self.update_gui)
-        worker.signals.error.connect(self.display_error)
+        worker.signals.error.connect(lambda exception: self.write_feedback(str(exception)))
 
         self.threadpool.start(worker)
 
@@ -296,7 +300,7 @@ def main(args=None):
         app.setStyleSheet(_style)
 
     window = Interface()
-    window.resize(600, 400)
+    window.resize(700, 600)
     window.show()
     app.exec()
 

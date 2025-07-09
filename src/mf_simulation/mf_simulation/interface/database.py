@@ -1,8 +1,6 @@
 import paho.mqtt.client as mqtt
 from paho.mqtt.enums import CallbackAPIVersion
-from pydantic import BaseModel, RootModel
-import json
-from typing import Literal
+from pydantic import BaseModel, RootModel, ValidationError
 from enum import Enum
 
 class Position(BaseModel):
@@ -19,7 +17,7 @@ class RobotStatus(Enum):
     UNKNOWN = "UNKNOWN"
 
 class RobotState(BaseModel):
-    robot_position: list[float]
+    robot_position: Position
     robot_status: RobotStatus
     timestamp: int
 
@@ -47,7 +45,8 @@ class Database():
         self.mqtt_client.connect("localhost", 1883, 60)
         self.robot_state_data_ = {}
         self.object_state_data_ = {}
-        self.mqtt_client.loop_start()  # Start the MQTT client loop in a separate thread
+          # Start the MQTT client loop in a separate thread
+        self.mqtt_client.loop_start()
     
     def __del__(self):
         self.mqtt_client.disconnect()
@@ -62,9 +61,9 @@ class Database():
         try:
             payload = msg.payload.decode('utf-8')
             if msg.topic == "robot_state_updates":
-                print("THE PAYLOAD IS", payload, flush=True)
 
                 state = RobotStateUpdate.model_validate_json(payload).model_dump()
+
                 # https://docs.python.org/3/library/stdtypes.html#dict.update
                 self.robot_state_data_.update(state)
             elif msg.topic == "object_state_updates":
@@ -72,8 +71,10 @@ class Database():
                 self.object_state_data_.update(state)
             else:
                 print(f"Unknown topic: {msg.topic}")
-        except json.JSONDecodeError as e:
-            print(f"Failed to parse JSON: {e}")
+        # This prevents truncating the invalid model representation:
+        # See: https://github.com/pydantic/pydantic/discussions/7733
+        except ValidationError as validation_error:
+            print(validation_error.errors(include_url=False), flush=True)
         except Exception as e:
             print(f"Error processing message: {e}")
     

@@ -67,8 +67,8 @@ void Position::round() {
     this->y = std::round(y*10) / 10;
     this->z = std::round(z*10) / 10;
     this->roll = std::round(roll*10) / 10;
-    this->roll = std::round(pitch*10) / 10;
-    this->roll = std::round(yaw*10) / 10;
+    this->pitch = std::round(pitch*10) / 10;
+    this->yaw = std::round(yaw*10) / 10;
 
 }
 
