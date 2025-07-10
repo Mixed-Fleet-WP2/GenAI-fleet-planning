@@ -18,21 +18,21 @@ struct ExecutableAction{
 //OR
 //https://json.nlohmann.me/features/arbitrary_types/#simplify-your-life-with-macros
 
-
-// void from_json(const json& j, ExecutableAction& e){
-//     j.at("action_id").get_to(e.action_id);
-//     j.at("args").get_to(e.args);
-
-
-// }
-
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ExecutableAction, action_id, args);
 
-enum RobotStatus {
-    ONLINE = 1,
-    OFFLINE = 0,
-    UNKNOWN = -1
+enum FeedbackType{
+    SUCCESS = 1,
+    ERROR = 0,
+    CANCELLED = -1
 };
+
+//https://json.nlohmann.me/features/enum_conversion/
+NLOHMANN_JSON_SERIALIZE_ENUM(FeedbackType, {
+    {SUCCESS, "SUCCESS"},
+    {ERROR, "ERROR"},
+    {CANCELLED, "CANCELLED"}
+})
+
 
 struct Position{
     float x;
@@ -44,12 +44,19 @@ struct Position{
     void round();
 };
 
+enum RobotStatus {
+    ONLINE = 1,
+    OFFLINE = 0,
+    UNKNOWN = -1
+};
+
 struct RobotState {
     Position robot_position;
     RobotStatus robot_status;
     int32_t timestamp;
 };
 
+//https://json.nlohmann.me/features/enum_conversion/
 NLOHMANN_JSON_SERIALIZE_ENUM(RobotStatus, {
     {ONLINE, "ONLINE"},
     {OFFLINE, "OFFLINE"},

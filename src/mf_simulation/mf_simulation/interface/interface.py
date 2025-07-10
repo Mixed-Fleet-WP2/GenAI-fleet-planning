@@ -16,7 +16,7 @@ from PySide6.QtWidgets import (QApplication,
     )
 
 
-from PySide6.QtCore import QTimer, QRunnable, QThreadPool, Slot, Signal, QObject
+from PySide6.QtCore import QTimer, QRunnable, QThreadPool, Slot, Signal, QObject, SignalInstance
 
 import os
 import signal
@@ -39,6 +39,7 @@ from enum import Enum
 class WorkerSignals(QObject):
     result_signal = Signal(tuple)
     error = Signal(tuple)
+    feedback = Signal(str)
 
 # https://www.pythonguis.com/tutorials/multithreading-pyside6-applications-qthreadpool/
 class Worker(QRunnable):
@@ -49,6 +50,11 @@ class Worker(QRunnable):
         self.args = args
         self.kwargs = kwargs
         self.signals = WorkerSignals()
+
+        # Add a callback to the kwargs that is passed
+        # to the function that runs in the worker thread
+        feedback_signal: SignalInstance = self.signals.feedback
+        self.kwargs['feedback_callback'] = feedback_signal
 
     # Override the run method
     # https://www.pythonguis.com/faq/what-does-slot-do/
@@ -62,7 +68,6 @@ class Worker(QRunnable):
             value = cast(BaseException, sys.exc_info()[1])
             self.signals.error.emit(value)
 
-
 class Formats(Enum):
     JSON = "json"
     YAML = "yaml"
@@ -74,7 +79,6 @@ class Interface(QMainWindow):
 
         self.threadpool = QThreadPool()
         self.prompt_generator_ = PromptGenerator()
-        self.controller_ = Controller()
 
         self.setWindowTitle("LLM Planner v3")
 
@@ -109,8 +113,7 @@ class Interface(QMainWindow):
         
         widget.setLayout(main_layout)
         self.setCentralWidget(widget)
-        self.write_feedback("GGG")
-   
+
     def create_dropdown_group(self):
         dropdown_widget = QWidget()
         dropdown_widget_layout = QHBoxLayout()
@@ -163,7 +166,7 @@ class Interface(QMainWindow):
 
         feedback_label = QLabel("Status")
         feedback_section = QPlainTextEdit()
-        feedback_section.setEnabled(False)
+        feedback_section.setReadOnly(True)
 
         feedback_widget_layout.addWidget(feedback_label)
         feedback_widget_layout.addWidget(feedback_section)
@@ -274,7 +277,7 @@ class Interface(QMainWindow):
         if not self.plan_:
             return
 
-        worker = Worker(self.controller_.run_plan, self.plan_)
+        worker = Worker(Controller().run_plan, self.plan_)
         
         worker.signals.result_signal.connect(self.update_gui)
         worker.signals.error.connect(lambda exception: self.write_feedback(str(exception)))

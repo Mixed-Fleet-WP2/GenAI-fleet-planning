@@ -70,7 +70,7 @@ class Action(BaseModel):
     action_id: int
     executing_robot: str
     command: str
-    command_arguments: list[Optional[str]]
+    command_arguments: dict[str, str | float]
     prerequisites: list[int]
     reasoning: str
 
