@@ -10,7 +10,8 @@
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
-# limitations under the License.
+# limitations under the License. In addition appropriate
+# arguments for initial pose were added.
 
 import os
 
@@ -44,6 +45,15 @@ def generate_launch_description():
     use_respawn = LaunchConfiguration('use_respawn')
     log_level = LaunchConfiguration('log_level')
     use_amcl = LaunchConfiguration('use_amcl')
+
+    pose = {
+        'x': LaunchConfiguration('x_pose'),
+        'y': LaunchConfiguration('y_pose'),
+        'z': LaunchConfiguration('z_pose'),
+        'roll': LaunchConfiguration('roll'),
+        'pitch': LaunchConfiguration('pitch'),
+        'yaw': LaunchConfiguration('yaw')
+    }
 
     lifecycle_nodes = ['map_server', 'amcl']
 
@@ -162,7 +172,7 @@ def generate_launch_description():
                 output='screen',
                 respawn=use_respawn,
                 respawn_delay=2.0,
-                parameters=[configured_params],
+                parameters=[configured_params, {'x': pose['x'], 'y':pose['y'], 'z': pose['z'], 'yaw': pose['yaw']}],
                 arguments=['--ros-args', '--log-level', log_level],
                 remappings=remappings,
                 condition=IfCondition(EqualsSubstitution(use_amcl, True))
@@ -226,7 +236,7 @@ def generate_launch_description():
                         package='nav2_amcl',
                         plugin='nav2_amcl::AmclNode',
                         name='amcl',
-                        parameters=[configured_params],
+                        parameters=[configured_params, {'x': pose['x'], 'y':pose['y'], 'z': pose['z'], 'yaw': pose['yaw']}],
                         remappings=remappings,
                     ),
                     ComposableNode(

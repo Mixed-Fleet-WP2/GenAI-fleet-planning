@@ -37,6 +37,8 @@ amcl:
     z_rand: 0.5
     z_short: 0.05
     scan_topic: scan
+    # Causes AMCL to set initial pose from the initial_pose* parameters instead of waiting for the initial_pose message.
+    set_initial_pose: True
 
 bt_navigator:
   ros__parameters:

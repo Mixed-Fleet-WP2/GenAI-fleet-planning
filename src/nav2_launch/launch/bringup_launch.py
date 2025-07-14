@@ -14,7 +14,8 @@
 
 # Modifications Copyright (c) 2025 Elmeri Pohjois-Koivisto Tampere University
 # This file has been modified from its original version by modifying the launch
-# configuration default values and removing comments
+# configuration default values and removing comments. In addition appropriate
+# arguments for initial pose were added.
 
 import os
 
@@ -57,6 +58,15 @@ def generate_launch_description():
     use_localization = LaunchConfiguration('use_localization')
     
     remappings = [('/tf', 'tf'), ('/tf_static', 'tf_static')]
+
+    pose = {
+        'x': LaunchConfiguration('x_pose'),
+        'y': LaunchConfiguration('y_pose'),
+        'z': LaunchConfiguration('z_pose'),
+        'roll': LaunchConfiguration('roll'),
+        'pitch': LaunchConfiguration('pitch'),
+        'yaw': LaunchConfiguration('yaw')
+    }
 
     params_file = ReplaceString(
         source_file=params_file,

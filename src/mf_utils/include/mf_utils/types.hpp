@@ -11,14 +11,14 @@ using json = nlohmann::json;
 
 struct ExecutableAction{
     int action_id;
-    std::unordered_map<std::string, std::string> args;
+    std::unordered_map<std::string, std::string> command_arguments;
 };
 
 //https://json.nlohmann.me/features/arbitrary_types/
 //OR
 //https://json.nlohmann.me/features/arbitrary_types/#simplify-your-life-with-macros
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ExecutableAction, action_id, args);
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ExecutableAction, action_id, command_arguments);
 
 enum FeedbackType{
     SUCCESS = 1,
@@ -32,6 +32,14 @@ NLOHMANN_JSON_SERIALIZE_ENUM(FeedbackType, {
     {ERROR, "ERROR"},
     {CANCELLED, "CANCELLED"}
 })
+
+struct Feedback{
+    int action_id;
+    FeedbackType type;
+    std::string message;
+};
+
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Feedback, action_id, type, message);
 
 
 struct Position{

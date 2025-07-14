@@ -1,6 +1,5 @@
 import paho.mqtt.client as mqtt
 import json
-from threading import Thread, Lock, Condition
 from typing import Optional
 from mf_simulation.interface.llm_utils import Plan, Action
 from dataclasses import dataclass
@@ -15,13 +14,14 @@ class ExecutableAction():
     prerequisites: set[Optional[int]]
     command: str
     executing_robot: str
+    action_id: int
 
-    def __remove_prerequisite(self, action_id: int) -> bool:
+    def remove_prerequisite(self, action_id: int) -> bool:
         """
         Args:
             action_id: The id of the action to be removed from prequisites
         Returns:
-            True if there are no prequisites left after removal, False
+            True if there are no prerequisites left after removal, False
             otherwise
         """
         self.prerequisites.discard(action_id)
@@ -30,6 +30,22 @@ class ExecutableAction():
             return True
         else:
             return False
+    
+    def run(self, client: mqtt.Client):
+        """
+        Run a robot action by publishing to the relevant mqtt topic
+
+        Args:
+            client: The mqtt client instance used to publish the action
+        Returns:
+            None
+        """
+        action_json = json.dumps({
+            "action_id": self.action_id,
+            "command_arguments": self.command_arguments
+        })
+
+        client.publish(f"{self.executing_robot}/{self.command}", action_json)
 
 
 #https://stackoverflow.com/questions/24481852/serialising-an-enum-member-to-json
@@ -37,10 +53,6 @@ class FeedbackType(str, Enum):
     SUCCESS = "SUCCESS"
     ERROR = "ERROR"
     CANCEL = "CANCELLED"
-
-class RobotAction(TypedDict):
-    action_id: int
-    command_arguments: dict[str, str | float]
 
 class Feedback(TypedDict):
     action_id: int
@@ -66,21 +78,16 @@ class Controller():
    
         self.received_feedback:SignalInstance | None = None
 
-        self.__feedback_lock = Lock()
-        
         self.mqtt_client.subscribe([("feedback", 2)])
 
         # Also runs in the same thread that is started with loop_start()
         # https://stackoverflow.com/questions/57925734/does-on-message-in-paho-mqtt-run-in-a-new-thread
         self.mqtt_client.on_message = self.on_message
 
-        self.__completed_actions:set[int] = set()
         self.__actions: dict[int, ExecutableAction] = dict()
-        self.condition = Condition()
-        self.__waiting_feedbacks:Queue[Feedback] = Queue()
-        self.__execution_done = Condition()
-
-
+    
+        self.__waiting_feedbacks: Queue[Feedback] = Queue()
+  
     def __del__(self):
 
         self.mqtt_client.loop_stop()
@@ -112,8 +119,6 @@ class Controller():
                 self.__progress_callback.emit(feedback["message"])
             
             if  feedback_type == FeedbackType.ERROR:
-                with self.__execution_done:
-                    self.__execution_done.notify()
                     return False
             
             if feedback_type == FeedbackType.SUCCESS:
@@ -122,13 +127,15 @@ class Controller():
 
                 # Remove completed action
                 del self.__actions[completed_action_id]
+                
+                if not self.__actions:
+                    return True
 
                 # Remove the id of the action from each action
                 # that it is prerequisite for
                 for id, action in self.__actions.items():
-                    action.prerequisites.discard(id)
-                    if not action.prerequisites:
-                        self.__run_action(action, id)
+                    if action.remove_prerequisite(id):
+                        action.run(self.mqtt_client)
                     
 
     def run_plan(self, plan: Plan, feedback_signal: SignalInstance):
@@ -144,7 +151,8 @@ class Controller():
                 command_arguments=action.command_arguments,
                 prerequisites=set(prerequisites),
                 command=action.command,
-                executing_robot=action.executing_robot
+                executing_robot=action.executing_robot,
+                action_id=action_id
             )
 
 
@@ -152,36 +160,17 @@ class Controller():
 
             # Run actions that dont have precondition immediately
             if not action.prerequisites:
-                self.__run_action(pending_action, action_id)
+                pending_action.run(self.mqtt_client)
 
 
         plan_success = self.__process_feedback()
 
-        # # Start the thread that processes feedback
-        # Thread(target=self.__process_feedback).start()
+        if plan_success:
+            feedback_signal.emit("Success: All actions completed")
+        else:
+            feedback_signal.emit("Failure: The plan could not be completed")
 
-        # # Sleep to wait for execution to complete.
-        # # Feedback is received from another thread
-        # with self.__execution_done:
-        #     self.__execution_done.wait()
 
-    def __run_action(self, action:ExecutableAction, action_id:int):
-        """
-        Run a generic action on a robot.
-
-        :param robot: The robot to run the action on
-        :param action: The action to run
-        :param args: The arguments to the action
-        :param prereqs: The prerequisites to the action
-        """
-
-        if not action.prerequisites:
-            print("No prerequisites, publishing immediately", flush=True)
-            payload_as_string = json.dumps(RobotAction(action_id=action_id, command_arguments=action.command_arguments))
-            self.mqtt_client.publish(f"{action.executing_robot}/{action.command}", payload_as_string, qos=2)
-            return True
-
-        return False
 
                     
                 

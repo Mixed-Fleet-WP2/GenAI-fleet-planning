@@ -28,7 +28,6 @@ setup(
         (f'share/{package_name}/config', glob('config/*')),
         (f'share/{package_name}/maps', glob('maps/*')),
         (f'share/{package_name}/worlds', glob('worlds/*')),
-        #(f'share/{package_name}/templates', glob('templates/*')),
         *setup_models(package_name, os.path.dirname(os.path.realpath(__file__)))
     ],
     install_requires=['setuptools'],

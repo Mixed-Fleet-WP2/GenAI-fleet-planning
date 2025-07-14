@@ -1,8 +1,8 @@
 drone:
   primitives:
     move:
-      args: ["x", "y", "z"]
-      args_type: ["float", "float", "float"]
+      args: ["x", "y", "z", "roll", "pitch", "yaw"]
+      args_type: ["float", "float", "float", "float", "float", "float"]
       description: "Move the drone to a specified position in 3D space."
 forklift:
   primitives:

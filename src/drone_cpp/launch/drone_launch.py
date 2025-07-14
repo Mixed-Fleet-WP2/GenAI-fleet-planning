@@ -32,7 +32,6 @@ from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.descriptions import ParameterFile
 from nav2_common.launch import ReplaceString, RewrittenYaml
-from mf_simulation.utils.launch_utils import launch_print
 
 
 def cancel_launch(event:ProcessExited, context, *args):
@@ -67,6 +66,15 @@ def generate_launch_description():
     mqtt_config_file = LaunchConfiguration('mqtt_config_file')
     robot_sdf = LaunchConfiguration('robot_sdf')
 
+    pose = {
+        'x': LaunchConfiguration('x_pose'),
+        'y': LaunchConfiguration('y_pose'),
+        'z': LaunchConfiguration('z_pose'),
+        'roll': LaunchConfiguration('roll'),
+        'pitch': LaunchConfiguration('pitch'),
+        'yaw': LaunchConfiguration('yaw')
+    }
+   
     remappings = [('/tf', 'tf'), ('/tf_static', 'tf_static')]
 
     declare_px4_airframe = DeclareLaunchArgument(
@@ -182,7 +190,7 @@ def generate_launch_description():
     handler = RegisterEventHandler(
         OnProcessExit(
             target_action=px4_launch,
-            on_exit=lambda e, context: cancel_launch(e)
+            on_exit=lambda e, context: cancel_launch(e, context)
         )
     )
 
@@ -205,6 +213,7 @@ def generate_launch_description():
             'autostart': autostart,
             'use_composition': use_composition,
             'use_respawn': use_respawn,
+            **pose
         }.items(),
     )
    
@@ -223,8 +232,8 @@ def generate_launch_description():
         arguments=[
             '-name', 'drone',
             '-string', parsed_sdf,
-            '-x', TextSubstitution(text=str(3.0)), '-y', TextSubstitution(text=str(0.0)), '-z', TextSubstitution(text=str(0.0)),
-            '-R', TextSubstitution(text=str(0.0)), '-P', TextSubstitution(text=str(0.0)), '-Y', TextSubstitution(text=str(0.0))
+            '-x', pose['x'], '-y', pose['y'], '-z', pose['z'],
+            '-R', pose['roll'], '-P', pose['pitch'], '-Y', pose['yaw']
             ]
     )
     

@@ -1,6 +1,5 @@
 #include "drone_controller.hh"
 
-//https://robotics.stackexchange.com/questions/107697/turtlebot4-nav2-how-to-call-action-navigatetopose-from-node-in-cpp
 DroneController::DroneController() :
     Node("default_name"){
     
@@ -54,9 +53,14 @@ void DroneController::move_to_pose_callback(
         if (json::accept(msg_str)){
             RCLCPP_ERROR_STREAM(get_logger(), "Received invalid json of the format: " + msg_str);
         }
-
+        
         json json_object = json::parse(msg_str);
+        // https://json.nlohmann.me/home/exceptions/#jsonexceptiontype_error302
         ExecutableAction action = json_object.template get<ExecutableAction>();
+        
+
+
+
 
         
     }catch (json::type_error &e){
@@ -98,6 +102,7 @@ void DroneController::odom_received_callback(const std::shared_ptr<OdomMsg> msg)
     
 };
 
+////https://robotics.stackexchange.com/questions/107697/turtlebot4-nav2-how-to-call-action-navigatetopose-from-node-in-cpp
 void DroneController::nav_result_callback(
     const NavToPoseGoalHandle::WrappedResult &result){
 
@@ -142,11 +147,17 @@ void DroneController::navigate_to_pose(const Position &pos){
 
     // Action definition can be seen from:
     // https://github.com/ros-navigation/navigation2/blob/main/nav2_msgs/action/NavigateToPose.action
-    PoseStampedMsg goal_msg;
+    auto [x,y,z,w] = euler_to_quaternion(pos.roll, pos.pitch, pos.yaw);
+    auto goal_msg = PoseStampedMsg();
     goal_msg.pose.position.x = pos.x;
     goal_msg.pose.position.y = pos.y;
-    //goal_msg.pose.position.z = pos.z
+    goal_msg.pose.position.z = pos.z;
+    goal_msg.pose.orientation.x = x;
+    goal_msg.pose.orientation.y = y;
+    goal_msg.pose.orientation.w = w;
+    
     NavToPoseAction::Goal goal;
+    
     goal.pose = goal_msg;
 
     auto send_goal_options = rclcpp_action::Client<NavToPoseAction>::SendGoalOptions();
