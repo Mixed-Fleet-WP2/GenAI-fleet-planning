@@ -57,7 +57,9 @@
         "typeinfo": "cpp",
         "variant": "cpp",
         "cstdarg": "cpp",
-        "numeric": "cpp"
+        "numeric": "cpp",
+        "future": "cpp",
+        "complex": "cpp"
     },
     "python.analysis.typeCheckingMode": "standard"
 }

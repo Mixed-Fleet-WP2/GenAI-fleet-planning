@@ -5,6 +5,7 @@
 #include <functional>
 #include <memory>
 #include <string>
+#include <future>
 
 #include "rclcpp/rclcpp.hpp"
 #include "geometry_msgs/msg/twist.hpp"
@@ -20,6 +21,7 @@
 #include "mf_utils/json.hpp"
 #include "sensor_msgs/msg/laser_scan.hpp"
 #include "geometry_msgs/msg/twist.hpp"
+
 
 using json = nlohmann::json;
 
@@ -59,7 +61,7 @@ class DroneController: public rclcpp::Node{
         std::shared_ptr<rclcpp::Publisher<std_msgs::msg::String>> feedback_publisher_;
         std::unique_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
         void move_to_pose_callback(const std::shared_ptr<std_msgs::msg::String> msg);
-        void lift(float z);
+        void lift(const float z);
         void odom_received_callback(const std::shared_ptr<OdomMsg> msg);
         void nav_result_callback(const rclcpp_action::ClientGoalHandle<NavToPoseAction>::WrappedResult &result);
         void nav_feedback_callback(std::shared_ptr<NavToPoseGoalHandle>, const std::shared_ptr<const NavToPoseAction::Feedback> feedback);

@@ -12,14 +12,13 @@ DroneController::DroneController() :
     odom_subsciber_options.callback_group = odom_callback_group_;
 
     nav_callback_group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
-    auto nav_subscriber_options = rclcpp::SubscriptionOptions();
-    nav_subscriber_options.callback_group = nav_callback_group_;
+    // auto nav_subscriber_options = rclcpp::SubscriptionOptions();
+    // nav_subscriber_options.callback_group = nav_callback_group_;
     
     // Run the navigation client in a separate cb group/in a separate thread
     nav_to_pose_client_ = rclcpp_action::create_client<NavToPoseAction>(
         this, // Pass a reference to the node
-        "navigate_to_pose", //This is defined by the nav2 launch system already,
-        nav_callback_group_
+        "navigate_to_pose" //This is defined by the nav2 launch system already,
     );
 
     // Assign the move_to_pose subsciber to the same callback group
@@ -42,7 +41,7 @@ DroneController::DroneController() :
     //THINGS RUNNING IN DIFFERENT THREADS:
     // odom
     // navigation
-    // lift
+    // lift (in normal std::thread)
 
     // Everything else in main thread
 
@@ -77,8 +76,13 @@ void DroneController::move_to_pose_callback(
         auto args = action.command_arguments;
 
         std::thread t([this, args](){
-            
-            lift(stof(args.at("z")));
+            float target_elevation = stof(args.at("z"));
+
+            // If the parameter z is zero, no need to raise the drone
+            if (target_elevation != 0){
+                lift(target_elevation);
+            };
+
             
             navigate_to_pose(stof(args.at("x")),
                         stof(args.at("y")),
@@ -99,14 +103,33 @@ void DroneController::move_to_pose_callback(
 
 }
 
-void DroneController::lift(float z){
-    // https://docs.ros2.org/foxy/api/rclcpp/classrclcpp_1_1QoS.html#a98fb6b31d7c5cbd4788412663fd38cfb
+void DroneController::lift(const float z){
+    auto twist_msg = TwistMsg();
+    const float kp = 0.2;
 
+    // This is used to throttle the loop
+    rclcpp::Rate rate(10); 
+    const auto start_time = this->now();
 
-    
+    while (rclcpp::ok()) {
+        float error = std::abs(current_pos_.z - z);
 
+        if (error < 0.1 || (this->now() - start_time).seconds() > 60.0) {
+            break;
+        }
 
+        twist_msg.linear.z = kp * error;
+        lift_publisher_->publish(twist_msg);
+
+        // Automatically calculate and sleep to maintain the rate
+        rate.sleep();
+    }
+
+    // Send stop command
+    twist_msg.linear.z = 0.0;
+    lift_publisher_->publish(twist_msg);
 }
+
 
 void DroneController::odom_received_callback(const std::shared_ptr<OdomMsg> msg) {
 
@@ -231,7 +254,7 @@ int main(int argc, char * argv[])
     rclcpp::init(argc, argv);
 
     // Assign 3 threads: the main thread and two other for the two callback groups
-    auto executor = rclcpp::executors::MultiThreadedExecutor(rclcpp::ExecutorOptions(), 3);
+    auto executor = rclcpp::executors::MultiThreadedExecutor(rclcpp::ExecutorOptions(), 2);
     executor.add_node(std::make_shared<DroneController>());
     executor.spin();
     rclcpp::shutdown();
