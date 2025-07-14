@@ -18,6 +18,8 @@
 #include "mf_utils/types.hpp"
 #include "mf_utils/utils.hpp"
 #include "mf_utils/json.hpp"
+#include "sensor_msgs/msg/laser_scan.hpp"
+#include "geometry_msgs/msg/twist.hpp"
 
 using json = nlohmann::json;
 
@@ -42,19 +44,22 @@ class DroneController: public rclcpp::Node{
         
 
         rclcpp_action::Client<NavToPoseAction>::SharedPtr nav_to_pose_client_;
-        rclcpp::CallbackGroup::SharedPtr callback_group_;
+        rclcpp::CallbackGroup::SharedPtr nav_callback_group_;
+        rclcpp::CallbackGroup::SharedPtr odom_callback_group_;
         rclcpp::executors::SingleThreadedExecutor callback_group_executor_;
         std::shared_future<rclcpp_action::ClientGoalHandle<NavToPoseAction>::SharedPtr> future_goal_handle_;
         Position current_pos_;
         
         
-        void navigate_to_pose(const Position &pos);
+        void navigate_to_pose(const float x, const float y, const float z, const float roll, const float pitch, const float yaw);
         rclcpp::Subscription<std_msgs::msg::String>::SharedPtr move_to_pose_subscriber_;
         rclcpp::Subscription<OdomMsg>::SharedPtr odom_subsciber_;
+        rclcpp::Publisher<TwistMsg>::SharedPtr lift_publisher_;
         rclcpp::Publisher<std_msgs::msg::String>::SharedPtr status_publisher_;
         std::shared_ptr<rclcpp::Publisher<std_msgs::msg::String>> feedback_publisher_;
         std::unique_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
         void move_to_pose_callback(const std::shared_ptr<std_msgs::msg::String> msg);
+        void lift(float z);
         void odom_received_callback(const std::shared_ptr<OdomMsg> msg);
         void nav_result_callback(const rclcpp_action::ClientGoalHandle<NavToPoseAction>::WrappedResult &result);
         void nav_feedback_callback(std::shared_ptr<NavToPoseGoalHandle>, const std::shared_ptr<const NavToPoseAction::Feedback> feedback);

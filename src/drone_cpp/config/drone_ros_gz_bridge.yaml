@@ -24,9 +24,12 @@
   direction: GZ_TO_ROS
 
 - topic_name: "tf"
-  ros_type_name: "tf2_msgs/msg/TFMessage"
-  gz_type_name: "gz.msgs.Pose_V"
+  ros_type_name: "sensor_msgs/msg/LaserScan"
+  gz_type_name: "gz.msgs.LaserScan"
   direction: GZ_TO_ROS
+
+- topic_name: "elevation_scan"
+
 
 # # replace imu_bridge - check gz topic name
 # - topic_name: "imu"

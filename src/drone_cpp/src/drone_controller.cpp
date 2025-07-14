@@ -1,22 +1,28 @@
 #include "drone_controller.hh"
 
+
 DroneController::DroneController() :
     Node("default_name"){
     
     node_name_ = this->get_name();
-
-    callback_group_ = create_callback_group(
-        rclcpp::CallbackGroupType::MutuallyExclusive,
-        false);
     
-    callback_group_executor_.add_callback_group(callback_group_, get_node_base_interface());
+    // https://docs.ros.org/en/foxy/How-To-Guides/Using-callback-groups.html#basics-of-callback-groups
+    odom_callback_group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
+    auto odom_subsciber_options = rclcpp::SubscriptionOptions();
+    odom_subsciber_options.callback_group = odom_callback_group_;
 
+    nav_callback_group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
+    auto nav_subscriber_options = rclcpp::SubscriptionOptions();
+    nav_subscriber_options.callback_group = nav_callback_group_;
+    
+    // Run the navigation client in a separate cb group/in a separate thread
     nav_to_pose_client_ = rclcpp_action::create_client<NavToPoseAction>(
         this, // Pass a reference to the node
         "navigate_to_pose", //This is defined by the nav2 launch system already,
-        callback_group_
+        nav_callback_group_
     );
 
+    // Assign the move_to_pose subsciber to the same callback group
     move_to_pose_subscriber_ = this->create_subscription<std_msgs::msg::String>(
         "move", 10, 
         [this](const std::shared_ptr<std_msgs::msg::String> msg) {
@@ -24,15 +30,26 @@ DroneController::DroneController() :
         }
     );
 
+    // Run in its own thread
     odom_subsciber_ = create_subscription<OdomMsg>(
         "odom", 10,
         [this](const std::shared_ptr<OdomMsg> msg){
             this->odom_received_callback(msg);
-        }
+        },
+        odom_subsciber_options
     );
 
+    //THINGS RUNNING IN DIFFERENT THREADS:
+    // odom
+    // navigation
+    // lift
+
+    // Everything else in main thread
+
     feedback_publisher_ = this->create_publisher<std_msgs::msg::String>(
-        "feedback", 10);
+        "/feedback", 10);
+    
+    lift_publisher_  = create_publisher<TwistMsg>("cmd_vel", 10);
     
     status_publisher_ = this->create_publisher<std_msgs::msg::String>("/robot_state_updates", 10);
 
@@ -40,8 +57,8 @@ DroneController::DroneController() :
 
 }
 
-DroneController::~DroneController(){
-
+DroneController::~DroneController() noexcept
+{
 }
 
 void DroneController::move_to_pose_callback(
@@ -57,30 +74,56 @@ void DroneController::move_to_pose_callback(
         json json_object = json::parse(msg_str);
         // https://json.nlohmann.me/home/exceptions/#jsonexceptiontype_error302
         ExecutableAction action = json_object.template get<ExecutableAction>();
-        
+        auto args = action.command_arguments;
+
+        std::thread t([this, args](){
+            
+            lift(stof(args.at("z")));
+            
+            navigate_to_pose(stof(args.at("x")),
+                        stof(args.at("y")),
+                        stof(args.at("z")),                
+                        stof(args.at("roll")),
+                        stof(args.at("pitch")),
+                        stof(args.at("yaw")));
+        });
 
 
-
-
-        
     }catch (json::type_error &e){
         RCLCPP_ERROR_STREAM(get_logger(), e.what());
+    }catch (std::out_of_range &e){
+        RCLCPP_ERROR_STREAM(get_logger(), &e);
+    }catch(std::invalid_argument &e){
+        RCLCPP_ERROR_STREAM(get_logger(), &e);
     }
 
 }
+
+void DroneController::lift(float z){
+    // https://docs.ros2.org/foxy/api/rclcpp/classrclcpp_1_1QoS.html#a98fb6b31d7c5cbd4788412663fd38cfb
+
+
+    
+
+
+}
+
 void DroneController::odom_received_callback(const std::shared_ptr<OdomMsg> msg) {
 
     // https://docs.ros2.org/foxy/api/std_msgs/msg/Header.html
     // Since gazebo clock is used, the timestamp is relative to simulation start
+
+    
     int32_t timestamp = msg->header.stamp.sec;
     auto [roll, pitch, yaw] = quaternion_to_euler(msg->pose.pose.orientation.x,msg->pose.pose.orientation.y,
                                         msg->pose.pose.orientation.z, msg->pose.pose.orientation.w);
     
-    auto x = static_cast<float>(msg->pose.pose.position.x);
-    auto y = static_cast<float>(msg->pose.pose.position.y);
-    auto z = static_cast<float>(msg->pose.pose.position.z);
-                      
-    current_pos_ = {x,y,z,roll,pitch,yaw};
+    current_pos_.x = static_cast<float>(msg->pose.pose.position.x);
+    current_pos_.y = static_cast<float>(msg->pose.pose.position.y);
+    current_pos_.z = static_cast<float>(msg->pose.pose.position.z);
+    current_pos_.roll = roll;
+    current_pos_.pitch = pitch;
+    current_pos_.yaw = yaw;
     current_pos_.round();
 
     // https://json.nlohmann.me/features/arbitrary_types/
@@ -95,9 +138,8 @@ void DroneController::odom_received_callback(const std::shared_ptr<OdomMsg> msg)
     json status = {};
     status[node_name_] = state;
     
-    auto stringified_status = status.dump();
     auto message = std_msgs::msg::String();
-    message.data = stringified_status;
+    message.data = status.dump();
     status_publisher_->publish(message);
     
 };
@@ -138,7 +180,7 @@ void DroneController::nav_goal_acknowledged_callback(const std::shared_ptr<NavTo
 
 }
 
-void DroneController::navigate_to_pose(const Position &pos){
+void DroneController::navigate_to_pose(const float x, const float y, const float z, const float roll, const float pitch, const float yaw){
 
     if (!nav_to_pose_client_->wait_for_action_server(std::chrono::seconds(10))){
         RCLCPP_ERROR(this->get_logger(), "Action server not available after waiting");
@@ -147,14 +189,15 @@ void DroneController::navigate_to_pose(const Position &pos){
 
     // Action definition can be seen from:
     // https://github.com/ros-navigation/navigation2/blob/main/nav2_msgs/action/NavigateToPose.action
-    auto [x,y,z,w] = euler_to_quaternion(pos.roll, pos.pitch, pos.yaw);
+    auto [qx,qy,qz,qw] = euler_to_quaternion(roll, pitch,yaw);
     auto goal_msg = PoseStampedMsg();
-    goal_msg.pose.position.x = pos.x;
-    goal_msg.pose.position.y = pos.y;
-    goal_msg.pose.position.z = pos.z;
-    goal_msg.pose.orientation.x = x;
-    goal_msg.pose.orientation.y = y;
-    goal_msg.pose.orientation.w = w;
+    goal_msg.pose.position.x = x;
+    goal_msg.pose.position.y = y;
+    goal_msg.pose.position.z = z;
+    goal_msg.pose.orientation.x = qx;
+    goal_msg.pose.orientation.y = qy;
+    goal_msg.pose.orientation.z = qz;
+    goal_msg.pose.orientation.w = qw;
     
     NavToPoseAction::Goal goal;
     
@@ -185,10 +228,14 @@ void DroneController::navigate_to_pose(const Position &pos){
 
 int main(int argc, char * argv[])
 {
-  rclcpp::init(argc, argv);
-  rclcpp::spin(std::make_shared<DroneController>());
-  rclcpp::shutdown();
-  return 0;
+    rclcpp::init(argc, argv);
+
+    // Assign 3 threads: the main thread and two other for the two callback groups
+    auto executor = rclcpp::executors::MultiThreadedExecutor(rclcpp::ExecutorOptions(), 3);
+    executor.add_node(std::make_shared<DroneController>());
+    executor.spin();
+    rclcpp::shutdown();
+    return 0;
 }
 
 
