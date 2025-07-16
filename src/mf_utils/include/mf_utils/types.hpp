@@ -11,7 +11,7 @@ using json = nlohmann::json;
 
 struct ExecutableAction{
     int action_id;
-    std::unordered_map<std::string, std::string> command_arguments;
+    std::unordered_map<std::string, json> command_arguments;
 };
 
 //https://json.nlohmann.me/features/arbitrary_types/
@@ -50,7 +50,27 @@ struct Position{
     float pitch;
     float yaw;
     void round();
+    // float diff(const Position& other);
 };
+
+/**
+ * Round the value of the Position to one decimal place
+ */
+void Position::round() {
+    // https://www.reddit.com/r/cpp_questions/comments/173uhmq/how_do_i_round_a_double_to_one_decimal/
+    this->x = std::round(x*10) / 10;
+    this->y = std::round(y*10) / 10;
+    this->z = std::round(z*10) / 10;
+    this->roll = std::round(roll*10) / 10;
+    this->pitch = std::round(pitch*10) / 10;
+    this->yaw = std::round(yaw*10) / 10;
+
+}
+
+// float Position::diff(const Position& other){
+
+
+// }
 
 enum RobotStatus {
     ONLINE = 1,
@@ -73,19 +93,7 @@ NLOHMANN_JSON_SERIALIZE_ENUM(RobotStatus, {
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(RobotState, robot_position, robot_status, timestamp);
 
-/**
- * Round the value of the Position to one decimal place
- */
-void Position::round() {
-    // https://www.reddit.com/r/cpp_questions/comments/173uhmq/how_do_i_round_a_double_to_one_decimal/
-    this->x = std::round(x*10) / 10;
-    this->y = std::round(y*10) / 10;
-    this->z = std::round(z*10) / 10;
-    this->roll = std::round(roll*10) / 10;
-    this->pitch = std::round(pitch*10) / 10;
-    this->yaw = std::round(yaw*10) / 10;
 
-}
 
 
 void to_json(json& j, const Position& p) {

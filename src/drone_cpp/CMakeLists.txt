@@ -15,9 +15,10 @@ find_package(tf2 REQUIRED)
 find_package(nav_msgs REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(nav2_msgs REQUIRED)
-find_package(rclcpp_components)
-find_package(std_msgs)
+find_package(rclcpp_components REQUIRED)
+find_package(std_msgs REQUIRED)
 find_package(mf_utils)
+find_package(sensor_msgs REQUIRED)
 
 # https://roboticsbackend.com/ros2-package-for-both-python-and-cpp-nodes/
 
@@ -29,7 +30,7 @@ add_executable(drone_controller src/drone_controller.cpp)
 # Add necessary dependecies to the target (specified as first argument)
 #https://docs.ros.org/en/foxy/How-To-Guides/Ament-CMake-Documentation.html#adding-dependencies
 ament_target_dependencies(drone_tf_publisher rclcpp geometry_msgs tf2_ros nav_msgs tf2)
-ament_target_dependencies(drone_controller rclcpp std_msgs tf2_ros nav2_msgs rclcpp_components tf2 mf_utils)
+ament_target_dependencies(drone_controller rclcpp std_msgs tf2_ros nav2_msgs rclcpp_components tf2 sensor_msgs)
 
 # Add non ament-compliant utils
 target_link_libraries(drone_controller mf_utils)

@@ -1,809 +1,655 @@
-[INFO] [launch]: All log files can be found below /home/elmeripk/.ros/log/2025-07-14-13-57-46-224914-DESKTOP-0Q572UO-70879
+(ros_env) elmeripk@DESKTOP-0Q572UO:~/forklift_sim$ source ~/.activate_ros
+(ros_env) elmeripk@DESKTOP-0Q572UO:~/forklift_sim$ ros2 launch mf_simulation multi_robot_launch.py
+[INFO] [launch]: All log files can be found below /home/elmeripk/.ros/log/2025-07-16-11-13-46-576110-DESKTOP-0Q572UO-29229
 [INFO] [launch]: Default logging verbosity is set to INFO
 [INFO] [launch.user]: /home/elmeripk/forklift_sim/install/forklift_controller/share:/home/elmeripk/forklift_sim/install/drone_cpp/share:/home/elmeripk/forklift_sim/install/mf_simulation/share/mf_simulation/models:/home/elmeripk/forklift_sim/install/forklift_controller/share/forklift_controller/..
+THE FILE IS:  /home/elmeripk/forklift_sim/install/drone_cpp/share/drone_cpp/config/drone_mqtt_bridge.yaml
+THE FILE IS:  /tmp/tmpahvpocxu
 [INFO] [launch.user]: LAUNCHING NAV
-[INFO] [component_container-1]: process started with pid [70903]
-[INFO] [gazebo-2]: process started with pid [70904]
-[INFO] [mf_simulation_interface-3]: process started with pid [70905]
-[INFO] [rviz2-4]: process started with pid [70906]
-[INFO] [parameter_bridge-5]: process started with pid [70907]
-[INFO] [mqtt_client-6]: process started with pid [70908]
-[INFO] [drone_controller-7]: process started with pid [70909]
-[INFO] [component_container_isolated-8]: process started with pid [70910]
-[INFO] [create-9]: process started with pid [70911]
-[INFO] [robot_state_publisher-10]: process started with pid [70912]
-[INFO] [drone_tf_publisher-11]: process started with pid [70913]
-[mqtt_client-6] [WARN] [1752490667.167877322] [drone_1.mqtt_client]: Parameter 'broker.port' not set, defaulting to '1883'
-[mqtt_client-6] [WARN] [1752490667.169354357] [drone_1.mqtt_client]: Parameter 'broker.tls.enabled' not set, defaulting to '0'
-[mqtt_client-6] [WARN] [1752490667.169635892] [drone_1.mqtt_client]: Parameter 'client.id' not set, defaulting to ''
-[mqtt_client-6] [WARN] [1752490667.169921449] [drone_1.mqtt_client]: Client buffer can not be enabled when client ID is empty
-[mqtt_client-6] [WARN] [1752490667.170172681] [drone_1.mqtt_client]: Parameter 'client.clean_session' not set, defaulting to '1'
-[mqtt_client-6] [WARN] [1752490667.170465052] [drone_1.mqtt_client]: Parameter 'client.keep_alive_interval' not set, defaulting to '60.000000'
-[mqtt_client-6] [WARN] [1752490667.170689050] [drone_1.mqtt_client]: Parameter 'client.max_inflight' not set, defaulting to '65535'
-[mqtt_client-6] [INFO] [1752490667.170916792] [drone_1.mqtt_client]: Bridging primitive ROS topic '/robot_state_updates' to MQTT topic 'robot_state_updates' 
-[mqtt_client-6] [INFO] [1752490667.171306749] [drone_1.mqtt_client]: Bridging primitive ROS topic '/object_state_updates' to MQTT topic 'object_state_updates' 
-[mqtt_client-6] [INFO] [1752490667.172239101] [drone_1.mqtt_client]: Connecting to broker at 'tcp://localhost:1883' ...
-[component_container-1] [INFO] [1752490667.177728697] [sim_env_container]: Load Library: /opt/ros/jazzy/lib/libmqtt_client_lib.so
-[component_container-1] [INFO] [1752490667.180157971] [sim_env_container]: Found class: rclcpp_components::NodeFactoryTemplate<mqtt_client::MqttClient>
-[component_container-1] [INFO] [1752490667.180174846] [sim_env_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<mqtt_client::MqttClient>
-[create-9] [INFO] [1752490667.188683414] [drone_1.ros_gz_sim]: Requesting list of world names.
-[component_container_isolated-8] [INFO] [1752490667.196243524] [drone_1.nav2_container]: Load Library: /opt/ros/jazzy/lib/libcontroller_server_core.so
-[component_container-1] [WARN] [1752490667.202720856] [global_mqtt_client]: Parameter 'broker.port' not set, defaulting to '1883'
-[component_container-1] [WARN] [1752490667.202778600] [global_mqtt_client]: Parameter 'broker.tls.enabled' not set, defaulting to '0'
-[component_container-1] [WARN] [1752490667.202791316] [global_mqtt_client]: Parameter 'client.id' not set, defaulting to ''
-[component_container-1] [WARN] [1752490667.202800073] [global_mqtt_client]: Client buffer can not be enabled when client ID is empty
-[component_container-1] [WARN] [1752490667.202808128] [global_mqtt_client]: Parameter 'client.clean_session' not set, defaulting to '1'
-[component_container-1] [WARN] [1752490667.202816588] [global_mqtt_client]: Parameter 'client.keep_alive_interval' not set, defaulting to '60.000000'
-[component_container-1] [WARN] [1752490667.202822681] [global_mqtt_client]: Parameter 'client.max_inflight' not set, defaulting to '65535'
-[component_container-1] [INFO] [1752490667.202841293] [global_mqtt_client]: Bridging primitive ROS topic '/robot_state_updates' to MQTT topic 'robot_state_updates' 
-[component_container-1] [INFO] [1752490667.202855792] [global_mqtt_client]: Bridging primitive ROS topic '/object_state_updates' to MQTT topic 'object_state_updates' 
-[component_container-1] [INFO] [1752490667.203473625] [global_mqtt_client]: Connecting to broker at 'tcp://localhost:1883' ...
+[INFO] [component_container-1]: process started with pid [29253]
+[INFO] [gazebo-2]: process started with pid [29254]
+[INFO] [mf_simulation_interface-3]: process started with pid [29255]
+[INFO] [rviz2-4]: process started with pid [29256]
+[INFO] [parameter_bridge-5]: process started with pid [29257]
+[INFO] [mqtt_client-6]: process started with pid [29258]
+[INFO] [drone_controller-7]: process started with pid [29259]
+[INFO] [component_container_isolated-8]: process started with pid [29260]
+[INFO] [create-9]: process started with pid [29261]
+[INFO] [robot_state_publisher-10]: process started with pid [29262]
+[mqtt_client-6] [WARN] [1752653627.553229129] [drone_1.mqtt_client]: Parameter 'broker.tls.enabled' not set, defaulting to '0'
+[mqtt_client-6] [WARN] [1752653627.553274824] [drone_1.mqtt_client]: Parameter 'client.id' not set, defaulting to ''
+[mqtt_client-6] [WARN] [1752653627.553280095] [drone_1.mqtt_client]: Client buffer can not be enabled when client ID is empty
+[mqtt_client-6] [WARN] [1752653627.553284018] [drone_1.mqtt_client]: Parameter 'client.clean_session' not set, defaulting to '1'
+[mqtt_client-6] [WARN] [1752653627.553317421] [drone_1.mqtt_client]: Parameter 'client.keep_alive_interval' not set, defaulting to '60.000000'
+[mqtt_client-6] [WARN] [1752653627.553329934] [drone_1.mqtt_client]: Parameter 'client.max_inflight' not set, defaulting to '65535'
+[mqtt_client-6] [INFO] [1752653627.553341117] [drone_1.mqtt_client]: Bridging ROS topic 'feedback' to MQTT topic 'feedback'
+[mqtt_client-6] [INFO] [1752653627.553347909] [drone_1.mqtt_client]: Bridging MQTT topic 'drone_1/move' to primitive ROS topic '/drone_1/move'
+[mqtt_client-6] [INFO] [1752653627.553934931] [drone_1.mqtt_client]: Connecting to broker at 'tcp://localhost:1883' ...
+[mqtt_client-6] [INFO] [1752653627.564644460] [drone_1.mqtt_client]: Connected to broker at 'tcp://localhost:1883'
+[mqtt_client-6] [INFO] [1752653627.564749012] [drone_1.mqtt_client]: Subscribed MQTT topic 'drone_1/move'
+[create-9] [INFO] [1752653627.567805807] [drone_1.ros_gz_sim]: Requesting list of world names.
+[component_container_isolated-8] [INFO] [1752653627.584341686] [drone_1.nav2_container]: Load Library: /opt/ros/jazzy/lib/libcontroller_server_core.so
+[component_container_isolated-8] [INFO] [1752653627.597512466] [drone_1.nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_controller::ControllerServer>
+[component_container_isolated-8] [INFO] [1752653627.597548087] [drone_1.nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_controller::ControllerServer>
+[component_container_isolated-8] [INFO] [1752653627.623381046] [drone_1.controller_server]:
+[component_container_isolated-8]        controller_server lifecycle node launched.
+[component_container_isolated-8]        Waiting on external lifecycle transitions to activate
+[component_container_isolated-8]        See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[component_container-1] [INFO] [1752653627.626261277] [sim_env_container]: Load Library: /opt/ros/jazzy/lib/libmqtt_client_lib.so
+[robot_state_publisher-10] Warning [Utils.cc:132] [/sdf/model[@name="x3_urdf_convr"]/link[@name="link"]/sensor[@name="lidar_2d_v2"]/gz_frame_id:<data-string>:L131]: XML Element[gz_frame_id], child of element[sensor], not defined in SDF. Copying[gz_frame_id] as children of [sensor].
+[component_container-1] [INFO] [1752653627.628112841] [sim_env_container]: Found class: rclcpp_components::NodeFactoryTemplate<mqtt_client::MqttClient>
+[component_container-1] [INFO] [1752653627.628152239] [sim_env_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<mqtt_client::MqttClient>
+[component_container_isolated-8] [INFO] [1752653627.628184263] [drone_1.controller_server]: Creating controller server
+[robot_state_publisher-10] Warning [Utils.cc:132] [/sdf/model[@name="x3_urdf_convr"]/link[@name="laser_link"]/sensor[@name="simple_laser"]/gz_frame_id:<data-string>:L419]: XML Element[gz_frame_id], child of element[sensor], not defined in SDF. Copying[gz_frame_id] as children of [sensor].
+[robot_state_publisher-10] [WARN] [1752653627.649762166] [sdformat_urdf]: SDFormat link [link] has a <sensor>, but URDF does not support this
+[robot_state_publisher-10] [WARN] [1752653627.649852402] [sdformat_urdf]: SDFormat link [laser_link] has a <sensor>, but URDF does not support this
+[component_container-1] [WARN] [1752653627.653181764] [global_mqtt_client]: Parameter 'broker.port' not set, defaulting to '1883'
+[component_container-1] [WARN] [1752653627.653250037] [global_mqtt_client]: Parameter 'broker.tls.enabled' not set, defaulting to '0'
+[component_container-1] [WARN] [1752653627.653267655] [global_mqtt_client]: Parameter 'client.id' not set, defaulting to ''
+[component_container-1] [WARN] [1752653627.653278040] [global_mqtt_client]: Client buffer can not be enabled when client ID is empty
+[component_container-1] [WARN] [1752653627.653285044] [global_mqtt_client]: Parameter 'client.clean_session' not set, defaulting to '1'
+[component_container-1] [WARN] [1752653627.653304843] [global_mqtt_client]: Parameter 'client.keep_alive_interval' not set, defaulting to '60.000000'
+[component_container-1] [WARN] [1752653627.653318850] [global_mqtt_client]: Parameter 'client.max_inflight' not set, defaulting to '65535'
+[component_container-1] [INFO] [1752653627.653339475] [global_mqtt_client]: Bridging primitive ROS topic '/robot_state_updates' to MQTT topic 'robot_state_updates'
+[component_container-1] [INFO] [1752653627.653359055] [global_mqtt_client]: Bridging primitive ROS topic '/object_state_updates' to MQTT topic 'object_state_updates'
+[component_container-1] [INFO] [1752653627.654211811] [global_mqtt_client]: Connecting to broker at 'tcp://localhost:1883' ...
 [INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/global_mqtt_client' in container 'sim_env_container'
-[component_container-1] [INFO] [1752490667.208057426] [sim_env_container]: Load Library: /opt/ros/jazzy/lib/libros_gz_bridge.so
-[component_container_isolated-8] [INFO] [1752490667.209193761] [drone_1.nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_controller::ControllerServer>
-[component_container_isolated-8] [INFO] [1752490667.209213678] [drone_1.nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_controller::ControllerServer>
-[component_container_isolated-8] [INFO] [1752490667.235438557] [drone_1.controller_server]: 
-[component_container_isolated-8] 	controller_server lifecycle node launched. 
-[component_container_isolated-8] 	Waiting on external lifecycle transitions to activate
-[component_container_isolated-8] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
-[component_container-1] [INFO] [1752490667.240265367] [sim_env_container]: Found class: rclcpp_components::NodeFactoryTemplate<ros_gz_bridge::RosGzBridge>
-[component_container-1] [INFO] [1752490667.240317179] [sim_env_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<ros_gz_bridge::RosGzBridge>
-[component_container_isolated-8] [INFO] [1752490667.240560460] [drone_1.controller_server]: Creating controller server
-[robot_state_publisher-10] [1;33mWarning [Utils.cc:132][0m [/sdf/model[@name="x3_urdf_convr"]/link[@name="link"]/sensor[@name="lidar_2d_v2"]/gz_frame_id:<data-string>:L131]: XML Element[gz_frame_id], child of element[sensor], not defined in SDF. Copying[gz_frame_id] as children of [sensor].
-[component_container_isolated-8] [INFO] [1752490667.275926221] [drone_1.local_costmap.local_costmap]: 
-[component_container_isolated-8] 	local_costmap lifecycle node launched. 
-[component_container_isolated-8] 	Waiting on external lifecycle transitions to activate
-[component_container_isolated-8] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
-[component_container_isolated-8] [INFO] [1752490667.276680523] [drone_1.local_costmap.local_costmap]: Creating Costmap
+[component_container-1] [INFO] [1752653627.659046413] [sim_env_container]: Load Library: /opt/ros/jazzy/lib/libros_gz_bridge.so
+[robot_state_publisher-10] [WARN] [1752653627.659591916] [kdl_parser]: The root link base_link has an inertia specified in the URDF, but KDL does not support a root link with an inertia.  As a workaround, you can add an extra dummy link to your URDF.
+[robot_state_publisher-10] [INFO] [1752653627.659694957] [drone_1.robot_state_publisher]: Robot initialized
+[component_container_isolated-8] [INFO] [1752653627.661991086] [drone_1.local_costmap.local_costmap]:
+[component_container_isolated-8]        local_costmap lifecycle node launched.
+[component_container_isolated-8]        Waiting on external lifecycle transitions to activate
+[component_container_isolated-8]        See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[component_container_isolated-8] [INFO] [1752653627.662683730] [drone_1.local_costmap.local_costmap]: Creating Costmap
+[component_container-1] [INFO] [1752653627.665086088] [global_mqtt_client]: Connected to broker at 'tcp://localhost:1883'
 [INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/drone_1/controller_server' in container 'drone_1/nav2_container'
-[component_container_isolated-8] [INFO] [1752490667.281104505] [drone_1.nav2_container]: Load Library: /opt/ros/jazzy/lib/libmap_server_core.so
-[mqtt_client-6] [INFO] [1752490667.282991370] [drone_1.mqtt_client]: Connected to broker at 'tcp://localhost:1883'
-[component_container_isolated-8] [INFO] [1752490667.289759503] [drone_1.nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_map_server::CostmapFilterInfoServer>
-[component_container_isolated-8] [INFO] [1752490667.289792524] [drone_1.nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_map_server::MapSaver>
-[component_container_isolated-8] [INFO] [1752490667.289797860] [drone_1.nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_map_server::MapServer>
-[component_container_isolated-8] [INFO] [1752490667.289800884] [drone_1.nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_map_server::MapServer>
-[robot_state_publisher-10] [1;33mWarning [Utils.cc:132][0m [/sdf/model[@name="x3_urdf_convr"]/link[@name="laser_link"]/sensor[@name="simple_laser"]/gz_frame_id:<data-string>:L419]: XML Element[gz_frame_id], child of element[sensor], not defined in SDF. Copying[gz_frame_id] as children of [sensor].
-[robot_state_publisher-10] [WARN] [1752490667.295962286] [sdformat_urdf]: SDFormat link [link] has a <sensor>, but URDF does not support this
-[robot_state_publisher-10] [WARN] [1752490667.296067996] [sdformat_urdf]: SDFormat link [laser_link] has a <sensor>, but URDF does not support this
-[robot_state_publisher-10] [WARN] [1752490667.302713462] [kdl_parser]: The root link base_link has an inertia specified in the URDF, but KDL does not support a root link with an inertia.  As a workaround, you can add an extra dummy link to your URDF.
-[robot_state_publisher-10] [INFO] [1752490667.302815088] [drone_1.robot_state_publisher]: Robot initialized
-[component_container-1] [INFO] [1752490667.314044391] [global_mqtt_client]: Connected to broker at 'tcp://localhost:1883'
-[component_container_isolated-8] [INFO] [1752490667.316484366] [drone_1.map_server]: 
-[component_container_isolated-8] 	map_server lifecycle node launched. 
-[component_container_isolated-8] 	Waiting on external lifecycle transitions to activate
-[component_container_isolated-8] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
-[component_container_isolated-8] [INFO] [1752490667.316543244] [drone_1.map_server]: Creating
+[component_container_isolated-8] [INFO] [1752653627.667982935] [drone_1.nav2_container]: Load Library: /opt/ros/jazzy/lib/libmap_server_core.so
+[component_container_isolated-8] [INFO] [1752653627.677836462] [drone_1.nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_map_server::CostmapFilterInfoServer>
+[component_container_isolated-8] [INFO] [1752653627.677871433] [drone_1.nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_map_server::MapSaver>
+[component_container_isolated-8] [INFO] [1752653627.677876905] [drone_1.nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_map_server::MapServer>
+[component_container_isolated-8] [INFO] [1752653627.677880159] [drone_1.nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_map_server::MapServer>
+[component_container-1] [INFO] [1752653627.690302524] [sim_env_container]: Found class: rclcpp_components::NodeFactoryTemplate<ros_gz_bridge::RosGzBridge>
+[component_container-1] [INFO] [1752653627.690352765] [sim_env_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<ros_gz_bridge::RosGzBridge>
+[component_container_isolated-8] [INFO] [1752653627.710639290] [drone_1.map_server]:
+[component_container_isolated-8]        map_server lifecycle node launched.
+[component_container_isolated-8]        Waiting on external lifecycle transitions to activate
+[component_container_isolated-8]        See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[component_container_isolated-8] [INFO] [1752653627.710692484] [drone_1.map_server]: Creating
 [INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/drone_1/map_server' in container 'drone_1/nav2_container'
-[component_container_isolated-8] [INFO] [1752490667.317718530] [drone_1.nav2_container]: Load Library: /opt/ros/jazzy/lib/libsmoother_server_core.so
-[component_container_isolated-8] [INFO] [1752490667.319589490] [drone_1.nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_smoother::SmootherServer>
-[component_container_isolated-8] [INFO] [1752490667.319623870] [drone_1.nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_smoother::SmootherServer>
-[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/global_gz_bridge' in container 'sim_env_container'
-[component_container-1] [INFO] [1752490667.343378009] [sim_env_container]: Load Library: /home/elmeripk/forklift_sim/install/state_bridge/lib/libstate_bridge.so
-[component_container_isolated-8] [INFO] [1752490667.343581093] [drone_1.smoother_server]: 
-[component_container_isolated-8] 	smoother_server lifecycle node launched. 
-[component_container_isolated-8] 	Waiting on external lifecycle transitions to activate
-[component_container_isolated-8] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
-[component_container_isolated-8] [INFO] [1752490667.344707609] [drone_1.smoother_server]: Creating smoother server
-[component_container-1] [INFO] [1752490667.344758214] [sim_env_container]: Found class: rclcpp_components::NodeFactoryTemplate<state_bridge::StateBridge>
-[component_container-1] [INFO] [1752490667.344773829] [sim_env_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<state_bridge::StateBridge>
-[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/drone_1/smoother_server' in container 'drone_1/nav2_container'
-[component_container_isolated-8] [INFO] [1752490667.346315836] [drone_1.nav2_container]: Load Library: /opt/ros/jazzy/lib/libamcl_core.so
-[component_container_isolated-8] [INFO] [1752490667.347780847] [drone_1.nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_amcl::AmclNode>
-[component_container_isolated-8] [INFO] [1752490667.347813382] [drone_1.nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_amcl::AmclNode>
-[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/state_bridge_exec' in container 'sim_env_container'
-[component_container-1] [INFO] [1752490667.366059531] [sim_env_container]: Load Library: /opt/ros/jazzy/lib/libgzserver_component.so
-[component_container_isolated-8] [INFO] [1752490667.372857226] [drone_1.amcl]: 
-[component_container_isolated-8] 	amcl lifecycle node launched. 
-[component_container_isolated-8] 	Waiting on external lifecycle transitions to activate
-[component_container_isolated-8] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
-[component_container_isolated-8] [INFO] [1752490667.373145169] [drone_1.amcl]: Creating
-[component_container-1] [INFO] [1752490667.381188965] [sim_env_container]: Found class: rclcpp_components::NodeFactoryTemplate<ros_gz_sim::GzServer>
-[component_container-1] [INFO] [1752490667.381222616] [sim_env_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<ros_gz_sim::GzServer>
+[component_container_isolated-8] [INFO] [1752653627.712130576] [drone_1.nav2_container]: Load Library: /opt/ros/jazzy/lib/libamcl_core.so
+[component_container_isolated-8] [INFO] [1752653627.715097393] [drone_1.nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_amcl::AmclNode>
+[component_container_isolated-8] [INFO] [1752653627.715139752] [drone_1.nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_amcl::AmclNode>
+[component_container_isolated-8] [INFO] [1752653627.743432436] [drone_1.amcl]:
+[component_container_isolated-8]        amcl lifecycle node launched.
+[component_container_isolated-8]        Waiting on external lifecycle transitions to activate
+[component_container_isolated-8]        See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[component_container_isolated-8] [INFO] [1752653627.743866977] [drone_1.amcl]: Creating
 [INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/drone_1/amcl' in container 'drone_1/nav2_container'
-[component_container_isolated-8] [INFO] [1752490667.383954105] [drone_1.nav2_container]: Load Library: /opt/ros/jazzy/lib/libplanner_server_core.so
-[component_container_isolated-8] [INFO] [1752490667.384699808] [drone_1.nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_planner::PlannerServer>
-[component_container_isolated-8] [INFO] [1752490667.384714532] [drone_1.nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_planner::PlannerServer>
-[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/gz_server' in container 'sim_env_container'
-[component_container_isolated-8] [INFO] [1752490667.408979850] [drone_1.planner_server]: 
-[component_container_isolated-8] 	planner_server lifecycle node launched. 
-[component_container_isolated-8] 	Waiting on external lifecycle transitions to activate
-[component_container_isolated-8] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
-[component_container_isolated-8] [INFO] [1752490667.410187087] [drone_1.planner_server]: Creating
-[component_container_isolated-8] [INFO] [1752490667.439521924] [drone_1.global_costmap.global_costmap]: 
-[component_container_isolated-8] 	global_costmap lifecycle node launched. 
-[component_container_isolated-8] 	Waiting on external lifecycle transitions to activate
-[component_container_isolated-8] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
-[component_container_isolated-8] [INFO] [1752490667.440282595] [drone_1.global_costmap.global_costmap]: Creating Costmap
-[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/drone_1/planner_server' in container 'drone_1/nav2_container'
-[component_container_isolated-8] [INFO] [1752490667.451202851] [drone_1.nav2_container]: Load Library: /opt/ros/jazzy/lib/libnav2_lifecycle_manager_core.so
-[component_container_isolated-8] [INFO] [1752490667.452383295] [drone_1.nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_lifecycle_manager::LifecycleManager>
-[component_container_isolated-8] [INFO] [1752490667.452402888] [drone_1.nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_lifecycle_manager::LifecycleManager>
-[component_container_isolated-8] [INFO] [1752490667.476111671] [drone_1.lifecycle_manager_localization]: Creating
-[component_container_isolated-8] [INFO] [1752490667.482178352] [drone_1.lifecycle_manager_localization]: [34m[1mCreating and initializing lifecycle service clients[0m[0m
+[component_container_isolated-8] [INFO] [1752653627.753789779] [drone_1.nav2_container]: Load Library: /opt/ros/jazzy/lib/libsmoother_server_core.so
+[component_container_isolated-8] [INFO] [1752653627.757264036] [drone_1.nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_smoother::SmootherServer>
+[component_container_isolated-8] [INFO] [1752653627.757350541] [drone_1.nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_smoother::SmootherServer>
+[component_container-1] [INFO] [1752653627.775014872] [sim_env_container]: Load Library: /home/elmeripk/forklift_sim/install/state_bridge/lib/libstate_bridge.so
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/global_gz_bridge' in container 'sim_env_container'
+[component_container-1] [INFO] [1752653627.777516107] [sim_env_container]: Found class: rclcpp_components::NodeFactoryTemplate<state_bridge::StateBridge>
+[component_container-1] [INFO] [1752653627.777564451] [sim_env_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<state_bridge::StateBridge>
+[component_container_isolated-8] [INFO] [1752653627.787670114] [drone_1.smoother_server]:
+[component_container_isolated-8]        smoother_server lifecycle node launched.
+[component_container_isolated-8]        Waiting on external lifecycle transitions to activate
+[component_container_isolated-8]        See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[component_container_isolated-8] [INFO] [1752653627.789000663] [drone_1.smoother_server]: Creating smoother server
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/drone_1/smoother_server' in container 'drone_1/nav2_container'
+[component_container_isolated-8] [INFO] [1752653627.791059104] [drone_1.nav2_container]: Load Library: /opt/ros/jazzy/lib/libnav2_lifecycle_manager_core.so
+[component_container_isolated-8] [INFO] [1752653627.792087492] [drone_1.nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_lifecycle_manager::LifecycleManager>
+[component_container_isolated-8] [INFO] [1752653627.792106302] [drone_1.nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_lifecycle_manager::LifecycleManager>
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/state_bridge_exec' in container 'sim_env_container'
+[component_container-1] [INFO] [1752653627.805566372] [sim_env_container]: Load Library: /opt/ros/jazzy/lib/libgzserver_component.so
+[component_container-1] [INFO] [1752653627.822027251] [sim_env_container]: Found class: rclcpp_components::NodeFactoryTemplate<ros_gz_sim::GzServer>
+[component_container-1] [INFO] [1752653627.822067667] [sim_env_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<ros_gz_sim::GzServer>
+[component_container_isolated-8] [INFO] [1752653627.823691973] [drone_1.lifecycle_manager_localization]: Creating
 [INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/drone_1/lifecycle_manager_localization' in container 'drone_1/nav2_container'
-[component_container_isolated-8] [INFO] [1752490667.482255411] [drone_1.nav2_container]: Load Library: /opt/ros/jazzy/lib/libbehavior_server_core.so
-[component_container_isolated-8] [INFO] [1752490667.482914212] [drone_1.nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<behavior_server::BehaviorServer>
-[component_container_isolated-8] [INFO] [1752490667.482931024] [drone_1.nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<behavior_server::BehaviorServer>
-[component_container_isolated-8] [INFO] [1752490667.501439555] [drone_1.lifecycle_manager_localization]: [34m[1mStarting managed nodes bringup...[0m[0m
-[component_container_isolated-8] [INFO] [1752490667.501496255] [drone_1.lifecycle_manager_localization]: [34m[1mConfiguring map_server[0m[0m
-[component_container_isolated-8] [INFO] [1752490667.501750575] [drone_1.map_server]: Configuring
-[component_container_isolated-8] [INFO] [1752490667.501841348] [map_io]: Loading yaml file: /home/elmeripk/forklift_sim/install/nav2_launch/share/nav2_launch/maps/warehouse.yaml
-[component_container_isolated-8] [INFO] [1752490667.502063825] [map_io]: resolution: 0.03
-[component_container_isolated-8] [INFO] [1752490667.502081276] [map_io]: origin[0]: -15.1
-[component_container_isolated-8] [INFO] [1752490667.502089781] [map_io]: origin[1]: -25
-[component_container_isolated-8] [INFO] [1752490667.502100113] [map_io]: origin[2]: 0
-[component_container_isolated-8] [INFO] [1752490667.502106521] [map_io]: free_thresh: 0.1
-[component_container_isolated-8] [INFO] [1752490667.502111354] [map_io]: occupied_thresh: 0.65
-[component_container_isolated-8] [INFO] [1752490667.502117672] [map_io]: mode: trinary
-[component_container_isolated-8] [INFO] [1752490667.502122442] [map_io]: negate: 0
-[component_container_isolated-8] [INFO] [1752490667.502436893] [map_io]: Loading image_file: /home/elmeripk/forklift_sim/install/nav2_launch/share/nav2_launch/maps/warehouse.pgm
-[component_container_isolated-8] [INFO] [1752490667.527154921] [drone_1.behavior_server]: 
-[component_container_isolated-8] 	behavior_server lifecycle node launched. 
-[component_container_isolated-8] 	Waiting on external lifecycle transitions to activate
-[component_container_isolated-8] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[component_container_isolated-8] [INFO] [1752653627.832845390] [drone_1.lifecycle_manager_localization]: Creating and initializing lifecycle service clients
+[component_container_isolated-8] [INFO] [1752653627.832918790] [drone_1.nav2_container]: Load Library: /opt/ros/jazzy/lib/libplanner_server_core.so
+[component_container_isolated-8] [INFO] [1752653627.834861068] [drone_1.nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_planner::PlannerServer>
+[component_container_isolated-8] [INFO] [1752653627.834950028] [drone_1.nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_planner::PlannerServer>
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/gz_server' in container 'sim_env_container'
+[component_container_isolated-8] [INFO] [1752653627.843852945] [drone_1.lifecycle_manager_localization]: Starting managed nodes bringup...
+[component_container_isolated-8] [INFO] [1752653627.843965654] [drone_1.lifecycle_manager_localization]: Configuring map_server
+[component_container_isolated-8] [INFO] [1752653627.844176213] [drone_1.map_server]: Configuring
+[component_container_isolated-8] [INFO] [1752653627.844232670] [map_io]: Loading yaml file: /home/elmeripk/forklift_sim/install/nav2_launch/share/nav2_launch/maps/warehouse.yaml
+[component_container_isolated-8] [INFO] [1752653627.844442420] [map_io]: resolution: 0.03
+[component_container_isolated-8] [INFO] [1752653627.844453044] [map_io]: origin[0]: -15.1
+[component_container_isolated-8] [INFO] [1752653627.844457407] [map_io]: origin[1]: -25
+[component_container_isolated-8] [INFO] [1752653627.844462320] [map_io]: origin[2]: 0
+[component_container_isolated-8] [INFO] [1752653627.844470662] [map_io]: free_thresh: 0.1
+[component_container_isolated-8] [INFO] [1752653627.844476657] [map_io]: occupied_thresh: 0.65
+[component_container_isolated-8] [INFO] [1752653627.844482468] [map_io]: mode: trinary
+[component_container_isolated-8] [INFO] [1752653627.844486758] [map_io]: negate: 0
+[component_container_isolated-8] [INFO] [1752653627.844723604] [map_io]: Loading image_file: /home/elmeripk/forklift_sim/install/nav2_launch/share/nav2_launch/maps/warehouse.pgm
+[component_container_isolated-8] [INFO] [1752653627.883351998] [drone_1.planner_server]:
+[component_container_isolated-8]        planner_server lifecycle node launched.
+[component_container_isolated-8]        Waiting on external lifecycle transitions to activate
+[component_container_isolated-8]        See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[component_container_isolated-8] [INFO] [1752653627.884864748] [drone_1.planner_server]: Creating
+[component_container_isolated-8] [INFO] [1752653627.916344725] [drone_1.global_costmap.global_costmap]:
+[component_container_isolated-8]        global_costmap lifecycle node launched.
+[component_container_isolated-8]        Waiting on external lifecycle transitions to activate
+[component_container_isolated-8]        See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[component_container_isolated-8] [INFO] [1752653627.917162364] [drone_1.global_costmap.global_costmap]: Creating Costmap
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/drone_1/planner_server' in container 'drone_1/nav2_container'
+[component_container_isolated-8] [INFO] [1752653627.926941153] [drone_1.nav2_container]: Load Library: /opt/ros/jazzy/lib/libbehavior_server_core.so
+[component_container_isolated-8] [INFO] [1752653627.927746913] [drone_1.nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<behavior_server::BehaviorServer>
+[component_container_isolated-8] [INFO] [1752653627.927780893] [drone_1.nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<behavior_server::BehaviorServer>
+[component_container_isolated-8] [INFO] [1752653627.960788363] [drone_1.behavior_server]:
+[component_container_isolated-8]        behavior_server lifecycle node launched.
+[component_container_isolated-8]        Waiting on external lifecycle transitions to activate
+[component_container_isolated-8]        See https://design.ros2.org/articles/node_lifecycle.html for more information.
 [INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/drone_1/behavior_server' in container 'drone_1/nav2_container'
-[component_container_isolated-8] [INFO] [1752490667.532826098] [drone_1.nav2_container]: Load Library: /opt/ros/jazzy/lib/libbt_navigator_core.so
-[component_container_isolated-8] [INFO] [1752490667.533842833] [drone_1.nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_bt_navigator::BtNavigator>
-[component_container_isolated-8] [INFO] [1752490667.533880975] [drone_1.nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_bt_navigator::BtNavigator>
-[component_container_isolated-8] [INFO] [1752490667.565519897] [drone_1.bt_navigator]: 
-[component_container_isolated-8] 	bt_navigator lifecycle node launched. 
-[component_container_isolated-8] 	Waiting on external lifecycle transitions to activate
-[component_container_isolated-8] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
-[component_container_isolated-8] [INFO] [1752490667.566700196] [drone_1.bt_navigator]: Creating
+[component_container_isolated-8] [INFO] [1752653627.970485421] [drone_1.nav2_container]: Load Library: /opt/ros/jazzy/lib/libbt_navigator_core.so
+[component_container_isolated-8] [INFO] [1752653627.972253193] [drone_1.nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_bt_navigator::BtNavigator>
+[component_container_isolated-8] [INFO] [1752653627.972321924] [drone_1.nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_bt_navigator::BtNavigator>
+[component_container_isolated-8] [INFO] [1752653628.013297074] [map_io]: Read map /home/elmeripk/forklift_sim/install/nav2_launch/share/nav2_launch/maps/warehouse.pgm: 1006 X 1674 map @ 0.03 m/cell
+[component_container_isolated-8] [INFO] [1752653628.020806027] [drone_1.bt_navigator]:
+[component_container_isolated-8]        bt_navigator lifecycle node launched.
+[component_container_isolated-8]        Waiting on external lifecycle transitions to activate
+[component_container_isolated-8]        See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[component_container_isolated-8] [INFO] [1752653628.022412238] [drone_1.bt_navigator]: Creating
+[component_container_isolated-8] [INFO] [1752653628.023279968] [drone_1.lifecycle_manager_localization]: Configuring amcl
+[component_container_isolated-8] [INFO] [1752653628.023456394] [drone_1.amcl]: Configuring
+[component_container_isolated-8] [INFO] [1752653628.023555970] [drone_1.amcl]: initTransforms
 [INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/drone_1/bt_navigator' in container 'drone_1/nav2_container'
-[component_container_isolated-8] [INFO] [1752490667.568843799] [drone_1.nav2_container]: Load Library: /opt/ros/jazzy/lib/libwaypoint_follower_core.so
-[component_container_isolated-8] [INFO] [1752490667.569794818] [drone_1.nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_waypoint_follower::WaypointFollower>
-[component_container_isolated-8] [INFO] [1752490667.569831889] [drone_1.nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_waypoint_follower::WaypointFollower>
-[component_container_isolated-8] [INFO] [1752490667.597013397] [drone_1.waypoint_follower]: 
-[component_container_isolated-8] 	waypoint_follower lifecycle node launched. 
-[component_container_isolated-8] 	Waiting on external lifecycle transitions to activate
-[component_container_isolated-8] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
-[component_container_isolated-8] [INFO] [1752490667.597310151] [drone_1.waypoint_follower]: Creating
+[component_container_isolated-8] [INFO] [1752653628.025857108] [drone_1.nav2_container]: Load Library: /opt/ros/jazzy/lib/libwaypoint_follower_core.so
+[component_container_isolated-8] [INFO] [1752653628.027319900] [drone_1.nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_waypoint_follower::WaypointFollower>
+[component_container_isolated-8] [INFO] [1752653628.027381453] [drone_1.nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_waypoint_follower::WaypointFollower>
+[component_container_isolated-8] [INFO] [1752653628.050302621] [drone_1.amcl]: initPubSub
+[component_container_isolated-8] [INFO] [1752653628.065604782] [drone_1.amcl]: Subscribed to map topic.
+[component_container_isolated-8] [INFO] [1752653628.079414663] [drone_1.lifecycle_manager_localization]: Activating map_server
+[component_container_isolated-8] [INFO] [1752653628.079609370] [drone_1.map_server]: Activating
+[component_container_isolated-8] [INFO] [1752653628.081073839] [drone_1.map_server]: Creating bond (map_server) to lifecycle manager.
+[component_container_isolated-8] [INFO] [1752653628.082802563] [drone_1.amcl]: Received a 1006 X 1674 map @ 0.030 m/pix
+[component_container_isolated-8] [INFO] [1752653628.097828689] [drone_1.waypoint_follower]:
+[component_container_isolated-8]        waypoint_follower lifecycle node launched.
+[component_container_isolated-8]        Waiting on external lifecycle transitions to activate
+[component_container_isolated-8]        See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[component_container_isolated-8] [INFO] [1752653628.099390593] [drone_1.waypoint_follower]: Creating
 [INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/drone_1/waypoint_follower' in container 'drone_1/nav2_container'
-[component_container_isolated-8] [INFO] [1752490667.601312520] [drone_1.nav2_container]: Load Library: /opt/ros/jazzy/lib/libvelocity_smoother_core.so
-[component_container_isolated-8] [INFO] [1752490667.602153029] [drone_1.nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_velocity_smoother::VelocitySmoother>
-[component_container_isolated-8] [INFO] [1752490667.602186283] [drone_1.nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_velocity_smoother::VelocitySmoother>
-[component_container_isolated-8] [INFO] [1752490667.633953524] [drone_1.velocity_smoother]: 
-[component_container_isolated-8] 	velocity_smoother lifecycle node launched. 
-[component_container_isolated-8] 	Waiting on external lifecycle transitions to activate
-[component_container_isolated-8] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[component_container_isolated-8] [INFO] [1752653628.106817553] [drone_1.nav2_container]: Load Library: /opt/ros/jazzy/lib/libvelocity_smoother_core.so
+[component_container_isolated-8] [INFO] [1752653628.107790730] [drone_1.nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_velocity_smoother::VelocitySmoother>
+[component_container_isolated-8] [INFO] [1752653628.107828891] [drone_1.nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_velocity_smoother::VelocitySmoother>
+[component_container_isolated-8] [INFO] [1752653628.142256629] [drone_1.velocity_smoother]:
 [INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/drone_1/velocity_smoother' in container 'drone_1/nav2_container'
-[component_container_isolated-8] [INFO] [1752490667.636906685] [drone_1.nav2_container]: Load Library: /opt/ros/jazzy/lib/libcollision_monitor_core.so
-[component_container_isolated-8] [INFO] [1752490667.639356654] [drone_1.nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_collision_monitor::CollisionMonitor>
-[component_container_isolated-8] [INFO] [1752490667.639395722] [drone_1.nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_collision_monitor::CollisionMonitor>
-[component_container_isolated-8] [INFO] [1752490667.648035084] [map_io]: Read map /home/elmeripk/forklift_sim/install/nav2_launch/share/nav2_launch/maps/warehouse.pgm: 1006 X 1674 map @ 0.03 m/cell
-[component_container_isolated-8] [INFO] [1752490667.662100492] [drone_1.lifecycle_manager_localization]: [34m[1mConfiguring amcl[0m[0m
-[component_container_isolated-8] [INFO] [1752490667.662271657] [drone_1.amcl]: Configuring
-[component_container_isolated-8] [INFO] [1752490667.662358128] [drone_1.amcl]: initTransforms
-[component_container_isolated-8] [INFO] [1752490667.685472892] [drone_1.amcl]: initPubSub
-[component_container_isolated-8] [INFO] [1752490667.688665504] [drone_1.collision_monitor]: 
-[component_container_isolated-8] 	collision_monitor lifecycle node launched. 
-[component_container_isolated-8] 	Waiting on external lifecycle transitions to activate
-[component_container_isolated-8] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[component_container_isolated-8]        velocity_smoother lifecycle node launched.
+[component_container_isolated-8]        Waiting on external lifecycle transitions to activate
+[component_container_isolated-8]        See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[component_container_isolated-8] [INFO] [1752653628.144699972] [drone_1.nav2_container]: Load Library: /opt/ros/jazzy/lib/libcollision_monitor_core.so
+[component_container_isolated-8] [INFO] [1752653628.147410517] [drone_1.nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_collision_monitor::CollisionMonitor>
+[component_container_isolated-8] [INFO] [1752653628.147442719] [drone_1.nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_collision_monitor::CollisionMonitor>
+[component_container_isolated-8] [INFO] [1752653628.180282850] [drone_1.collision_monitor]:
+[component_container_isolated-8]        collision_monitor lifecycle node launched.
+[component_container_isolated-8]        Waiting on external lifecycle transitions to activate
 [INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/drone_1/collision_monitor' in container 'drone_1/nav2_container'
-[component_container_isolated-8] [INFO] [1752490667.691135345] [drone_1.nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_lifecycle_manager::LifecycleManager>
-[component_container_isolated-8] [INFO] [1752490667.691154388] [drone_1.nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_lifecycle_manager::LifecycleManager>
-[component_container_isolated-8] [INFO] [1752490667.694353117] [drone_1.amcl]: Subscribed to map topic.
-[component_container_isolated-8] [INFO] [1752490667.704058739] [drone_1.lifecycle_manager_localization]: [34m[1mActivating map_server[0m[0m
-[component_container_isolated-8] [INFO] [1752490667.704173799] [drone_1.map_server]: Activating
-[component_container_isolated-8] [INFO] [1752490667.705566794] [drone_1.map_server]: Creating bond (map_server) to lifecycle manager.
-[component_container_isolated-8] [INFO] [1752490667.707146356] [drone_1.amcl]: Received a 1006 X 1674 map @ 0.030 m/pix
-[component_container_isolated-8] [INFO] [1752490667.727559081] [drone_1.lifecycle_manager_navigation]: Creating
+[component_container_isolated-8]        See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[component_container_isolated-8] [INFO] [1752653628.182640922] [drone_1.nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_lifecycle_manager::LifecycleManager>
+[component_container_isolated-8] [INFO] [1752653628.182656276] [drone_1.nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_lifecycle_manager::LifecycleManager>
+[component_container_isolated-8] [INFO] [1752653628.190221929] [drone_1.lifecycle_manager_localization]: Server map_server connected with bond.
+[component_container_isolated-8] [INFO] [1752653628.190262748] [drone_1.lifecycle_manager_localization]: Activating amcl
+[component_container_isolated-8] [INFO] [1752653628.190446968] [drone_1.amcl]: Activating
+[component_container_isolated-8] [INFO] [1752653628.190477686] [drone_1.amcl]: initialPoseReceived
+[component_container_isolated-8] [INFO] [1752653628.190600325] [drone_1.amcl]: Setting pose (0.000000): 0.000 0.000 0.000
+[component_container_isolated-8] [INFO] [1752653628.191070790] [drone_1.amcl]: Creating bond (amcl) to lifecycle manager.
+[component_container_isolated-8] [INFO] [1752653628.212260278] [drone_1.lifecycle_manager_navigation]: Creating
+[component_container_isolated-8] [INFO] [1752653628.219263417] [drone_1.lifecycle_manager_navigation]: Creating and initializing lifecycle service clients
 [INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/drone_1/lifecycle_manager_navigation' in container 'drone_1/nav2_container'
-[component_container_isolated-8] [INFO] [1752490667.751952159] [drone_1.lifecycle_manager_navigation]: [34m[1mCreating and initializing lifecycle service clients[0m[0m
-[component_container_isolated-8] [INFO] [1752490667.783102027] [drone_1.lifecycle_manager_navigation]: [34m[1mStarting managed nodes bringup...[0m[0m
-[component_container_isolated-8] [INFO] [1752490667.783147243] [drone_1.lifecycle_manager_navigation]: [34m[1mConfiguring controller_server[0m[0m
-[component_container_isolated-8] [INFO] [1752490667.783286603] [drone_1.controller_server]: Configuring controller interface
-[component_container_isolated-8] [INFO] [1752490667.783306646] [drone_1.controller_server]: getting progress checker plugins..
-[component_container_isolated-8] [INFO] [1752490667.783897876] [drone_1.controller_server]: getting goal checker plugins..
-[component_container_isolated-8] [INFO] [1752490667.784409043] [drone_1.controller_server]: Controller frequency set to 20.0000Hz
-[component_container_isolated-8] [INFO] [1752490667.784458507] [drone_1.local_costmap.local_costmap]: Configuring
-[component_container_isolated-8] [INFO] [1752490667.793981193] [drone_1.local_costmap.local_costmap]: Using plugin "voxel_layer"
-[component_container_isolated-8] [INFO] [1752490667.799746109] [drone_1.local_costmap.local_costmap]: Subscribed to Topics: scan
-[component_container_isolated-8] [INFO] [1752490667.815050533] [drone_1.local_costmap.local_costmap]: Initialized plugin "voxel_layer"
-[component_container_isolated-8] [INFO] [1752490667.815082465] [drone_1.local_costmap.local_costmap]: Using plugin "inflation_layer"
-[component_container_isolated-8] [INFO] [1752490667.817578846] [drone_1.local_costmap.local_costmap]: Initialized plugin "inflation_layer"
-[component_container_isolated-8] [INFO] [1752490667.818402538] [drone_1.lifecycle_manager_localization]: Server map_server connected with bond.
-[component_container_isolated-8] [INFO] [1752490667.818445234] [drone_1.lifecycle_manager_localization]: [34m[1mActivating amcl[0m[0m
-[component_container_isolated-8] [INFO] [1752490667.818626073] [drone_1.amcl]: Activating
-[component_container_isolated-8] [INFO] [1752490667.818646872] [drone_1.amcl]: initialPoseReceived
-[component_container_isolated-8] [INFO] [1752490667.818701735] [drone_1.amcl]: Setting pose (0.000000): 0.000 0.000 0.000
-[component_container_isolated-8] [INFO] [1752490667.819058077] [drone_1.amcl]: Creating bond (amcl) to lifecycle manager.
-[component_container_isolated-8] [INFO] [1752490667.844496213] [drone_1.controller_server]: Created progress_checker : progress_checker of type nav2_controller::SimpleProgressChecker
-[component_container_isolated-8] [INFO] [1752490667.845740880] [drone_1.controller_server]: Controller Server has progress_checker  progress checkers available.
-[component_container_isolated-8] [INFO] [1752490667.846615508] [drone_1.controller_server]: Created goal checker : general_goal_checker of type nav2_controller::SimpleGoalChecker
-[component_container_isolated-8] [INFO] [1752490667.848251985] [drone_1.controller_server]: Controller Server has general_goal_checker  goal checkers available.
-[component_container_isolated-8] [INFO] [1752490667.850413255] [drone_1.controller_server]: Created controller : FollowPath of type dwb_core::DWBLocalPlanner
-[component_container_isolated-8] [INFO] [1752490667.855836130] [drone_1.controller_server]: Setting transform_tolerance to 0.200000
-[component_container_isolated-8] [INFO] [1752490667.887036216] [drone_1.controller_server]: Using critic "RotateToGoal" (dwb_critics::RotateToGoalCritic)
-[component_container_isolated-8] [INFO] [1752490667.889811711] [drone_1.controller_server]: Critic plugin initialized
-[component_container_isolated-8] [INFO] [1752490667.890445429] [drone_1.controller_server]: Using critic "Oscillation" (dwb_critics::OscillationCritic)
-[component_container_isolated-8] [INFO] [1752490667.893054479] [drone_1.controller_server]: Critic plugin initialized
-[component_container_isolated-8] [INFO] [1752490667.893675148] [drone_1.controller_server]: Using critic "BaseObstacle" (dwb_critics::BaseObstacleCritic)
-[component_container_isolated-8] [INFO] [1752490667.894783116] [drone_1.controller_server]: Critic plugin initialized
-[component_container_isolated-8] [INFO] [1752490667.895422270] [drone_1.controller_server]: Using critic "GoalAlign" (dwb_critics::GoalAlignCritic)
-[component_container_isolated-8] [INFO] [1752490667.897080230] [drone_1.controller_server]: Critic plugin initialized
-[component_container_isolated-8] [INFO] [1752490667.897667509] [drone_1.controller_server]: Using critic "PathAlign" (dwb_critics::PathAlignCritic)
-[component_container_isolated-8] [INFO] [1752490667.899341641] [drone_1.controller_server]: Critic plugin initialized
-[component_container_isolated-8] [INFO] [1752490667.899894370] [drone_1.controller_server]: Using critic "PathDist" (dwb_critics::PathDistCritic)
-[component_container_isolated-8] [INFO] [1752490667.900989117] [drone_1.controller_server]: Critic plugin initialized
-[component_container_isolated-8] [INFO] [1752490667.901560241] [drone_1.controller_server]: Using critic "GoalDist" (dwb_critics::GoalDistCritic)
-[component_container_isolated-8] [INFO] [1752490667.902616558] [drone_1.controller_server]: Critic plugin initialized
-[component_container_isolated-8] [INFO] [1752490667.902652188] [drone_1.controller_server]: Controller Server has FollowPath  controllers available.
-[component_container_isolated-8] [INFO] [1752490667.916848059] [drone_1.lifecycle_manager_navigation]: [34m[1mConfiguring smoother_server[0m[0m
-[component_container_isolated-8] [INFO] [1752490667.917011988] [drone_1.smoother_server]: Configuring smoother server
-[component_container_isolated-8] [INFO] [1752490667.926990674] [drone_1.lifecycle_manager_localization]: Server amcl connected with bond.
-[component_container_isolated-8] [INFO] [1752490667.927027834] [drone_1.lifecycle_manager_localization]: [34m[1mManaged nodes are active[0m[0m
-[component_container_isolated-8] [INFO] [1752490667.927038049] [drone_1.lifecycle_manager_localization]: [34m[1mCreating bond timer...[0m[0m
-[component_container_isolated-8] [INFO] [1752490667.929153608] [drone_1.smoother_server]: Created smoother : simple_smoother of type nav2_smoother::SimpleSmoother
-[component_container_isolated-8] [INFO] [1752490667.932196256] [drone_1.smoother_server]: Smoother Server has simple_smoother  smoothers available.
-[component_container_isolated-8] [INFO] [1752490667.940152204] [drone_1.lifecycle_manager_navigation]: [34m[1mConfiguring planner_server[0m[0m
-[component_container_isolated-8] [INFO] [1752490667.940295681] [drone_1.planner_server]: Configuring
-[component_container_isolated-8] [INFO] [1752490667.940358069] [drone_1.global_costmap.global_costmap]: Configuring
-[component_container_isolated-8] [INFO] [1752490667.949321708] [drone_1.global_costmap.global_costmap]: Using plugin "static_layer"
-[component_container_isolated-8] [INFO] [1752490667.952305838] [drone_1.global_costmap.global_costmap]: Subscribing to the map topic (/drone_1/map) with transient local durability
-[component_container_isolated-8] [INFO] [1752490667.953424165] [drone_1.global_costmap.global_costmap]: Initialized plugin "static_layer"
-[component_container_isolated-8] [INFO] [1752490667.953454377] [drone_1.global_costmap.global_costmap]: Using plugin "obstacle_layer"
-[component_container_isolated-8] [INFO] [1752490667.956373411] [drone_1.global_costmap.global_costmap]: Subscribed to Topics: scan
-[component_container_isolated-8] [INFO] [1752490667.965009158] [drone_1.global_costmap.global_costmap]: Initialized plugin "obstacle_layer"
-[component_container_isolated-8] [INFO] [1752490667.965044213] [drone_1.global_costmap.global_costmap]: Using plugin "inflation_layer"
-[component_container_isolated-8] [INFO] [1752490667.967703501] [drone_1.global_costmap.global_costmap]: Initialized plugin "inflation_layer"
-[component_container_isolated-8] [INFO] [1752490667.992934013] [drone_1.planner_server]: Created global planner plugin GridBased of type nav2_navfn_planner::NavfnPlanner
-[component_container_isolated-8] [INFO] [1752490667.992975412] [drone_1.planner_server]: Configuring plugin GridBased of type NavfnPlanner
-[component_container_isolated-8] [INFO] [1752490667.995475205] [drone_1.planner_server]: Planner Server has GridBased  planners available.
-[component_container_isolated-8] [INFO] [1752490668.009139283] [drone_1.lifecycle_manager_navigation]: [34m[1mConfiguring behavior_server[0m[0m
-[component_container_isolated-8] [INFO] [1752490668.009289042] [drone_1.behavior_server]: Configuring
-[component_container_isolated-8] [INFO] [1752490668.017683800] [drone_1.behavior_server]: Creating behavior plugin spin of type nav2_behaviors::Spin
-[component_container_isolated-8] [INFO] [1752490668.018927073] [drone_1.behavior_server]: Creating behavior plugin backup of type nav2_behaviors::BackUp
-[component_container_isolated-8] [INFO] [1752490668.020034437] [drone_1.behavior_server]: Creating behavior plugin drive_on_heading of type nav2_behaviors::DriveOnHeading
-[component_container_isolated-8] [INFO] [1752490668.021209706] [drone_1.behavior_server]: Creating behavior plugin assisted_teleop of type nav2_behaviors::AssistedTeleop
-[component_container_isolated-8] [INFO] [1752490668.022716837] [drone_1.behavior_server]: Creating behavior plugin wait of type nav2_behaviors::Wait
-[component_container_isolated-8] [INFO] [1752490668.024821476] [drone_1.global_costmap.global_costmap]: StaticLayer: Resizing costmap to 1006 X 1674 at 0.030000 m/pix
-[component_container_isolated-8] [INFO] [1752490668.027810488] [drone_1.behavior_server]: Configuring spin
-[component_container_isolated-8] [INFO] [1752490668.040562618] [drone_1.behavior_server]: Configuring backup
-[component_container_isolated-8] [INFO] [1752490668.049893966] [drone_1.behavior_server]: Configuring drive_on_heading
-[component_container_isolated-8] [INFO] [1752490668.057917002] [drone_1.behavior_server]: Configuring assisted_teleop
-[component_container_isolated-8] [INFO] [1752490668.068269658] [drone_1.behavior_server]: Configuring wait
-[component_container_isolated-8] [INFO] [1752490668.075474062] [drone_1.lifecycle_manager_navigation]: [34m[1mConfiguring velocity_smoother[0m[0m
-[component_container_isolated-8] [INFO] [1752490668.075640606] [drone_1.velocity_smoother]: Configuring velocity smoother
-[component_container_isolated-8] [INFO] [1752490668.084178986] [drone_1.lifecycle_manager_navigation]: [34m[1mConfiguring collision_monitor[0m[0m
-[component_container_isolated-8] [INFO] [1752490668.084418389] [drone_1.collision_monitor]: Configuring
-[component_container_isolated-8] [INFO] [1752490668.099537405] [collision_monitor]: [scan]: Creating Scan
-[component_container_isolated-8] [INFO] [1752490668.103383428] [collision_monitor]: [FootprintApproach]: Creating Polygon
-[component_container_isolated-8] [INFO] [1752490668.104123319] [collision_monitor]: [FootprintApproach]: Polygon points are not defined. Using dynamic subscription instead.
-[component_container_isolated-8] [INFO] [1752490668.109740863] [collision_monitor]: [FootprintApproach]: Making footprint subscriber on local_costmap/published_footprint topic
-[component_container_isolated-8] [INFO] [1752490668.116538674] [drone_1.lifecycle_manager_navigation]: [34m[1mConfiguring bt_navigator[0m[0m
-[component_container_isolated-8] [INFO] [1752490668.116695664] [drone_1.bt_navigator]: Configuring
-[component_container_isolated-8] [INFO] [1752490668.123919373] [drone_1.bt_navigator]: Creating navigator id navigate_to_pose of type nav2_bt_navigator::NavigateToPoseNavigator
-[component_container-1] [1;33m[Wrn] [SdfEntityCreator.cc:933] [0m[1;33mGazebo does not support Ogre material scripts. See [0m[1;33mhttps://gazebosim.org/api/sim/8/migrationsdf.html#:~:text=Materials [0m[1;33mfor details.[0m[1;33m[0m
-[component_container-1] [1;33m[Wrn] [SdfEntityCreator.cc:949] [0m[1;33mUsing an internal gazebo.material to parse [0m[1;33mGazebo/Wood[0m[1;33m[0m
-[mqtt_client-6] [INFO] [1752490668.186271030] [drone_1.mqtt_client]: Subscribed ROS topic '/object_state_updates' of type 'std_msgs/msg/String'
-[component_container-1] [1;33m[Wrn] [SdfEntityCreator.cc:933] [0m[1;33mGazebo does not support Ogre material scripts. See [0m[1;33mhttps://gazebosim.org/api/sim/8/migrationsdf.html#:~:text=Materials [0m[1;33mfor details.[0m[1;33m[0m
-[component_container-1] [1;33m[Wrn] [SdfEntityCreator.cc:949] [0m[1;33mUsing an internal gazebo.material to parse [0m[1;33mGazebo/Grey[0m[1;33m[0m
-[component_container-1] [1;33m[Wrn] [SdfEntityCreator.cc:933] [0m[1;33mGazebo does not support Ogre material scripts. See [0m[1;33mhttps://gazebosim.org/api/sim/8/migrationsdf.html#:~:text=Materials [0m[1;33mfor details.[0m[1;33m[0m
-[component_container-1] [1;33m[Wrn] [SdfEntityCreator.cc:949] [0m[1;33mUsing an internal gazebo.material to parse [0m[1;33mGazebo/Grey[0m[1;33m[0m
-[component_container-1] [1;33m[Wrn] [SdfEntityCreator.cc:933] [0m[1;33mGazebo does not support Ogre material scripts. See [0m[1;33mhttps://gazebosim.org/api/sim/8/migrationsdf.html#:~:text=Materials [0m[1;33mfor details.[0m[1;33m[0m
-[component_container-1] [1;33m[Wrn] [SdfEntityCreator.cc:949] [0m[1;33mUsing an internal gazebo.material to parse [0m[1;33mGazebo/Grey[0m[1;33m[0m
-[component_container-1] [1;33m[Wrn] [SdfEntityCreator.cc:933] [0m[1;33mGazebo does not support Ogre material scripts. See [0m[1;33mhttps://gazebosim.org/api/sim/8/migrationsdf.html#:~:text=Materials [0m[1;33mfor details.[0m[1;33m[0m
-[component_container-1] [1;33m[Wrn] [SdfEntityCreator.cc:949] [0m[1;33mUsing an internal gazebo.material to parse [0m[1;33mGazebo/Grey[0m[1;33m[0m
-[mqtt_client-6] [INFO] [1752490668.187453310] [drone_1.mqtt_client]: Subscribed ROS topic '/robot_state_updates' of type 'std_msgs/msg/String'
-[component_container-1] [1;32m[Msg] [0m[1;32mLoading SDF world file[[0m[1;32m/home/elmeripk/forklift_sim/install/mf_simulation/share/mf_simulation/worlds/warehouse.sdf[0m[1;32m].[0m
-[component_container-1] [1;32m[Msg] [0m[1;32mServing entity system service on [[0m[1;32m/[0m[1;32mentity/system/add[0m[1;32m][0m[1;32m[0m
-[component_container-1] [1;36m[Dbg] [Physics.cc:883] [0m[1;36mLoaded [[0m[1;36mgz::physics::dartsim::Plugin[0m[1;36m] from library [[0m[1;36m/opt/ros/jazzy/opt/gz_physics_vendor/lib/gz-physics-7/engine-plugins/libgz-physics-dartsim-plugin.so[0m[1;36m][0m[1;36m[0m
-[component_container-1] [1;36m[Dbg] [SystemManager.cc:80] [0m[1;36mLoaded system [[0m[1;36mgz::sim::systems::Physics[0m[1;36m] for entity [[0m[1;36m1[0m[1;36m][0m[1;36m[0m
-[component_container-1] [1;32m[Msg] [0m[1;32mCreate service on [[0m[1;32m/world/warehouse/create[0m[1;32m][0m[1;32m[0m
-[component_container-1] [1;32m[Msg] [0m[1;32mRemove service on [[0m[1;32m/world/warehouse/remove[0m[1;32m][0m[1;32m[0m
-[component_container-1] [1;32m[Msg] [0m[1;32mPose service on [[0m[1;32m/world/warehouse/set_pose[0m[1;32m][0m[1;32m[0m
-[component_container-1] [1;32m[Msg] [0m[1;32mPose service on [[0m[1;32m/world/warehouse/set_pose_vector[0m[1;32m][0m[1;32m[0m
-[component_container-1] [1;32m[Msg] [0m[1;32mLight configuration service on [[0m[1;32m/world/warehouse/light_config[0m[1;32m][0m[1;32m[0m
-[component_container-1] [1;32m[Msg] [0m[1;32mPhysics service on [[0m[1;32m/world/warehouse/set_physics[0m[1;32m][0m[1;32m[0m
-[component_container-1] [1;32m[Msg] [0m[1;32mSphericalCoordinates service on [[0m[1;32m/world/warehouse/set_spherical_coordinates[0m[1;32m][0m[1;32m[0m
-[component_container-1] [1;32m[Msg] [0m[1;32mEnable collision service on [[0m[1;32m/world/warehouse/enable_collision[0m[1;32m][0m[1;32m[0m
-[component_container-1] [1;32m[Msg] [0m[1;32mDisable collision service on [[0m[1;32m/world/warehouse/disable_collision[0m[1;32m][0m[1;32m[0m
-[component_container-1] [1;32m[Msg] [0m[1;32mMaterial service on [[0m[1;32m/world/warehouse/visual_config[0m[1;32m][0m[1;32m[0m
-[component_container-1] [1;32m[Msg] [0m[1;32mMaterial service on [[0m[1;32m/world/warehouse/wheel_slip[0m[1;32m][0m[1;32m[0m
-[component_container-1] [1;36m[Dbg] [SystemManager.cc:80] [0m[1;36mLoaded system [[0m[1;36mgz::sim::systems::UserCommands[0m[1;36m] for entity [[0m[1;36m1[0m[1;36m][0m[1;36m[0m
-[component_container-1] [1;36m[Dbg] [SystemManager.cc:80] [0m[1;36mLoaded system [[0m[1;36mgz::sim::systems::SceneBroadcaster[0m[1;36m] for entity [[0m[1;36m1[0m[1;36m][0m[1;36m[0m
-[component_container-1] [1;36m[Dbg] [Sensors.cc:697] [0m[1;36mConfiguring Sensors system[0m[1;36m[0m
-[component_container-1] [1;36m[Dbg] [Sensors.cc:557] [0m[1;36mSensorsPrivate::Run[0m[1;36m[0m
-[component_container-1] [1;36m[Dbg] [SystemManager.cc:80] [0m[1;36mLoaded system [[0m[1;36mgz::sim::systems::Sensors[0m[1;36m] for entity [[0m[1;36m1[0m[1;36m][0m[1;36m[0m
-[component_container-1] [1;36m[Dbg] [Sensors.cc:532] [0m[1;36mSensorsPrivate::RenderThread started[0m[1;36m[0m
-[component_container-1] [1;36m[Dbg] [Sensors.cc:337] [0m[1;36mWaiting for init[0m[1;36m[0m
-[component_container-1] [1;36m[Dbg] [SystemManager.cc:80] [0m[1;36mLoaded system [[0m[1;36mgz::sim::systems::Imu[0m[1;36m] for entity [[0m[1;36m1[0m[1;36m][0m[1;36m[0m
-[component_container-1] [1;36m[Dbg] [SystemManager.cc:80] [0m[1;36mLoaded system [[0m[1;36mgz::sim::systems::PosePublisher[0m[1;36m] for entity [[0m[1;36m12[0m[1;36m][0m[1;36m[0m
-[component_container-1] [1;32m[Msg] [0m[1;32mLoaded level [[0m[1;32mdefault[0m[1;32m][0m[1;32m[0m
-[component_container-1] [1;32m[Msg] [0m[1;32mServing world controls on [[0m[1;32m/world/warehouse[0m[1;32m/control], [[0m[1;32m/world/warehouse[0m[1;32m/control/state] and [[0m[1;32m/world/warehouse[0m[1;32m/playback/control][0m[1;32m[0m
-[component_container-1] [1;32m[Msg] [0m[1;32mServing GUI information on [[0m[1;32m/world/warehouse[0m[1;32m/[0m[1;32mgui/info[0m[1;32m][0m[1;32m[0m
-[component_container-1] [1;32m[Msg] [0m[1;32mWorld [[0m[1;32mwarehouse[0m[1;32m] initialized with [[0m[1;32m1ms[0m[1;32m] physics profile.[0m[1;32m[0m
-[component_container-1] [1;32m[Msg] [0m[1;32mServing world SDF generation service on [[0m[1;32m/world/warehouse[0m[1;32m/[0m[1;32mgenerate_world_sdf[0m[1;32m][0m[1;32m[0m
-[component_container-1] [1;32m[Msg] [0m[1;32mServing world names on [[0m[1;32m/gazebo/worlds[0m[1;32m][0m[1;32m[0m
-[parameter_bridge-5] [INFO] [1752490668.203649603] [drone_1.ros_gz_bridge]: Creating GZ->ROS Bridge: [/drone_1/joint_states (gz.msgs.Model) -> joint_states (sensor_msgs/msg/JointState)] (Lazy 0)
-[component_container-1] [INFO] [1752490668.209537691] [global_mqtt_client]: Subscribed ROS topic '/object_state_updates' of type 'std_msgs/msg/String'
-[component_container_isolated-8] [INFO] [1752490668.209558644] [drone_1.bt_navigator]: Creating navigator id navigate_through_poses of type nav2_bt_navigator::NavigateThroughPosesNavigator
-[component_container-1] [INFO] [1752490668.211084313] [global_mqtt_client]: Subscribed ROS topic '/robot_state_updates' of type 'std_msgs/msg/String'
-[parameter_bridge-5] [INFO] [1752490668.237782583] [drone_1.ros_gz_bridge]: Creating ROS->GZ Bridge: [cmd_vel (geometry_msgs/msg/Twist) -> /drone_1/cmd_vel (gz.msgs.Twist)] (Lazy 0)
-[parameter_bridge-5] [INFO] [1752490668.239935524] [drone_1.ros_gz_bridge]: Creating GZ->ROS Bridge: [/drone_1/scan (gz.msgs.LaserScan) -> scan (sensor_msgs/msg/LaserScan)] (Lazy 0)
-[parameter_bridge-5] [INFO] [1752490668.242055404] [drone_1.ros_gz_bridge]: Creating GZ->ROS Bridge: [/drone_1/odom (gz.msgs.Odometry) -> odom (nav_msgs/msg/Odometry)] (Lazy 0)
-[parameter_bridge-5] [INFO] [1752490668.245307113] [drone_1.ros_gz_bridge]: Creating GZ->ROS Bridge: [/drone_1/tf (gz.msgs.Pose_V) -> tf (tf2_msgs/msg/TFMessage)] (Lazy 0)
-[component_container_isolated-8] [INFO] [1752490668.260779033] [drone_1.lifecycle_manager_navigation]: [34m[1mConfiguring waypoint_follower[0m[0m
-[component_container_isolated-8] [INFO] [1752490668.260935401] [drone_1.waypoint_follower]: Configuring
-[component_container_isolated-8] [INFO] [1752490668.282584271] [drone_1.waypoint_follower]: Created waypoint_task_executor : wait_at_waypoint of type nav2_waypoint_follower::WaitAtWaypoint
-[component_container_isolated-8] [INFO] [1752490668.283986019] [drone_1.lifecycle_manager_navigation]: [34m[1mActivating controller_server[0m[0m
-[component_container_isolated-8] [INFO] [1752490668.284203033] [drone_1.controller_server]: Activating
-[component_container_isolated-8] [INFO] [1752490668.284245791] [drone_1.local_costmap.local_costmap]: Activating
-[component_container_isolated-8] [INFO] [1752490668.284254278] [drone_1.local_costmap.local_costmap]: Checking transform
-[component_container_isolated-8] [INFO] [1752490668.284286039] [drone_1.local_costmap.local_costmap]: Timed out waiting for transform from base_link to odom to become available, tf error: Invalid frame ID "odom" passed to canTransform argument target_frame - frame does not exist
-[component_container-1] [INFO] [1752490668.343406239] [global_gz_bridge]: Creating GZ->ROS Bridge: [/clock (gz.msgs.Clock) -> /clock (rosgraph_msgs/msg/Clock)] (Lazy 0)
-[component_container-1] [INFO] [1752490668.438716836] [global_gz_bridge]: Creating GZ->ROS Bridge: [/model/pallet_1/pose (gz.msgs.Pose_V) -> /object_state_updates_gz (tf2_msgs/msg/TFMessage)] (Lazy 0)
-[create-9] [INFO] [1752490668.439163960] [drone_1.ros_gz_sim]: Entity creation successful.
-[INFO] [create-9]: process has finished cleanly [pid 70911]
-[gazebo-2] [1;32m[Msg] [0m[1;32mGazebo Sim GUI    v[0m[1;32m8.9.0[0m[1;32m[0m
-[gazebo-2] [1;36m[Dbg] [Application.cc:96] [0m[1;36mInitializing application.[0m[1;36m[0m
-[gazebo-2] [1;36m[Dbg] [Application.cc:170] [0m[1;36mQt using OpenGL graphics interface[0m[1;36m[0m
-[gazebo-2] [1;36m[GUI] [Dbg] [Application.cc:657] [0m[1;36mCreate main window[0m[1;36m[0m
-[gazebo-2] [1;36m[GUI] [Dbg] [PathManager.cc:68] [0m[1;36mRequesting resource paths through [[0m[1;36m/gazebo/resource_paths/get[0m[1;36m][0m[1;36m[0m
-[gazebo-2] [1;36m[GUI] [Dbg] [Gui.cc:355] [0m[1;36mGUI requesting list of world names. The server may be busy [0m[1;36mdownloading resources. Please be patient.[0m[1;36m[0m
-[gazebo-2] [1;36m[GUI] [Dbg] [Gui.cc:413] [0m[1;36mRequesting GUI from [[0m[1;36m/world/warehouse/gui/info[0m[1;36m]...[0m[1;36m[0m
-[gazebo-2] [1;36m[GUI] [Dbg] [PathManager.cc:57] [0m[1;36mReceived resource paths.[0m[1;36m[0m
-[gazebo-2] [1;36m[GUI] [Dbg] [GuiRunner.cc:149] [0m[1;36mRequesting initial state from [[0m[1;36m/world/warehouse/state[0m[1;36m]...[0m[1;36m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoading config [[0m[1;32m/home/elmeripk/.gz/sim/8/gui.config[0m[1;32m][0m[1;32m[0m
-[gazebo-2] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mMinimalScene[0m[1;36m][0m[1;36m[0m
-[gazebo-2] [1;36m[GUI] [Dbg] [MinimalScene.cc:802] [0m[1;36mCreating gz-rendering interface for OpenGL[0m[1;36m[0m
-[gazebo-2] [1;36m[GUI] [Dbg] [MinimalScene.cc:802] [0m[1;36mCreating gz-rendering interface for OpenGL[0m[1;36m[0m
-[gazebo-2] [1;36m[GUI] [Dbg] [MinimalScene.cc:986] [0m[1;36mCreating render thread interface for OpenGL[0m[1;36m[0m
-[gazebo-2] [1;36m[GUI] [Dbg] [MinimalScene.cc:802] [0m[1;36mCreating gz-rendering interface for OpenGL[0m[1;36m[0m
-[gazebo-2] [1;36m[GUI] [Dbg] [MinimalScene.cc:986] [0m[1;36mCreating render thread interface for OpenGL[0m[1;36m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32m3D View[0m[1;32m] to main window[0m[1;32m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mMinimalScene[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_gui_vendor/lib/gz-gui-8/plugins/libMinimalScene.so[0m[1;32m][0m[1;32m[0m
-[gazebo-2] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mEntityContextMenuPlugin[0m[1;36m][0m[1;36m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mCurrently tracking topic on [[0m[1;32m/gui/currently_tracked[0m[1;32m][0m[1;32m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mEntity Context Menu[0m[1;32m] to main window[0m[1;32m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mEntityContextMenuPlugin[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libEntityContextMenuPlugin.so[0m[1;32m][0m[1;32m[0m
-[gazebo-2] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mGzSceneManager[0m[1;36m][0m[1;36m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mScene Manager[0m[1;32m] to main window[0m[1;32m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mGzSceneManager[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libGzSceneManager.so[0m[1;32m][0m[1;32m[0m
-[gazebo-2] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mInteractiveViewControl[0m[1;36m][0m[1;36m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mCamera view controller topic advertised on [[0m[1;32m/gui/camera/view_control[0m[1;32m][0m[1;32m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mCamera reference visual topic advertised on [[0m[1;32m/gui/camera/view_control/reference_visual[0m[1;32m][0m[1;32m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mCamera view control sensitivity advertised on [[0m[1;32m/gui/camera/view_control/sensitivity[0m[1;32m][0m[1;32m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mInteractive view control[0m[1;32m] to main window[0m[1;32m[0m
-[rviz2-4] [INFO] [1752490668.695512667] [rviz2]: Stereo is NOT SUPPORTED
-[rviz2-4] [INFO] [1752490668.695593063] [rviz2]: OpenGl version: 4.6 (GLSL 4.6)
-[rviz2-4] [INFO] [1752490668.731899657] [rviz2]: Stereo is NOT SUPPORTED
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mInteractiveViewControl[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_gui_vendor/lib/gz-gui-8/plugins/libInteractiveViewControl.so[0m[1;32m][0m[1;32m[0m
-[gazebo-2] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mCameraTracking[0m[1;36m][0m[1;36m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mCamera tracking[0m[1;32m] to main window[0m[1;32m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mCameraTracking[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_gui_vendor/lib/gz-gui-8/plugins/libCameraTracking.so[0m[1;32m][0m[1;32m[0m
-[gazebo-2] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mMarkerManager[0m[1;36m][0m[1;36m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mListening to stats on [[0m[1;32m/world/warehouse/stats[0m[1;32m][0m[1;32m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mMarker Manager[0m[1;32m] to main window[0m[1;32m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mMarkerManager[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_gui_vendor/lib/gz-gui-8/plugins/libMarkerManager.so[0m[1;32m][0m[1;32m[0m
-[gazebo-2] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mSelectEntities[0m[1;36m][0m[1;36m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mSelect entities[0m[1;32m] to main window[0m[1;32m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mSelectEntities[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libSelectEntities.so[0m[1;32m][0m[1;32m[0m
-[gazebo-2] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mSpawn[0m[1;36m][0m[1;36m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mSpawn[0m[1;32m] to main window[0m[1;32m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mSpawn[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libSpawn.so[0m[1;32m][0m[1;32m[0m
-[gazebo-2] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mVisualizationCapabilities[0m[1;36m][0m[1;36m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mView as transparent service on [[0m[1;32m/gui/view/transparent[0m[1;32m][0m[1;32m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mView as wireframes service on [[0m[1;32m/gui/view/wireframes[0m[1;32m][0m[1;32m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mView center of mass service on [[0m[1;32m/gui/view/com[0m[1;32m][0m[1;32m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mView inertia service on [[0m[1;32m/gui/view/inertia[0m[1;32m][0m[1;32m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mView collisions service on [[0m[1;32m/gui/view/collisions[0m[1;32m][0m[1;32m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mView joints service on [[0m[1;32m/gui/view/joints[0m[1;32m][0m[1;32m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mView frames service on [[0m[1;32m/gui/view/frames[0m[1;32m][0m[1;32m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mVisualization capabilities[0m[1;32m] to main window[0m[1;32m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mVisualizationCapabilities[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libVisualizationCapabilities.so[0m[1;32m][0m[1;32m[0m
-[gazebo-2] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mWorldControl[0m[1;36m][0m[1;36m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mUsing world control service [[0m[1;32m/world/warehouse/control[0m[1;32m][0m[1;32m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mListening to stats on [[0m[1;32m/world/warehouse/stats[0m[1;32m][0m[1;32m[0m
-[gazebo-2] [1;36m[GUI] [Dbg] [WorldControl.cc:237] [0m[1;36mUsing an event to share WorldControl msgs with the server[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mWorld control[0m[1;32m] to main window[0m[1;32m[0m
-[component_container_isolated-8] [INFO] [1752490668.784363957] [drone_1.local_costmap.local_costmap]: Timed out waiting for transform from base_link to odom to become available, tf error: Invalid frame ID "odom" passed to canTransform argument target_frame - frame does not exist
-[rviz2-4] [INFO] [1752490668.813413124] [drone_1.rviz]: Subscribing to: /drone_1/mobile_base/sensors/bumper_pointcloud
-[rviz2-4] 
-[rviz2-4] [INFO] [1752490668.814815811] [drone_1.rviz]: Subscribing to: /drone_1/mobile_base/sensors/bumper_pointcloud
-[rviz2-4] 
-[component_container_isolated-8] [WARN] [1752490668.829152381] [drone_1.amcl]: New subscription discovered on topic '/drone_1/particle_cloud', requesting incompatible QoS. No messages will be sent to it. Last incompatible policy: RELIABILITY_QOS_POLICY
-[rviz2-4] [INFO] [1752490668.879604027] [drone_1.rviz]: Subscribing to: /drone_1/mobile_base/sensors/bumper_pointcloud
-[rviz2-4] 
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mWorldControl[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_gui_vendor/lib/gz-gui-8/plugins/libWorldControl.so[0m[1;32m][0m[1;32m[0m
-[gazebo-2] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mWorldStats[0m[1;36m][0m[1;36m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mListening to stats on [[0m[1;32m/world/warehouse/stats[0m[1;32m][0m[1;32m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mWorld stats[0m[1;32m] to main window[0m[1;32m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mWorldStats[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_gui_vendor/lib/gz-gui-8/plugins/libWorldStats.so[0m[1;32m][0m[1;32m[0m
-[gazebo-2] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mShapes[0m[1;36m][0m[1;36m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mShapes[0m[1;32m] to main window[0m[1;32m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mShapes[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libShapes.so[0m[1;32m][0m[1;32m[0m
-[gazebo-2] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mLights[0m[1;36m][0m[1;36m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mLights[0m[1;32m] to main window[0m[1;32m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mLights[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libLights.so[0m[1;32m][0m[1;32m[0m
-[gazebo-2] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mTransformControl[0m[1;36m][0m[1;36m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mTransform control[0m[1;32m] to main window[0m[1;32m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mTransformControl[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libTransformControl.so[0m[1;32m][0m[1;32m[0m
-[gazebo-2] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mScreenshot[0m[1;36m][0m[1;36m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mScreenshot service on [[0m[1;32m/gui/screenshot[0m[1;32m][0m[1;32m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mScreenshot[0m[1;32m] to main window[0m[1;32m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mScreenshot[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_gui_vendor/lib/gz-gui-8/plugins/libScreenshot.so[0m[1;32m][0m[1;32m[0m
-[gazebo-2] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mCopyPaste[0m[1;36m][0m[1;36m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mCopy/Paste[0m[1;32m] to main window[0m[1;32m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mCopyPaste[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libCopyPaste.so[0m[1;32m][0m[1;32m[0m
-[gazebo-2] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mComponentInspector[0m[1;36m][0m[1;36m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mComponent inspector[0m[1;32m] to main window[0m[1;32m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mComponentInspector[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libComponentInspector.so[0m[1;32m][0m[1;32m[0m
-[gazebo-2] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mEntityTree[0m[1;36m][0m[1;36m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mCurrently tracking topic on [[0m[1;32m/gui/currently_tracked[0m[1;32m][0m[1;32m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mEntity tree[0m[1;32m] to main window[0m[1;32m[0m
-[gazebo-2] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] file::/WorldStats/WorldStats.qml:53:3: QML RowLayout: Binding loop detected for property "x"[0m[1;33m[0m
-[rviz2-4] [INFO] [1752490669.094028753] [rviz2]: Trying to create a map of size 1006 x 1674 using 1 swatches
-[rviz2-4] [ERROR] [1752490669.106037190] [rviz2]: rviz/glsl120/indexed_8bit_image.vert
+[component_container_isolated-8] [INFO] [1752653628.250074360] [drone_1.lifecycle_manager_navigation]: Starting managed nodes bringup...
+[component_container_isolated-8] [INFO] [1752653628.250128708] [drone_1.lifecycle_manager_navigation]: Configuring controller_server
+[component_container_isolated-8] [INFO] [1752653628.250284082] [drone_1.controller_server]: Configuring controller interface
+[component_container_isolated-8] [INFO] [1752653628.250334315] [drone_1.controller_server]: getting progress checker plugins..
+[component_container_isolated-8] [INFO] [1752653628.251153916] [drone_1.controller_server]: getting goal checker plugins..
+[component_container_isolated-8] [INFO] [1752653628.251841380] [drone_1.controller_server]: Controller frequency set to 20.0000Hz
+[component_container_isolated-8] [INFO] [1752653628.252015096] [drone_1.local_costmap.local_costmap]: Configuring
+[component_container_isolated-8] [INFO] [1752653628.264714173] [drone_1.local_costmap.local_costmap]: Using plugin "voxel_layer"
+[component_container_isolated-8] [INFO] [1752653628.269931517] [drone_1.local_costmap.local_costmap]: Subscribed to Topics: scan
+[component_container_isolated-8] [INFO] [1752653628.287362622] [drone_1.local_costmap.local_costmap]: Initialized plugin "voxel_layer"
+[component_container_isolated-8] [INFO] [1752653628.287410462] [drone_1.local_costmap.local_costmap]: Using plugin "inflation_layer"
+[component_container_isolated-8] [INFO] [1752653628.290108531] [drone_1.local_costmap.local_costmap]: Initialized plugin "inflation_layer"
+[component_container_isolated-8] [INFO] [1752653628.302522540] [drone_1.lifecycle_manager_localization]: Server amcl connected with bond.
+[component_container_isolated-8] [INFO] [1752653628.302554293] [drone_1.lifecycle_manager_localization]: Managed nodes are active
+[component_container_isolated-8] [INFO] [1752653628.302566943] [drone_1.lifecycle_manager_localization]: Creating bond timer...
+[component_container_isolated-8] [INFO] [1752653628.314682756] [drone_1.controller_server]: Created progress_checker : progress_checker of type nav2_controller::SimpleProgressChecker
+[component_container_isolated-8] [INFO] [1752653628.315893072] [drone_1.controller_server]: Controller Server has progress_checker  progress checkers available.
+[component_container_isolated-8] [INFO] [1752653628.316796575] [drone_1.controller_server]: Created goal checker : general_goal_checker of type nav2_controller::SimpleGoalChecker
+[component_container_isolated-8] [INFO] [1752653628.318231390] [drone_1.controller_server]: Controller Server has general_goal_checker  goal checkers available.
+[component_container_isolated-8] [INFO] [1752653628.320118089] [drone_1.controller_server]: Created controller : FollowPath of type dwb_core::DWBLocalPlanner
+[component_container_isolated-8] [INFO] [1752653628.325277546] [drone_1.controller_server]: Setting transform_tolerance to 0.200000
+[component_container_isolated-8] [INFO] [1752653628.352435547] [drone_1.controller_server]: Using critic "RotateToGoal" (dwb_critics::RotateToGoalCritic)
+[component_container_isolated-8] [INFO] [1752653628.355157448] [drone_1.controller_server]: Critic plugin initialized
+[component_container_isolated-8] [INFO] [1752653628.355800327] [drone_1.controller_server]: Using critic "Oscillation" (dwb_critics::OscillationCritic)
+[component_container_isolated-8] [INFO] [1752653628.358445495] [drone_1.controller_server]: Critic plugin initialized
+[component_container_isolated-8] [INFO] [1752653628.359020377] [drone_1.controller_server]: Using critic "BaseObstacle" (dwb_critics::BaseObstacleCritic)
+[component_container_isolated-8] [INFO] [1752653628.360044374] [drone_1.controller_server]: Critic plugin initialized
+[component_container_isolated-8] [INFO] [1752653628.360619631] [drone_1.controller_server]: Using critic "GoalAlign" (dwb_critics::GoalAlignCritic)
+[component_container_isolated-8] [INFO] [1752653628.362195070] [drone_1.controller_server]: Critic plugin initialized
+[component_container_isolated-8] [INFO] [1752653628.362824653] [drone_1.controller_server]: Using critic "PathAlign" (dwb_critics::PathAlignCritic)
+[component_container_isolated-8] [INFO] [1752653628.364468676] [drone_1.controller_server]: Critic plugin initialized
+[component_container_isolated-8] [INFO] [1752653628.365064357] [drone_1.controller_server]: Using critic "PathDist" (dwb_critics::PathDistCritic)
+[component_container_isolated-8] [INFO] [1752653628.366157158] [drone_1.controller_server]: Critic plugin initialized
+[component_container_isolated-8] [INFO] [1752653628.366739648] [drone_1.controller_server]: Using critic "GoalDist" (dwb_critics::GoalDistCritic)
+[component_container_isolated-8] [INFO] [1752653628.367859005] [drone_1.controller_server]: Critic plugin initialized
+[component_container_isolated-8] [INFO] [1752653628.367903618] [drone_1.controller_server]: Controller Server has FollowPath  controllers available.
+[component_container_isolated-8] [INFO] [1752653628.380776634] [drone_1.lifecycle_manager_navigation]: Configuring smoother_server
+[component_container_isolated-8] [INFO] [1752653628.380963243] [drone_1.smoother_server]: Configuring smoother server
+[component_container_isolated-8] [INFO] [1752653628.394643188] [drone_1.smoother_server]: Created smoother : simple_smoother of type nav2_smoother::SimpleSmoother
+[component_container_isolated-8] [INFO] [1752653628.397625778] [drone_1.smoother_server]: Smoother Server has simple_smoother  smoothers available.
+[component_container_isolated-8] [INFO] [1752653628.406178469] [drone_1.lifecycle_manager_navigation]: Configuring planner_server
+[component_container_isolated-8] [INFO] [1752653628.406319099] [drone_1.planner_server]: Configuring
+[component_container_isolated-8] [INFO] [1752653628.406354399] [drone_1.global_costmap.global_costmap]: Configuring
+[component_container_isolated-8] [INFO] [1752653628.415762000] [drone_1.global_costmap.global_costmap]: Using plugin "static_layer"
+[component_container_isolated-8] [INFO] [1752653628.419662360] [drone_1.global_costmap.global_costmap]: Subscribing to the map topic (/drone_1/map) with transient local durability
+[component_container_isolated-8] [INFO] [1752653628.420996011] [drone_1.global_costmap.global_costmap]: Initialized plugin "static_layer"
+[component_container_isolated-8] [INFO] [1752653628.421031623] [drone_1.global_costmap.global_costmap]: Using plugin "obstacle_layer"
+[component_container_isolated-8] [INFO] [1752653628.424443231] [drone_1.global_costmap.global_costmap]: Subscribed to Topics: scan
+[component_container_isolated-8] [INFO] [1752653628.434656358] [drone_1.global_costmap.global_costmap]: Initialized plugin "obstacle_layer"
+[component_container_isolated-8] [INFO] [1752653628.434691164] [drone_1.global_costmap.global_costmap]: Using plugin "inflation_layer"
+[component_container_isolated-8] [INFO] [1752653628.437185680] [drone_1.global_costmap.global_costmap]: Initialized plugin "inflation_layer"
+[component_container_isolated-8] [INFO] [1752653628.461534645] [drone_1.planner_server]: Created global planner plugin GridBased of type nav2_navfn_planner::NavfnPlanner
+[component_container_isolated-8] [INFO] [1752653628.461588645] [drone_1.planner_server]: Configuring plugin GridBased of type NavfnPlanner
+[component_container_isolated-8] [INFO] [1752653628.464162164] [drone_1.planner_server]: Planner Server has GridBased  planners available.
+[component_container_isolated-8] [INFO] [1752653628.478365807] [drone_1.lifecycle_manager_navigation]: Configuring behavior_server
+[component_container_isolated-8] [INFO] [1752653628.478512151] [drone_1.behavior_server]: Configuring
+[component_container_isolated-8] [INFO] [1752653628.486955494] [drone_1.behavior_server]: Creating behavior plugin spin of type nav2_behaviors::Spin
+[component_container_isolated-8] [INFO] [1752653628.488246898] [drone_1.behavior_server]: Creating behavior plugin backup of type nav2_behaviors::BackUp
+[component_container_isolated-8] [INFO] [1752653628.489353825] [drone_1.behavior_server]: Creating behavior plugin drive_on_heading of type nav2_behaviors::DriveOnHeading
+[component_container_isolated-8] [INFO] [1752653628.490506494] [drone_1.behavior_server]: Creating behavior plugin assisted_teleop of type nav2_behaviors::AssistedTeleop
+[component_container_isolated-8] [INFO] [1752653628.491298733] [drone_1.global_costmap.global_costmap]: StaticLayer: Resizing costmap to 1006 X 1674 at 0.030000 m/pix
+[component_container_isolated-8] [INFO] [1752653628.492720128] [drone_1.behavior_server]: Creating behavior plugin wait of type nav2_behaviors::Wait
+[component_container_isolated-8] [INFO] [1752653628.496945035] [drone_1.behavior_server]: Configuring spin
+[component_container_isolated-8] [INFO] [1752653628.509685609] [drone_1.behavior_server]: Configuring backup
+[component_container_isolated-8] [INFO] [1752653628.517342560] [drone_1.behavior_server]: Configuring drive_on_heading
+[component_container_isolated-8] [INFO] [1752653628.524980840] [drone_1.behavior_server]: Configuring assisted_teleop
+[component_container_isolated-8] [INFO] [1752653628.538888615] [drone_1.behavior_server]: Configuring wait
+[component_container_isolated-8] [INFO] [1752653628.549336896] [drone_1.lifecycle_manager_navigation]: Configuring velocity_smoother
+[component_container_isolated-8] [INFO] [1752653628.549549318] [drone_1.velocity_smoother]: Configuring velocity smoother
+[component_container_isolated-8] [INFO] [1752653628.559406425] [drone_1.lifecycle_manager_navigation]: Configuring collision_monitor
+[component_container_isolated-8] [INFO] [1752653628.559586821] [drone_1.collision_monitor]: Configuring
+[component_container_isolated-8] [INFO] [1752653628.581342746] [collision_monitor]: [scan]: Creating Scan
+[component_container_isolated-8] [INFO] [1752653628.585209112] [collision_monitor]: [FootprintApproach]: Creating Polygon
+[component_container_isolated-8] [INFO] [1752653628.585922555] [collision_monitor]: [FootprintApproach]: Polygon points are not defined. Using dynamic subscription instead.
+[component_container_isolated-8] [INFO] [1752653628.591103653] [collision_monitor]: [FootprintApproach]: Making footprint subscriber on local_costmap/published_footprint topic
+[component_container_isolated-8] [INFO] [1752653628.597837514] [drone_1.lifecycle_manager_navigation]: Configuring bt_navigator
+[component_container_isolated-8] [INFO] [1752653628.597996894] [drone_1.bt_navigator]: Configuring
+[parameter_bridge-5] [INFO] [1752653628.605113909] [drone_1.ros_gz_bridge]: Creating GZ->ROS Bridge: [/drone_1/joint_states (gz.msgs.Model) -> joint_states (sensor_msgs/msg/JointState)] (Lazy 0)
+[component_container_isolated-8] [INFO] [1752653628.605186828] [drone_1.bt_navigator]: Creating navigator id navigate_to_pose of type nav2_bt_navigator::NavigateToPoseNavigator
+[parameter_bridge-5] [INFO] [1752653628.609906822] [drone_1.ros_gz_bridge]: Creating ROS->GZ Bridge: [cmd_vel (geometry_msgs/msg/Twist) -> /drone_1/cmd_vel (gz.msgs.Twist)] (Lazy 0)
+[parameter_bridge-5] [INFO] [1752653628.612438232] [drone_1.ros_gz_bridge]: Creating GZ->ROS Bridge: [/drone_1/scan (gz.msgs.LaserScan) -> scan (sensor_msgs/msg/LaserScan)] (Lazy 0)
+[parameter_bridge-5] [INFO] [1752653628.615452868] [drone_1.ros_gz_bridge]: Creating GZ->ROS Bridge: [/drone_1/odom (gz.msgs.Odometry) -> odom (nav_msgs/msg/Odometry)] (Lazy 0)
+[parameter_bridge-5] [INFO] [1752653628.619191507] [drone_1.ros_gz_bridge]: Creating GZ->ROS Bridge: [/drone_1/tf (gz.msgs.Pose_V) -> tf (tf2_msgs/msg/TFMessage)] (Lazy 0)
+[component_container-1] [INFO] [1752653628.674323104] [global_mqtt_client]: Subscribed ROS topic '/object_state_updates' of type 'std_msgs/msg/String'
+[component_container-1] [INFO] [1752653628.675613867] [global_mqtt_client]: Subscribed ROS topic '/robot_state_updates' of type 'std_msgs/msg/String'
+[component_container-1] [Wrn] [SdfEntityCreator.cc:933] Gazebo does not support Ogre material scripts. See https://gazebosim.org/api/sim/8/migrationsdf.html#:~:text=Materials for details.
+[component_container-1] [Wrn] [SdfEntityCreator.cc:949] Using an internal gazebo.material to parse Gazebo/Wood
+[component_container-1] [Wrn] [SdfEntityCreator.cc:933] Gazebo does not support Ogre material scripts. See https://gazebosim.org/api/sim/8/migrationsdf.html#:~:text=Materials for details.
+[component_container-1] [Wrn] [SdfEntityCreator.cc:949] Using an internal gazebo.material to parse Gazebo/Grey
+[component_container-1] [Wrn] [SdfEntityCreator.cc:933] Gazebo does not support Ogre material scripts. See https://gazebosim.org/api/sim/8/migrationsdf.html#:~:text=Materials for details.
+[component_container-1] [Wrn] [SdfEntityCreator.cc:949] Using an internal gazebo.material to parse Gazebo/Grey
+[component_container-1] [Wrn] [SdfEntityCreator.cc:933] Gazebo does not support Ogre material scripts. See https://gazebosim.org/api/sim/8/migrationsdf.html#:~:text=Materials for details.
+[component_container-1] [Wrn] [SdfEntityCreator.cc:949] Using an internal gazebo.material to parse Gazebo/Grey
+[component_container-1] [Wrn] [SdfEntityCreator.cc:933] Gazebo does not support Ogre material scripts. See https://gazebosim.org/api/sim/8/migrationsdf.html#:~:text=Materials for details.
+[component_container-1] [Wrn] [SdfEntityCreator.cc:949] Using an internal gazebo.material to parse Gazebo/Grey
+[component_container-1] [Msg] Loading SDF world file[/home/elmeripk/forklift_sim/install/mf_simulation/share/mf_simulation/worlds/warehouse.sdf].
+[component_container-1] [Msg] Serving entity system service on [/entity/system/add]
+[component_container-1] [Dbg] [Physics.cc:883] Loaded [gz::physics::dartsim::Plugin] from library [/opt/ros/jazzy/opt/gz_physics_vendor/lib/gz-physics-7/engine-plugins/libgz-physics-dartsim-plugin.so]
+[component_container-1] [Dbg] [SystemManager.cc:80] Loaded system [gz::sim::systems::Physics] for entity [1]
+[component_container-1] [Msg] Create service on [/world/warehouse/create]
+[component_container-1] [Msg] Remove service on [/world/warehouse/remove]
+[component_container-1] [Msg] Pose service on [/world/warehouse/set_pose]
+[component_container-1] [Msg] Pose service on [/world/warehouse/set_pose_vector]
+[component_container-1] [Msg] Light configuration service on [/world/warehouse/light_config]
+[component_container-1] [Msg] Physics service on [/world/warehouse/set_physics]
+[component_container-1] [Msg] SphericalCoordinates service on [/world/warehouse/set_spherical_coordinates]
+[component_container-1] [Msg] Enable collision service on [/world/warehouse/enable_collision]
+[component_container-1] [Msg] Disable collision service on [/world/warehouse/disable_collision]
+[component_container-1] [Msg] Material service on [/world/warehouse/visual_config]
+[component_container-1] [Msg] Material service on [/world/warehouse/wheel_slip]
+[component_container-1] [Dbg] [SystemManager.cc:80] Loaded system [gz::sim::systems::UserCommands] for entity [1]
+[component_container-1] [Dbg] [SystemManager.cc:80] Loaded system [gz::sim::systems::SceneBroadcaster] for entity [1]
+[component_container-1] [Dbg] [Sensors.cc:697] Configuring Sensors system
+[component_container-1] [Dbg] [Sensors.cc:557] SensorsPrivate::Run
+[component_container-1] [Dbg] [SystemManager.cc:80] Loaded system [gz::sim::systems::Sensors] for entity [1]
+[component_container-1] [Dbg] [Sensors.cc:532] SensorsPrivate::RenderThread started
+[component_container-1] [Dbg] [Sensors.cc:337] Waiting for init
+[component_container-1] [Dbg] [SystemManager.cc:80] Loaded system [gz::sim::systems::Imu] for entity [1]
+[component_container-1] [Dbg] [SystemManager.cc:80] Loaded system [gz::sim::systems::PosePublisher] for entity [12]
+[component_container-1] [Msg] Loaded level [default]
+[component_container-1] [Msg] Serving world controls on [/world/warehouse/control], [/world/warehouse/control/state] and [/world/warehouse/playback/control]
+[component_container-1] [Msg] Serving GUI information on [/world/warehouse/gui/info]
+[component_container-1] [Msg] World [warehouse] initialized with [1ms] physics profile.
+[component_container-1] [Msg] Serving world SDF generation service on [/world/warehouse/generate_world_sdf]
+[component_container-1] [Msg] Serving world names on [/gazebo/worlds]
+[component_container_isolated-8] [INFO] [1752653628.718911016] [drone_1.bt_navigator]: Creating navigator id navigate_through_poses of type nav2_bt_navigator::NavigateThroughPosesNavigator
+[component_container-1] [INFO] [1752653628.775187021] [global_gz_bridge]: Creating GZ->ROS Bridge: [/clock (gz.msgs.Clock) -> /clock (rosgraph_msgs/msg/Clock)] (Lazy 0)
+[component_container_isolated-8] [INFO] [1752653628.778352906] [drone_1.lifecycle_manager_navigation]: Configuring waypoint_follower
+[component_container_isolated-8] [INFO] [1752653628.778532452] [drone_1.waypoint_follower]: Configuring
+[component_container_isolated-8] [INFO] [1752653628.803870968] [drone_1.waypoint_follower]: Created waypoint_task_executor : wait_at_waypoint of type nav2_waypoint_follower::WaitAtWaypoint
+[component_container_isolated-8] [INFO] [1752653628.805510823] [drone_1.lifecycle_manager_navigation]: Activating controller_server
+[component_container_isolated-8] [INFO] [1752653628.805797403] [drone_1.controller_server]: Activating
+[component_container_isolated-8] [INFO] [1752653628.805844042] [drone_1.local_costmap.local_costmap]: Activating
+[component_container_isolated-8] [INFO] [1752653628.805853438] [drone_1.local_costmap.local_costmap]: Checking transform
+[component_container_isolated-8] [INFO] [1752653628.805898749] [drone_1.local_costmap.local_costmap]: Timed out waiting for transform from base_link to odom to become available, tf error: Invalid frame ID "odom" passed to canTransform argument target_frame - frame does not exist
+[component_container-1] [INFO] [1752653628.828967183] [global_gz_bridge]: Creating GZ->ROS Bridge: [/model/pallet_1/pose (gz.msgs.Pose_V) -> /object_state_updates_gz (tf2_msgs/msg/TFMessage)] (Lazy 0)
+[create-9] [INFO] [1752653628.929727595] [drone_1.ros_gz_sim]: Entity creation successful.
+[INFO] [create-9]: process has finished cleanly [pid 29261]
+[gazebo-2] [Msg] Gazebo Sim GUI    v8.9.0
+[gazebo-2] [Dbg] [Application.cc:96] Initializing application.
+[gazebo-2] [Dbg] [Application.cc:170] Qt using OpenGL graphics interface
+[gazebo-2] [GUI] [Dbg] [Application.cc:657] Create main window
+[gazebo-2] [GUI] [Dbg] [PathManager.cc:68] Requesting resource paths through [/gazebo/resource_paths/get]
+[gazebo-2] [GUI] [Dbg] [Gui.cc:355] GUI requesting list of world names. The server may be busy downloading resources. Please be patient.
+[gazebo-2] [GUI] [Dbg] [Gui.cc:413] Requesting GUI from [/world/warehouse/gui/info]...
+[gazebo-2] [GUI] [Dbg] [PathManager.cc:57] Received resource paths.
+[gazebo-2] [GUI] [Dbg] [GuiRunner.cc:149] Requesting initial state from [/world/warehouse/state]...
+[gazebo-2] [GUI] [Msg] Loading config [/home/elmeripk/.gz/sim/8/gui.config]
+[gazebo-2] [GUI] [Dbg] [Application.cc:528] Loading plugin [MinimalScene]
+[gazebo-2] [GUI] [Dbg] [MinimalScene.cc:802] Creating gz-rendering interface for OpenGL
+[gazebo-2] [GUI] [Dbg] [MinimalScene.cc:802] Creating gz-rendering interface for OpenGL
+[gazebo-2] [GUI] [Dbg] [MinimalScene.cc:986] Creating render thread interface for OpenGL
+[gazebo-2] [GUI] [Dbg] [MinimalScene.cc:802] Creating gz-rendering interface for OpenGL
+[gazebo-2] [GUI] [Dbg] [MinimalScene.cc:986] Creating render thread interface for OpenGL
+[gazebo-2] [GUI] [Msg] Added plugin [3D View] to main window
+[gazebo-2] [GUI] [Msg] Loaded plugin [MinimalScene] from path [/opt/ros/jazzy/opt/gz_gui_vendor/lib/gz-gui-8/plugins/libMinimalScene.so]
+[gazebo-2] [GUI] [Dbg] [Application.cc:528] Loading plugin [EntityContextMenuPlugin]
+[gazebo-2] [GUI] [Msg] Currently tracking topic on [/gui/currently_tracked]
+[gazebo-2] [GUI] [Msg] Added plugin [Entity Context Menu] to main window
+[gazebo-2] [GUI] [Msg] Loaded plugin [EntityContextMenuPlugin] from path [/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libEntityContextMenuPlugin.so]
+[gazebo-2] [GUI] [Dbg] [Application.cc:528] Loading plugin [GzSceneManager]
+[gazebo-2] [GUI] [Msg] Added plugin [Scene Manager] to main window
+[gazebo-2] [GUI] [Msg] Loaded plugin [GzSceneManager] from path [/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libGzSceneManager.so]
+[gazebo-2] [GUI] [Dbg] [Application.cc:528] Loading plugin [InteractiveViewControl]
+[gazebo-2] [GUI] [Msg] Camera view controller topic advertised on [/gui/camera/view_control]
+[gazebo-2] [GUI] [Msg] Camera reference visual topic advertised on [/gui/camera/view_control/reference_visual]
+[gazebo-2] [GUI] [Msg] Camera view control sensitivity advertised on [/gui/camera/view_control/sensitivity]
+[gazebo-2] [GUI] [Msg] Added plugin [Interactive view control] to main window
+[gazebo-2] [GUI] [Msg] Loaded plugin [InteractiveViewControl] from path [/opt/ros/jazzy/opt/gz_gui_vendor/lib/gz-gui-8/plugins/libInteractiveViewControl.so]
+[gazebo-2] [GUI] [Dbg] [Application.cc:528] Loading plugin [CameraTracking]
+[gazebo-2] [GUI] [Msg] Added plugin [Camera tracking] to main window
+[gazebo-2] [GUI] [Msg] Loaded plugin [CameraTracking] from path [/opt/ros/jazzy/opt/gz_gui_vendor/lib/gz-gui-8/plugins/libCameraTracking.so]
+[gazebo-2] [GUI] [Dbg] [Application.cc:528] Loading plugin [MarkerManager]
+[gazebo-2] [GUI] [Msg] Listening to stats on [/world/warehouse/stats]
+[gazebo-2] [GUI] [Msg] Added plugin [Marker Manager] to main window
+[gazebo-2] [GUI] [Msg] Loaded plugin [MarkerManager] from path [/opt/ros/jazzy/opt/gz_gui_vendor/lib/gz-gui-8/plugins/libMarkerManager.so]
+[gazebo-2] [GUI] [Dbg] [Application.cc:528] Loading plugin [SelectEntities]
+[gazebo-2] [GUI] [Msg] Added plugin [Select entities] to main window
+[gazebo-2] [GUI] [Msg] Loaded plugin [SelectEntities] from path [/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libSelectEntities.so]
+[gazebo-2] [GUI] [Dbg] [Application.cc:528] Loading plugin [Spawn]
+[gazebo-2] [GUI] [Msg] Added plugin [Spawn] to main window
+[gazebo-2] [GUI] [Msg] Loaded plugin [Spawn] from path [/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libSpawn.so]
+[gazebo-2] [GUI] [Dbg] [Application.cc:528] Loading plugin [VisualizationCapabilities]
+[gazebo-2] [GUI] [Msg] View as transparent service on [/gui/view/transparent]
+[gazebo-2] [GUI] [Msg] View as wireframes service on [/gui/view/wireframes]
+[gazebo-2] [GUI] [Msg] View center of mass service on [/gui/view/com]
+[gazebo-2] [GUI] [Msg] View inertia service on [/gui/view/inertia]
+[gazebo-2] [GUI] [Msg] View collisions service on [/gui/view/collisions]
+[gazebo-2] [GUI] [Msg] View joints service on [/gui/view/joints]
+[gazebo-2] [GUI] [Msg] View frames service on [/gui/view/frames]
+[gazebo-2] [GUI] [Msg] Added plugin [Visualization capabilities] to main window
+[gazebo-2] [GUI] [Msg] Loaded plugin [VisualizationCapabilities] from path [/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libVisualizationCapabilities.so]
+[gazebo-2] [GUI] [Dbg] [Application.cc:528] Loading plugin [WorldControl]
+[gazebo-2] [GUI] [Msg] Using world control service [/world/warehouse/control]
+[gazebo-2] [GUI] [Msg] Listening to stats on [/world/warehouse/stats]
+[gazebo-2] [GUI] [Dbg] [WorldControl.cc:237] Using an event to share WorldControl msgs with the server
+[gazebo-2] [GUI] [Msg] Added plugin [World control] to main window
+[component_container_isolated-8] [INFO] [1752653629.305954258] [drone_1.local_costmap.local_costmap]: Timed out waiting for transform from base_link to odom to become available, tf error: Invalid frame ID "odom" passed to canTransform argument target_frame - frame does not exist
+[rviz2-4] [INFO] [1752653629.345413753] [rviz2]: Stereo is NOT SUPPORTED
+[rviz2-4] [INFO] [1752653629.345495217] [rviz2]: OpenGl version: 4.6 (GLSL 4.6)
+[rviz2-4] [INFO] [1752653629.384508695] [rviz2]: Stereo is NOT SUPPORTED
+[gazebo-2] [GUI] [Msg] Loaded plugin [WorldControl] from path [/opt/ros/jazzy/opt/gz_gui_vendor/lib/gz-gui-8/plugins/libWorldControl.so]
+[gazebo-2] [GUI] [Dbg] [Application.cc:528] Loading plugin [WorldStats]
+[gazebo-2] [GUI] [Msg] Listening to stats on [/world/warehouse/stats]
+[gazebo-2] [GUI] [Msg] Added plugin [World stats] to main window
+[gazebo-2] [GUI] [Msg] Loaded plugin [WorldStats] from path [/opt/ros/jazzy/opt/gz_gui_vendor/lib/gz-gui-8/plugins/libWorldStats.so]
+[gazebo-2] [GUI] [Dbg] [Application.cc:528] Loading plugin [Shapes]
+[gazebo-2] [GUI] [Msg] Added plugin [Shapes] to main window
+[gazebo-2] [GUI] [Msg] Loaded plugin [Shapes] from path [/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libShapes.so]
+[gazebo-2] [GUI] [Dbg] [Application.cc:528] Loading plugin [Lights]
+[gazebo-2] [GUI] [Msg] Added plugin [Lights] to main window
+[gazebo-2] [GUI] [Msg] Loaded plugin [Lights] from path [/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libLights.so]
+[gazebo-2] [GUI] [Dbg] [Application.cc:528] Loading plugin [TransformControl]
+[gazebo-2] [GUI] [Msg] Added plugin [Transform control] to main window
+[gazebo-2] [GUI] [Msg] Loaded plugin [TransformControl] from path [/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libTransformControl.so]
+[gazebo-2] [GUI] [Dbg] [Application.cc:528] Loading plugin [Screenshot]
+[gazebo-2] [GUI] [Msg] Screenshot service on [/gui/screenshot]
+[gazebo-2] [GUI] [Msg] Added plugin [Screenshot] to main window
+[gazebo-2] [GUI] [Msg] Loaded plugin [Screenshot] from path [/opt/ros/jazzy/opt/gz_gui_vendor/lib/gz-gui-8/plugins/libScreenshot.so]
+[gazebo-2] [GUI] [Dbg] [Application.cc:528] Loading plugin [CopyPaste]
+[gazebo-2] [GUI] [Msg] Added plugin [Copy/Paste] to main window
+[gazebo-2] [GUI] [Msg] Loaded plugin [CopyPaste] from path [/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libCopyPaste.so]
+[gazebo-2] [GUI] [Dbg] [Application.cc:528] Loading plugin [ComponentInspector]
+[gazebo-2] [GUI] [Msg] Added plugin [Component inspector] to main window
+[gazebo-2] [GUI] [Msg] Loaded plugin [ComponentInspector] from path [/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libComponentInspector.so]
+[gazebo-2] [GUI] [Dbg] [Application.cc:528] Loading plugin [EntityTree]
+[gazebo-2] [GUI] [Msg] Currently tracking topic on [/gui/currently_tracked]
+[gazebo-2] [GUI] [Msg] Added plugin [Entity tree] to main window
+[rviz2-4] [INFO] [1752653629.450147260] [drone_1.rviz]: Subscribing to: /drone_1/mobile_base/sensors/bumper_pointcloud
+[rviz2-4]
+[rviz2-4] [INFO] [1752653629.451695182] [drone_1.rviz]: Subscribing to: /drone_1/mobile_base/sensors/bumper_pointcloud
+[rviz2-4]
+[gazebo-2] [GUI] [Wrn] [Application.cc:908] [QT] file::/WorldStats/WorldStats.qml:53:3: QML RowLayout: Binding loop detected for property "x"
+[component_container_isolated-8] [WARN] [1752653629.482552647] [drone_1.amcl]: New subscription discovered on topic '/drone_1/particle_cloud', requesting incompatible QoS. No messages will be sent to it. Last incompatible policy: RELIABILITY_QOS_POLICY
+[rviz2-4] [INFO] [1752653629.534800123] [drone_1.rviz]: Subscribing to: /drone_1/mobile_base/sensors/bumper_pointcloud
+[rviz2-4]
+[rviz2-4] [INFO] [1752653629.732361221] [rviz2]: Trying to create a map of size 1006 x 1674 using 1 swatches
+[rviz2-4] [ERROR] [1752653629.745777723] [rviz2]: rviz/glsl120/indexed_8bit_image.vert
 [rviz2-4] rviz/glsl120/indexed_8bit_image.frag
-[rviz2-4]  GLSL link result : 
+[rviz2-4]  GLSL link result :
 [rviz2-4] active samplers with a different type refer to the same texture image unit
-[component_container_isolated-8] [INFO] [1752490669.284384150] [drone_1.local_costmap.local_costmap]: Timed out waiting for transform from base_link to odom to become available, tf error: Invalid frame ID "odom" passed to canTransform argument target_frame - frame does not exist
+[component_container_isolated-8] [INFO] [1752653629.805958016] [drone_1.local_costmap.local_costmap]: Timed out waiting for transform from base_link to odom to become available, tf error: Invalid frame ID "odom" passed to canTransform argument target_frame - frame does not exist
 [gazebo-2] libEGL warning: failed to open /dev/dri/renderD128: Permission denied
-[gazebo-2] 
+[gazebo-2]
 [gazebo-2] libEGL warning: failed to open /dev/dri/renderD128: Permission denied
-[gazebo-2] 
+[gazebo-2]
 [gazebo-2] libEGL warning: failed to open /dev/dri/card0: Permission denied
-[gazebo-2] 
-[component_container-1] [1;32m[Msg] [0m[1;32mResource path add service on [[0m[1;32m/gazebo/resource_paths/add[0m[1;32m].[0m[1;32m[0m
-[component_container-1] [1;32m[Msg] [0m[1;32mResource path get service on [[0m[1;32m/gazebo/resource_paths/get[0m[1;32m].[0m[1;32m[0m
-[component_container-1] [1;32m[Msg] [0m[1;32mResource path resolve service on [[0m[1;32m/gazebo/resource_paths/resolve[0m[1;32m].[0m[1;32m[0m
-[component_container-1] [1;32m[Msg] [0m[1;32mResource paths published on [[0m[1;32m/gazebo/resource_paths[0m[1;32m].[0m[1;32m[0m
-[component_container-1] [1;32m[Msg] [0m[1;32mServer control service on [[0m[1;32m/server_control[0m[1;32m].[0m[1;32m[0m
-[component_container-1] [1;32m[Msg] [0m[1;32mFound no publishers on /stats, adding root stats topic[0m[1;32m[0m
-[component_container-1] [1;32m[Msg] [0m[1;32mFound no publishers on /clock, adding root clock topic[0m[1;32m[0m
-[component_container-1] [1;36m[Dbg] [SimulationRunner.cc:533] [0m[1;36mCreating PostUpdate worker threads: [0m[1;36m5[0m[1;36m[0m
-[component_container-1] [1;36m[Dbg] [SimulationRunner.cc:544] [0m[1;36mCreating postupdate worker thread ([0m[1;36m0[0m[1;36m)[0m[1;36m[0m
-[component_container-1] [1;36m[Dbg] [SimulationRunner.cc:544] [0m[1;36mCreating postupdate worker thread ([0m[1;36m1[0m[1;36m)[0m[1;36m[0m
-[component_container-1] [1;36m[Dbg] [SimulationRunner.cc:544] [0m[1;36mCreating postupdate worker thread ([0m[1;36m2[0m[1;36m)[0m[1;36m[0m
-[component_container-1] [1;36m[Dbg] [SimulationRunner.cc:544] [0m[1;36mCreating postupdate worker thread ([0m[1;36m3[0m[1;36m)[0m[1;36m[0m
-[component_container-1] [1;33mWarning [Utils.cc:132][0m [/sdf/model[@name="x3_urdf_convr"]/link[@name="link"]/sensor[@name="lidar_2d_v2"]/gz_frame_id:<data-string>:L131]: XML Element[gz_frame_id], child of element[sensor], not defined in SDF. Copying[gz_frame_id] as children of [sensor].
-[component_container-1] [1;33mWarning [Utils.cc:132][0m [/sdf/model[@name="x3_urdf_convr"]/link[@name="laser_link"]/sensor[@name="simple_laser"]/gz_frame_id:<data-string>:L419]: XML Element[gz_frame_id], child of element[sensor], not defined in SDF. Copying[gz_frame_id] as children of [sensor].
-[component_container-1] [1;33m[Wrn] [OBJLoader.cc:91] [0m[1;33mBoth `d` and `Tr` parameters defined for "Chair". Use the value of `d` for dissolve (line 8 in .mtl.)[0m
-[component_container-1] [1;33m[0m
-[component_container-1] [1;36m[Dbg] [MulticopterMotorModel.cc:386] [0m[1;36mListening to topic: [0m[1;36mdrone_1/gazebo/command/motor_speed[0m[1;36m[0m
-[component_container-1] [1;36m[Dbg] [SystemManager.cc:80] [0m[1;36mLoaded system [[0m[1;36mgz::sim::systems::MulticopterMotorModel[0m[1;36m] for entity [[0m[1;36m143[0m[1;36m][0m[1;36m[0m
-[component_container-1] [1;36m[Dbg] [MulticopterMotorModel.cc:386] [0m[1;36mListening to topic: [0m[1;36mdrone_1/gazebo/command/motor_speed[0m[1;36m[0m
-[component_container-1] [1;36m[Dbg] [SystemManager.cc:80] [0m[1;36mLoaded system [[0m[1;36mgz::sim::systems::MulticopterMotorModel[0m[1;36m] for entity [[0m[1;36m143[0m[1;36m][0m[1;36m[0m
-[component_container-1] [1;36m[Dbg] [MulticopterMotorModel.cc:386] [0m[1;36mListening to topic: [0m[1;36mdrone_1/gazebo/command/motor_speed[0m[1;36m[0m
-[component_container-1] [1;36m[Dbg] [SystemManager.cc:80] [0m[1;36mLoaded system [[0m[1;36mgz::sim::systems::MulticopterMotorModel[0m[1;36m] for entity [[0m[1;36m143[0m[1;36m][0m[1;36m[0m
-[component_container-1] [1;36m[Dbg] [MulticopterMotorModel.cc:386] [0m[1;36mListening to topic: [0m[1;36mdrone_1/gazebo/command/motor_speed[0m[1;36m[0m
-[component_container-1] [1;36m[Dbg] [SystemManager.cc:80] [0m[1;36mLoaded system [[0m[1;36mgz::sim::systems::MulticopterMotorModel[0m[1;36m] for entity [[0m[1;36m143[0m[1;36m][0m[1;36m[0m
-[component_container-1] [1;32m[Msg] [0m[1;32mMulticopterVelocityControl subscribing to Twist messages on [[0m[1;32mdrone_1/cmd_vel[0m[1;32m][0m[1;32m[0m
-[component_container-1] [1;32m[Msg] [0m[1;32mMulticopterVelocityControl subscribing to Boolean messages on [[0m[1;32mdrone_1/enable[0m[1;32m][0m[1;32m[0m
-[component_container-1] [1;36m[Dbg] [SystemManager.cc:80] [0m[1;36mLoaded system [[0m[1;36mgz::sim::systems::MulticopterVelocityControl[0m[1;36m] for entity [[0m[1;36m143[0m[1;36m][0m[1;36m[0m
-[component_container-1] [1;32m[Msg] [0m[1;32mOdometryPublisher publishing odometry on [[0m[1;32mdrone_1/odom[0m[1;32m][0m[1;32m[0m
-[component_container-1] [1;32m[Msg] [0m[1;32mOdometryPublisher publishing odometry with covariance on [[0m[1;32m/model/drone/odometry_with_covariance[0m[1;32m][0m[1;32m[0m
-[component_container-1] [1;32m[Msg] [0m[1;32mOdometryPublisher publishing Pose_V (TF) on [[0m[1;32mdrone_1/tf[0m[1;32m][0m[1;32m[0m
-[component_container-1] [1;36m[Dbg] [SystemManager.cc:80] [0m[1;36mLoaded system [[0m[1;36mgz::sim::systems::OdometryPublisher[0m[1;36m] for entity [[0m[1;36m143[0m[1;36m][0m[1;36m[0m
-[component_container-1] [1;36m[Dbg] [SystemManager.cc:80] [0m[1;36mLoaded system [[0m[1;36mgz::sim::systems::JointStatePublisher[0m[1;36m] for entity [[0m[1;36m143[0m[1;36m][0m[1;36m[0m
-[component_container-1] [1;36m[Dbg] [UserCommands.cc:1318] [0m[1;36mCreated entity [[0m[1;36m143[0m[1;36m] named [[0m[1;36mdrone[0m[1;36m][0m[1;36m[0m
-[component_container-1] [1;36m[Dbg] [SDFFeatures.cc:332] [0m[1;36mMesh construction from an SDF has not been implemented yet for [0m[1;36mdartsim. Use AttachMeshShapeFeature to use mesh shapes.[0m
-[component_container-1] [1;36m[Dbg] [SDFFeatures.cc:864] [0m[1;36mThe geometry element of collision [[0m[1;36mwarehouse_collision[0m[1;36m] [0m[1;36mcouldn't be created[0m
-[component_container-1] [1;36m[Dbg] [SDFFeatures.cc:332] [0m[1;36mMesh construction from an SDF has not been implemented yet for [0m[1;36mdartsim. Use AttachMeshShapeFeature to use mesh shapes.[0m
-[component_container-1] [1;36m[Dbg] [SDFFeatures.cc:864] [0m[1;36mThe geometry element of collision [[0m[1;36mcollision[0m[1;36m] [0m[1;36mcouldn't be created[0m
-[component_container-1] [1;36m[Dbg] [SDFFeatures.cc:332] [0m[1;36mMesh construction from an SDF has not been implemented yet for [0m[1;36mdartsim. Use AttachMeshShapeFeature to use mesh shapes.[0m
-[component_container-1] [1;36m[Dbg] [SDFFeatures.cc:864] [0m[1;36mThe geometry element of collision [[0m[1;36mcollision[0m[1;36m] [0m[1;36mcouldn't be created[0m
-[component_container-1] [1;36m[Dbg] [SDFFeatures.cc:332] [0m[1;36mMesh construction from an SDF has not been implemented yet for [0m[1;36mdartsim. Use AttachMeshShapeFeature to use mesh shapes.[0m
-[component_container-1] [1;36m[Dbg] [SDFFeatures.cc:864] [0m[1;36mThe geometry element of collision [[0m[1;36mcollision[0m[1;36m] [0m[1;36mcouldn't be created[0m
-[component_container-1] [1;36m[Dbg] [SimulationFeatures.cc:90] [0m[1;36mSimulation timestep set to: [0m[1;36m0.003[0m[1;36m[0m
-[component_container_isolated-8] [INFO] [1752490669.784394543] [drone_1.local_costmap.local_costmap]: Timed out waiting for transform from base_link to odom to become available, tf error: Invalid frame ID "odom" passed to canTransform argument target_frame - frame does not exist
+[gazebo-2]
+[component_container-1] [Msg] Resource path add service on [/gazebo/resource_paths/add].
+[component_container-1] [Msg] Resource path get service on [/gazebo/resource_paths/get].
+[component_container-1] [Msg] Resource path resolve service on [/gazebo/resource_paths/resolve].
+[component_container-1] [Msg] Resource paths published on [/gazebo/resource_paths].
+[component_container-1] [Msg] Server control service on [/server_control].
+[component_container-1] [Msg] Found no publishers on /stats, adding root stats topic
+[component_container-1] [Msg] Found no publishers on /clock, adding root clock topic
+[component_container-1] [Dbg] [SimulationRunner.cc:533] Creating PostUpdate worker threads: 5
+[component_container-1] [Dbg] [SimulationRunner.cc:544] Creating postupdate worker thread (0)
+[component_container-1] [Dbg] [SimulationRunner.cc:544] Creating postupdate worker thread (1)
+[component_container-1] [Dbg] [SimulationRunner.cc:544] Creating postupdate worker thread (2)
+[component_container-1] [Dbg] [SimulationRunner.cc:544] Creating postupdate worker thread (3)
+[component_container-1] Warning [Utils.cc:132] [/sdf/model[@name="x3_urdf_convr"]/link[@name="link"]/sensor[@name="lidar_2d_v2"]/gz_frame_id:<data-string>:L131]: XML Element[gz_frame_id], child of element[sensor], not defined in SDF. Copying[gz_frame_id] as children of [sensor].
+[component_container-1] Warning [Utils.cc:132] [/sdf/model[@name="x3_urdf_convr"]/link[@name="laser_link"]/sensor[@name="simple_laser"]/gz_frame_id:<data-string>:L419]: XML Element[gz_frame_id], child of element[sensor], not defined in SDF. Copying[gz_frame_id] as children of [sensor].
+[component_container-1] [Wrn] [OBJLoader.cc:91] Both `d` and `Tr` parameters defined for "Chair". Use the value of `d` for dissolve (line 8 in .mtl.)
+[component_container-1]
+[component_container-1] [Dbg] [MulticopterMotorModel.cc:386] Listening to topic: drone_1/gazebo/command/motor_speed
+[component_container-1] [Dbg] [SystemManager.cc:80] Loaded system [gz::sim::systems::MulticopterMotorModel] for entity [143]
+[component_container-1] [Dbg] [MulticopterMotorModel.cc:386] Listening to topic: drone_1/gazebo/command/motor_speed
+[component_container-1] [Dbg] [SystemManager.cc:80] Loaded system [gz::sim::systems::MulticopterMotorModel] for entity [143]
+[component_container-1] [Dbg] [MulticopterMotorModel.cc:386] Listening to topic: drone_1/gazebo/command/motor_speed
+[component_container-1] [Dbg] [SystemManager.cc:80] Loaded system [gz::sim::systems::MulticopterMotorModel] for entity [143]
+[component_container-1] [Dbg] [MulticopterMotorModel.cc:386] Listening to topic: drone_1/gazebo/command/motor_speed
+[component_container-1] [Dbg] [SystemManager.cc:80] Loaded system [gz::sim::systems::MulticopterMotorModel] for entity [143]
+[component_container-1] [Msg] MulticopterVelocityControl subscribing to Twist messages on [drone_1/cmd_vel]
+[component_container-1] [Msg] MulticopterVelocityControl subscribing to Boolean messages on [drone_1/enable]
+[component_container-1] [Dbg] [SystemManager.cc:80] Loaded system [gz::sim::systems::MulticopterVelocityControl] for entity [143]
+[component_container-1] [Msg] OdometryPublisher publishing odometry on [drone_1/odom]
+[component_container-1] [Msg] OdometryPublisher publishing odometry with covariance on [/model/drone/odometry_with_covariance]
+[component_container-1] [Msg] OdometryPublisher publishing Pose_V (TF) on [drone_1/tf]
+[component_container-1] [Dbg] [SystemManager.cc:80] Loaded system [gz::sim::systems::OdometryPublisher] for entity [143]
+[component_container-1] [Dbg] [SystemManager.cc:80] Loaded system [gz::sim::systems::JointStatePublisher] for entity [143]
+[component_container-1] [Dbg] [UserCommands.cc:1318] Created entity [143] named [drone]
+[component_container-1] [Dbg] [SDFFeatures.cc:332] Mesh construction from an SDF has not been implemented yet for dartsim. Use AttachMeshShapeFeature to use mesh shapes.
+[component_container-1] [Dbg] [SDFFeatures.cc:864] The geometry element of collision [warehouse_collision] couldn't be created
+[component_container-1] [Dbg] [SDFFeatures.cc:332] Mesh construction from an SDF has not been implemented yet for dartsim. Use AttachMeshShapeFeature to use mesh shapes.
+[component_container-1] [Dbg] [SDFFeatures.cc:864] The geometry element of collision [collision] couldn't be created
+[component_container-1] [Dbg] [SDFFeatures.cc:332] Mesh construction from an SDF has not been implemented yet for dartsim. Use AttachMeshShapeFeature to use mesh shapes.
+[component_container-1] [Dbg] [SDFFeatures.cc:864] The geometry element of collision [collision] couldn't be created
+[component_container-1] [Dbg] [SDFFeatures.cc:332] Mesh construction from an SDF has not been implemented yet for dartsim. Use AttachMeshShapeFeature to use mesh shapes.
+[component_container-1] [Dbg] [SDFFeatures.cc:864] The geometry element of collision [collision] couldn't be created
+[component_container-1] [Dbg] [SimulationFeatures.cc:90] Simulation timestep set to: 0.003
+[gazebo-2] D3D12: Removing Device.
 [component_container-1] libEGL warning: failed to open /dev/dri/renderD128: Permission denied
-[component_container-1] 
+[component_container-1]
 [component_container-1] libEGL warning: failed to open /dev/dri/renderD128: Permission denied
-[component_container-1] 
+[component_container-1]
 [component_container-1] libEGL warning: failed to open /dev/dri/card0: Permission denied
-[component_container-1] 
-[component_container_isolated-8] [INFO] [1752490670.284327401] [drone_1.local_costmap.local_costmap]: Timed out waiting for transform from base_link to odom to become available, tf error: Invalid frame ID "odom" passed to canTransform argument target_frame - frame does not exist
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mEntityTree[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libEntityTree.so[0m[1;32m][0m[1;32m[0m
-[gazebo-2] [1;36m[GUI] [Dbg] [Application.cc:398] [0m[1;36mLoading window config[0m[1;36m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mUsing server control service [[0m[1;32m/server_control[0m[1;32m][0m[1;32m[0m
-[gazebo-2] [1;36m[GUI] [Dbg] [Application.cc:671] [0m[1;36mApplying config[0m[1;36m[0m
-[gazebo-2] [1;36m[GUI] [Dbg] [MinimalScene.cc:802] [0m[1;36mCreating gz-rendering interface for OpenGL[0m[1;36m[0m
-[gazebo-2] [1;36m[GUI] [Dbg] [MinimalScene.cc:986] [0m[1;36mCreating render thread interface for OpenGL[0m[1;36m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoading plugin [[0m[1;32mgz-rendering-ogre2[0m[1;32m][0m[1;32m[0m
-[gazebo-2] [1;36m[GUI] [Dbg] [MinimalScene.cc:749] [0m[1;36mCreate scene [[0m[1;36mscene[0m[1;36m][0m[1;36m[0m
-[gazebo-2] [1;36m[GUI] [Dbg] [MinimalScene.cc:1037] [0m[1;36mCreating texture node render interface for OpenGL[0m[1;36m[0m
-[gazebo-2] [1;36m[GUI] [Dbg] [TransformControl.cc:453] [0m[1;36mTransformControl plugin is using camera [[0m[1;36mscene::Camera(65527)[0m[1;36m][0m[1;36m[0m
-[gazebo-2] [1;36m[GUI] [Dbg] [Spawn.cc:308] [0m[1;36mSpawn plugin is using camera [[0m[1;36mscene::Camera(65527)[0m[1;36m][0m[1;36m[0m
-[gazebo-2] [1;36m[GUI] [Dbg] [SelectEntities.cc:452] [0m[1;36mSelectEntities plugin is using camera [[0m[1;36mscene::Camera(65527)[0m[1;36m][0m[1;36m[0m
-[gazebo-2] [1;36m[GUI] [Dbg] [MarkerManager.cc:169] [0m[1;36mAdvertise [0m[1;36m/marker[0m[1;36m/list service.[0m
-[gazebo-2] [1;36m[GUI] [Dbg] [MarkerManager.cc:179] [0m[1;36mAdvertise [0m[1;36m/marker[0m[1;36m/list.[0m
-[gazebo-2] [1;36m[GUI] [Dbg] [MarkerManager.cc:189] [0m[1;36mAdvertise [0m[1;36m/marker[0m[1;36m_array.[0m
-[gazebo-2] [1;36m[GUI] [Dbg] [CameraTracking.cc:205] [0m[1;36mCameraTrackingPrivate plugin is moving camera [[0m[1;36mscene::Camera(65527)[0m[1;36m][0m[1;36m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mMove to service on [[0m[1;32m/gui/move_to[0m[1;32m][0m[1;32m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mFollow service on [[0m[1;32m/gui/follow[0m[1;32m] (deprecated)[0m[1;32m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mTracking topic on [[0m[1;32m/gui/track[0m[1;32m][0m[1;32m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mTracking status topic on [[0m[1;32m/gui/currently_tracked[0m[1;32m][0m[1;32m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mMove to pose service on [[0m[1;32m/gui/move_to/pose[0m[1;32m][0m[1;32m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mCamera pose topic advertised on [[0m[1;32m/gui/camera/pose[0m[1;32m][0m[1;32m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mFollow offset service on [[0m[1;32m/gui/follow/offset[0m[1;32m] (deprecated)[0m[1;32m[0m
-[gazebo-2] [1;36m[GUI] [Dbg] [InteractiveViewControl.cc:176] [0m[1;36mInteractiveViewControl plugin is moving camera [[0m[1;36mscene::Camera(65527)[0m[1;36m][0m[1;36m[0m
-[gazebo-2] [1;36m[GUI] [Dbg] [EntityContextMenuPlugin.cc:79] [0m[1;36mEntity context menu plugin is using camera [[0m[1;36mscene::Camera(65527)[0m[1;36m][0m[1;36m[0m
-[gazebo-2] [1;33mWarning [Utils.cc:132][0m [/sdf/model[@name="x3_urdf_convr"]/link[@name="link"]/sensor[@name="lidar_2d_v2"]/gz_frame_id:<data-string>:L138]: XML Element[gz_frame_id], child of element[sensor], not defined in SDF. Copying[gz_frame_id] as children of [sensor].
-[gazebo-2] [1;33mWarning [Utils.cc:132][0m [/sdf/model[@name="x3_urdf_convr"]/link[@name="laser_link"]/sensor[@name="simple_laser"]/gz_frame_id:<data-string>:L426]: XML Element[gz_frame_id], child of element[sensor], not defined in SDF. Copying[gz_frame_id] as children of [sensor].
-[component_container_isolated-8] [INFO] [1752490670.784372236] [drone_1.local_costmap.local_costmap]: Timed out waiting for transform from base_link to odom to become available, tf error: Invalid frame ID "odom" passed to canTransform argument target_frame - frame does not exist
-[component_container_isolated-8] [INFO] [1752490671.284333035] [drone_1.local_costmap.local_costmap]: Timed out waiting for transform from base_link to odom to become available, tf error: Invalid frame ID "odom" passed to canTransform argument target_frame - frame does not exist
-[component_container-1] [1;33m[Wrn] [ColladaLoader.cc:2059] [0m[1;33mPolylist input semantic: '[0m[1;33mCOLOR[0m[1;33m' is currently[0m[1;33m not supported[0m[1;33m[0m
-[component_container_isolated-8] [INFO] [1752490671.655103178] [drone_1.amcl]: createLaserObject
-[gazebo-2] [1;33mWarning [Utils.cc:132][0m [/sdf/model[@name="x3_urdf_convr"]/link[@name="link"]/sensor[@name="lidar_2d_v2"]/gz_frame_id:<data-string>:L138]: XML Element[gz_frame_id], child of element[sensor], not defined in SDF. Copying[gz_frame_id] as children of [sensor].
-[gazebo-2] [1;33mWarning [Utils.cc:132][0m [/sdf/model[@name="x3_urdf_convr"]/link[@name="laser_link"]/sensor[@name="simple_laser"]/gz_frame_id:<data-string>:L426]: XML Element[gz_frame_id], child of element[sensor], not defined in SDF. Copying[gz_frame_id] as children of [sensor].
-[component_container_isolated-8] [INFO] [1752490671.785446546] [drone_1.local_costmap.local_costmap]: start
-[rviz2-4] [INFO] [1752490671.891021990] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.006 for reason 'discarding message because the queue is full'
-[rviz2-4] [INFO] [1752490671.954641529] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.033 for reason 'discarding message because the queue is full'
-[rviz2-4] [INFO] [1752490671.986621804] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.069 for reason 'discarding message because the queue is full'
-[component_container_isolated-8] [INFO] [1752490671.987722400] [drone_1.controller_server]: Creating bond (controller_server) to lifecycle manager.
-[rviz2-4] [INFO] [1752490672.019346526] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.102 for reason 'discarding message because the queue is full'
-[rviz2-4] [INFO] [1752490672.050929934] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.135 for reason 'discarding message because the queue is full'
-[rviz2-4] [INFO] [1752490672.083308758] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.168 for reason 'discarding message because the queue is full'
-[component_container_isolated-8] [INFO] [1752490672.095415713] [drone_1.lifecycle_manager_navigation]: Server controller_server connected with bond.
-[component_container_isolated-8] [INFO] [1752490672.095500312] [drone_1.lifecycle_manager_navigation]: [34m[1mActivating smoother_server[0m[0m
-[component_container_isolated-8] [INFO] [1752490672.095880341] [drone_1.smoother_server]: Activating
-[component_container_isolated-8] [INFO] [1752490672.095916070] [drone_1.smoother_server]: Creating bond (smoother_server) to lifecycle manager.
-[rviz2-4] [INFO] [1752490672.115283204] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.201 for reason 'discarding message because the queue is full'
-[component_container-1] [1;36m[Dbg] [Sensors.cc:953] [0m[1;36mInitialization needed[0m[1;36m[0m
-[component_container-1] [1;36m[Dbg] [Sensors.cc:349] [0m[1;36mInitializing render context[0m[1;36m[0m
-[component_container-1] [1;32m[Msg] [0m[1;32mLoading plugin [[0m[1;32mgz-rendering-ogre2[0m[1;32m][0m[1;32m[0m
-[component_container-1] [1;32m[Msg] [0m[1;32mServing scene information on [[0m[1;32m/world/warehouse[0m[1;32m/[0m[1;32mscene/info[0m[1;32m][0m[1;32m[0m
-[component_container-1] [1;32m[Msg] [0m[1;32mServing graph information on [[0m[1;32m/world/warehouse[0m[1;32m/[0m[1;32mscene/graph[0m[1;32m][0m[1;32m[0m
-[component_container-1] [1;32m[Msg] [0m[1;32mServing full state on [[0m[1;32m/world/warehouse[0m[1;32m/[0m[1;32mstate[0m[1;32m][0m[1;32m[0m
-[component_container-1] [1;32m[Msg] [0m[1;32mServing full state (async) on [[0m[1;32m/world/warehouse[0m[1;32m/[0m[1;32mstate_async[0m[1;32m][0m[1;32m[0m
-[component_container-1] [1;32m[Msg] [0m[1;32mPublishing scene information on [[0m[1;32m/world/warehouse/scene/info[0m[1;32m][0m[1;32m[0m
-[component_container-1] [1;32m[Msg] [0m[1;32mPublishing entity deletions on [[0m[1;32m/world/warehouse/scene/deletion[0m[1;32m][0m[1;32m[0m
-[component_container-1] [1;32m[Msg] [0m[1;32mPublishing state changes on [[0m[1;32m/world/warehouse/state[0m[1;32m][0m[1;32m[0m
-[component_container-1] [1;32m[Msg] [0m[1;32mPublishing pose messages on [[0m[1;32m/world/warehouse[0m[1;32m/[0m[1;32mpose/info[0m[1;32m][0m[1;32m[0m
-[component_container-1] [1;32m[Msg] [0m[1;32mPublishing dynamic pose messages on [[0m[1;32m/world/warehouse[0m[1;32m/[0m[1;32mdynamic_pose/info[0m[1;32m][0m[1;32m[0m
-[component_container-1] [1;36m[Dbg] [EntityComponentManager.cc:1656] [0m[1;36mUpdated state thread iterators: [0m[1;36m16[0m[1;36m threads processing around [0m[1;36m11[0m[1;36m entities each.[0m[1;36m[0m
-[component_container-1] [1;36m[Dbg] [SimulationRunner.cc:560] [Dbg] [SimulationRunner.cc:560] [0m[1;36mExiting postupdate worker thread ([0m[1;36m1[0m[1;36m)[Dbg] [SimulationRunner.cc:560] [0m[1;36m[Dbg] [SimulationRunner.cc:560] [0m[1;36mExiting postupdate worker thread ([0m[1;36m2[0m[1;36mExiting postupdate worker thread ([0m[1;36m3[0m[1;36m)[0m[1;36mExiting postupdate worker thread ([Dbg] [SimulationRunner.cc:560] [0m[1;36mExiting postupdate worker thread ([0m[1;36m0[0m[1;36m)[0m[1;36m[0m
-[component_container-1] [1;36m[0m
-[component_container-1] [1;36m)[0m[1;36m)[0m[1;36m[0m
-[component_container-1] [1;36m[Dbg] [SimulationRunner.cc:533] [0m[1;36mCreating PostUpdate worker threads: [0m[1;36m7[0m[1;36m[0m
-[component_container-1] [1;36m[Dbg] [SimulationRunner.cc:544] [0m[1;36mCreating postupdate worker thread ([0m[1;36m0[0m[1;36m)[0m[1;36m[0m
-[component_container-1] [1;36m[Dbg] [SimulationRunner.cc:544] [0m[1;36mCreating postupdate worker thread ([0m[1;36m1[0m[1;36m)[0m[1;36m[0m
-[component_container-1] [1;36m[Dbg] [SimulationRunner.cc:544] [0m[1;36mCreating postupdate worker thread ([0m[1;36m2[0m[1;36m)[0m[1;36m[0m
-[component_container-1] [1;36m[Dbg] [SimulationRunner.cc:544] [0m[1;36mCreating postupdate worker thread ([0m[1;36m3[0m[1;36m)[0m[1;36m[0m
-[component_container-1] [1;36m[Dbg] [SimulationRunner.cc:544] [0m[1;36mCreating postupdate worker thread ([0m[1;36m4[0m[1;36m)[0m[1;36m[0m
-[component_container-1] [1;36m[Dbg] [SimulationRunner.cc:544] [0m[1;36mCreating postupdate worker thread ([0m[1;36m5[0m[1;36m)[0m[1;36m[0m
-[component_container-1] [1;36m[Dbg] [RenderUtil.cc:2643] [0m[1;36mCreate scene [[0m[1;36mscene[0m[1;36m][0m[1;36m[0m
-[component_container-1] [1;36m[Dbg] [Sensors.cc:391] [0m[1;36mRendering Thread initialized[0m[1;36m[0m
-[component_container-1] [1;36m[Dbg] [Sensors.cc:953] [0m[1;36mInitialization needed[0m[1;36m[0m
-[component_container-1] [1;36m[Dbg] [Lidar.cc:139] [0m[1;36mLaser scans for [[0m[1;36mdrone::link::lidar_2d_v2[0m[1;36m] advertised on [[0m[1;36mdrone_1/scan[0m[1;36m][0m[1;36m[0m
-[component_container-1] [1;36m[Dbg] [GpuLidarSensor.cc:164] [0m[1;36mLidar points for [[0m[1;36mdrone::link::lidar_2d_v2[0m[1;36m] advertised on [[0m[1;36mdrone_1/scan/points[0m[1;36m][0m[1;36m[0m
-[component_container-1] [1;36m[Dbg] [Lidar.cc:139] [0m[1;36mLaser scans for [[0m[1;36mdrone::laser_link::simple_laser[0m[1;36m] advertised on [[0m[1;36mlaser_1d[0m[1;36m][0m[1;36m[0m
-[component_container-1] [1;36m[Dbg] [GpuLidarSensor.cc:164] [0m[1;36mLidar points for [[0m[1;36mdrone::laser_link::simple_laser[0m[1;36m] advertised on [[0m[1;36mlaser_1d/points[0m[1;36m][0m[1;36m[0m
-[rviz2-4] [INFO] [1752490672.147011399] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.234 for reason 'discarding message because the queue is full'
-[rviz2-4] [INFO] [1752490672.178635966] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.267 for reason 'discarding message because the queue is full'
-[component_container_isolated-8] [INFO] [1752490672.203161148] [drone_1.lifecycle_manager_navigation]: Server smoother_server connected with bond.
-[component_container_isolated-8] [INFO] [1752490672.203205985] [drone_1.lifecycle_manager_navigation]: [34m[1mActivating planner_server[0m[0m
-[component_container_isolated-8] [INFO] [1752490672.203614616] [drone_1.planner_server]: Activating
-[component_container_isolated-8] [INFO] [1752490672.203677633] [drone_1.global_costmap.global_costmap]: Activating
-[component_container_isolated-8] [INFO] [1752490672.203690224] [drone_1.global_costmap.global_costmap]: Checking transform
-[component_container_isolated-8] [INFO] [1752490672.203712454] [drone_1.global_costmap.global_costmap]: Timed out waiting for transform from base_link to map to become available, tf error: Lookup would require extrapolation into the past.  Requested time 0.612000 but the earliest data is at time 1.102000, when looking up transform from frame [base_link] to frame [map]
-[rviz2-4] [INFO] [1752490672.210854845] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.300 for reason 'discarding message because the queue is full'
-[rviz2-4] [INFO] [1752490672.243146860] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.333 for reason 'discarding message because the queue is full'
-[rviz2-4] [INFO] [1752490672.274589184] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.366 for reason 'discarding message because the queue is full'
-[gazebo-2] [1;33m[GUI] [Wrn] [OBJLoader.cc:91] [0m[1;33mBoth `d` and `Tr` parameters defined for "Chair". Use the value of `d` for dissolve (line 8 in .mtl.)[0m
-[gazebo-2] [1;33m[0m
-[rviz2-4] [INFO] [1752490672.306812365] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.399 for reason 'discarding message because the queue is full'
-[rviz2-4] [INFO] [1752490672.338819072] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.432 for reason 'discarding message because the queue is full'
-[rviz2-4] [INFO] [1752490672.370708431] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.465 for reason 'discarding message because the queue is full'
-[rviz2-4] [INFO] [1752490672.435407948] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.498 for reason 'discarding message because the queue is full'
-[rviz2-4] [INFO] [1752490672.467449410] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.531 for reason 'discarding message because the queue is full'
-[rviz2-4] [INFO] [1752490672.499206734] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.564 for reason 'discarding message because the queue is full'
-[rviz2-4] [INFO] [1752490672.530777437] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.597 for reason 'discarding message because the queue is full'
-[component_container_isolated-8] [INFO] [1752490676.064506497] [drone_1.global_costmap.global_costmap]: Timed out waiting for transform from base_link to map to become available, tf error: Lookup would require extrapolation into the past.  Requested time 0.918000 but the earliest data is at time 1.102000, when looking up transform from frame [base_link] to frame [map]
-[component_container_isolated-8] [INFO] [1752490676.064587433] [drone_1.global_costmap.global_costmap]: Timed out waiting for transform from base_link to map to become available, tf error: Lookup would require extrapolation into the past.  Requested time 0.918000 but the earliest data is at time 1.102000, when looking up transform from frame [base_link] to frame [map]
-[rviz2-4] [INFO] [1752490676.085316996] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.630 for reason 'discarding message because the queue is full'
-[component_container_isolated-8] [INFO] [1752490676.089274716] [drone_1.amcl]: Message Filter dropping message: frame 'link' at time 0.006 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
-[rviz2-4] [INFO] [1752490676.117540019] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.663 for reason 'discarding message because the queue is full'
-[component_container_isolated-8] [INFO] [1752490676.122684825] [drone_1.amcl]: Message Filter dropping message: frame 'link' at time 0.033 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
-[rviz2-4] [INFO] [1752490676.148867086] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.696 for reason 'discarding message because the queue is full'
-[component_container_isolated-8] [INFO] [1752490676.159364155] [drone_1.amcl]: Message Filter dropping message: frame 'link' at time 0.069 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
-[rviz2-4] [INFO] [1752490676.181336544] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.729 for reason 'discarding message because the queue is full'
-[rviz2-4] [INFO] [1752490676.213727993] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.762 for reason 'discarding message because the queue is full'
-[rviz2-4] [INFO] [1752490676.245604652] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.795 for reason 'discarding message because the queue is full'
-[rviz2-4] [INFO] [1752490676.276951225] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.828 for reason 'discarding message because the queue is full'
-[rviz2-4] [INFO] [1752490676.342860254] [rviz2]: Trying to create a map of size 60 x 60 using 1 swatches
-[component_container_isolated-8] [INFO] [1752490676.564892778] [drone_1.global_costmap.global_costmap]: start
-[gazebo-2] [1;33m[GUI] [Wrn] [ColladaLoader.cc:2059] [0m[1;33mPolylist input semantic: '[0m[1;33mCOLOR[0m[1;33m' is currently[0m[1;33m not supported[0m[1;33m[0m
-[rviz2-4] [INFO] [1752490676.916948855] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.861 for reason 'discarding message because the queue is full'
-[component_container_isolated-8] [INFO] [1752490677.616625100] [drone_1.planner_server]: Activating plugin GridBased of type NavfnPlanner
-[component_container_isolated-8] [INFO] [1752490677.619290345] [drone_1.planner_server]: Creating bond (planner_server) to lifecycle manager.
-[rviz2-4] [INFO] [1752490677.631918776] [rviz2]: Trying to create a map of size 1006 x 1674 using 1 swatches
-[component_container_isolated-8] [INFO] [1752490677.728819072] [drone_1.lifecycle_manager_navigation]: Server planner_server connected with bond.
-[component_container_isolated-8] [INFO] [1752490677.728867187] [drone_1.lifecycle_manager_navigation]: [34m[1mActivating behavior_server[0m[0m
-[component_container_isolated-8] [INFO] [1752490677.729151737] [drone_1.behavior_server]: Activating
-[component_container_isolated-8] [INFO] [1752490677.729166865] [drone_1.behavior_server]: Activating spin
-[component_container_isolated-8] [INFO] [1752490677.729346748] [drone_1.behavior_server]: Activating backup
-[component_container_isolated-8] [INFO] [1752490677.729429983] [drone_1.behavior_server]: Activating drive_on_heading
-[component_container_isolated-8] [INFO] [1752490677.729549609] [drone_1.behavior_server]: Activating assisted_teleop
-[component_container_isolated-8] [INFO] [1752490677.729576307] [drone_1.behavior_server]: Activating wait
-[component_container_isolated-8] [INFO] [1752490677.729592170] [drone_1.behavior_server]: Creating bond (behavior_server) to lifecycle manager.
-[component_container_isolated-8] [INFO] [1752490677.845532349] [drone_1.lifecycle_manager_navigation]: Server behavior_server connected with bond.
-[component_container_isolated-8] [INFO] [1752490677.845596300] [drone_1.lifecycle_manager_navigation]: [34m[1mActivating velocity_smoother[0m[0m
-[component_container_isolated-8] [INFO] [1752490677.845947902] [drone_1.velocity_smoother]: Activating
-[component_container_isolated-8] [INFO] [1752490677.845995083] [drone_1.velocity_smoother]: Creating bond (velocity_smoother) to lifecycle manager.
-[component_container_isolated-8] [INFO] [1752490677.953964507] [drone_1.lifecycle_manager_navigation]: Server velocity_smoother connected with bond.
-[component_container_isolated-8] [INFO] [1752490677.954017622] [drone_1.lifecycle_manager_navigation]: [34m[1mActivating collision_monitor[0m[0m
-[component_container_isolated-8] [INFO] [1752490677.954324614] [drone_1.collision_monitor]: Activating
-[component_container_isolated-8] [INFO] [1752490677.954453433] [drone_1.collision_monitor]: Creating bond (collision_monitor) to lifecycle manager.
-[component_container_isolated-8] [INFO] [1752490678.065806796] [drone_1.lifecycle_manager_navigation]: Server collision_monitor connected with bond.
-[component_container_isolated-8] [INFO] [1752490678.065904714] [drone_1.lifecycle_manager_navigation]: [34m[1mActivating bt_navigator[0m[0m
-[component_container_isolated-8] [INFO] [1752490678.066261763] [drone_1.bt_navigator]: Activating
-[component_container_isolated-8] [INFO] [1752490678.181790708] [drone_1.bt_navigator]: Creating bond (bt_navigator) to lifecycle manager.
-[component_container_isolated-8] [INFO] [1752490678.292339632] [drone_1.lifecycle_manager_navigation]: Server bt_navigator connected with bond.
-[component_container_isolated-8] [INFO] [1752490678.292387902] [drone_1.lifecycle_manager_navigation]: [34m[1mActivating waypoint_follower[0m[0m
-[component_container_isolated-8] [INFO] [1752490678.292769587] [drone_1.waypoint_follower]: Activating
-[component_container_isolated-8] [INFO] [1752490678.292870301] [drone_1.waypoint_follower]: Creating bond (waypoint_follower) to lifecycle manager.
-[component_container_isolated-8] [INFO] [1752490678.407537334] [drone_1.lifecycle_manager_navigation]: Server waypoint_follower connected with bond.
-[component_container_isolated-8] [INFO] [1752490678.407588208] [drone_1.lifecycle_manager_navigation]: [34m[1mManaged nodes are active[0m[0m
-[component_container_isolated-8] [INFO] [1752490678.407595359] [drone_1.lifecycle_manager_navigation]: [34m[1mCreating bond timer...[0m[0m
-[gazebo-2] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] qrc:/qml/PluginMenu.qml:130: TypeError: Cannot read property 'width' of null[0m[1;33m[0m
-[gazebo-2] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] qrc:/qml/PluginMenu.qml:130: TypeError: Cannot read property 'width' of null[0m[1;33m[0m
-[gazebo-2] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] qrc:/qml/PluginMenu.qml:130: TypeError: Cannot read property 'width' of null[0m[1;33m[0m
-[gazebo-2] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] qrc:/qml/PluginMenu.qml:130: TypeError: Cannot read property 'width' of null[0m[1;33m[0m
-[gazebo-2] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] qrc:/qml/PluginMenu.qml:130: TypeError: Cannot read property 'width' of null[0m[1;33m[0m
-[gazebo-2] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] qrc:/qml/PluginMenu.qml:130: TypeError: Cannot read property 'width' of null[0m[1;33m[0m
-[gazebo-2] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] qrc:/qml/PluginMenu.qml:130: TypeError: Cannot read property 'width' of null[0m[1;33m[0m
-[gazebo-2] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] qrc:/qml/PluginMenu.qml:130: TypeError: Cannot read property 'width' of null[0m[1;33m[0m
-[gazebo-2] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] qrc:/qml/PluginMenu.qml:130: TypeError: Cannot read property 'width' of null[0m[1;33m[0m
-[gazebo-2] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] qrc:/qml/PluginMenu.qml:130: TypeError: Cannot read property 'width' of null[0m[1;33m[0m
-[gazebo-2] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] qrc:/qml/PluginMenu.qml:130: TypeError: Cannot read property 'width' of null[0m[1;33m[0m
-[gazebo-2] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] qrc:/qml/PluginMenu.qml:130: TypeError: Cannot read property 'width' of null[0m[1;33m[0m
-[gazebo-2] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] qrc:/qml/PluginMenu.qml:130: TypeError: Cannot read property 'width' of null[0m[1;33m[0m
-[gazebo-2] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] qrc:/qml/PluginMenu.qml:130: TypeError: Cannot read property 'width' of null[0m[1;33m[0m
-[gazebo-2] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] qrc:/qml/PluginMenu.qml:130: TypeError: Cannot read property 'width' of null[0m[1;33m[0m
-[gazebo-2] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] qrc:/qml/PluginMenu.qml:130: TypeError: Cannot read property 'width' of null[0m[1;33m[0m
-[gazebo-2] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] qrc:/qml/PluginMenu.qml:130: TypeError: Cannot read property 'width' of null[0m[1;33m[0m
-[gazebo-2] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] qrc:/qml/PluginMenu.qml:130: TypeError: Cannot read property 'width' of null[0m[1;33m[0m
-[gazebo-2] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] qrc:/qml/PluginMenu.qml:130: TypeError: Cannot read property 'width' of null[0m[1;33m[0m
-[gazebo-2] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] qrc:/qml/PluginMenu.qml:130: TypeError: Cannot read property 'width' of null[0m[1;33m[0m
-[gazebo-2] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] qrc:/qml/PluginMenu.qml:130: TypeError: Cannot read property 'width' of null[0m[1;33m[0m
-[gazebo-2] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] qrc:/qml/PluginMenu.qml:130: TypeError: Cannot read property 'width' of null[0m[1;33m[0m
-[gazebo-2] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] qrc:/qml/PluginMenu.qml:130: TypeError: Cannot read property 'width' of null[0m[1;33m[0m
-[gazebo-2] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] qrc:/qml/PluginMenu.qml:130: TypeError: Cannot read property 'width' of null[0m[1;33m[0m
-[rviz2-4] [INFO] [1752490684.657408524] [drone_1.rviz]: Message Filter dropping message: frame 'odom' at time 0.408 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
-[rviz2-4] [INFO] [1752490684.863957718] [drone_1.rviz]: Message Filter dropping message: frame 'odom' at time 0.633 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
-[rviz2-4] [INFO] [1752490684.864066290] [drone_1.rviz]: Message Filter dropping message: frame 'odom' at time 0.612 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
-[rviz2-4] [INFO] [1752490685.069856144] [drone_1.rviz]: Message Filter dropping message: frame 'odom' at time 0.816 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
-[rviz2-4] [INFO] [1752490685.275986357] [drone_1.rviz]: Message Filter dropping message: frame 'odom' at time 1.020 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
-[rviz2-4] [INFO] [1752490686.099723011] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.894 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
-[rviz2-4] [INFO] [1752490686.202690031] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.960 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
-[rviz2-4] [INFO] [1752490686.202795825] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.993 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
-[rviz2-4] [INFO] [1752490686.202836180] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.927 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
-[rviz2-4] [INFO] [1752490686.305456927] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 1.059 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
-[rviz2-4] [INFO] [1752490686.305572405] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 1.092 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
-[rviz2-4] [INFO] [1752490686.305592663] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 1.026 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
-[component_container-1] [1;33mWarning [Utils.cc:132][0m [/sdf/model[@name="x3_urdf_convr"]/link[@name="link"]/sensor[@name="lidar_2d_v2"]/gz_frame_id:<data-string>:L138]: XML Element[gz_frame_id], child of element[sensor], not defined in SDF. Copying[gz_frame_id] as children of [sensor].
-[component_container-1] [1;33mWarning [Utils.cc:132][0m [/sdf/model[@name="x3_urdf_convr"]/link[@name="laser_link"]/sensor[@name="simple_laser"]/gz_frame_id:<data-string>:L426]: XML Element[gz_frame_id], child of element[sensor], not defined in SDF. Copying[gz_frame_id] as children of [sensor].
-[component_container-1] [1;33mWarning [Utils.cc:132][0m [/sdf/model[@name="x3_urdf_convr"]/link[@name="link"]/sensor[@name="lidar_2d_v2"]/gz_frame_id:<data-string>:L138]: XML Element[gz_frame_id], child of element[sensor], not defined in SDF. Copying[gz_frame_id] as children of [sensor].
-[component_container-1] [1;33mWarning [Utils.cc:132][0m [/sdf/model[@name="x3_urdf_convr"]/link[@name="laser_link"]/sensor[@name="simple_laser"]/gz_frame_id:<data-string>:L426]: XML Element[gz_frame_id], child of element[sensor], not defined in SDF. Copying[gz_frame_id] as children of [sensor].
-[WARNING] [launch]: user interrupted with ctrl-c (SIGINT)
-[INFO] [launch.user]: The launch had to be aborted for the following reason: ctrl-c (SIGINT)
-[component_container_isolated-8] [INFO] [1752490871.742086958] [rclcpp]: signal_handler(signum=2)
-[component_container_isolated-8] [INFO] [1752490871.742317770] [drone_1.controller_server]: Running Nav2 LifecycleNode rcl preshutdown (controller_server)
-[ERROR] [mf_simulation_interface-3]: process has died [pid 70905, exit code 254, cmd 'ros2 run mf_simulation interface'].
-[robot_state_publisher-10] [INFO] [1752490871.742089713] [rclcpp]: signal_handler(signum=2)
-[mqtt_client-6] [INFO] [1752490871.742125586] [rclcpp]: signal_handler(signum=2)
-[drone_controller-7] [INFO] [1752490871.742136044] [rclcpp]: signal_handler(signum=2)
-[drone_tf_publisher-11] [INFO] [1752490871.742121828] [rclcpp]: signal_handler(signum=2)
-[rviz2-4] [INFO] [1752490871.742185884] [rclcpp]: signal_handler(signum=2)
-[parameter_bridge-5] [INFO] [1752490871.742187828] [rclcpp]: signal_handler(signum=2)
-[component_container_isolated-8] [INFO] [1752490871.742620688] [drone_1.controller_server]: Deactivating
-[component_container_isolated-8] [INFO] [1752490871.742775945] [drone_1.local_costmap.local_costmap]: Deactivating
-[component_container_isolated-8] [INFO] [1752490871.752138069] [drone_1.controller_server]: Destroying bond (controller_server) to lifecycle manager.
-[component_container_isolated-8] [INFO] [1752490871.762358290] [drone_1.controller_server]: Cleaning up
-[component_container_isolated-8] [INFO] [1752490871.763102662] [drone_1.local_costmap.local_costmap]: Cleaning up
-[mf_simulation_interface-3] [ros2run]: Interrupt
-[component_container_isolated-8] [INFO] [1752490871.824848322] [drone_1.controller_server]: Destroying bond (controller_server) to lifecycle manager.
-[component_container_isolated-8] [INFO] [1752490871.824887552] [drone_1.map_server]: Running Nav2 LifecycleNode rcl preshutdown (map_server)
-[component_container_isolated-8] [INFO] [1752490871.824945556] [drone_1.map_server]: Deactivating
-[component_container_isolated-8] [INFO] [1752490871.825001293] [drone_1.map_server]: Destroying bond (map_server) to lifecycle manager.
-[component_container_isolated-8] [INFO] [1752490871.835436851] [drone_1.map_server]: Cleaning up
-[component_container_isolated-8] [INFO] [1752490871.835587554] [drone_1.map_server]: Destroying bond (map_server) to lifecycle manager.
-[component_container_isolated-8] [INFO] [1752490871.835598912] [drone_1.smoother_server]: Running Nav2 LifecycleNode rcl preshutdown (smoother_server)
-[component_container_isolated-8] [INFO] [1752490871.835635092] [drone_1.smoother_server]: Deactivating
-[component_container_isolated-8] [INFO] [1752490871.835651409] [drone_1.smoother_server]: Destroying bond (smoother_server) to lifecycle manager.
-[component_container_isolated-8] [INFO] [1752490871.846085370] [drone_1.smoother_server]: Cleaning up
-[component_container_isolated-8] [INFO] [1752490871.851501510] [drone_1.lifecycle_manager_navigation]: [34m[1mHave not received a heartbeat from controller_server.[0m[0m
-[component_container_isolated-8] [ERROR] [1752490871.851566741] [drone_1.lifecycle_manager_navigation]: CRITICAL FAILURE: SERVER controller_server IS DOWN after not receiving a heartbeat for 4000 ms. Shutting down related nodes.
-[component_container_isolated-8] [INFO] [1752490871.851620209] [drone_1.lifecycle_manager_navigation]: [34m[1mTerminating bond timer...[0m[0m
-[component_container_isolated-8] [INFO] [1752490871.851636931] [drone_1.lifecycle_manager_navigation]: [34m[1mResetting managed nodes...[0m[0m
-[component_container_isolated-8] [INFO] [1752490871.851643528] [drone_1.lifecycle_manager_navigation]: [34m[1mDeactivating waypoint_follower[0m[0m
-[component_container_isolated-8] [INFO] [1752490871.851903373] [drone_1.waypoint_follower]: Deactivating
-[component_container_isolated-8] [INFO] [1752490871.851996396] [drone_1.waypoint_follower]: Destroying bond (waypoint_follower) to lifecycle manager.
-[component_container_isolated-8] [INFO] [1752490871.862322141] [drone_1.smoother_server]: Destroying bond (smoother_server) to lifecycle manager.
-[component_container_isolated-8] [INFO] [1752490871.862354946] [drone_1.amcl]: Running Nav2 LifecycleNode rcl preshutdown (amcl)
-[component_container_isolated-8] [INFO] [1752490871.862391503] [drone_1.amcl]: Deactivating
-[component_container_isolated-8] [INFO] [1752490871.862426144] [drone_1.amcl]: Destroying bond (amcl) to lifecycle manager.
-[INFO] [drone_tf_publisher-11]: process has finished cleanly [pid 70913]
-[INFO] [drone_controller-7]: process has finished cleanly [pid 70909]
-[INFO] [parameter_bridge-5]: process has finished cleanly [pid 70907]
-[INFO] [robot_state_publisher-10]: process has finished cleanly [pid 70912]
-[component_container_isolated-8] [INFO] [1752490871.872711795] [drone_1.amcl]: Cleaning up
-[component_container_isolated-8] [INFO] [1752490871.887936273] [drone_1.amcl]: Destroying bond (amcl) to lifecycle manager.
-[component_container_isolated-8] [INFO] [1752490871.887968069] [drone_1.planner_server]: Running Nav2 LifecycleNode rcl preshutdown (planner_server)
-[component_container_isolated-8] [INFO] [1752490871.888005446] [drone_1.planner_server]: Deactivating
-[component_container_isolated-8] [INFO] [1752490871.888027486] [drone_1.global_costmap.global_costmap]: Deactivating
-[component_container_isolated-8] [INFO] [1752490871.893337458] [drone_1.lifecycle_manager_localization]: [34m[1mHave not received a heartbeat from map_server.[0m[0m
-[component_container_isolated-8] [ERROR] [1752490871.893426314] [drone_1.lifecycle_manager_localization]: CRITICAL FAILURE: SERVER map_server IS DOWN after not receiving a heartbeat for 4000 ms. Shutting down related nodes.
-[component_container_isolated-8] [INFO] [1752490871.893446384] [drone_1.lifecycle_manager_localization]: [34m[1mTerminating bond timer...[0m[0m
-[component_container_isolated-8] [INFO] [1752490871.893451244] [drone_1.lifecycle_manager_localization]: [34m[1mResetting managed nodes...[0m[0m
-[component_container_isolated-8] [INFO] [1752490871.893455186] [drone_1.lifecycle_manager_localization]: [34m[1mDeactivating amcl[0m[0m
-[component_container_isolated-8] [WARN] [1752490871.899227406] [rcl_lifecycle]: No transition matching 4 found for current state unconfigured
-[component_container_isolated-8] [ERROR] [1752490871.899260327] [drone_1.amcl]: Unable to start transition 4 from current state unconfigured: Transition is not registered., at ./src/rcl_lifecycle.c:355
-[component_container_isolated-8] [ERROR] [1752490871.899565635] [drone_1.lifecycle_manager_localization]: Failed to change state for node: amcl
-[component_container_isolated-8] [INFO] [1752490871.899605154] [drone_1.lifecycle_manager_localization]: [34m[1mDeactivating map_server[0m[0m
-[component_container_isolated-8] [WARN] [1752490871.899717828] [rcl_lifecycle]: No transition matching 4 found for current state unconfigured
-[component_container_isolated-8] [ERROR] [1752490871.899727116] [drone_1.map_server]: Unable to start transition 4 from current state unconfigured: Transition is not registered., at ./src/rcl_lifecycle.c:355
-[component_container_isolated-8] [ERROR] [1752490871.899983482] [drone_1.lifecycle_manager_localization]: Failed to change state for node: map_server
-[component_container_isolated-8] [INFO] [1752490871.900003408] [drone_1.lifecycle_manager_localization]: [34m[1mCleaning up amcl[0m[0m
-[component_container_isolated-8] [WARN] [1752490871.900111222] [rcl_lifecycle]: No transition matching 2 found for current state unconfigured
-[component_container_isolated-8] [ERROR] [1752490871.900119799] [drone_1.amcl]: Unable to start transition 2 from current state unconfigured: Transition is not registered., at ./src/rcl_lifecycle.c:355
-[component_container_isolated-8] [INFO] [1752490871.900327003] [drone_1.lifecycle_manager_localization]: [34m[1mCleaning up map_server[0m[0m
-[component_container_isolated-8] [WARN] [1752490871.900422083] [rcl_lifecycle]: No transition matching 2 found for current state unconfigured
-[component_container_isolated-8] [ERROR] [1752490871.900435781] [drone_1.map_server]: Unable to start transition 2 from current state unconfigured: Transition is not registered., at ./src/rcl_lifecycle.c:355
-[component_container_isolated-8] [INFO] [1752490871.900651428] [drone_1.lifecycle_manager_localization]: [34m[1mManaged nodes have been reset[0m[0m
-[INFO] [mqtt_client-6]: process has finished cleanly [pid 70908]
-[component_container_isolated-8] [INFO] [1752490871.964454126] [drone_1.lifecycle_manager_navigation]: [34m[1mDeactivating bt_navigator[0m[0m
-[component_container_isolated-8] [INFO] [1752490871.964754732] [drone_1.bt_navigator]: Deactivating
-[component_container_isolated-8] [INFO] [1752490871.964861948] [drone_1.bt_navigator]: Destroying bond (bt_navigator) to lifecycle manager.
-[component_container_isolated-8] [INFO] [1752490872.009031319] [drone_1.planner_server]: Deactivating plugin GridBased of type NavfnPlanner
-[component_container_isolated-8] [INFO] [1752490872.009098395] [drone_1.planner_server]: Destroying bond (planner_server) to lifecycle manager.
-[component_container_isolated-8] [INFO] [1752490872.019338612] [drone_1.planner_server]: Cleaning up
-[component_container_isolated-8] [INFO] [1752490872.030530304] [drone_1.global_costmap.global_costmap]: Cleaning up
-[component_container_isolated-8] [INFO] [1752490872.036110651] [drone_1.planner_server]: Cleaning up plugin GridBased of type NavfnPlanner
-[component_container_isolated-8] [INFO] [1752490872.036191038] [drone_1.planner_server]: Destroying plugin GridBased of type NavfnPlanner
-[INFO] [rviz2-4]: process has finished cleanly [pid 70906]
-[INFO] [launch.user]: The launch had to be aborted for the following reason: rviz exited
-[ERROR] [launch]: Caught exception in launch (see debug for traceback): Cannot shutdown a ROS adapter that is not running
-[component_container_isolated-8] [INFO] [1752490872.055736481] [drone_1.planner_server]: Destroying bond (planner_server) to lifecycle manager.
-[component_container_isolated-8] [INFO] [1752490872.055771041] [drone_1.lifecycle_manager_localization]: Running Nav2 LifecycleManager rcl preshutdown (lifecycle_manager_localization)
-[component_container_isolated-8] [INFO] [1752490872.059004180] [drone_1.behavior_server]: Running Nav2 LifecycleNode rcl preshutdown (behavior_server)
-[component_container_isolated-8] [INFO] [1752490872.059066243] [drone_1.behavior_server]: Deactivating
-[component_container_isolated-8] [INFO] [1752490872.059130196] [drone_1.behavior_server]: Destroying bond (behavior_server) to lifecycle manager.
-[component_container_isolated-8] [INFO] [1752490872.069378044] [drone_1.behavior_server]: Cleaning up
-[component_container_isolated-8] [INFO] [1752490872.073814685] [drone_1.behavior_server]: Destroying bond (behavior_server) to lifecycle manager.
-[component_container_isolated-8] [INFO] [1752490872.073849964] [drone_1.bt_navigator]: Running Nav2 LifecycleNode rcl preshutdown (bt_navigator)
-[component_container_isolated-8] [INFO] [1752490872.073862870] [drone_1.bt_navigator]: Cleaning up
-[component_container_isolated-8] [INFO] [1752490872.077393811] [drone_1.lifecycle_manager_navigation]: [34m[1mDeactivating collision_monitor[0m[0m
-[gazebo-2] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mVisualizeLidar[0m[1;36m][0m[1;36m[0m
-[gazebo-2] [1;36m[GUI] [Dbg] [VisualizeLidar.cc:186] [0m[1;36mCreating lidar visual[0m[1;36m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mVisualize lidar[0m[1;32m] to main window[0m[1;32m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mVisualizeLidar[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libVisualizeLidar.so[0m[1;32m][0m[1;32m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mRefreshing topic list for LaserScan messages.[0m[1;32m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mSubscribed to [0m[1;32m/drone_1/scan[0m[1;32m[0m
-[gazebo-2] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mSubscribed to [0m[1;32m/laser_1d[0m[1;32m[0m
-[gazebo-2] [1;36m[GUI] [Dbg] [SignalHandler.cc:142] [0m[1;36mReceived signal[[0m[1;36m2[0m[1;36m].[0m
-[gazebo-2] [1;36m[GUI] [Dbg] [Gui.cc:535] [0m[1;36mShutting down gz-sim-gui[0m[1;36m[0m
-[gazebo-2] [1;36m[GUI] [Dbg] [Application.cc:237] [0m[1;36mTerminating application.[0m[1;36m[0m
-[gazebo-2] [1;36m[GUI] [Dbg] [MinimalScene.cc:841] [0m[1;36mDestroy scene [[0m[1;36mscene[0m[1;36m][0m[1;36m[0m
-[component_container_isolated-8] [INFO] [1752490872.204662238] [drone_1.bt_navigator]: Completed Cleaning up
-[component_container_isolated-8] [INFO] [1752490872.204716372] [drone_1.bt_navigator]: Destroying bond (bt_navigator) to lifecycle manager.
-[component_container_isolated-8] [INFO] [1752490872.204724040] [drone_1.waypoint_follower]: Running Nav2 LifecycleNode rcl preshutdown (waypoint_follower)
-[component_container_isolated-8] [INFO] [1752490872.204740933] [drone_1.waypoint_follower]: Cleaning up
-[component_container_isolated-8] [INFO] [1752490872.209426492] [drone_1.waypoint_follower]: Destroying bond (waypoint_follower) to lifecycle manager.
-[component_container_isolated-8] [INFO] [1752490872.209459828] [drone_1.velocity_smoother]: Running Nav2 LifecycleNode rcl preshutdown (velocity_smoother)
-[component_container_isolated-8] [INFO] [1752490872.209495099] [drone_1.velocity_smoother]: Deactivating
-[component_container_isolated-8] [INFO] [1752490872.209516383] [drone_1.velocity_smoother]: Destroying bond (velocity_smoother) to lifecycle manager.
-[component_container_isolated-8] [INFO] [1752490872.219724629] [drone_1.velocity_smoother]: Cleaning up
-[component_container_isolated-8] [INFO] [1752490872.219777827] [drone_1.velocity_smoother]: Destroying bond (velocity_smoother) to lifecycle manager.
-[component_container_isolated-8] [INFO] [1752490872.219788609] [drone_1.collision_monitor]: Running Nav2 LifecycleNode rcl preshutdown (collision_monitor)
-[component_container_isolated-8] [INFO] [1752490872.219830324] [drone_1.collision_monitor]: Deactivating
-[component_container_isolated-8] [INFO] [1752490872.219867574] [drone_1.collision_monitor]: Destroying bond (collision_monitor) to lifecycle manager.
-[INFO] [gazebo-2]: process has finished cleanly [pid 70904]
-[component_container_isolated-8] [INFO] [1752490872.321720095] [drone_1.collision_monitor]: Cleaning up
-[component_container_isolated-8] [INFO] [1752490872.323588275] [collision_monitor]: [FootprintApproach]: Destroying Polygon
-[component_container_isolated-8] [INFO] [1752490872.327402068] [drone_1.collision_monitor]: Destroying bond (collision_monitor) to lifecycle manager.
-[component_container_isolated-8] [INFO] [1752490872.327435179] [drone_1.lifecycle_manager_navigation]: Running Nav2 LifecycleManager rcl preshutdown (lifecycle_manager_navigation)
-[ERROR] [component_container_isolated-8]: process[component_container_isolated-8] failed to terminate '5' seconds after receiving 'SIGINT', escalating to 'SIGTERM'
-[ERROR] [component_container-1]: process[component_container-1] failed to terminate '5' seconds after receiving 'SIGINT', escalating to 'SIGTERM'
-[INFO] [component_container_isolated-8]: sending signal 'SIGTERM' to process[component_container_isolated-8]
-[INFO] [component_container-1]: sending signal 'SIGTERM' to process[component_container-1]
-[component_container_isolated-8] [INFO] [1752490876.790209365] [rclcpp]: signal_handler(signum=15)
-[ERROR] [component_container-1]: process has died [pid 70903, exit code -11, cmd '/opt/ros/jazzy/lib/rclcpp_components/component_container --ros-args -r __node:=sim_env_container'].
-[ERROR] [component_container_isolated-8]: process[component_container_isolated-8] failed to terminate '10.0' seconds after receiving 'SIGTERM', escalating to 'SIGKILL'
-[INFO] [component_container_isolated-8]: sending signal 'SIGKILL' to process[component_container_isolated-8]
-[ERROR] [component_container_isolated-8]: process has died [pid 70910, exit code -9, cmd '/opt/ros/jazzy/lib/rclcpp_components/component_container_isolated --ros-args --log-level info --ros-args -r __node:=nav2_container -r __ns:=/drone_1 --params-file /tmp/launch_params_devze_75 --params-file /tmp/launch_params_t55e97xo -r /tf:=tf -r /tf_static:=tf_static'].
+[component_container-1]
+[component_container_isolated-8] [INFO] [1752653630.305951234] [drone_1.local_costmap.local_costmap]: Timed out waiting for transform from base_link to odom to become available, tf error: Invalid frame ID "odom" passed to canTransform argument target_frame - frame does not exist
+[component_container_isolated-8] [INFO] [1752653630.805949196] [drone_1.local_costmap.local_costmap]: Timed out waiting for transform from base_link to odom to become available, tf error: Invalid frame ID "odom" passed to canTransform argument target_frame - frame does not exist
+[component_container_isolated-8] [INFO] [1752653631.305963444] [drone_1.local_costmap.local_costmap]: Timed out waiting for transform from base_link to odom to become available, tf error: Invalid frame ID "odom" passed to canTransform argument target_frame - frame does not exist
+[gazebo-2] [GUI] [Msg] Loaded plugin [EntityTree] from path [/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libEntityTree.so]
+[gazebo-2] [GUI] [Dbg] [Application.cc:398] Loading window config
+[gazebo-2] [GUI] [Msg] Using server control service [/server_control]
+[gazebo-2] [GUI] [Dbg] [Application.cc:671] Applying config
+[gazebo-2] [GUI] [Dbg] [MinimalScene.cc:802] Creating gz-rendering interface for OpenGL
+[gazebo-2] [GUI] [Dbg] [MinimalScene.cc:986] Creating render thread interface for OpenGL
+[gazebo-2] [GUI] [Msg] Loading plugin [gz-rendering-ogre2]
+[gazebo-2] [GUI] [Dbg] [MinimalScene.cc:749] Create scene [scene]
+[gazebo-2] [GUI] [Dbg] [MinimalScene.cc:1037] Creating texture node render interface for OpenGL
+[gazebo-2] [GUI] [Dbg] [TransformControl.cc:453] TransformControl plugin is using camera [scene::Camera(65527)]
+[gazebo-2] [GUI] [Dbg] [Spawn.cc:308] Spawn plugin is using camera [scene::Camera(65527)]
+[gazebo-2] [GUI] [Dbg] [SelectEntities.cc:452] SelectEntities plugin is using camera [scene::Camera(65527)]
+[gazebo-2] [GUI] [Dbg] [MarkerManager.cc:169] Advertise /marker/list service.
+[gazebo-2] [GUI] [Dbg] [MarkerManager.cc:179] Advertise /marker/list.
+[gazebo-2] [GUI] [Dbg] [MarkerManager.cc:189] Advertise /marker_array.
+[gazebo-2] [GUI] [Dbg] [CameraTracking.cc:205] CameraTrackingPrivate plugin is moving camera [scene::Camera(65527)]
+[gazebo-2] [GUI] [Msg] Move to service on [/gui/move_to]
+[gazebo-2] [GUI] [Msg] Follow service on [/gui/follow] (deprecated)
+[gazebo-2] [GUI] [Msg] Tracking topic on [/gui/track]
+[gazebo-2] [GUI] [Msg] Tracking status topic on [/gui/currently_tracked]
+[gazebo-2] [GUI] [Msg] Move to pose service on [/gui/move_to/pose]
+[gazebo-2] [GUI] [Msg] Camera pose topic advertised on [/gui/camera/pose]
+[gazebo-2] [GUI] [Msg] Follow offset service on [/gui/follow/offset] (deprecated)
+[gazebo-2] [GUI] [Dbg] [InteractiveViewControl.cc:176] InteractiveViewControl plugin is moving camera [scene::Camera(65527)]
+[gazebo-2] [GUI] [Dbg] [EntityContextMenuPlugin.cc:79] Entity context menu plugin is using camera [scene::Camera(65527)]
+[gazebo-2] Warning [Utils.cc:132] [/sdf/model[@name="x3_urdf_convr"]/link[@name="link"]/sensor[@name="lidar_2d_v2"]/gz_frame_id:<data-string>:L138]: XML Element[gz_frame_id], child of element[sensor], not defined in SDF. Copying[gz_frame_id] as children of [sensor].
+[gazebo-2] Warning [Utils.cc:132] [/sdf/model[@name="x3_urdf_convr"]/link[@name="laser_link"]/sensor[@name="simple_laser"]/gz_frame_id:<data-string>:L426]: XML Element[gz_frame_id], child of element[sensor], not defined in SDF. Copying[gz_frame_id] as children of [sensor].
+[component_container-1] [Wrn] [ColladaLoader.cc:2059] Polylist input semantic: 'COLOR' is currently not supported
+[component_container_isolated-8] [INFO] [1752653631.805969866] [drone_1.local_costmap.local_costmap]: Timed out waiting for transform from base_link to odom to become available, tf error: Invalid frame ID "odom" passed to canTransform argument target_frame - frame does not exist
+[gazebo-2] Warning [Utils.cc:132] [/sdf/model[@name="x3_urdf_convr"]/link[@name="link"]/sensor[@name="lidar_2d_v2"]/gz_frame_id:<data-string>:L138]: XML Element[gz_frame_id], child of element[sensor], not defined in SDF. Copying[gz_frame_id] as children of [sensor].
+[gazebo-2] Warning [Utils.cc:132] [/sdf/model[@name="x3_urdf_convr"]/link[@name="laser_link"]/sensor[@name="simple_laser"]/gz_frame_id:<data-string>:L426]: XML Element[gz_frame_id], child of element[sensor], not defined in SDF. Copying[gz_frame_id] as children of [sensor].
+[component_container_isolated-8] [INFO] [1752653632.118268818] [drone_1.amcl]: createLaserObject
+[component_container_isolated-8] [INFO] [1752653632.306090989] [drone_1.local_costmap.local_costmap]: start
+[rviz2-4] [INFO] [1752653632.370966714] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.006 for reason 'discarding message because the queue is full'
+[rviz2-4] [INFO] [1752653632.402690491] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.033 for reason 'discarding message because the queue is full'
+[rviz2-4] [INFO] [1752653632.435039092] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.069 for reason 'discarding message because the queue is full'
+[rviz2-4] [INFO] [1752653632.466873425] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.102 for reason 'discarding message because the queue is full'
+[rviz2-4] [INFO] [1752653632.498686929] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.135 for reason 'discarding message because the queue is full'
+[component_container_isolated-8] [INFO] [1752653632.507624860] [drone_1.controller_server]: Creating bond (controller_server) to lifecycle manager.
+[component_container-1] [Dbg] [Sensors.cc:953] Initialization needed
+[component_container-1] [Dbg] [Sensors.cc:349] Initializing render context
+[component_container-1] [Msg] Loading plugin [gz-rendering-ogre2]
+[component_container-1] [Msg] Serving scene information on [/world/warehouse/scene/info]
+[component_container-1] [Msg] Serving graph information on [/world/warehouse/scene/graph]
+[component_container-1] [Msg] Serving full state on [/world/warehouse/state]
+[component_container-1] [Msg] Serving full state (async) on [/world/warehouse/state_async]
+[component_container-1] [Msg] Publishing scene information on [/world/warehouse/scene/info]
+[component_container-1] [Msg] Publishing entity deletions on [/world/warehouse/scene/deletion]
+[component_container-1] [Msg] Publishing state changes on [/world/warehouse/state]
+[component_container-1] [Msg] Publishing pose messages on [/world/warehouse/pose/info]
+[component_container-1] [Msg] Publishing dynamic pose messages on [/world/warehouse/dynamic_pose/info]
+[component_container-1] [Dbg] [EntityComponentManager.cc:1656] Updated state thread iterators: 16 threads processing around 11 entities each.
+[component_container-1] [Dbg] [SimulationRunner.cc:560] Exiting postupdate worker thread (2)
+[component_container-1] [Dbg] [SimulationRunner.cc:560] Exiting postupdate worker thread (1)
+[component_container-1] [Dbg] [SimulationRunner.cc:560] [Dbg] [SimulationRunner.cc:560] Exiting postupdate worker thread (3[Dbg] [SimulationRunner.cc:560] Exiting postupdate worker thread (0)
+[component_container-1] )
+[component_container-1] [Dbg] [SimulationRunner.cc:533] Creating PostUpdate worker threads: 7
+[component_container-1] [Dbg] [SimulationRunner.cc:544] Creating postupdate worker thread (0)
+[component_container-1] [Dbg] [SimulationRunner.cc:544] Creating postupdate worker thread (1)
+[component_container-1] [Dbg] [SimulationRunner.cc:544] Creating postupdate worker thread (2)
+[component_container-1] [Dbg] [SimulationRunner.cc:544] Creating postupdate worker thread (3)
+[component_container-1] [Dbg] [SimulationRunner.cc:544] Creating postupdate worker thread (4)
+[component_container-1] [Dbg] [SimulationRunner.cc:544] Creating postupdate worker thread (5)
+[component_container-1] [Dbg] [RenderUtil.cc:2643] Create scene [scene]
+[component_container-1] [Dbg] [Sensors.cc:953] Initialization needed
+[component_container-1] [Dbg] [Sensors.cc:391] Rendering Thread initialized
+[component_container-1] [Dbg] [Lidar.cc:139] Laser scans for [drone::link::lidar_2d_v2] advertised on [drone_1/scan]
+[component_container-1] [Dbg] [GpuLidarSensor.cc:164] Lidar points for [drone::link::lidar_2d_v2] advertised on [drone_1/scan/points]
+[component_container-1] [Dbg] [Lidar.cc:139] Laser scans for [drone::laser_link::simple_laser] advertised on [drone_1/elevation_scan]
+[component_container-1] [Dbg] [GpuLidarSensor.cc:164] Lidar points for [drone::laser_link::simple_laser] advertised on [drone_1/elevation_scan/points]
+[rviz2-4] [INFO] [1752653632.530984349] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.168 for reason 'discarding message because the queue is full'
+[rviz2-4] [INFO] [1752653632.563117045] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.201 for reason 'discarding message because the queue is full'
+[rviz2-4] [INFO] [1752653632.595404822] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.234 for reason 'discarding message because the queue is full'
+[component_container_isolated-8] [INFO] [1752653632.615171982] [drone_1.lifecycle_manager_navigation]: Server controller_server connected with bond.
+[component_container_isolated-8] [INFO] [1752653632.615224662] [drone_1.lifecycle_manager_navigation]: Activating smoother_server
+[component_container_isolated-8] [INFO] [1752653632.615608866] [drone_1.smoother_server]: Activating
+[component_container_isolated-8] [INFO] [1752653632.615660840] [drone_1.smoother_server]: Creating bond (smoother_server) to lifecycle manager.
+[rviz2-4] [INFO] [1752653632.627455922] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.267 for reason 'discarding message because the queue is full'
+[rviz2-4] [INFO] [1752653632.659147885] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.300 for reason 'discarding message because the queue is full'
+[rviz2-4] [INFO] [1752653632.690761639] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.333 for reason 'discarding message because the queue is full'
+[component_container_isolated-8] [INFO] [1752653632.723320075] [drone_1.lifecycle_manager_navigation]: Server smoother_server connected with bond.
+[component_container_isolated-8] [INFO] [1752653632.723381739] [drone_1.lifecycle_manager_navigation]: Activating planner_server
+[component_container_isolated-8] [INFO] [1752653632.723746658] [drone_1.planner_server]: Activating
+[component_container_isolated-8] [INFO] [1752653632.723797404] [drone_1.global_costmap.global_costmap]: Activating
+[component_container_isolated-8] [INFO] [1752653632.723810504] [drone_1.global_costmap.global_costmap]: Checking transform
+[component_container_isolated-8] [INFO] [1752653632.723843301] [drone_1.global_costmap.global_costmap]: Timed out waiting for transform from base_link to map to become available, tf error: Lookup would require extrapolation into the past.  Requested time 0.612000 but the earliest data is at time 1.102000, when looking up transform from frame [base_link] to frame [map]
+[rviz2-4] [INFO] [1752653632.754883294] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.366 for reason 'discarding message because the queue is full'
+[rviz2-4] [INFO] [1752653632.786964826] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.399 for reason 'discarding message because the queue is full'
+[rviz2-4] [INFO] [1752653632.818935260] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.432 for reason 'discarding message because the queue is full'
+[rviz2-4] [INFO] [1752653632.851424943] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.465 for reason 'discarding message because the queue is full'
+[rviz2-4] [INFO] [1752653632.882568898] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.498 for reason 'discarding message because the queue is full'
+[rviz2-4] [INFO] [1752653632.915174286] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.531 for reason 'discarding message because the queue is full'
+[gazebo-2] [GUI] [Wrn] [OBJLoader.cc:91] Both `d` and `Tr` parameters defined for "Chair". Use the value of `d` for dissolve (line 8 in .mtl.)
+[gazebo-2]
+[rviz2-4] [INFO] [1752653632.947303740] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.564 for reason 'discarding message because the queue is full'
+[rviz2-4] [INFO] [1752653632.979137009] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.597 for reason 'discarding message because the queue is full'
+[rviz2-4] [INFO] [1752653633.010589826] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.630 for reason 'discarding message because the queue is full'
+[component_container_isolated-8] [INFO] [1752653633.029834225] [drone_1.amcl]: Message Filter dropping message: frame 'link' at time 0.006 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[rviz2-4] [INFO] [1752653633.043215316] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.663 for reason 'discarding message because the queue is full'
+[component_container_isolated-8] [INFO] [1752653633.063073587] [drone_1.amcl]: Message Filter dropping message: frame 'link' at time 0.033 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[rviz2-4] [INFO] [1752653633.074893911] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.696 for reason 'discarding message because the queue is full'
+[component_container_isolated-8] [INFO] [1752653633.099398993] [drone_1.amcl]: Message Filter dropping message: frame 'link' at time 0.069 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[rviz2-4] [INFO] [1752653633.107485985] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.729 for reason 'discarding message because the queue is full'
+[rviz2-4] [INFO] [1752653633.138967949] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.762 for reason 'discarding message because the queue is full'
+[rviz2-4] [INFO] [1752653633.170768435] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.795 for reason 'discarding message because the queue is full'
+[rviz2-4] [INFO] [1752653633.203028179] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.828 for reason 'discarding message because the queue is full'
+[component_container_isolated-8] [INFO] [1752653633.223997992] [drone_1.global_costmap.global_costmap]: start
+[rviz2-4] [INFO] [1752653633.235036880] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.861 for reason 'discarding message because the queue is full'
+[rviz2-4] [INFO] [1752653633.335247060] [rviz2]: Trying to create a map of size 60 x 60 using 1 swatches
+[gazebo-2] [GUI] [Wrn] [ColladaLoader.cc:2059] Polylist input semantic: 'COLOR' is currently not supported
+[rviz2-4] [INFO] [1752653634.264956319] [rviz2]: Trying to create a map of size 1006 x 1674 using 1 swatches
+[component_container_isolated-8] [INFO] [1752653634.275620867] [drone_1.planner_server]: Activating plugin GridBased of type NavfnPlanner
+[component_container_isolated-8] [INFO] [1752653634.278568202] [drone_1.planner_server]: Creating bond (planner_server) to lifecycle manager.
+[component_container_isolated-8] [INFO] [1752653634.386489284] [drone_1.lifecycle_manager_navigation]: Server planner_server connected with bond.
+[component_container_isolated-8] [INFO] [1752653634.386538756] [drone_1.lifecycle_manager_navigation]: Activating behavior_server
+[component_container_isolated-8] [INFO] [1752653634.386796749] [drone_1.behavior_server]: Activating
+[component_container_isolated-8] [INFO] [1752653634.386814651] [drone_1.behavior_server]: Activating spin
+[component_container_isolated-8] [INFO] [1752653634.386835386] [drone_1.behavior_server]: Activating backup
+[component_container_isolated-8] [INFO] [1752653634.386843361] [drone_1.behavior_server]: Activating drive_on_heading
+[component_container_isolated-8] [INFO] [1752653634.386851510] [drone_1.behavior_server]: Activating assisted_teleop
+[component_container_isolated-8] [INFO] [1752653634.386870247] [drone_1.behavior_server]: Activating wait
+[component_container_isolated-8] [INFO] [1752653634.386882612] [drone_1.behavior_server]: Creating bond (behavior_server) to lifecycle manager.
+[component_container_isolated-8] [INFO] [1752653634.495798597] [drone_1.lifecycle_manager_navigation]: Server behavior_server connected with bond.
+[component_container_isolated-8] [INFO] [1752653634.495851955] [drone_1.lifecycle_manager_navigation]: Activating velocity_smoother
+[component_container_isolated-8] [INFO] [1752653634.496156610] [drone_1.velocity_smoother]: Activating
+[component_container_isolated-8] [INFO] [1752653634.496206430] [drone_1.velocity_smoother]: Creating bond (velocity_smoother) to lifecycle manager.
+[component_container_isolated-8] [INFO] [1752653634.605500834] [drone_1.lifecycle_manager_navigation]: Server velocity_smoother connected with bond.
+[component_container_isolated-8] [INFO] [1752653634.605548225] [drone_1.lifecycle_manager_navigation]: Activating collision_monitor
+[component_container_isolated-8] [INFO] [1752653634.605786456] [drone_1.collision_monitor]: Activating
+[component_container_isolated-8] [INFO] [1752653634.605836011] [drone_1.collision_monitor]: Creating bond (collision_monitor) to lifecycle manager.
+[component_container_isolated-8] [INFO] [1752653634.715155836] [drone_1.lifecycle_manager_navigation]: Server collision_monitor connected with bond.
+[component_container_isolated-8] [INFO] [1752653634.715207490] [drone_1.lifecycle_manager_navigation]: Activating bt_navigator
+[component_container_isolated-8] [INFO] [1752653634.715540649] [drone_1.bt_navigator]: Activating
+[component_container_isolated-8] [INFO] [1752653634.828648024] [drone_1.bt_navigator]: Creating bond (bt_navigator) to lifecycle manager.
+[component_container_isolated-8] [INFO] [1752653634.940103792] [drone_1.lifecycle_manager_navigation]: Server bt_navigator connected with bond.
+[component_container_isolated-8] [INFO] [1752653634.940170396] [drone_1.lifecycle_manager_navigation]: Activating waypoint_follower
+[component_container_isolated-8] [INFO] [1752653634.940659927] [drone_1.waypoint_follower]: Activating
+[component_container_isolated-8] [INFO] [1752653634.940751400] [drone_1.waypoint_follower]: Creating bond (waypoint_follower) to lifecycle manager.
+[component_container_isolated-8] [INFO] [1752653635.057544020] [drone_1.lifecycle_manager_navigation]: Server waypoint_follower connected with bond.
+[component_container_isolated-8] [INFO] [1752653635.057596315] [drone_1.lifecycle_manager_navigation]: Managed nodes are active
+[component_container_isolated-8] [INFO] [1752653635.057603089] [drone_1.lifecycle_manager_navigation]: Creating bond timer...
+[rviz2-4] [INFO] [1752653644.449297675] [drone_1.rviz]: Message Filter dropping message: frame 'odom' at time 0.408 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[rviz2-4] [INFO] [1752653644.654852187] [drone_1.rviz]: Message Filter dropping message: frame 'odom' at time 0.612 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[rviz2-4] [INFO] [1752653644.757631131] [drone_1.rviz]: Message Filter dropping message: frame 'odom' at time 0.690 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[rviz2-4] [INFO] [1752653644.860995160] [drone_1.rviz]: Message Filter dropping message: frame 'odom' at time 0.816 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[rviz2-4] [INFO] [1752653645.067502609] [drone_1.rviz]: Message Filter dropping message: frame 'odom' at time 1.020 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[rviz2-4] [INFO] [1752653645.891755650] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.894 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[rviz2-4] [INFO] [1752653645.994355762] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.993 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[rviz2-4] [INFO] [1752653645.994478675] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.960 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[rviz2-4] [INFO] [1752653645.994555937] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 0.927 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[rviz2-4] [INFO] [1752653646.097535688] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 1.059 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[rviz2-4] [INFO] [1752653646.097679882] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 1.026 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[rviz2-4] [INFO] [1752653646.097769310] [drone_1.rviz]: Message Filter dropping message: frame 'link' at time 1.092 for reason 'the timestamp on the message is earlier than all the data in the transform cache'

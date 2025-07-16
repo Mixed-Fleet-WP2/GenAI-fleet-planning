@@ -63,7 +63,6 @@ class Database():
             if msg.topic == "robot_state_updates":
 
                 state = RobotStateUpdate.model_validate_json(payload).model_dump()
-
                 # https://docs.python.org/3/library/stdtypes.html#dict.update
                 self.robot_state_data_.update(state)
             elif msg.topic == "object_state_updates":

@@ -54,7 +54,7 @@ class Worker(QRunnable):
         # Add a callback to the kwargs that is passed
         # to the function that runs in the worker thread
         feedback_signal: SignalInstance = self.signals.feedback
-        self.kwargs['feedback_callback'] = feedback_signal
+        self.kwargs['feedback_signal'] = feedback_signal
 
     # Override the run method
     # https://www.pythonguis.com/faq/what-does-slot-do/
@@ -273,12 +273,14 @@ class Interface(QMainWindow):
 
     def execute_plan_(self):
         
+        print("EXECUTION PRESSED")
         # Prevent executing if user presses execute without plan
         if not self.plan_:
             return
 
         worker = Worker(Controller().run_plan, self.plan_)
         
+        worker.signals.feedback.connect(self.write_feedback)
         worker.signals.result_signal.connect(self.update_gui)
         worker.signals.error.connect(lambda exception: self.write_feedback(str(exception)))
 

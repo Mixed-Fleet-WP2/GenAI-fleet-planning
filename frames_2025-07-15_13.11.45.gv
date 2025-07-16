@@ -1,0 +1,13 @@
+digraph G {
+"base_link" -> "rotor_0"[label=" Broadcaster: default_authority\nAverage rate: 21.219\nBuffer length: 2.592\nMost recent transform: 108.702\nOldest transform: 106.11\n"];
+"base_link" -> "rotor_1"[label=" Broadcaster: default_authority\nAverage rate: 21.219\nBuffer length: 2.592\nMost recent transform: 108.702\nOldest transform: 106.11\n"];
+"base_link" -> "rotor_2"[label=" Broadcaster: default_authority\nAverage rate: 21.219\nBuffer length: 2.592\nMost recent transform: 108.702\nOldest transform: 106.11\n"];
+"base_link" -> "rotor_3"[label=" Broadcaster: default_authority\nAverage rate: 21.219\nBuffer length: 2.592\nMost recent transform: 108.702\nOldest transform: 106.11\n"];
+"base_link" -> "link"[label=" Broadcaster: default_authority\nAverage rate: 10000.0\nBuffer length: 0.0\nMost recent transform: 0.0\nOldest transform: 0.0\n"];
+"base_link" -> "laser_link"[label=" Broadcaster: default_authority\nAverage rate: 10000.0\nBuffer length: 0.0\nMost recent transform: 0.0\nOldest transform: 0.0\n"];
+"base_link" -> "base_footprint"[label=" Broadcaster: default_authority\nAverage rate: 10.23\nBuffer length: 2.346\nMost recent transform: 108.732\nOldest transform: 106.386\n"];
+edge [style=invis];
+ subgraph cluster_legend { style=bold; color=black; label ="view_frames Result";
+"Recorded at time: 1752574305.0970738"[ shape=plaintext ] ;
+}->"base_link";
+}

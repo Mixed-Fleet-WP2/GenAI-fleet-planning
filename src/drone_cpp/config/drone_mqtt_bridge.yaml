@@ -9,18 +9,13 @@
       ros2mqtt:
         ros_topics: 
           - feedback
-          - /robot_state_updates
         feedback:
           mqtt_topic: feedback
-        # /robot_state_updates:
-        #   mqtt_topic: robot_state_updates
-        #   ros_type: std_msgs/msg/String
-        #   primitive: true
       mqtt2ros:
         mqtt_topics: 
           - <robot_namespace>/move
         <robot_namespace>/move:
-          ros_topic: <robot_namespace>/move
+          ros_topic: /<robot_namespace>/move
           ros_type: std_msgs/msg/String
           primitive: true
         

@@ -79,7 +79,7 @@ def create_robot_instances(context, *args, **kwargs):
                     'robot_name': TextSubstitution(text=robot_name),
                 }.items(),
             )
-        ])
+        ], scoped=True, forwarding=True)
         nav_instances_cmds.append(group)
             
     return nav_instances_cmds

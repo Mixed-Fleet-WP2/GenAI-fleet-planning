@@ -17,6 +17,8 @@
   <depend>rclpy</depend>
   <depend>px4_msgs</depend>
   <depend>sdformat_urdf</depend>
+  <depend>sensor_msgs</depend>
+  
 
   <export>
     <build_type>ament_cmake</build_type>

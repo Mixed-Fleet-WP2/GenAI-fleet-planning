@@ -1,3 +1,5 @@
+# type: ignore
+
 import os
 
 from ament_index_python.packages import get_package_share_directory, get_package_prefix
@@ -10,7 +12,9 @@ from launch.actions import (
     RegisterEventHandler,
     EmitEvent,
     SetEnvironmentVariable,
-    IncludeLaunchDescription
+    IncludeLaunchDescription,
+    OpaqueFunction
+    
 )
 
 from launch.substitutions.command import Command
@@ -33,6 +37,9 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.descriptions import ParameterFile
 from nav2_common.launch import ReplaceString, RewrittenYaml
 
+def launch_print(launch_item: ReplaceString | LaunchConfiguration):
+
+    return OpaqueFunction(function=lambda context: print("THE FILE IS: ", launch_item.perform(context)))
 
 def cancel_launch(event:ProcessExited, context, *args):
     
@@ -63,7 +70,8 @@ def generate_launch_description():
     use_composition  = LaunchConfiguration('use_composition')
     use_respawn  = LaunchConfiguration('use_respawn')
     map_yaml_file = LaunchConfiguration('map_yaml_file')
-    mqtt_config_file = LaunchConfiguration('mqtt_config_file')
+    drone_mqtt_config_file = LaunchConfiguration('drone_mqtt_config_file')
+    drone_gz_bridge_config = LaunchConfiguration('drone_gz_bridge_config')
     robot_sdf = LaunchConfiguration('robot_sdf')
 
     pose = {
@@ -162,13 +170,13 @@ def generate_launch_description():
     )
 
     declare_gz_bridge_path = DeclareLaunchArgument(
-        name="gz_bridge_config",
+        name="drone_gz_bridge_config",
         default_value=os.path.join(pkg_share, 'config', 'drone_ros_gz_bridge.yaml'),
         description="Path to gz bridge configuration"
     )
 
     declare_mqtt_config_file = DeclareLaunchArgument(
-        name="mqtt_config_file",
+        name="drone_mqtt_config_file",
         default_value=os.path.join(pkg_share, 'config', 'drone_mqtt_bridge.yaml')
     )
  
@@ -192,14 +200,17 @@ def generate_launch_description():
             target_action=px4_launch,
             on_exit=lambda e, context: cancel_launch(e, context)
         )
+    )   
+
+    filename = drone_mqtt_config_file
+
+
+
+    drone_mqtt_config_file = ReplaceString(
+        source_file=drone_mqtt_config_file,
+        replacements={'<robot_namespace>':(namespace)}
     )
 
-    mqtt_config_file = ReplaceString(
-        source_file=mqtt_config_file,
-        replacements={'<robot_namespace>':('/', namespace)}
-    )
-
-    
     # Get the launch directory
     bringup_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(os.path.join(nav_launch_dir, 'launch', 'bringup_launch.py')),
@@ -257,7 +268,7 @@ def generate_launch_description():
         namespace=namespace,
         parameters=[
             {
-                'config_file': os.path.join(pkg_share, 'config', 'drone_ros_gz_bridge.yaml'),
+                'config_file': drone_gz_bridge_config,
                 'expand_gz_topic_names': True,
                 'use_sim_time': True,
             }
@@ -270,17 +281,17 @@ def generate_launch_description():
         executable='mqtt_client',
         namespace=namespace,
         output='screen',
-        parameters=[mqtt_config_file]
+        parameters=[drone_mqtt_config_file]
     )
 
-    drone_footprint_broadcaster = Node(
-        package='drone_cpp',
-        executable='drone_tf_publisher',
-        name='drone_broadcaster',
-        namespace=namespace,
-        parameters=[{'use_sim_time': True}],
-        remappings=remappings
-    )
+    # drone_footprint_broadcaster = Node(
+    #     package='drone_cpp',
+    #     executable='drone_tf_publisher',
+    #     name='drone_broadcaster',
+    #     namespace=namespace,
+    #     parameters=[{'use_sim_time': True}],
+    #     remappings=remappings
+    # )
 
     # https://robotics.stackexchange.com/questions/99879/ros2-launch-how-to-concatenate-launchconfiguration-with-string
     drone_controller = Node(
@@ -344,6 +355,8 @@ def generate_launch_description():
     ld.add_action(declare_gz_bridge_path)
     
     ld.add_action(set_env_vars_resources)
+    ld.add_action(launch_print(filename))
+    ld.add_action(launch_print(drone_mqtt_config_file))
  
     ld.add_action(shutdown_handler)
 
@@ -355,7 +368,7 @@ def generate_launch_description():
 
     ld.add_action(spawn_model)
     ld.add_action(run_robot_state_publisher)
-    ld.add_action(drone_footprint_broadcaster)
+    #ld.add_action(drone_footprint_broadcaster)
 
     return ld
 

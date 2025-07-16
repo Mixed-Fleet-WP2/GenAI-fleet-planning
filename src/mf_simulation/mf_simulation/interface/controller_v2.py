@@ -15,6 +15,7 @@ class ExecutableAction():
     command: str
     executing_robot: str
     action_id: int
+    feedback_signal: SignalInstance
 
     def remove_prerequisite(self, action_id: int) -> bool:
         """
@@ -40,12 +41,14 @@ class ExecutableAction():
         Returns:
             None
         """
+        
         action_json = json.dumps({
             "action_id": self.action_id,
             "command_arguments": self.command_arguments
         })
-
-        client.publish(f"{self.executing_robot}/{self.command}", action_json)
+        topic = f"{self.executing_robot}/{self.command}"
+        self.feedback_signal.emit(f"Running action with id of {self.action_id} on topic {topic}")
+        client.publish(topic, action_json)
 
 
 #https://stackoverflow.com/questions/24481852/serialising-an-enum-member-to-json
@@ -142,6 +145,9 @@ class Controller():
 
         self.__progress_callback = feedback_signal
 
+        print("RUNNING PLAN", flush=True)
+        self.__progress_callback.emit("Running plan")
+
         for action in plan.actions:
             
             prerequisites = action.prerequisites
@@ -152,7 +158,8 @@ class Controller():
                 prerequisites=set(prerequisites),
                 command=action.command,
                 executing_robot=action.executing_robot,
-                action_id=action_id
+                action_id=action_id,
+                feedback_signal=feedback_signal
             )
 
 

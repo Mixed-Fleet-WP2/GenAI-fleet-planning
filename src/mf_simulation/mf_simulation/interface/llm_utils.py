@@ -126,7 +126,7 @@ class PromptGenerator():
         except Exception as e:
             raise LLMError("Filling out the prompt template failed")
 
-    def generate_plan(self, task: str, model: GPTModel | ClaudeModel | LLamaModel) -> tuple[str, Plan]:
+    def generate_plan(self, task: str, model: GPTModel | ClaudeModel | LLamaModel, feedback_signal) -> tuple[str, Plan]:
         """
         Generate an action plan for available robots using an llm that
         attempts to achieve a given task. 
