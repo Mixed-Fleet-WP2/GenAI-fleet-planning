@@ -165,7 +165,7 @@ class Interface(QMainWindow):
         feedback_widget.setLayout(feedback_widget_layout)
 
         feedback_label = QLabel("Status")
-        feedback_section = QPlainTextEdit()
+        feedback_section = QTextEdit()
         feedback_section.setReadOnly(True)
 
         feedback_widget_layout.addWidget(feedback_label)
@@ -249,11 +249,11 @@ class Interface(QMainWindow):
             self.plan_.to_format(self.current_format_.value))
                
         # Make the status text dissappear
-        self.feedback_area.appendPlainText("Done")
+        self.feedback_area.append("Done")
     
     def write_feedback(self, text:str = "test"):
         #https://stackoverflow.com/questions/13559990/how-to-append-text-to-qplaintextedit-without-adding-newline-and-keep-scroll-at
-        self.feedback_area.appendPlainText(text)
+        self.feedback_area.append(text)
 
     def switch_format_(self, btn: QPushButton):
         self.current_format_ = (Formats.JSON
@@ -281,7 +281,7 @@ class Interface(QMainWindow):
         worker = Worker(Controller().run_plan, self.plan_)
         
         worker.signals.feedback.connect(self.write_feedback)
-        worker.signals.result_signal.connect(self.update_gui)
+        worker.signals.result_signal.connect(self.write_feedback)
         worker.signals.error.connect(lambda exception: self.write_feedback(str(exception)))
 
         self.threadpool.start(worker)

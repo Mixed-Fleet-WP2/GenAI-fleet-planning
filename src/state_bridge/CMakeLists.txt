@@ -40,12 +40,12 @@ find_package(rclcpp REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(std_msgs)
 find_package(tf2_msgs)
-find_package(mf_utils)
+find_package(mf_utils REQUIRED)
 
-ament_target_dependencies(state_bridge rclcpp geometry_msgs std_msgs tf2_msgs)
+ament_target_dependencies(state_bridge rclcpp geometry_msgs std_msgs tf2_msgs mf_utils)
 
 # Add non-ament utils
-target_link_libraries(state_bridge mf_utils)
+#target_link_libraries(state_bridge mf_utils)
 
 if (IS_COMPOSED)
   ament_export_targets(state_bridge)

@@ -8,9 +8,11 @@
     # feedback is namespaced by the robot namespace
       ros2mqtt:
         ros_topics: 
-          - feedback
-        feedback:
+          - /feedback
+        /feedback:
           mqtt_topic: feedback
+          ros_type: std_msgs/msg/String
+          primitive: true
       mqtt2ros:
         mqtt_topics: 
           - <robot_namespace>/move

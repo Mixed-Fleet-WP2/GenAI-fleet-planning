@@ -3,7 +3,7 @@ import json
 from typing import Optional
 from mf_simulation.interface.llm_utils import Plan, Action
 from dataclasses import dataclass
-from typing import TypedDict
+from typing import TypedDict, cast
 from enum import Enum
 from PySide6.QtCore import SignalInstance
 from queue import Queue
@@ -64,7 +64,7 @@ class Feedback(TypedDict):
 
 def feedback_str_to_enum(curr_dict):
 
-    curr_dict["action_id"] = FeedbackType(curr_dict["action_id"])
+    curr_dict["type"] = FeedbackType(curr_dict["type"])
     return curr_dict
 
 class Controller():
@@ -74,12 +74,12 @@ class Controller():
         self.mqtt_client = mqtt.Client()
         self.mqtt_client.connect("localhost")
 
-        self.__progress_callback = None
+        self.__progress_callback: SignalInstance
         
         #Start the mqtt client in a separate thread
         self.mqtt_client.loop_start()
    
-        self.received_feedback:SignalInstance | None = None
+        self.received_feedback: SignalInstance | None = None
 
         self.mqtt_client.subscribe([("feedback", 2)])
 
@@ -104,7 +104,10 @@ class Controller():
         topic = message.topic
 
         if topic == "feedback":
+            # object hook allows specifying how certain strings should be converted
+            # to python types. In this case enums
             payload:Feedback = json.loads(message.payload, object_hook=feedback_str_to_enum)
+            # Add a processable item to a feedback queue
             self.__waiting_feedbacks.put(payload)
             
 
@@ -118,8 +121,7 @@ class Controller():
 
             feedback_type = feedback["type"]
             
-            if self.__progress_callback: 
-                self.__progress_callback.emit(feedback["message"])
+            self.__progress_callback.emit(feedback["message"])
             
             if  feedback_type == FeedbackType.ERROR:
                     return False
@@ -128,10 +130,12 @@ class Controller():
                 
                 completed_action_id = feedback["action_id"]
 
-                # Remove completed action
+                # Remove completed action from all actions
                 del self.__actions[completed_action_id]
                 
+                # All actions have been completed
                 if not self.__actions:
+                    self.__progress_callback.emit("The plan has been completed successfully!")
                     return True
 
                 # Remove the id of the action from each action
@@ -145,7 +149,6 @@ class Controller():
 
         self.__progress_callback = feedback_signal
 
-        print("RUNNING PLAN", flush=True)
         self.__progress_callback.emit("Running plan")
 
         for action in plan.actions:

@@ -21,6 +21,7 @@
 #include "mf_utils/json.hpp"
 #include "sensor_msgs/msg/laser_scan.hpp"
 #include "geometry_msgs/msg/twist.hpp"
+#include "mf_utils/navigatable.hpp"
 
 
 using json = nlohmann::json;
@@ -48,10 +49,10 @@ class PIDController {
 
         float calculate_input(float error){
             
-            std::cerr << "kp is " + std::to_string(Kp_) << std::endl;
-            std::cerr << "kd is " + std::to_string(Kd_) << std::endl;
-            std::cerr << "ki is " + std::to_string(Ki_) << std::endl;
-            std::cerr << "Error is " + std::to_string(error) << std::endl;
+            // std::cerr << "kp is " + std::to_string(Kp_) << std::endl;
+            // std::cerr << "kd is " + std::to_string(Kd_) << std::endl;
+            // std::cerr << "ki is " + std::to_string(Ki_) << std::endl;
+            // std::cerr << "Error is " + std::to_string(error) << std::endl;
             float p = Kp_ * error;
             // Use approximation: https://en.wikipedia.org/wiki/Numerical_differentiation
             // Goes near zero on the first feedback round
@@ -94,7 +95,7 @@ class PIDController {
 
 };
 
-class DroneController: public rclcpp::Node{
+class DroneController: public Navigatable{
 
     public:
         DroneController();
@@ -103,38 +104,17 @@ class DroneController: public rclcpp::Node{
         //~DroneController() noexcept;
     private:
         
-
-        std::string node_name_ = "";
-
-        
-
-        rclcpp_action::Client<NavToPoseAction>::SharedPtr nav_to_pose_client_;
-        rclcpp::CallbackGroup::SharedPtr nav_callback_group_;
-        rclcpp::CallbackGroup::SharedPtr odom_callback_group_;
-        rclcpp::executors::SingleThreadedExecutor callback_group_executor_;
-        std::shared_future<rclcpp_action::ClientGoalHandle<NavToPoseAction>::SharedPtr> future_goal_handle_;
-        Position current_pos_;
         rclcpp::TimerBase::SharedPtr lift_timer_;
 
         //Interval for the timer callback for lifting the drone up runs (in ms)
         const int lift_interval_ = 100;
-        PIDController pid_controller_ = PIDController(lift_interval_, 0.18, 0.0, 0.4);
-        
-        
-        void navigate_to_pose(const Position& pos, int action_id);
-        rclcpp::Subscription<std_msgs::msg::String>::SharedPtr move_to_pose_subscriber_;
-        rclcpp::Subscription<OdomMsg>::SharedPtr odom_subsciber_;
+        PIDController pid_controller_;
+    
         rclcpp::Publisher<TwistMsg>::SharedPtr lift_publisher_;
-        rclcpp::Publisher<std_msgs::msg::String>::SharedPtr status_publisher_;
-        std::shared_ptr<rclcpp::Publisher<std_msgs::msg::String>> feedback_publisher_;
         std::unique_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
-        void move_to_pose_callback(const std::shared_ptr<std_msgs::msg::String> msg);
-        void lift_callback(const float z, std::function<void()> cb, rclcpp::Time start);
-        void odom_received_callback(const std::shared_ptr<OdomMsg> msg);
-        void send_nav_goal(const Position& pos, int action_id);
-        void nav_result_callback(const rclcpp_action::ClientGoalHandle<NavToPoseAction>::WrappedResult &result, int action_id);
-        void nav_feedback_callback(std::shared_ptr<NavToPoseGoalHandle> g, const std::shared_ptr<const NavToPoseAction::Feedback> feedback, int action_id);
-        void nav_goal_acknowledged_callback(std::shared_ptr<rclcpp_action::ClientGoalHandle<NavToPoseAction>> goal);
+        //https://stackoverflow.com/questions/15117591/why-is-inherited-member-not-allowed
+        void navigate_to_pose(const Position& pos, int action_id) override;
+        void lift(const float z, std::function<void()> send_nav_goal, rclcpp::Time start, int action_id);
     };
 
 
