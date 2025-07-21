@@ -355,8 +355,8 @@ def generate_launch_description():
     ld.add_action(declare_gz_bridge_path)
     
     ld.add_action(set_env_vars_resources)
-    ld.add_action(launch_print(filename))
-    ld.add_action(launch_print(drone_mqtt_config_file))
+    #ld.add_action(launch_print(filename))
+    #ld.add_action(launch_print(drone_mqtt_config_file))
  
     ld.add_action(shutdown_handler)
 

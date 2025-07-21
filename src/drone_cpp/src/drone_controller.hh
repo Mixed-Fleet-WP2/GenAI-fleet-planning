@@ -51,6 +51,7 @@ class PIDController {
             std::cerr << "kp is " + std::to_string(Kp_) << std::endl;
             std::cerr << "kd is " + std::to_string(Kd_) << std::endl;
             std::cerr << "ki is " + std::to_string(Ki_) << std::endl;
+            std::cerr << "Error is " + std::to_string(error) << std::endl;
             float p = Kp_ * error;
             // Use approximation: https://en.wikipedia.org/wiki/Numerical_differentiation
             // Goes near zero on the first feedback round
@@ -117,7 +118,7 @@ class DroneController: public rclcpp::Node{
 
         //Interval for the timer callback for lifting the drone up runs (in ms)
         const int lift_interval_ = 100;
-        PIDController pid_controller_ = PIDController(lift_interval_, 0.1, 0.5, 0.3);
+        PIDController pid_controller_ = PIDController(lift_interval_, 0.18, 0.0, 0.4);
         
         
         void navigate_to_pose(const Position& pos, int action_id);

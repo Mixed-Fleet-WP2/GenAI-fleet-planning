@@ -27,7 +27,8 @@ from launch.actions import (
     GroupAction,
     IncludeLaunchDescription,
     SetEnvironmentVariable,
-    LogInfo
+    LogInfo,
+    OpaqueFunction
 )
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
@@ -73,17 +74,52 @@ def generate_launch_description():
         replacements={'<robot_namespace>': ('/', namespace)},
         condition=IfCondition(use_namespace),
     )
+    def launch_print(launch_item):
 
-    configured_params = ParameterFile(
-        RewrittenYaml(
+        return OpaqueFunction(function=lambda context: print("THE PARAMS FILE IS: ", launch_item.perform(context)))
+
+    # {'x': pose['x'], 'y': pose['y'], 'z': pose['z'], 'yaw': pose['yaw']}
+
+
+
+    # configured_params = ParameterFile(
+    #     RewrittenYaml(
+    #         source_file=params_file,
+    #         root_key=namespace,
+    #         # https://docs.nav2.org/migration/Iron.html#rewrittenyaml-could-add-new-parameters-to-yamls
+    #         param_rewrites={'amcl.ros__parameters.initial_pose.x': pose['x'],
+    #                         'amcl.ros__parameters.initial_pose.y': pose['y'],
+    #                         'amcl.ros__parameters.initial_pose.y': pose['z'],
+    #                         'amcl.ros__parameters.initial_pose.y': pose['yaw'],
+    #                         'autostart': autostart
+    #                         },
+    #         convert_types=True,
+    #     ),
+    #     allow_substs=True,
+    # )
+
+    # configured_params =  RewrittenYaml(
+    #         source_file=params_file,
+    #         root_key=namespace,
+    #         # https://docs.nav2.org/migration/Iron.html#rewrittenyaml-could-add-new-parameters-to-yamls
+    #         param_rewrites={'amcl.ros__parameters.initial_pose.x': pose['x'],
+    #                         'amcl.ros__parameters.initial_pose.y': pose['y'],
+    #                         'amcl.ros__parameters.initial_pose.z': pose['z'],
+    #                         'amcl.ros__parameters.initial_pose.yaw': pose['yaw'],
+    #                         'autostart': autostart
+    #                         },
+    #         convert_types=True,
+    #     )
+
+    configured_params =  RewrittenYaml(
             source_file=params_file,
             root_key=namespace,
+            # https://docs.nav2.org/migration/Iron.html#rewrittenyaml-could-add-new-parameters-to-yamls
             param_rewrites={},
             convert_types=True,
-        ),
-        allow_substs=True,
-    )
+        )
 
+    #configured_params = params_file
     stdout_linebuf_envvar = SetEnvironmentVariable(
         'RCUTILS_LOGGING_BUFFERED_STREAM', '1'
     )
@@ -154,7 +190,7 @@ def generate_launch_description():
                 name='nav2_container',
                 package='rclcpp_components',
                 executable='component_container_isolated',
-                parameters=[configured_params, {'autostart': autostart}],
+                parameters=[ParameterFile(configured_params)],
                 arguments=['--ros-args', '--log-level', log_level],
                 remappings=remappings,
                 output='screen',
@@ -176,13 +212,14 @@ def generate_launch_description():
                 PythonLaunchDescriptionSource(
                     os.path.join(pkg_share, 'launch', 'localization_launch.py')
                 ),
+                # 90% of the time we want to run this
                 condition=IfCondition(PythonExpression(['not ', slam, ' and ', use_localization])),
                 launch_arguments={
                     'namespace': namespace,
                     'map': map_yaml_file,
                     'use_sim_time': use_sim_time,
                     'autostart': autostart,
-                    'params_file': params_file,
+                    'params_file': configured_params,
                     'use_composition': use_composition,
                     'use_respawn': use_respawn,
                     'container_name': 'nav2_container',
@@ -196,7 +233,7 @@ def generate_launch_description():
                     'namespace': namespace,
                     'use_sim_time': use_sim_time,
                     'autostart': autostart,
-                    'params_file': params_file,
+                    'params_file': configured_params,
                     'use_composition': use_composition,
                     'use_respawn': use_respawn,
                     'container_name': 'nav2_container',
@@ -222,7 +259,7 @@ def generate_launch_description():
     ld.add_action(declare_use_respawn_cmd)
     ld.add_action(declare_log_level_cmd)
     ld.add_action(declare_use_localization_cmd)
-    ld.add_action(LogInfo(msg=TextSubstitution(text="LAUNCHING NAV")))
+    ld.add_action(launch_print(params_file))
 
     ld.add_action(bringup_cmd_group)
 

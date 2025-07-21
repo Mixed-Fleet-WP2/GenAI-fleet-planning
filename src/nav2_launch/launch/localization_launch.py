@@ -19,7 +19,7 @@ from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, GroupAction
-from launch.actions import SetEnvironmentVariable
+from launch.actions import SetEnvironmentVariable, OpaqueFunction
 from launch.conditions import IfCondition
 from launch.substitutions import EqualsSubstitution
 from launch.substitutions import LaunchConfiguration, PythonExpression
@@ -46,14 +46,14 @@ def generate_launch_description():
     log_level = LaunchConfiguration('log_level')
     use_amcl = LaunchConfiguration('use_amcl')
 
-    pose = {
-        'x': LaunchConfiguration('x_pose'),
-        'y': LaunchConfiguration('y_pose'),
-        'z': LaunchConfiguration('z_pose'),
-        'roll': LaunchConfiguration('roll'),
-        'pitch': LaunchConfiguration('pitch'),
-        'yaw': LaunchConfiguration('yaw')
-    }
+    # pose = {
+    #     'x': LaunchConfiguration('x_pose'),
+    #     'y': LaunchConfiguration('y_pose'),
+    #     'z': LaunchConfiguration('z_pose'),
+    #     'roll': LaunchConfiguration('roll'),
+    #     'pitch': LaunchConfiguration('pitch'),
+    #     'yaw': LaunchConfiguration('yaw')
+    # }
 
     lifecycle_nodes = ['map_server', 'amcl']
 
@@ -65,16 +65,17 @@ def generate_launch_description():
     #              https://github.com/ros2/launch_ros/issues/56
     remappings = [('/tf', 'tf'), ('/tf_static', 'tf_static')]
 
-    configured_params = ParameterFile(
-        RewrittenYaml(
-            source_file=params_file,
-            root_key=namespace,
-            param_rewrites={},
-            convert_types=True,
-        ),
-        allow_substs=True,
-    )
+    # configured_params = ParameterFile(
+    #     RewrittenYaml(
+    #         source_file=params_file,
+    #         root_key=namespace,
+    #         param_rewrites={},
+    #         convert_types=True,
+    #     ),
+    #     allow_substs=True,
+    # )
 
+    configured_params = ParameterFile(params_file)
     stdout_linebuf_envvar = SetEnvironmentVariable(
         'RCUTILS_LOGGING_BUFFERED_STREAM', '1'
     )
@@ -172,7 +173,7 @@ def generate_launch_description():
                 output='screen',
                 respawn=use_respawn,
                 respawn_delay=2.0,
-                parameters=[configured_params, {'x': pose['x'], 'y':pose['y'], 'z': pose['z'], 'yaw': pose['yaw']}],
+                parameters=[configured_params],
                 arguments=['--ros-args', '--log-level', log_level],
                 remappings=remappings,
                 condition=IfCondition(EqualsSubstitution(use_amcl, True))
@@ -236,7 +237,7 @@ def generate_launch_description():
                         package='nav2_amcl',
                         plugin='nav2_amcl::AmclNode',
                         name='amcl',
-                        parameters=[configured_params, {'x': pose['x'], 'y':pose['y'], 'z': pose['z'], 'yaw': pose['yaw']}],
+                        parameters=[configured_params],
                         remappings=remappings,
                     ),
                     ComposableNode(
@@ -269,7 +270,10 @@ def generate_launch_description():
     ld.add_action(declare_use_respawn_cmd)
     ld.add_action(declare_log_level_cmd)
     ld.add_action(declare_use_amcl)
+    def launch_print(launch_item):
 
+        return OpaqueFunction(function=lambda context: print("THE INNER PARAMS FILE IS: ", launch_item.perform(context)))
+    ld.add_action(launch_print(params_file))
     # Add the actions to launch all of the localiztion nodes
     ld.add_action(load_nodes)
     ld.add_action(load_composable_nodes)

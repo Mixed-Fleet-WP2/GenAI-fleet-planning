@@ -6,8 +6,6 @@ DroneController::DroneController() :
     
     node_name_ = this->get_name();
 
-    //auto pid_controller_ = PIDController(lift_interval_, 0.1, 0.5, 0.3);
-
     // https://docs.ros.org/en/foxy/How-To-Guides/Using-callback-groups.html#basics-of-callback-groups
     odom_callback_group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
     auto odom_subsciber_options = rclcpp::SubscriptionOptions();
@@ -105,15 +103,16 @@ void DroneController::lift_callback(const float z, std::function<void()> cb, rcl
 
     const auto elapsed_time = (this->now() - start).seconds();
     //RCLCPP_INFO_STREAM(get_logger(), "ELAPSED TIME: " + std::to_string(elapsed_time));
-
+    RCLCPP_INFO_STREAM(get_logger(), "CURRENT POSITION: " + std::to_string(current_pos_.z));
     float error = z - current_pos_.z;
 
-    if (std::abs(error) < 0.1 || elapsed_time > 30.0) {
+    if (std::abs(error) < 0.05 || elapsed_time > 30.0) {
         lift_timer_->cancel();
         RCLCPP_INFO_STREAM(get_logger(), "Stopping lift");
         // Send stop command
         twist_msg.linear.z = 0.0;
         lift_publisher_->publish(twist_msg);
+        cb();
         return;
     }
 
@@ -213,9 +212,11 @@ void DroneController::navigate_to_pose(const Position& pos, int action_id){
         this->send_nav_goal(pos, action_id);
     };
 
-    // If the drone needs to move in the z-axis, execute the operation
+    // If the drone needs to move in the z-axis, execute the lift operation
     // in a timer callback and after that run the 2D navigation
-    if (std::abs(current_pos_.z - pos.z) > 0.1) {
+
+    // Dimensions are in meters
+    if (std::abs(current_pos_.z - pos.z) > 0.05) {
         RCLCPP_INFO_STREAM(get_logger(), "LIFT IN PROGRESS");
         pid_controller_.set_new_goal(pos.z, current_pos_.z);
         // Run the lift operation in a callback based timer that is assigned its own callback group
@@ -239,10 +240,13 @@ void DroneController::send_nav_goal(const Position& pos, int action_id){
         return;
     }
 
+    RCLCPP_ERROR_STREAM(get_logger(), "NAV GOAL SENDING");
     // Action definition can be seen from:
     // https://github.com/ros-navigation/navigation2/blob/main/nav2_msgs/action/NavigateToPose.action
     auto [qx,qy,qz,qw] = euler_to_quaternion(pos.roll, pos.pitch, pos.yaw);
     auto goal_msg = PoseStampedMsg();
+    goal_msg.header.frame_id = "map";
+    goal_msg.header.stamp = this->get_clock()->now();
     goal_msg.pose.position.x = pos.x;
     goal_msg.pose.position.y = pos.y;
     goal_msg.pose.position.z = pos.z;
@@ -251,6 +255,8 @@ void DroneController::send_nav_goal(const Position& pos, int action_id){
     goal_msg.pose.orientation.z = qz;
     goal_msg.pose.orientation.w = qw;
     
+    RCLCPP_INFO_STREAM(get_logger(), "THE GOAL IS: X: " + std::to_string(pos.x) + " Y:" + std::to_string(pos.y));
+
     NavToPoseAction::Goal goal;
     
     goal.pose = goal_msg;
