@@ -103,7 +103,7 @@ void DroneController::lift_callback(const float z, std::function<void()> cb, rcl
 
     const auto elapsed_time = (this->now() - start).seconds();
     //RCLCPP_INFO_STREAM(get_logger(), "ELAPSED TIME: " + std::to_string(elapsed_time));
-    RCLCPP_INFO_STREAM(get_logger(), "CURRENT POSITION: " + std::to_string(current_pos_.z));
+    //RCLCPP_INFO_STREAM(get_logger(), "CURRENT POSITION: " + std::to_string(current_pos_.z));
     float error = z - current_pos_.z;
 
     if (std::abs(error) < 0.05 || elapsed_time > 30.0) {
@@ -200,15 +200,7 @@ void DroneController::nav_goal_acknowledged_callback(std::shared_ptr<NavToPoseGo
 
 void DroneController::navigate_to_pose(const Position& pos, int action_id){
 
-    if (std::abs(current_pos_.x - pos.x) < 0.1 &&
-        std::abs(current_pos_.y - pos.y) < 0.1 &&
-        std::abs(current_pos_.z - pos.z) < 0.1 &&
-        std::abs(current_pos_.yaw - pos.yaw) < 5){
-        
-        return;
-    }
-
-    auto continuation_func = [this, pos, action_id](){
+    auto run_2D_nav = [this, pos, action_id](){
         this->send_nav_goal(pos, action_id);
     };
 
@@ -220,15 +212,16 @@ void DroneController::navigate_to_pose(const Position& pos, int action_id){
         RCLCPP_INFO_STREAM(get_logger(), "LIFT IN PROGRESS");
         pid_controller_.set_new_goal(pos.z, current_pos_.z);
         // Run the lift operation in a callback based timer that is assigned its own callback group
+        //After lift, the callback calls 2d navigation
         auto start_time = this->now();
         lift_timer_ = this->create_wall_timer(std::chrono::milliseconds(lift_interval_),
-        [this, z=pos.z, continuation_func, start_time]() {this->lift_callback(z, continuation_func, start_time);}, nav_callback_group_);
+        [this, z=pos.z, run_2D_nav, start_time]() {this->lift_callback(z, run_2D_nav, start_time);}, nav_callback_group_);
         
         return;
     }
 
     //If no lift is needed, just run 2D nav
-    continuation_func();
+    run_2D_nav();
     
     return;
 }
@@ -294,8 +287,6 @@ int main(int argc, char * argv[])
     executor.spin();
 
     rclcpp::shutdown();
-
-    // rclcpp::spin(std::make_shared<DroneController>());
 
     rclcpp::shutdown();
     return 0;

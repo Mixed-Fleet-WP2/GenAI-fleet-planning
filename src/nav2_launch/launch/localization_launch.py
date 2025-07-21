@@ -28,6 +28,7 @@ from launch_ros.actions import LoadComposableNodes, SetParameter
 from launch_ros.actions import Node
 from launch_ros.descriptions import ComposableNode, ParameterFile
 from nav2_common.launch import RewrittenYaml
+from mf_simulation.utils import launch_print
 
 
 def generate_launch_description():
@@ -46,14 +47,14 @@ def generate_launch_description():
     log_level = LaunchConfiguration('log_level')
     use_amcl = LaunchConfiguration('use_amcl')
 
-    # pose = {
-    #     'x': LaunchConfiguration('x_pose'),
-    #     'y': LaunchConfiguration('y_pose'),
-    #     'z': LaunchConfiguration('z_pose'),
-    #     'roll': LaunchConfiguration('roll'),
-    #     'pitch': LaunchConfiguration('pitch'),
-    #     'yaw': LaunchConfiguration('yaw')
-    # }
+    pose = {
+        'x': LaunchConfiguration('x_pose'),
+        'y': LaunchConfiguration('y_pose'),
+        'z': LaunchConfiguration('z_pose'),
+        'roll': LaunchConfiguration('roll'),
+        'pitch': LaunchConfiguration('pitch'),
+        'yaw': LaunchConfiguration('yaw')
+    }
 
     lifecycle_nodes = ['map_server', 'amcl']
 
@@ -65,17 +66,19 @@ def generate_launch_description():
     #              https://github.com/ros2/launch_ros/issues/56
     remappings = [('/tf', 'tf'), ('/tf_static', 'tf_static')]
 
-    # configured_params = ParameterFile(
-    #     RewrittenYaml(
-    #         source_file=params_file,
-    #         root_key=namespace,
-    #         param_rewrites={},
-    #         convert_types=True,
-    #     ),
-    #     allow_substs=True,
-    # )
+    configured_params =  ParameterFile(RewrittenYaml(
+            source_file=params_file,
+            root_key=namespace,
+            # https://docs.nav2.org/migration/Iron.html#rewrittenyaml-could-add-new-parameters-to-yamls
+            param_rewrites={'amcl.ros__parameters.initial_pose.x': pose['x'],
+                            'amcl.ros__parameters.initial_pose.y': pose['y'],
+                            'amcl.ros__parameters.initial_pose.z': pose['z'],
+                            'amcl.ros__parameters.initial_pose.yaw': pose['yaw'],
+                            'autostart': autostart
+                            },
+            convert_types=True,
+        ))
 
-    configured_params = ParameterFile(params_file)
     stdout_linebuf_envvar = SetEnvironmentVariable(
         'RCUTILS_LOGGING_BUFFERED_STREAM', '1'
     )
@@ -270,12 +273,10 @@ def generate_launch_description():
     ld.add_action(declare_use_respawn_cmd)
     ld.add_action(declare_log_level_cmd)
     ld.add_action(declare_use_amcl)
-    def launch_print(launch_item):
-
-        return OpaqueFunction(function=lambda context: print("THE INNER PARAMS FILE IS: ", launch_item.perform(context)))
-    ld.add_action(launch_print(params_file))
+    
     # Add the actions to launch all of the localiztion nodes
     ld.add_action(load_nodes)
     ld.add_action(load_composable_nodes)
+    launch_print("Param file for localization:", configured_params.param_file[0], launch_description=ld)
     
     return ld

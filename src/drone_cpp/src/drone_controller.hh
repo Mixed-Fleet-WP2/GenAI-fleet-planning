@@ -69,10 +69,10 @@ class PIDController {
             // std::cout << "Derivative: " + std::to_string(d) << std::endl << std::flush;
             // std::cout << "Proportional: " + std::to_string(p) << std::endl << std::flush;
 
-            std::cerr << "Integral: " + std::to_string(i) << std::endl;
-            std::cerr << "Derivative: " + std::to_string(d) << std::endl;
-            std::cerr << "Proportional: " + std::to_string(p) << std::endl;
-            std::cerr.flush();
+            // std::cerr << "Integral: " + std::to_string(i) << std::endl;
+            // std::cerr << "Derivative: " + std::to_string(d) << std::endl;
+            // std::cerr << "Proportional: " + std::to_string(p) << std::endl;
+            // std::cerr.flush();
 
             return p+d+i;
 

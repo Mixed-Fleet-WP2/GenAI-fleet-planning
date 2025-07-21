@@ -18,6 +18,7 @@
 # arguments for initial pose were added.
 
 import os
+import copy
 
 from ament_index_python.packages import get_package_share_directory
 
@@ -37,6 +38,7 @@ from launch_ros.actions import Node
 from launch_ros.actions import PushROSNamespace
 from launch_ros.descriptions import ParameterFile
 from nav2_common.launch import ReplaceString, RewrittenYaml
+from mf_simulation.utils import launch_print
 
 
 def generate_launch_description():
@@ -69,57 +71,24 @@ def generate_launch_description():
         'yaw': LaunchConfiguration('yaw')
     }
 
+    # Add topic namespace
     params_file = ReplaceString(
         source_file=params_file,
         replacements={'<robot_namespace>': ('/', namespace)},
         condition=IfCondition(use_namespace),
     )
-    def launch_print(launch_item):
 
-        return OpaqueFunction(function=lambda context: print("THE PARAMS FILE IS: ", launch_item.perform(context)))
-
-    # {'x': pose['x'], 'y': pose['y'], 'z': pose['z'], 'yaw': pose['yaw']}
-
-
-
-    # configured_params = ParameterFile(
-    #     RewrittenYaml(
-    #         source_file=params_file,
-    #         root_key=namespace,
-    #         # https://docs.nav2.org/migration/Iron.html#rewrittenyaml-could-add-new-parameters-to-yamls
-    #         param_rewrites={'amcl.ros__parameters.initial_pose.x': pose['x'],
-    #                         'amcl.ros__parameters.initial_pose.y': pose['y'],
-    #                         'amcl.ros__parameters.initial_pose.y': pose['z'],
-    #                         'amcl.ros__parameters.initial_pose.y': pose['yaw'],
-    #                         'autostart': autostart
-    #                         },
-    #         convert_types=True,
-    #     ),
-    #     allow_substs=True,
-    # )
-
-    # configured_params =  RewrittenYaml(
-    #         source_file=params_file,
-    #         root_key=namespace,
-    #         # https://docs.nav2.org/migration/Iron.html#rewrittenyaml-could-add-new-parameters-to-yamls
-    #         param_rewrites={'amcl.ros__parameters.initial_pose.x': pose['x'],
-    #                         'amcl.ros__parameters.initial_pose.y': pose['y'],
-    #                         'amcl.ros__parameters.initial_pose.z': pose['z'],
-    #                         'amcl.ros__parameters.initial_pose.yaw': pose['yaw'],
-    #                         'autostart': autostart
-    #                         },
-    #         convert_types=True,
-    #     )
-
-    configured_params =  RewrittenYaml(
+    # Add node namespace
+    configured_params = ParameterFile(
+        RewrittenYaml(
             source_file=params_file,
             root_key=namespace,
-            # https://docs.nav2.org/migration/Iron.html#rewrittenyaml-could-add-new-parameters-to-yamls
             param_rewrites={},
             convert_types=True,
-        )
+        ),
+        allow_substs=True,
+    )
 
-    #configured_params = params_file
     stdout_linebuf_envvar = SetEnvironmentVariable(
         'RCUTILS_LOGGING_BUFFERED_STREAM', '1'
     )
@@ -190,7 +159,7 @@ def generate_launch_description():
                 name='nav2_container',
                 package='rclcpp_components',
                 executable='component_container_isolated',
-                parameters=[ParameterFile(configured_params)],
+                parameters=[configured_params],
                 arguments=['--ros-args', '--log-level', log_level],
                 remappings=remappings,
                 output='screen',
@@ -208,6 +177,21 @@ def generate_launch_description():
                     'params_file': params_file,
                 }.items(),
             ),
+            
+            IncludeLaunchDescription(
+                PythonLaunchDescriptionSource(
+                    os.path.join(pkg_share, 'launch', 'navigation_launch.py')
+                ),
+                launch_arguments={
+                    'namespace': namespace,
+                    'use_sim_time': use_sim_time,
+                    'autostart': autostart,
+                    'params_file': params_file,
+                    'use_composition': use_composition,
+                    'use_respawn': use_respawn,
+                    'container_name': 'nav2_container',
+                }.items(),
+            ),
             IncludeLaunchDescription(
                 PythonLaunchDescriptionSource(
                     os.path.join(pkg_share, 'launch', 'localization_launch.py')
@@ -219,26 +203,13 @@ def generate_launch_description():
                     'map': map_yaml_file,
                     'use_sim_time': use_sim_time,
                     'autostart': autostart,
-                    'params_file': configured_params,
+                    'params_file': params_file,
                     'use_composition': use_composition,
                     'use_respawn': use_respawn,
                     'container_name': 'nav2_container',
+                    **pose
                 }.items(),
-            ),
-            IncludeLaunchDescription(
-                PythonLaunchDescriptionSource(
-                    os.path.join(pkg_share, 'launch', 'navigation_launch.py')
-                ),
-                launch_arguments={
-                    'namespace': namespace,
-                    'use_sim_time': use_sim_time,
-                    'autostart': autostart,
-                    'params_file': configured_params,
-                    'use_composition': use_composition,
-                    'use_respawn': use_respawn,
-                    'container_name': 'nav2_container',
-                }.items(),
-            ),
+            )
         ]
     )
 
@@ -259,8 +230,7 @@ def generate_launch_description():
     ld.add_action(declare_use_respawn_cmd)
     ld.add_action(declare_log_level_cmd)
     ld.add_action(declare_use_localization_cmd)
-    ld.add_action(launch_print(params_file))
-
     ld.add_action(bringup_cmd_group)
+    launch_print("The outer param file is", configured_params.param_file[0], launch_description=ld)
 
     return ld
