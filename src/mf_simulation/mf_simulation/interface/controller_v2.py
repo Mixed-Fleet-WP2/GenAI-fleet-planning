@@ -28,8 +28,11 @@ class ExecutableAction():
         self.prerequisites.discard(action_id)
 
         if len(self.prerequisites) == 0:
+            print("no PREREQS", flush=True)
             return True
         else:
+            print(str(self.prerequisites), flush=True)
+            print("len is: ", len(self.prerequisites), flush=True)
             return False
     
     def run(self, client: mqtt.Client):
@@ -138,10 +141,12 @@ class Controller():
                     self.__progress_callback.emit("The plan has been completed successfully!")
                     return True
 
-                # Remove the id of the action from each action
+                # Remove the id of the completed action from each action
                 # that it is prerequisite for
                 for id, action in self.__actions.items():
-                    if action.remove_prerequisite(id):
+                    print("REMOVING PREREQS", flush=True)
+                    if action.remove_prerequisite(completed_action_id):
+                        print("NO PREREQS LEFT", flush=True)
                         action.run(self.mqtt_client)
                     
 

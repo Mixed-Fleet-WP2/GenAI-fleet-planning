@@ -36,12 +36,14 @@ def create_robot_instances(context, *args, **kwargs):
     nav_instances_cmds = []
     
     for robot in robots:
+        print("ROBOT COUNTER", flush=True)
         robot_name = robot["name"]
         robot_package = robot["package"]
         launch_file = robot["launch_file"]
         nav2_config = robot["nav2_config"]
         start_pos = robot.get("starting_position", [3.0, -1.0, 0.0])
         start_orient = robot.get("starting_orientation", [0.0, 0.0, 0.0])
+        use_pure_odom = robot.get("use_pure_odom", False)
         
         pkg = get_package_share_directory(robot_package)
 
@@ -77,8 +79,26 @@ def create_robot_instances(context, *args, **kwargs):
                     'pitch': TextSubstitution(text=str(start_orient[1])),
                     'yaw': TextSubstitution(text=str(start_orient[2])),
                     'robot_name': TextSubstitution(text=robot_name),
+                    'use_pure_odom': TextSubstitution(text=str(use_pure_odom))
                 }.items(),
-            )
+            ),  
+                # Only publish static map->odom transform if the odom is ground truth and amcl is not used
+                Node(
+                    condition=IfCondition(str(use_pure_odom)),
+                    name="map_odom_transformer",
+                    package="tf2_ros",
+                    executable="static_transform_publisher",
+                    output="screen",
+                    namespace=robot_name,
+                    arguments=[
+                        "--frame-id", "map",
+                        "--child-frame-id", "odom"
+                    ],
+                    parameters=[{
+                        "use_sim_time": True
+                    }],
+                    remappings = [('/tf', 'tf'), ('/tf_static', 'tf_static')]
+                )
         ], scoped=True, forwarding=True)
         nav_instances_cmds.append(group)
             
@@ -187,6 +207,7 @@ def generate_launch_description():
         output='both'
     )
 
+
     # See https://github.com/gazebosim/ros_gz/blob/bba6783a85955e2719a0d11468d9a8a79223b0a7/ros_gz_sim/launch/ros_gz_sim.launch.py#L22 
     # for example of using GzServer action
 
@@ -264,7 +285,7 @@ def generate_launch_description():
     ld.add_action(set_env_vars_resources)
 
     ld.add_action(simulation_container)
-
+ 
     ld.add_action(load_composable_nodes)
 
     ld.add_action(gz_bridge)

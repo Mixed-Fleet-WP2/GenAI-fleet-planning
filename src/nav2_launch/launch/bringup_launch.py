@@ -59,6 +59,7 @@ def generate_launch_description():
     use_respawn = LaunchConfiguration('use_respawn')
     log_level = LaunchConfiguration('log_level')
     use_localization = LaunchConfiguration('use_localization')
+    use_pure_odom = LaunchConfiguration('use_pure_odom')
     
     remappings = [('/tf', 'tf'), ('/tf_static', 'tf_static')]
 
@@ -150,6 +151,10 @@ def generate_launch_description():
         'log_level', default_value='info', description='log level'
     )
 
+    declare_use_pure_odom = DeclareLaunchArgument(
+        'use_pure_odom', default_value='False', description="Whether to rely on odometry for localization without amcl"
+    )
+
     # Specify the actions
     bringup_cmd_group = GroupAction(
         [
@@ -207,6 +212,7 @@ def generate_launch_description():
                     'use_composition': use_composition,
                     'use_respawn': use_respawn,
                     'container_name': 'nav2_container',
+                    'use_amcl': PythonExpression(['not ', use_pure_odom]),
                     **pose
                 }.items(),
             )
@@ -230,7 +236,7 @@ def generate_launch_description():
     ld.add_action(declare_use_respawn_cmd)
     ld.add_action(declare_log_level_cmd)
     ld.add_action(declare_use_localization_cmd)
+    ld.add_action(declare_use_pure_odom)
     ld.add_action(bringup_cmd_group)
-    launch_print("The outer param file is", configured_params.param_file[0], launch_description=ld)
 
     return ld

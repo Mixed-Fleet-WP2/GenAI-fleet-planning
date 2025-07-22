@@ -1,5 +1,3 @@
-# type: ignore
-
 import os
 
 from ament_index_python.packages import get_package_share_directory, get_package_prefix
@@ -57,9 +55,6 @@ def generate_launch_description():
     nav_launch_dir = get_package_share_directory('nav2_launch')
     pkg_share = get_package_share_directory('drone_cpp')
 
-    use_gz = LaunchConfiguration('use_gz')
-    px4_path = LaunchConfiguration('px4_path')
-    px4_airframe = LaunchConfiguration('px4_airframe')
     drone_name = LaunchConfiguration('drone_name')
     namespace = LaunchConfiguration('namespace')
     use_sim_time = LaunchConfiguration('use_sim_time')
@@ -73,6 +68,7 @@ def generate_launch_description():
     drone_mqtt_config_file = LaunchConfiguration('drone_mqtt_config_file')
     drone_gz_bridge_config = LaunchConfiguration('drone_gz_bridge_config')
     robot_sdf = LaunchConfiguration('robot_sdf')
+    use_pure_odom = LaunchConfiguration('use_pure_odom')
 
     pose = {
         'x': LaunchConfiguration('x_pose'),
@@ -85,22 +81,10 @@ def generate_launch_description():
    
     remappings = [('/tf', 'tf'), ('/tf_static', 'tf_static')]
 
-    declare_px4_airframe = DeclareLaunchArgument(
-        name='px4_airframe',
-        default_value='4001',
-        description='Airframe to be used for the drone'
-    )
-
     declare_use_gz = DeclareLaunchArgument(
         name='use_gz',
         default_value='True',
         description='Wheter to use gz sim'
-    )
-
-    declare_px4_path = DeclareLaunchArgument(
-        name='px4_path',
-        default_value=os.path.join(os.path.expanduser('~'), 'PX4-Autopilot'),
-        description='Path to px4 installation'
     )
 
     declare_drone_name = DeclareLaunchArgument(
@@ -179,31 +163,20 @@ def generate_launch_description():
         name="drone_mqtt_config_file",
         default_value=os.path.join(pkg_share, 'config', 'drone_mqtt_bridge.yaml')
     )
- 
-    px4_launch_file = 'drone_cpp.px4_build'
 
-    #If the env parameter is not given, the process use the environment
-    #variables from this context
-    px4_launch = ExecuteProcess(
-        cmd=['python3', '-m', px4_launch_file],
-        output='screen',
-        shell=False,
-        
-        #https://github.com/ros2/launch/blob/e1d12d595f2a7af7341fd685ea53ad302ea49d60/launch/launch/conditions/launch_configuration_equals.py#L54
+    declare_use_pure_odom = DeclareLaunchArgument(
+        'use_pure_odom', default_value='False', description="Whether to rely on odometry for localization without amcl"
     )
 
     #https://robotics.stackexchange.com/questions/89531/how-to-exit-from-a-ros2-lifecycle-launch-script
     #https://github.com/ros2/launch/blob/a89671962220c8691ea4f128717bca599c711cda/launch/examples/launch_counters.py#L96-L98
     #https://docs.ros.org/en/galactic/Tutorials/Intermediate/Launch/Using-Event-Handlers.html
-    handler = RegisterEventHandler(
-        OnProcessExit(
-            target_action=px4_launch,
-            on_exit=lambda e, context: cancel_launch(e, context)
-        )
-    )   
-
-    filename = drone_mqtt_config_file
-
+    # handler = RegisterEventHandler(
+    #     OnProcessExit(
+    #         target_action=px4_launch,
+    #         on_exit=lambda e, context: cancel_launch(e, context)
+    #     )
+    # )   
 
 
     drone_mqtt_config_file = ReplaceString(
@@ -224,6 +197,7 @@ def generate_launch_description():
             'autostart': autostart,
             'use_composition': use_composition,
             'use_respawn': use_respawn,
+            'use_pure_odom': use_pure_odom,
             **pose
         }.items(),
     )
@@ -297,7 +271,6 @@ def generate_launch_description():
     drone_controller = Node(
         package='drone_cpp',
         name=namespace,
-        #name=[namespace, TextSubstitution(text="_node")],
         executable='drone_controller',
         parameters=[{'use_sim_time':True}],
         namespace=namespace
@@ -321,26 +294,13 @@ def generate_launch_description():
     set_env_vars_resources = AppendEnvironmentVariable(
         'GZ_SIM_RESOURCE_PATH', os.path.join(get_package_prefix('drone_cpp'), 'share'))
     
-    
-
     ld = LaunchDescription()
-    ld.add_action(LogInfo(msg=EnvironmentVariable(name='GZ_SIM_RESOURCE_PATH')))
-
-    #ld.add_action(launch_print(os.path.join(get_package_prefix('drone_cpp'), 'share')))
 
     ld.add_action(declare_use_gz)
-    ld.add_action(declare_px4_path)
-    ld.add_action(declare_px4_airframe)
     ld.add_action(declare_drone_name)
 
-    #https://docs.px4.io/main/en/sim_gazebo_gz/#usage-configuration-options
-    ld.add_action(SetEnvironmentVariable('PX4_PATH', px4_path))
-    ld.add_action(SetEnvironmentVariable('PX4_GZ_MODEL_NAME', drone_name))
-    ld.add_action(SetEnvironmentVariable('PX4_SYS_AUTOSTART', px4_airframe))
-    ld.add_action(SetEnvironmentVariable('PX4_GZ_STANDALONE', TextSubstitution(text='1')))
+    #ld.add_action(handler)
 
-    ld.add_action(handler)
-    #ld.add_action(px4_launch)
     ld.add_action(declare_robot_sdf)
     ld.add_action(declare_namespace)
     ld.add_action(declare_use_sim_time)
@@ -355,9 +315,7 @@ def generate_launch_description():
     ld.add_action(declare_gz_bridge_path)
     
     ld.add_action(set_env_vars_resources)
-    #ld.add_action(launch_print(filename))
-    #ld.add_action(launch_print(drone_mqtt_config_file))
- 
+  
     ld.add_action(shutdown_handler)
 
     ld.add_action(bridge)
@@ -368,7 +326,7 @@ def generate_launch_description():
 
     ld.add_action(spawn_model)
     ld.add_action(run_robot_state_publisher)
-    #ld.add_action(drone_footprint_broadcaster)
+    ld.add_action(declare_use_pure_odom)
 
     return ld
 

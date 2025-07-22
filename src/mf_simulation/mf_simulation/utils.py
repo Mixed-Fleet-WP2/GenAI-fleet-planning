@@ -14,6 +14,8 @@ def print_helper(items, context: LaunchContext):
             arg = arg.perform(context=context)
         
         print_str += f"{str(arg)} "
+
+        print(print_str, flush=True)
     
 
 def launch_print(*args: str|int|float|bool|Substitution, launch_description: LaunchDescription):

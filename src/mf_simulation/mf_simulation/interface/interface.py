@@ -273,7 +273,6 @@ class Interface(QMainWindow):
 
     def execute_plan_(self):
         
-        print("EXECUTION PRESSED")
         # Prevent executing if user presses execute without plan
         if not self.plan_:
             return

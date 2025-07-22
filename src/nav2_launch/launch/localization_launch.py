@@ -13,6 +13,12 @@
 # limitations under the License. In addition appropriate
 # arguments for initial pose were added.
 
+# Modifications Copyright (c) 2025 Elmeri Pohjois-Koivisto Tampere University
+# This file has been modified from its original version by modifying the launch
+# configuration default values and removing comments. In addition appropriate
+# arguments for initial pose were added as well as the support for pure odometry
+# navigation was added by separating LoadComposableNodes more granually.
+
 import os
 
 from ament_index_python.packages import get_package_share_directory
@@ -56,8 +62,6 @@ def generate_launch_description():
         'yaw': LaunchConfiguration('yaw')
     }
 
-    lifecycle_nodes = ['map_server', 'amcl']
-
     # Map fully qualified names to relative ones so the node's namespace can be prepended.
     # In case of the transforms (tf), currently, there doesn't seem to be a better alternative
     # https://github.com/ros/geometry2/issues/32
@@ -65,6 +69,13 @@ def generate_launch_description():
     # TODO(orduno) Substitute with `PushNodeRemapping`
     #              https://github.com/ros2/launch_ros/issues/56
     remappings = [('/tf', 'tf'), ('/tf_static', 'tf_static')]
+
+    param_rewrites = {'amcl.ros__parameters.initial_pose.x': pose['x'],
+                            'amcl.ros__parameters.initial_pose.y': pose['y'],
+                            'amcl.ros__parameters.initial_pose.z': pose['z'],
+                            'amcl.ros__parameters.initial_pose.yaw': pose['yaw'],
+                            'autostart': autostart
+                            }
 
     configured_params =  ParameterFile(RewrittenYaml(
             source_file=params_file,
@@ -187,7 +198,7 @@ def generate_launch_description():
                 name='lifecycle_manager_localization',
                 output='screen',
                 arguments=['--ros-args', '--log-level', log_level],
-                parameters=[{'autostart': autostart}, {'node_names': lifecycle_nodes}],
+                parameters=[{'autostart': autostart}, {'node_names': ['map_server', 'amcl']}],
             ),
         ],
     )
@@ -235,6 +246,7 @@ def generate_launch_description():
             ),
             LoadComposableNodes(
                 target_container=container_name_full,
+                condition=IfCondition(EqualsSubstitution(use_amcl, True)),
                 composable_node_descriptions=[
                     ComposableNode(
                         package='nav2_amcl',
@@ -243,16 +255,31 @@ def generate_launch_description():
                         parameters=[configured_params],
                         remappings=remappings,
                     ),
+                     ComposableNode(
+                        package='nav2_lifecycle_manager',
+                        plugin='nav2_lifecycle_manager::LifecycleManager',
+                        name='lifecycle_manager_localization',
+                        parameters=[
+                            {'autostart': autostart, 'node_names': ['map_server', 'amcl']}
+                        ],
+                    ),
+                ],
+            ),
+            LoadComposableNodes(
+                target_container=container_name_full,
+                condition=IfCondition(EqualsSubstitution(use_amcl, False)),
+                composable_node_descriptions=[
                     ComposableNode(
                         package='nav2_lifecycle_manager',
                         plugin='nav2_lifecycle_manager::LifecycleManager',
                         name='lifecycle_manager_localization',
                         parameters=[
-                            {'autostart': autostart, 'node_names': lifecycle_nodes}
+                            # If amcl is not used, map server is the only lifecycle node
+                            {'autostart': autostart, 'node_names': ['map_server']}
                         ],
                     ),
                 ],
-            ),
+            )
         ],
     )
 
@@ -278,5 +305,6 @@ def generate_launch_description():
     ld.add_action(load_nodes)
     ld.add_action(load_composable_nodes)
     launch_print("Param file for localization:", configured_params.param_file[0], launch_description=ld)
+    launch_print("AMCL USE CONDITION:", use_amcl, launch_description=ld)
     
     return ld
