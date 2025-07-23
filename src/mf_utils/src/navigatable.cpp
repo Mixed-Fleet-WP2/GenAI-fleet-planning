@@ -75,15 +75,14 @@ void Navigatable::move_to_pose_callback(
     try {
         const std::string &msg_str = msg->data;
         
-        if (!json::accept(msg_str)){
-            RCLCPP_ERROR_STREAM(get_logger(), "Received invalid json of the format: " + msg_str);
+        auto action = parse_json(msg_str);
+        
+        if (!action.has_value()){
+            send_feedback({-1, ERROR, "Failed to parse payload"});
             return;
         }
-        
-        json json_object = json::parse(msg_str);
-        // https://json.nlohmann.me/home/exceptions/#jsonexceptiontype_error302
-        ExecutableAction action = json_object.template get<ExecutableAction>();
-        auto args = action.command_arguments;
+
+        auto args = action->command_arguments;
 
         Position new_pos = {};
         new_pos.x =  args.at("x").get<float>();
@@ -93,7 +92,7 @@ void Navigatable::move_to_pose_callback(
         new_pos.pitch = args.at("pitch").get<float>();
         new_pos.yaw = args.at("yaw").get<float>();
 
-        navigate_to_pose(new_pos, action.action_id);
+        navigate_to_pose(new_pos, action->action_id);
 
         
 
