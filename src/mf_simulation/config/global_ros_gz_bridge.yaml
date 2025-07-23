@@ -1,0 +1,34 @@
+# Bridge clock only once, see: https://github.com/gazebosim/ros_gz/issues/591
+
+# https://github.com/gazebosim/ros_gz/tree/jazzy/ros_gz_bridge#example-6-configuring-the-bridge-via-xml-launch-file
+- topic_name: "/clock"
+  gz_type_name: "gz.msgs.Clock"
+  ros_type_name: "rosgraph_msgs/msg/Clock"
+  direction: GZ_TO_ROS
+
+#This topic is not namespaced by ros2 because it is absolute
+- gz_topic_name: "/model/pallet_1/pose"
+  ros_topic_name: "/object_state_updates_gz"
+  gz_type_name: "gz.msgs.Pose_V"
+  ros_type_name: "tf2_msgs/msg/TFMessage"
+  direction: GZ_TO_ROS
+
+# - gz_topic_name: "/world/warehouse/set_pose"
+#   gz_type_name: "gz.msgs.Pose@gz.msgs.Boolean"
+#   ros_topic_name: "/set_model_pose"
+#   ros_type_name: "ros_gz_interfaces/srv/SetEntityPose"
+#   direction: ROS_TO_GZ
+
+
+# https://github.com/gazebosim/ros_gz/blob/77522600db37d49a23e349c6e109b08caa621188/ros_gz_bridge/src/bridge_config.cpp#L240
+
+# https://github.com/gazebosim/ros_gz/blob/77522600db37d49a23e349c6e109b08caa621188/ros_gz_bridge/src/ros_gz_bridge.cpp#L30
+
+# Functionality has not been added as of 23.7.2025 for jazzy:
+# PR: https://github.com/gazebosim/ros_gz/commit/f69a10d73b3d32fdd4efaea40359a6b62a7f27b2
+
+# - service_name: "/world/warehouse/set_pose"
+#   gz_req_type_name: "gz.msgs.Pose"
+#   gz_res_type_name: "gz.msgs.Boolean"
+#   ros_type_name: "ros_gz_interfaces/srv/SetEntityPose"
+#   direction: BIDIRECTIONAL

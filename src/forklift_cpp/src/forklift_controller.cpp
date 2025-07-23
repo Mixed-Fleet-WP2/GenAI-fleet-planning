@@ -42,6 +42,9 @@ ForkliftController::ForkliftController() : Navigatable() {
         "fork_control", 10
     );
 
+    // https://github.com/gazebosim/ros_gz/pull/380
+    object_pose_setter_client_ = this->create_client<ros_gz_interfaces::srv::SetEntityPose>("/set_model_pose");
+
 
 }
 void ForkliftController::move_fork_callback_(const std_msgs::msg::String::ConstSharedPtr msg) {
@@ -72,6 +75,10 @@ void ForkliftController::move_fork_callback_(const std_msgs::msg::String::ConstS
         RCLCPP_ERROR_STREAM(get_logger(), e.what());
     }
 
+}
+
+void ForkliftController::drop_callback_(const std_msgs::msg::String::ConstSharedPtr msg)
+{
 }
 
 void ForkliftController::move_fork(float z, int action_id) {

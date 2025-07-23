@@ -22,6 +22,7 @@
 #include "geometry_msgs/msg/twist.hpp"
 #include "mf_utils/navigatable.hpp"
 #include "sensor_msgs/msg/joint_state.hpp"
+#include "ros_gz_interfaces/srv/set_entity_pose.hpp"
 
 class ForkliftController : public Navigatable {
 
@@ -34,6 +35,7 @@ class ForkliftController : public Navigatable {
         rclcpp::Subscription<std_msgs::msg::String>::SharedPtr move_fork_subscription_;
         rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr joint_state_subscription_;
         rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr fork_control_publisher_;
+        rclcpp::Client<ros_gz_interfaces::srv::SetEntityPose>::SharedPtr object_pose_setter_client_;
 
         float current_fork_pos_;
         void move_fork_callback_(const std_msgs::msg::String::ConstSharedPtr msg);

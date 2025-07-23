@@ -1,3 +1,4 @@
+# type: ignore
 import os
 from ament_index_python.packages import get_package_share_directory, get_packages_with_prefixes, get_package_prefix
 from launch import LaunchDescription
@@ -170,12 +171,12 @@ def generate_launch_description():
 
     declare_global_mqtt_config_file = DeclareLaunchArgument(
         name="mqtt_config_file",
-        default_value=os.path.join(pkg_share, 'config', 'state_bridge_mqtt_bridge.yaml')
+        default_value=os.path.join(pkg_share, 'config', 'global_mqtt_bridge.yaml')
     )
 
     declare_global_gz_bridge_path = DeclareLaunchArgument(
         name="gz_bridge_config",
-        default_value=os.path.join(pkg_share, 'config', 'state_bridge_ros_gz_bridge.yaml'),
+        default_value=os.path.join(pkg_share, 'config', 'global_ros_gz_bridge.yaml'),
         description="Path to gz bridge configuration"
     )
     
@@ -229,7 +230,17 @@ def generate_launch_description():
         config_file=global_gz_bridge_config_file,
         container_name="sim_env_container",
         create_own_container=str(False),
-        use_composition=str(True)
+        use_composition=str(True),
+        # Fixes a bug with extra bridge params, see:
+        # https://github.com/gazebosim/ros_gz/pull/775
+        extra_bridge_params=[dict()]
+    )
+
+    service_bridge = Node(
+        name="service_bridge",
+        package="ros_gz_bridge",
+        executable="parameter_bridge",
+        arguments=["/world/warehouse/set_pose@ros_gz_interfaces/srv/SetEntityPose@gz.msgs.Pose@gz.msgs.Boolean"]
     )
 
     # https://docs.ros.org/en/jazzy/How-To-Guides/Launching-composable-nodes.html
@@ -292,6 +303,7 @@ def generate_launch_description():
     ld.add_action(gazebo_server)
     ld.add_action(gazebo_client)
     ld.add_action(start_interface)
+    ld.add_action(service_bridge)
     
 
     # Use OpaqueFunction to create robot instances after resolving the YAML path

@@ -318,7 +318,7 @@ def generate_launch_description():
   
     ld.add_action(shutdown_handler)
 
-    ld.add_action(bridge)
+    #ld.add_action(bridge)
     ld.add_action(mqtt_bridge)
     ld.add_action(drone_controller)
 
