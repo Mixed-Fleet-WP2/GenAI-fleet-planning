@@ -75,7 +75,7 @@ void Navigatable::move_to_pose_callback(
     try {
         const std::string &msg_str = msg->data;
         
-        auto action = parse_json(msg_str);
+        auto action = parse_json(msg_str, this);
         
         if (!action.has_value()){
             send_feedback({-1, ERROR, "Failed to parse payload"});

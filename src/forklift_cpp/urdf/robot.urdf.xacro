@@ -46,6 +46,7 @@
       <joint_name>fork_2_joint</joint_name>
       <joint_name>fork_plate</joint_name>
       -->
+      <joint_name>fork_plate</joint_name>
       <topic>$(arg namespace)/joint_states</topic>
     </plugin>
 

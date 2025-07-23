@@ -49,10 +49,9 @@ void ForkliftController::move_fork_callback_(const std_msgs::msg::String::ConstS
     try {
         const std::string &msg_str = msg->data;
         
-       auto action = parse_json(msg_str);
+       auto action = parse_json(msg_str, this);
         
         if (!action.has_value()){
-            send_feedback({-1, ERROR, "Failed to parse payload"});
             return;
         }
 
@@ -86,13 +85,88 @@ void ForkliftController::move_fork(float z, int action_id) {
     this -> create_wall_timer(std::chrono::milliseconds(100),
         [this, z, action_id]() {
             
-            if (std::abs(current_fork_pos_ - z) < 0.05)
-                send_feedback({action_id, SUCCESS, "Fork raised"});
+            // Smaller error possible because the gz sim joint controller is basically
+            // as accurate as ground truth
+            if (std::abs(current_fork_pos_ - z) < 0.025)
+                send_feedback({action_id, SUCCESS, "Fork raised to elevation: " + std::to_string(z)});
         }
     );
 
+}
+void ForkliftController::navigate_to_pose(const Position &pos, int action_id) {
+    send_nav_goal(pos, action_id);
 };
 
-void ForkliftController::joint_states_callback_(const sensor_msgs::msg::JointState::ConstSharedPtr joint_states)
+void ForkliftController::pick_up_callback_(const std_msgs::msg::String::ConstSharedPtr msg){
+
+    try {
+        const std::string &msg_str = msg->data;
+        
+       auto action = parse_json(msg_str, this);
+        
+        if (!action.has_value()){
+            send_feedback({-1, ERROR, "Failed to parse payload. Is the json in correct format?"});
+            return;
+        }
+
+        auto args = action->command_arguments;
+
+        std::string object_name = args.at("object").get<std::string>();
+
+        pick_up(object_name);
+
+        
+    }catch (json::type_error &e){
+        RCLCPP_ERROR_STREAM(get_logger(), e.what());
+    // If json does not have the key
+    }catch (std::out_of_range &e){
+        RCLCPP_ERROR_STREAM(get_logger(), e.what());
+    }catch(std::invalid_argument &e){
+        // If the object name cannot be converted to string
+        RCLCPP_ERROR_STREAM(get_logger(), e.what());
+    }
+
+}
+
+void ForkliftController::pick_up(std::string object){
+    
+    try {
+    // https://docs.ros.org/en/foxy/Tutorials/Intermediate/Tf2/Writing-A-Tf2-Listener-Cpp.html
+    auto buffer = tf2_ros::Buffer(this->get_clock(), tf2::Duration(tf2::BUFFER_CORE_DEFAULT_CACHE_TIME), this);
+
+    auto tf_listener = tf2_ros::TransformListener(buffer);
+
+    auto transform = buffer.lookupTransform("map", "fork_1", rclcpp::Time(0), rclcpp::Duration::from_seconds(10));
+    auto rotation = transform.transform.rotation;
+    auto translation = transform.transform.translation;
+
+    }
+    catch(const tf2::TransformException & ex) {
+          RCLCPP_INFO_STREAM(get_logger(), "Unable to get transform!");
+          return;
+        }
+}
+
+void ForkliftController::joint_states_callback_(const sensor_msgs::msg::JointState::ConstSharedPtr joint_states){
+
+    // The topic only publishes the state of the fork_plate joint so the
+    // array's length is always one
+    current_fork_pos_ = joint_states->position[0];
+    RCLCPP_INFO_STREAM(get_logger(), "THE POSITION OF THE FORK IS: " + std::to_string(current_fork_pos_));
+}
+
+int main(int argc, char * argv[])
 {
+    rclcpp::init(argc, argv);
+    
+    // Assign 3 threads: the main thread and two other for the two callback groups
+    auto executor = rclcpp::executors::MultiThreadedExecutor(rclcpp::ExecutorOptions(), 3);
+    auto node = std::make_shared<ForkliftController>();
+    executor.add_node(node);
+    executor.spin();
+
+    rclcpp::shutdown();
+
+    rclcpp::shutdown();
+    return 0;
 }

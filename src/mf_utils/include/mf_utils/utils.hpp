@@ -55,13 +55,14 @@ std::tuple<float, float, float, float>euler_to_quaternion(double roll, double pi
     return {x,y,z, w};
 }
 
-std::optional<ExecutableAction> parse_json(std::string msg_str)
+template <typename T>
+std::optional<ExecutableAction> parse_json(std::string msg_str, T node)
 
     try {
         
         if (!json::accept(msg_str)){
             std::cerr << "Received invalid json of the format: " + msg_str << std::flush << std::endl;;
-            return;
+            return std::nullopt;
         }
         
         json json_object = json::parse(msg_str);
@@ -69,7 +70,8 @@ std::optional<ExecutableAction> parse_json(std::string msg_str)
         ExecutableAction action = json_object.template get<ExecutableAction>();
         return action;
     }catch (json::type_error &e){
-        std::cerr << e.what() << std::flush << std::endl;
+        node->send_feedback({-1, ERROR, "Parsing json failed"});
+        return std::nullopt;
     }
 
 #endif

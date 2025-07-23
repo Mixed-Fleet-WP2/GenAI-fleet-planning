@@ -21,6 +21,7 @@ using OdomMsg = nav_msgs::msg::Odometry;
 class Navigatable : public rclcpp::Node {
     public:
         Navigatable();
+        void send_feedback(Feedback feedback);
     protected:
         std::string node_name_ = "";
 
@@ -43,8 +44,6 @@ class Navigatable : public rclcpp::Node {
         void nav_feedback_callback(std::shared_ptr<NavToPoseGoalHandle> g, const std::shared_ptr<const NavToPoseAction::Feedback> feedback, int action_id);
         void nav_goal_acknowledged_callback(std::shared_ptr<rclcpp_action::ClientGoalHandle<NavToPoseAction>> goal, int action_id);
         void move_to_pose_callback(const std::shared_ptr<std_msgs::msg::String> msg);
-        void send_feedback(Feedback feedback);
-
 };
 
 #endif

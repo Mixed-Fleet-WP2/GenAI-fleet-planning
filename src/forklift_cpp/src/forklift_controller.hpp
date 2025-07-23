@@ -6,6 +6,8 @@
 #include "rclcpp/rclcpp.hpp"
 #include "geometry_msgs/msg/twist.hpp"
 #include "tf2_ros/transform_broadcaster.h"
+#include "tf2_ros/transform_listener.h"
+#include "tf2_ros/buffer.h"
 #include "std_msgs/msg/string.hpp"
 #include "std_msgs/msg/float64.hpp"
 #include "nav2_msgs/action/navigate_to_pose.hpp"
@@ -40,11 +42,10 @@ class ForkliftController : public Navigatable {
         void joint_states_callback_(const sensor_msgs::msg::JointState::ConstSharedPtr joint_states);
 
         void move_fork(float z, int action_id);
+        void pick_up(std::string object);
+        void navigate_to_pose(const Position& pos, int action_id) override;
 
-
-
-    
 };
 
 
-#endif FORKLIFT_CONTROLLER_HPP
+#endif //FORKLIFT_CONTROLLER_HPP
