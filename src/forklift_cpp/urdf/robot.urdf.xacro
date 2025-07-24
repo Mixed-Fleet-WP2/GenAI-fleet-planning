@@ -6,6 +6,16 @@
 
   <gazebo>
 
+    <!-- <plugin
+      filename="gz-sim-pose-publisher-system"
+      name="gz::sim::systems::PosePublisher">
+      <publish_link_pose>true</publish_link_pose>
+      <publish_collision_pose>false</publish_collision_pose>
+      <publish_visual_pose>false</publish_visual_pose>
+      <publish_nested_model_pose>false</publish_nested_model_pose>
+      <use_pose_vector_msg>true</use_pose_vector_msg>
+    </plugin> -->
+
     <plugin
       filename="gz-sim-diff-drive-system"
       name="gz::sim::systems::DiffDrive">
@@ -46,7 +56,7 @@
       <joint_name>fork_2_joint</joint_name>
       <joint_name>fork_plate</joint_name>
       -->
-      <joint_name>fork_plate</joint_name>
+      <!-- <joint_name>fork_plate</joint_name> -->
       <topic>$(arg namespace)/joint_states</topic>
     </plugin>
 

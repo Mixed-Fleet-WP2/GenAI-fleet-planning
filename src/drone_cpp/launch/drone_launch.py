@@ -218,7 +218,7 @@ def generate_launch_description():
         namespace=namespace,
         parameters=[{'use_sim_time':True}],
         arguments=[
-            '-name', 'drone',
+            '-name', namespace,
             '-string', parsed_sdf,
             '-x', pose['x'], '-y', pose['y'], '-z', pose['z'],
             '-R', pose['roll'], '-P', pose['pitch'], '-Y', pose['yaw']
@@ -254,9 +254,9 @@ def generate_launch_description():
     )
 
     bridge= RosGzBridge(
-        bridge_name="global_gz_bridge",
+        bridge_name=[namespace, "_bridge_name"],
         config_file=drone_gz_bridge_config,
-        container_name="sim_env_container",
+        #container_name="sim_env_container",
         namespace=namespace,
   
         # Fixes a bug with extra bridge params, see:

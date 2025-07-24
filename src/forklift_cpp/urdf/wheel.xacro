@@ -19,8 +19,8 @@
       <origin xyz="0 0 0" rpy="${yaw} 0 0" />
       <geometry>
         <!--The
-        package resolves into install/forklift_controller/share/forklift_controller/-->
-        <mesh filename="package://forklift_controller/models/forklift/meshes/wheel_correct_scale.dae"/>
+        package resolves into install/forklift_cpp/share/forklift_cpp/-->
+        <mesh filename="package://forklift_cpp/models/forklift/meshes/wheel_correct_scale.dae"/>
       </geometry>
     </visual>
     <collision>

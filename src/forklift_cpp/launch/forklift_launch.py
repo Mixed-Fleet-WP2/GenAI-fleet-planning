@@ -1,3 +1,5 @@
+# type: ignore
+
 import os
 
 from ament_index_python.packages import get_package_share_directory, get_package_prefix
@@ -28,12 +30,13 @@ from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.descriptions import ParameterFile
 from nav2_common.launch import ReplaceString, RewrittenYaml
+from ros_gz_bridge.actions import RosGzBridge
 
 
 def generate_launch_description():
     
     nav_launch_dir = get_package_share_directory('nav2_launch')
-    pkg_share = get_package_share_directory('forklift_controller')
+    pkg_share = get_package_share_directory('forklift_cpp')
 
     robot_name = LaunchConfiguration('robot_name')
     namespace = LaunchConfiguration('namespace')
@@ -46,10 +49,19 @@ def generate_launch_description():
     use_respawn  = LaunchConfiguration('use_respawn')
     map_yaml_file = LaunchConfiguration('map_yaml_file')
     mqtt_config_file = LaunchConfiguration('mqtt_config_file')
-    gz_bridge_config = LaunchConfiguration("gz_bridge_config")
+    forklift_gz_bridge_config = LaunchConfiguration("forklift_gz_bridge_config")
     robot_sdf = LaunchConfiguration('robot_sdf')
 
     remappings = [('/tf', 'tf'), ('/tf_static', 'tf_static')]
+
+    pose = {
+        'x': LaunchConfiguration('x_pose'),
+        'y': LaunchConfiguration('y_pose'),
+        'z': LaunchConfiguration('z_pose'),
+        'roll': LaunchConfiguration('roll'),
+        'pitch': LaunchConfiguration('pitch'),
+        'yaw': LaunchConfiguration('yaw')
+    }
 
     
     declare_use_gz = DeclareLaunchArgument(
@@ -124,8 +136,8 @@ def generate_launch_description():
         description="Path to the robot sdf/urdf"
     )
 
-    declare_gz_bridge_path = DeclareLaunchArgument(
-        name="gz_bridge_config",
+    declare_forklift_gz_bridge_path = DeclareLaunchArgument(
+        name="forklift_gz_bridge_config",
         default_value=os.path.join(pkg_share, 'config', 'forklift_ros_gz_bridge.yaml'),
         description="Path to gz bridge configuration"
     )
@@ -139,7 +151,9 @@ def generate_launch_description():
         source_file=mqtt_config_file,
         replacements={'<robot_namespace>':('/', namespace)}
     )
- 
+    
+    
+
     bringup_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(os.path.join(nav_launch_dir, 'launch', 'bringup_launch.py')),
         launch_arguments={
@@ -153,10 +167,10 @@ def generate_launch_description():
             'autostart': autostart,
             'use_composition': use_composition,
             'use_respawn': use_respawn,
+            **pose
         }.items(),
     )
    
-    
     # This command returns the parsed sdf as a string
     # How to pass arguments to xacro: 
     # https://robotics.stackexchange.com/questions/85348/pass-parameters-to-xacro-from-launch-file-or-otherwise
@@ -169,17 +183,16 @@ def generate_launch_description():
         namespace=namespace,
         parameters=[{'use_sim_time':True}],
         arguments=[
-            '-name', '',
+            '-name', namespace,
             '-string', parsed_urdf,
-            '-x', TextSubstitution(text=str(0.0)), '-y', TextSubstitution(text=str(0.0)), '-z', TextSubstitution(text=str(0.0)),
-            '-R', TextSubstitution(text=str(0.0)), '-P', TextSubstitution(text=str(0.0)), '-Y', TextSubstitution(text=str(0.0))
+            '-x', pose['x'], '-y', pose['y'], '-z', pose['z'],
+            '-R', pose['roll'], '-P', pose['pitch'], '-Y', pose['yaw']
             ]
     )
 
     run_robot_state_publisher = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
-        name='robot_state_publisher',
         namespace=namespace,
         output='screen',
         parameters=[
@@ -190,18 +203,19 @@ def generate_launch_description():
         remappings=remappings,
     )
     
-    bridge = Node(
-        package='ros_gz_bridge',
-        executable='parameter_bridge',
+    bridge= RosGzBridge(
+        container_name="sim_env_container",
+        bridge_name=[namespace, "_bridge"],
         namespace=namespace,
-        parameters=[
-            {
-                'config_file': gz_bridge_config,
+        config_file=forklift_gz_bridge_config,
+  
+        # Fixes a bug with extra bridge params, see:
+        # https://github.com/gazebosim/ros_gz/pull/775
+
+        extra_bridge_params=[ {
                 'expand_gz_topic_names': True,
                 'use_sim_time': True,
-            }
-        ],
-        output='screen',
+            }]
     )
 
     mqtt_bridge = Node(
@@ -219,14 +233,14 @@ def generate_launch_description():
     # gazebo uses model:// like a prefix to the path
     # This is why the path must be one higher
     set_env_vars_resources = AppendEnvironmentVariable(
-        'GZ_SIM_RESOURCE_PATH', os.path.join(get_package_prefix('forklift_controller'), 'share'))
+        'GZ_SIM_RESOURCE_PATH', os.path.join(get_package_prefix('forklift_cpp'), 'share'))
 
     ld = LaunchDescription()
 
     ld.add_action(declare_robot_sdf)
     ld.add_action(declare_use_gz)
     ld.add_action(declare_robot_name)
-    ld.add_action(declare_gz_bridge_path)
+    ld.add_action(declare_forklift_gz_bridge_path)
     ld.add_action(declare_namespace)
     ld.add_action(declare_use_sim_time)
     ld.add_action(declare_use_namespace)
@@ -246,7 +260,6 @@ def generate_launch_description():
 
     ld.add_action(bringup_cmd)
     ld.add_action(spawn_model)
-    ld.add_action(run_robot_state_publisher)
 
     return ld
 

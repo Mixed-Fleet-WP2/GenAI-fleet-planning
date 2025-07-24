@@ -298,7 +298,7 @@ def generate_launch_description():
     # Create the launch description and populate
     ld = LaunchDescription()
 
-    PKGS = ["forklift_controller", "drone_cpp"]
+    PKGS = ["forklift_cpp", "drone_cpp"]
     for pkg in PKGS:
         pkg_prefix = get_package_prefix(pkg)
         resource_path = os.path.join(pkg_prefix, 'share')

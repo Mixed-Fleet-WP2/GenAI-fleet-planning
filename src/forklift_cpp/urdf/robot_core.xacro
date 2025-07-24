@@ -50,13 +50,13 @@
     <visual>
       <origin xyz="0 0 0" />
       <geometry>
-        <mesh filename="package://forklift_controller/models/forklift/meshes/body_correct_scale.dae"/>
+        <mesh filename="package://forklift_cpp/models/forklift/meshes/body_correct_scale.dae"/>
       </geometry>
     </visual>
     <collision>
       <origin xyz="0 0 0" />
       <geometry>
-        <mesh filename="package://forklift_controller/models/forklift/meshes/body_correct_scale.dae"/>
+        <mesh filename="package://forklift_cpp/models/forklift/meshes/body_correct_scale.dae"/>
       </geometry>
     </collision>
     
@@ -71,7 +71,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://forklift_controller/models/forklift/meshes/fork_plate_correct_scale.dae"
+        <mesh filename="package://forklift_cpp/models/forklift/meshes/fork_plate_correct_scale.dae"
         scale="1 1 0.77"
         />
       </geometry>
