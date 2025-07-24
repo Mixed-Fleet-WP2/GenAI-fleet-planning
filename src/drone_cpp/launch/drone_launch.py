@@ -1,3 +1,5 @@
+# type: ignore
+
 import os
 
 from ament_index_python.packages import get_package_share_directory, get_package_prefix
@@ -14,6 +16,7 @@ from launch.actions import (
     OpaqueFunction
     
 )
+from ros_gz_bridge.actions import RosGzBridge
 
 from launch.substitutions.command import Command
 from launch_ros.parameter_descriptions import ParameterValue
@@ -235,7 +238,7 @@ def generate_launch_description():
         ],
         remappings=remappings,
     )
-    
+
     bridge = Node(
         package='ros_gz_bridge',
         executable='parameter_bridge',
@@ -248,6 +251,21 @@ def generate_launch_description():
             }
         ],
         output='screen',
+    )
+
+    bridge= RosGzBridge(
+        bridge_name="global_gz_bridge",
+        config_file=drone_gz_bridge_config,
+        container_name="sim_env_container",
+        namespace=namespace,
+  
+        # Fixes a bug with extra bridge params, see:
+        # https://github.com/gazebosim/ros_gz/pull/775
+
+        extra_bridge_params=[ {
+                'expand_gz_topic_names': True,
+                'use_sim_time': True,
+            }]
     )
 
     mqtt_bridge = Node(
@@ -318,7 +336,7 @@ def generate_launch_description():
   
     ld.add_action(shutdown_handler)
 
-    #ld.add_action(bridge)
+    ld.add_action(bridge)
     ld.add_action(mqtt_bridge)
     ld.add_action(drone_controller)
 

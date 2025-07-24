@@ -233,13 +233,38 @@ def generate_launch_description():
         use_composition=str(True),
         # Fixes a bug with extra bridge params, see:
         # https://github.com/gazebosim/ros_gz/pull/775
-        extra_bridge_params=[dict()]
+
+        # In addition, allows us to start a service bridge by passing
+        # extra params, because services cannot yet be defined with yaml
+        # although ros_gz_bridge itself supports launching them
+
+        extra_bridge_params=[{"bridge_names": ["service_bridge"],
+        "bridges.service_bridge.service_name": "/world/warehouse/set_pose",
+        "bridges.service_bridge.ros_type_name": "ros_gz_interfaces/srv/SetEntityPose",
+        "bridges.service_bridge.gz_req_type_name": "gz.msgs.Pose",
+        "bridges.service_bridge.gz_rep_type_name": "gz.msgs.Boolean",
+        }]
     )
 
+    # Unused for now in favor of RosGzBridge- action
     service_bridge = Node(
         name="service_bridge",
         package="ros_gz_bridge",
         executable="parameter_bridge",
+        # These handle the parameters
+        # https://github.com/gazebosim/ros_gz/blob/77522600db37d49a23e349c6e109b08caa621188/ros_gz_bridge/src/ros_gz_bridge.cpp#L36
+        # https://github.com/gazebosim/ros_gz/blob/2b0f0a045bb232fab6aac59beeefe46bc7e082ab/ros_gz_bridge/src/bridge_config.cpp
+        parameters=[{
+            'config_file': global_gz_bridge_config_file
+        } 
+        ],
+        # Pass the service bridge definition as plain arguments because the RosGzBridge doesnt support services
+        # from yaml files when using the version from apt (as of 24.7.2025).
+        # In the future, when changes are available, services can be listed in the yaml
+        # See: https://github.com/gazebosim/ros_gz/commit/f69a10d73b3d32fdd4efaea40359a6b62a7f27b2 
+
+        # This handles the arguments:
+        # https://github.com/gazebosim/ros_gz/blob/2b0f0a045bb232fab6aac59beeefe46bc7e082ab/ros_gz_bridge/src/parameter_bridge.cpp
         arguments=["/world/warehouse/set_pose@ros_gz_interfaces/srv/SetEntityPose@gz.msgs.Pose@gz.msgs.Boolean"]
     )
 
@@ -299,11 +324,12 @@ def generate_launch_description():
  
     ld.add_action(load_composable_nodes)
 
-    ld.add_action(gz_bridge)
+    #ld.add_action(gz_bridge)
     ld.add_action(gazebo_server)
     ld.add_action(gazebo_client)
     ld.add_action(start_interface)
-    ld.add_action(service_bridge)
+    #ld.add_action(service_bridge)
+    ld.add_action(gz_bridge)
     
 
     # Use OpaqueFunction to create robot instances after resolving the YAML path
