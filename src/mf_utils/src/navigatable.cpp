@@ -97,6 +97,7 @@ void Navigatable::odom_received_callback(const std::shared_ptr<OdomMsg> msg) {
     current_pos_.z = static_cast<float>(msg->pose.pose.position.z);
     current_pos_.roll = roll;
     current_pos_.pitch = pitch;
+    // Rotate the object so the long side is 
     current_pos_.yaw = yaw;
     current_pos_.round();
 

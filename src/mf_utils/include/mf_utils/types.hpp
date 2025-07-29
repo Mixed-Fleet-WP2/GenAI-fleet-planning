@@ -31,22 +31,27 @@ struct MoveAction{
     float yaw;
 };
 
-template<typename ObjectAction>
+struct ObjectAction {
+    int action_id;
+    std::string object;
+};
+
+struct JointPositionAction {
+    int action_id;
+    float position;
+};
+
+
 void from_json(const json& j, ObjectAction& action) {
     std::cout << "Parsing PickUpAction, JSON: " << j.dump() << std::flush << std::endl;
     j.at("action_id").get_to(action.action_id);
     j.at("command_arguments").at("object").get_to(action.object);
 }
 
-struct PickUpAction {
-    int action_id;
-    std::string object;
-};
-
-struct DropAction {
-    int action_id;
-    std::string object;
-};
+void from_json(const json& j, JointPositionAction& action) {
+    j.at("action_id").get_to(action.action_id);
+    j.at("command_arguments").at("position").get_to(action.position);
+}
 
 
 // https://github.com/nlohmann/json/issues/2199

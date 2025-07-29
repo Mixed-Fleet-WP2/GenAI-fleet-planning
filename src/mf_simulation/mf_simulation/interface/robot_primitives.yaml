@@ -19,6 +19,6 @@ forklift:
       args_type: ["string"]
       description: "Pick up an object by its name."
     move_fork:
-      args: ["height"]
+      args: ["position"]
       args_type: ["float"]
       description: "Move the forklift's fork to a specified height."

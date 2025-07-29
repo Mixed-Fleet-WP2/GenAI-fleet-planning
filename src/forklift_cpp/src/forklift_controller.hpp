@@ -31,6 +31,8 @@ class ForkliftController : public Navigatable {
         ForkliftController();
 
     private:
+
+        rclcpp::TimerBase::SharedPtr lift_timer_;
         rclcpp::Subscription<std_msgs::msg::String>::SharedPtr pick_up_subscription_;
         rclcpp::Subscription<std_msgs::msg::String>::SharedPtr drop_subscription_;
         rclcpp::Subscription<std_msgs::msg::String>::SharedPtr move_fork_subscription_;
@@ -43,9 +45,8 @@ class ForkliftController : public Navigatable {
         void drop_callback_(const std_msgs::msg::String::ConstSharedPtr msg);
         void pick_up_callback_(const std_msgs::msg::String::ConstSharedPtr msg);
         void joint_states_callback_(const sensor_msgs::msg::JointState::ConstSharedPtr joint_states);
-
-        void move_fork(float z, int action_id);
-        void pick_up(const PickUpAction& action);
+        void move_fork(const JointPositionAction& action);
+        void pick_up(const ObjectAction& action);
         void navigate_to_pose(const MoveAction& action) override;
 
 };

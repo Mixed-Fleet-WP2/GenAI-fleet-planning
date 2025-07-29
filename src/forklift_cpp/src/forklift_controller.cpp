@@ -56,7 +56,16 @@ ForkliftController::ForkliftController() : Navigatable() {
 }
 void ForkliftController::move_fork_callback_(const std_msgs::msg::String::ConstSharedPtr msg) {
 
+    RCLCPP_INFO_STREAM(get_logger(), "RECEIVED MOVE FORK");
+    const std::string &msg_str = msg->data;
+
+    auto action = parse_json<JointPositionAction>(msg_str, this);
     
+    if (!action.has_value()){
+        return;
+    }
+
+    move_fork(action.value());
 
 }
 
@@ -64,25 +73,33 @@ void ForkliftController::drop_callback_(const std_msgs::msg::String::ConstShared
 {
 }
 
-void ForkliftController::move_fork(float z, int action_id) {
+void ForkliftController::move_fork(const JointPositionAction& action) {
     
     auto msg = std_msgs::msg::Float64();
-    msg.data = z;
+    msg.data = action.position;
     fork_control_publisher_->publish(msg);
-    
+    RCLCPP_INFO_STREAM(get_logger(), "Movement");
     // Periodically check if the desired height has been reached
     // (simulates sensor input/hardware interrrupts)
-    this -> create_wall_timer(std::chrono::milliseconds(100),
-        [this, z, action_id]() {
-            
+    lift_timer_ = this->create_wall_timer(std::chrono::milliseconds(100),
+        [this, action]() {
             // Smaller error possible because the gz sim joint controller is basically
             // as accurate as ground truth
-            if (std::abs(current_fork_pos_ - z) < 0.025)
-                send_feedback({action_id, SUCCESS, "Fork raised to elevation: " + std::to_string(z)});
+            const float error = std::abs(current_fork_pos_ - action.position);
+            RCLCPP_INFO_STREAM(get_logger(), std::to_string(error));
+            if (error < 0.025){
+                lift_timer_->cancel();
+                send_feedback({
+                    action.action_id, 
+                    SUCCESS, 
+                    "Fork raised to elevation: " + std::to_string(action.position)
+                });
+            }
         }
     );
 
 }
+
 void ForkliftController::navigate_to_pose(const MoveAction& action) {
     send_nav_goal(action);
 };
@@ -91,10 +108,9 @@ void ForkliftController::pick_up_callback_(const std_msgs::msg::String::ConstSha
 
     const std::string &msg_str = msg->data;
 
-    auto action = parse_json<PickUpAction>(msg_str, this);
+    auto action = parse_json<ObjectAction>(msg_str, this);
     
     if (!action.has_value()){
-        RCLCPP_INFO_STREAM(get_logger(), "RETURNED EMPTY");
         return;
     }
 
@@ -102,7 +118,7 @@ void ForkliftController::pick_up_callback_(const std_msgs::msg::String::ConstSha
 
 }
 
-void ForkliftController::pick_up(const PickUpAction& action){
+void ForkliftController::pick_up(const ObjectAction& action){
     
     const std::string object = action.object;
     const int id = action.action_id;
@@ -133,6 +149,7 @@ void ForkliftController::pick_up(const PickUpAction& action){
     // https://docs.ros.org/en/iron/p/ros_gz_interfaces/interfaces/msg/Entity.html
     auto move_request = std::make_shared<ros_gz_interfaces::srv::SetEntityPose::Request>();
 
+    // See urdf fork_attach_offsets for where these come from
     static const float DISTANCE_BETWEEN_FORK_ORIGINS = 0.4;
 
     auto position = geometry_msgs::msg::Point();
@@ -140,10 +157,6 @@ void ForkliftController::pick_up(const PickUpAction& action){
     position.y = static_cast<float>(fork_global_y - DISTANCE_BETWEEN_FORK_ORIGINS / 2);
     position.z = static_cast<float>(fork_global_z);
     
-    // See urdf fork_attach_offsets for where these come from
-    //const float FORK_WIDTH = 0.1;
-    
-
     move_request->pose.orientation = fork_global_rotation;
     move_request->pose.position = position;
 
