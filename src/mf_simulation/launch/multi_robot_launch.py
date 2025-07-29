@@ -1,4 +1,8 @@
 # type: ignore
+
+#  Copyright (c) 2025 Elmeri Pohjois-Koivisto
+#  Licensed under MIT, see LICENSES at the repository root for full license(s)
+
 import os
 from ament_index_python.packages import get_package_share_directory, get_packages_with_prefixes, get_package_prefix
 from launch import LaunchDescription

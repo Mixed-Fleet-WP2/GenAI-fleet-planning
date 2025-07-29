@@ -6,6 +6,8 @@
   <description>TODO: Package description</description>
   <maintainer email="elmeri.pohjois-koivisto@tuni.fi">Elmeri Pohjois-Koivisto</maintainer>
   <license>MIT-license</license>
+  <license>Apache-2.0</license>
+  <license>CC BY-NC-ND 4.0</license>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>

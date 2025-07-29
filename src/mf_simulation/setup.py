@@ -1,4 +1,9 @@
 #type: ignore
+
+#  Copyright (c) 2025 Elmeri Pohjois-Koivisto
+#  Licensed under MIT, see LICENSES at the repository root for full license
+
+
 from setuptools import find_packages, setup
 from glob import glob
 
