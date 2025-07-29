@@ -1,21 +1,4 @@
 <?xml version="1.0"?>
-
-  <!-- 
-    Copyright (c) Elmeri Pohjois-Koivisto
-
-    Licensed under MIT license (code) and CC-BY-4.0 (models and textures),
-    see LICENSES at the repository root for full license(s)
-
-    Model information:
-      Model name: Forklift low poly
-      Original author: Ricardo Sanchez (https://sketchfab.com/380660711785)
-      Original URL: https://sketchfab.com/3d-models/forklift-low-poly-8ab650b3982243f8b661142de50f79c9
-
-    Changes made: 
-      - Extracted forks, wheels and the body to a separate dae models
-      - Resized wheels, forks and the body to match proportions in meshes/models_src/forklift_spec.pdf
-  -->
-
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="forklift">
 
   <xacro:arg name="namespace" default="" />
@@ -77,21 +60,21 @@
       <topic>$(arg namespace)/joint_states</topic>
     </plugin>
 
-    
-      <plugin filename="gz-sim-joint-position-controller-system"
-    name="gz::sim::systems::JointPositionController">
-        <joint_name>fork_plate_joint</joint_name>
-        <initial_position>0.0</initial_position>
-        <topic>$(arg namespace)/fork_control</topic>
-        <p_gain>4000000</p_gain>
-        <i_gain>2000</i_gain>
-        <d_gain>5000</d_gain>
-        <i_min>-2000</i_min>
-        <i_max>2000</i_max>
-        <cmd_min>-80000</cmd_min>
-        <cmd_max>120000</cmd_max>
-      </plugin>
-    
+
+    <plugin filename="gz-sim-joint-position-controller-system"
+      name="gz::sim::systems::JointPositionController">
+      <joint_name>fork_plate_joint</joint_name>
+      <initial_position>0.0</initial_position>
+      <topic>$(arg namespace)/fork_control</topic>
+      <p_gain>4000000</p_gain>
+      <i_gain>2000</i_gain>
+      <d_gain>5000</d_gain>
+      <i_min>-2000</i_min>
+      <i_max>2000</i_max>
+      <cmd_min>-80000</cmd_min>
+      <cmd_max>120000</cmd_max>
+    </plugin>
+
 
   </gazebo>
 
