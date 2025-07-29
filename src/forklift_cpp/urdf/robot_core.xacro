@@ -1,9 +1,15 @@
 <?xml version="1.0"?>
+
+  <!-- 
+    Copyright (c) Elmeri Pohjois-Koivisto
+    See robot.urdf.xacro for licensing
+  -->
+
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
   <xacro:include filename="inertial_macros.xacro" />
   <xacro:include filename="fork.xacro" />
-  <xacro:include filename="wheel.xacro"/>
+  <xacro:include filename="wheel.xacro" />
 
   <material name="white">
     <color rgba="1 1 1 1" />
@@ -15,24 +21,28 @@
   <xacro:property name="base_height" value="2" />
   <xacro:property name="base_width" value="0.895" />
   <xacro:property name="base_length" value="2.29" />
-  
+
   <material name="darkgray">
     <color rgba="0.01 0.01 0.01 1" />
   </material>
 
   <xacro:property name="fork_mass" value="15" />
 
-  <!--See: https://github.com/ros-navigation/navigation2_tutorials/blob/rolling/sam_bot_description/src/description/sam_bot_description.urdf -->
-  <!--From nav2 docs: 
+  <!--See:
+  https://github.com/ros-navigation/navigation2_tutorials/blob/rolling/sam_bot_description/src/description/sam_bot_description.urdf -->
+  <!--From
+  nav2 docs: 
   "We will also be using the box_inertia macro we defined before to add some inertial properties 
   to our base_link. The kdl_parser package used in robot_state_publisher
   doesn’t like inertial properties being specified in the root link, 
   in this case the base_link, to combat this we will be including them in the base_footprint instead.
-  Include the following code snippet within <link name="base_footprint"> tag of base_footprint in our URDF." 
+  Include the following code snippet within <link name="base_footprint"> tag of base_footprint in our
+  URDF." 
   -->
 
   <link name="base_footprint">
-    <!--MASS HERE IS TOTALLY INACCURATE BUT WITH THE REAL MASS OF 1500, ROBOT WAS UNABLE TO TURN,
+    <!--MASS
+    HERE IS TOTALLY INACCURATE BUT WITH THE REAL MASS OF 1500, ROBOT WAS UNABLE TO TURN,
     SHOULD BE TUNED IN BOTH NAV2 AND GZ SIM DIFF DRIVE IN THE FUTURE-->
     <xacro:inertial_box mass="50" x="${base_length}" y="${base_width}" z="${base_height}">
       <origin xyz="-0.1 0 ${0.35+0.25}" rpy="0 0 0" />
@@ -42,7 +52,9 @@
   <joint name="base_link_joint" type="fixed">
     <parent link="base_link" />
     <child link="base_footprint" />
-    <!--Set the base_footprint down to wheel axis level + half the wheel radius to be exactly at the bottom-->
+    <!--Set
+    the base_footprint down to wheel axis level + half the wheel radius to be exactly at the
+    bottom-->
     <origin xyz="0 0 -${0.35+0.25}" rpy="0 0 0" />
   </joint>
 
@@ -50,21 +62,21 @@
     <visual>
       <origin xyz="0 0 0" />
       <geometry>
-        <mesh filename="package://forklift_cpp/models/forklift/meshes/body_correct_scale.dae"/>
+        <mesh filename="package://forklift_cpp/models/forklift/meshes/body_correct_scale.dae" />
       </geometry>
     </visual>
     <collision>
       <origin xyz="0 0 0" />
       <geometry>
-        <mesh filename="package://forklift_cpp/models/forklift/meshes/body_correct_scale.dae"/>
+        <mesh filename="package://forklift_cpp/models/forklift/meshes/body_correct_scale.dae" />
       </geometry>
     </collision>
-    
+
   </link>
 
-  <xacro:property name="plate_width" value="0.885"/>
-  <xacro:property name="plate_height" value="1.290"/>
-  <xacro:property name="plate_length" value="0.1"/>
+  <xacro:property name="plate_width" value="0.885" />
+  <xacro:property name="plate_height" value="1.290" />
+  <xacro:property name="plate_length" value="0.1" />
 
 
   <link name="fork_plate">
@@ -72,7 +84,7 @@
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
         <mesh filename="package://forklift_cpp/models/forklift/meshes/fork_plate_correct_scale.dae"
-        scale="1 1 0.77"
+          scale="1 1 0.77"
         />
       </geometry>
     </visual>
@@ -98,11 +110,15 @@
   <xacro:fork id="1" mass="15" scale="1" fork_attach_offsets="0.05 0.2 -0.35"></xacro:fork>
   <xacro:fork id="2" mass="15" scale="1" fork_attach_offsets="0.05 -0.2 -0.35"></xacro:fork>
 
-  <xacro:wheel name="right_wheel" mass="5" scale="1" x="0.8" y="-0.4" z="-0.35" yaw="${pi/2}" axis="-1"></xacro:wheel>
-  <xacro:wheel name="right_wheel_back" mass="5" scale="1" x="-0.65" y="-0.4" z="-0.35" yaw="${pi/2}" axis="-1"></xacro:wheel>
-  <xacro:wheel name="left_wheel" mass="5" scale="1" x="0.8" y="0.4" z="-0.35" yaw="-${pi/2}"  axis="-1"></xacro:wheel>
-  <xacro:wheel name="left_wheel_back" mass="5" scale="1" x="-0.65" y="0.4" z="-0.35" yaw="-${pi/2}" axis="-1"></xacro:wheel>
-  
+  <xacro:wheel name="right_wheel" mass="5" scale="1" x="0.8" y="-0.4" z="-0.35" yaw="${pi/2}"
+    axis="-1"></xacro:wheel>
+  <xacro:wheel name="right_wheel_back" mass="5" scale="1" x="-0.65" y="-0.4" z="-0.35" yaw="${pi/2}"
+    axis="-1"></xacro:wheel>
+  <xacro:wheel name="left_wheel" mass="5" scale="1" x="0.8" y="0.4" z="-0.35" yaw="-${pi/2}"
+    axis="-1"></xacro:wheel>
+  <xacro:wheel name="left_wheel_back" mass="5" scale="1" x="-0.65" y="0.4" z="-0.35" yaw="-${pi/2}"
+    axis="-1"></xacro:wheel>
+
   <gazebo>
     <!--
     <plugin filename="gz-sim-touchplugin-system"
@@ -114,7 +130,7 @@
     </plugin>
   -->
   </gazebo>
-  
+
   <gazebo reference="fork_plate">
     <sensor name='sensor_contact' type='contact'>
       <contact>

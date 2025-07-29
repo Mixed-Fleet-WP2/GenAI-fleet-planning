@@ -1,4 +1,10 @@
 <?xml version="1.0"?>
+
+    <!-- 
+        Copyright (c) Elmeri Pohjois-Koivisto
+        See robot.urdf.xacro for licensing
+    -->
+
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
     <!-- Specify some standard inertial calculations

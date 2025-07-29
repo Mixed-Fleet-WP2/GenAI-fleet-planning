@@ -1,4 +1,10 @@
 <?xml version="1.0"?>
+
+<!-- 
+  Copyright (c) Elmeri Pohjois-Koivisto
+  See robot.urdf.xacro for licensing
+-->
+
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
   <xacro:macro name="fork" params="id mass scale fork_attach_offsets">
@@ -82,21 +88,7 @@
       <origin xyz="${fork_length/2} 0 -${fork_attach_height/2-fork_height/2}" rpy="0 0 0" />
     </joint>
   
-
-
     <!-- https://osrf-migration.github.io/sdformat-gh-pages/#!/osrf/sdformat/issues/131/page/1-->
-
-    <!--
-    <gazebo reference="fork_{id}_joint">
-        <disableFixedJointLumping>true</disableFixedJointLumping>
-    </gazebo>
-
-    <gazebo reference="fork_attach_${id}_joint">
-        <disableFixedJointLumping>true</disableFixedJointLumping>
-    </gazebo>
-    -->
-    
-    
 
   </xacro:macro>
 

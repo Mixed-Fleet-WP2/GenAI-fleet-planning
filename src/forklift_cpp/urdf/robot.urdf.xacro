@@ -1,4 +1,21 @@
 <?xml version="1.0"?>
+
+  <!-- 
+    Copyright (c) Elmeri Pohjois-Koivisto
+
+    Licensed under MIT license (code) and CC-BY-4.0 (models and textures),
+    see LICENSES at the repository root for full license(s)
+
+    Model information:
+      Model name: Forklift low poly
+      Original author: Ricardo Sanchez (https://sketchfab.com/380660711785)
+      Original URL: https://sketchfab.com/3d-models/forklift-low-poly-8ab650b3982243f8b661142de50f79c9
+
+    Changes made: 
+      - Extracted forks, wheels and the body to a separate dae models
+      - Resized wheels, forks and the body to match proportions in meshes/models_src/forklift_spec.pdf
+  -->
+
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="forklift">
 
   <xacro:arg name="namespace" default="" />
