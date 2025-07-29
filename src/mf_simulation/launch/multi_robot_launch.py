@@ -243,6 +243,7 @@ def generate_launch_description():
         "bridges.service_bridge.ros_type_name": "ros_gz_interfaces/srv/SetEntityPose",
         "bridges.service_bridge.gz_req_type_name": "gz.msgs.Pose",
         "bridges.service_bridge.gz_rep_type_name": "gz.msgs.Boolean",
+        "bridges.service_bridge.direction": "BIDIRECTIONALuuu"
         }]
     )
 

@@ -48,7 +48,7 @@ def generate_launch_description():
     use_composition  = LaunchConfiguration('use_composition')
     use_respawn  = LaunchConfiguration('use_respawn')
     map_yaml_file = LaunchConfiguration('map_yaml_file')
-    mqtt_config_file = LaunchConfiguration('mqtt_config_file')
+    forklift_mqtt_config_file = LaunchConfiguration('forklift_mqtt_config_file')
     forklift_gz_bridge_config = LaunchConfiguration("forklift_gz_bridge_config")
     robot_sdf = LaunchConfiguration('robot_sdf')
 
@@ -143,12 +143,12 @@ def generate_launch_description():
     )
 
     declare_mqtt_config_file = DeclareLaunchArgument(
-        name="mqtt_config_file",
+        name="forklift_mqtt_config_file",
         default_value=os.path.join(pkg_share, 'config', 'forklift_mqtt_bridge.yaml')
     )
 
-    mqtt_config_file = ReplaceString(
-        source_file=mqtt_config_file,
+    forklift_mqtt_config_file = ReplaceString(
+        source_file=forklift_mqtt_config_file,
         replacements={'<robot_namespace>':('/', namespace)}
     )
     
@@ -223,7 +223,17 @@ def generate_launch_description():
         executable='mqtt_client',
         namespace=namespace,
         output='screen',
-        parameters=[mqtt_config_file]
+        parameters=[forklift_mqtt_config_file]
+    )
+
+    forklift_controller = Node(
+        package="forklift_cpp",
+        executable="forklift_controller",
+        namespace=namespace,
+        name=namespace,
+        output='screen',
+        parameters=[{'use_sim_time':True}],
+        remappings=remappings
     )
 
     # This is so package:// and model:// is resolved in sdf files
@@ -260,6 +270,7 @@ def generate_launch_description():
 
     ld.add_action(bringup_cmd)
     ld.add_action(spawn_model)
+    ld.add_action(forklift_controller)
 
     return ld
 

@@ -1,8 +1,25 @@
 <?xml version='1.0'?>
+
+<!-- 
+  Name: pallet
+  Original author: MovAi
+  Original URL: https://app.gazebosim.org/MovAi/fuel/models/pallet
+
+  Licensed under Creative Commons Attribution Non Commercial No Derivatives 4.0 International 
+  You may obtain a copy of the License at: https://creativecommons.org/licenses/by-nc-nd/4.0/
+
+  Modifications by Elmeri Pohjois-Koivisto (elmeri.pohjois-koivisto@tuni.fi), 29/07/2025:
+    - Added PosePublisher system plugin
+    - Changed model texture url to reflect the project
+    - Changed the geometry tag by rotating the model's pose 90 degrees
+-->
+
 <sdf version='1.6'>
   <model name='pallet'>
     <!--https://gazebosim.org/api/sim/8/classgz_1_1sim_1_1systems_1_1PosePublisher.html-->
-    <!--PosePublisher does not yet support topic renaming: https://github.com/gazebosim/gz-sim/issues/1585-->-->
+    <!--PosePublisher does not yet support topic renaming: https://github.com/gazebosim/gz-sim/issues/1585
+    So the renaming is done in the global_ros_gz_bridge config
+    -->
     <plugin
         filename="gz-sim-pose-publisher-system"
         name="gz::sim::systems::PosePublisher">
@@ -19,7 +36,7 @@
     <self_collide>false</self_collide>
     <!-- BASE_LINK FRAME -->
     <link name='pallet_base'>
-      <pose frame=''>0 0 0 0 0 0</pose>
+      <pose frame=''>0 0 0 0 0 1.57</pose>
       <collision name="pallet_top_collision">
         <pose>0 0 0.125 0 0 0</pose>
         <geometry>

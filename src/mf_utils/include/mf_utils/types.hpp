@@ -14,11 +14,52 @@ struct ExecutableAction{
     std::unordered_map<std::string, json> command_arguments;
 };
 
+
 //https://json.nlohmann.me/features/arbitrary_types/
 //OR
 //https://json.nlohmann.me/features/arbitrary_types/#simplify-your-life-with-macros
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ExecutableAction, action_id, command_arguments);
+
+struct MoveAction{
+    int action_id;
+    float x;
+    float y;
+    float z;
+    float roll;
+    float pitch;
+    float yaw;
+};
+
+template<typename ObjectAction>
+void from_json(const json& j, ObjectAction& action) {
+    std::cout << "Parsing PickUpAction, JSON: " << j.dump() << std::flush << std::endl;
+    j.at("action_id").get_to(action.action_id);
+    j.at("command_arguments").at("object").get_to(action.object);
+}
+
+struct PickUpAction {
+    int action_id;
+    std::string object;
+};
+
+struct DropAction {
+    int action_id;
+    std::string object;
+};
+
+
+// https://github.com/nlohmann/json/issues/2199
+
+void from_json(const json& j, MoveAction& action) {
+    j.at("action_id").get_to(action.action_id);
+    j.at("command_arguments").at("x").get_to(action.x);
+    j.at("command_arguments").at("y").get_to(action.y);
+    j.at("command_arguments").at("z").get_to(action.z);
+    j.at("command_arguments").at("roll").get_to(action.roll);
+    j.at("command_arguments").at("pitch").get_to(action.pitch);
+    j.at("command_arguments").at("yaw").get_to(action.yaw);
+}
 
 enum FeedbackType{
     SUCCESS = 1,

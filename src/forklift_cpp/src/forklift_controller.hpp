@@ -2,6 +2,7 @@
 #define FORKLIFT_CONTROLLER_HPP
 
 #include <memory>
+#include <chrono>
 
 #include "rclcpp/rclcpp.hpp"
 #include "geometry_msgs/msg/twist.hpp"
@@ -44,8 +45,8 @@ class ForkliftController : public Navigatable {
         void joint_states_callback_(const sensor_msgs::msg::JointState::ConstSharedPtr joint_states);
 
         void move_fork(float z, int action_id);
-        void pick_up(std::string object);
-        void navigate_to_pose(const Position& pos, int action_id) override;
+        void pick_up(const PickUpAction& action);
+        void navigate_to_pose(const MoveAction& action) override;
 
 };
 

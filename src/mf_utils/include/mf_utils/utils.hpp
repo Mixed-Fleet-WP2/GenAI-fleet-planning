@@ -4,6 +4,7 @@
 #include <cmath>
 #include <tuple>
 #include <optional>
+#include <utility>
 #include "mf_utils/types.hpp"
 
 // https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
@@ -55,23 +56,40 @@ std::tuple<float, float, float, float>euler_to_quaternion(double roll, double pi
     return {x,y,z, w};
 }
 
-template <typename T>
-std::optional<ExecutableAction> parse_json(std::string msg_str, T node)
-
+template <typename ToType, typename T>
+std::optional<ToType> parse_json(std::string msg_str, T node)
+ {
+    
     try {
         
-        if (!json::accept(msg_str)){
-            std::cerr << "Received invalid json of the format: " + msg_str << std::flush << std::endl;;
+        if (!json::accept(msg_str)) {
+            RCLCPP_INFO_STREAM(node->get_logger(), "invalid json");
+            std::cerr << "Received invalid json of the format: " + msg_str << std::flush << std::endl;
             return std::nullopt;
         }
-        
+
         json json_object = json::parse(msg_str);
-        // https://json.nlohmann.me/home/exceptions/#jsonexceptiontype_error302
-        ExecutableAction action = json_object.template get<ExecutableAction>();
+        ToType action = json_object.template get<ToType>();
         return action;
-    }catch (json::type_error &e){
+
+    } catch (json::exception &e) {
+        RCLCPP_INFO_STREAM(node->get_logger(), e.what());
         node->send_feedback({-1, ERROR, "Parsing json failed"});
         return std::nullopt;
+    
+    // If json does not have the key
+    } catch (std::out_of_range &e){
+        RCLCPP_INFO_STREAM(node->get_logger(), e.what());
+        node->send_feedback({-1, ERROR, e.what()});
+        return std::nullopt;
+    } catch(std::invalid_argument &e){
+        RCLCPP_INFO_STREAM(node->get_logger(), e.what());
+        // If the object name cannot be converted to string
+        node->send_feedback({-1, ERROR, e.what()});
+        return std::nullopt;
     }
+}
+
+
 
 #endif

@@ -6,7 +6,7 @@ import os
 package_name = 'mf_simulation'
 
 # https://stackoverflow.com/questions/3108285/in-python-script-how-do-i-set-pythonpath
-from build_utils import setup_models
+from mf_utils.build_utils import setup_models
 # Get directory of this file
 #https://stackoverflow.com/questions/4934806/how-can-i-find-scripts-directory
 
@@ -36,10 +36,13 @@ setup(
     maintainer_email='elmeripeekoo@gmail.com',
     description='TODO: Package description',
     license='TODO: License declaration',
-    tests_require=['pytest'],
+    # https://github.com/ros2/ros2_documentation/issues/4727
     entry_points={
         'console_scripts': [
             'interface = mf_simulation.interface.interface:main'
         ],
     },
+    extras_require =  {
+        'test': ['pytest']
+    }
 )

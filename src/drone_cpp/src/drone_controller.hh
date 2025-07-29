@@ -113,8 +113,8 @@ class DroneController: public Navigatable{
         rclcpp::Publisher<TwistMsg>::SharedPtr lift_publisher_;
         std::unique_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
         //https://stackoverflow.com/questions/15117591/why-is-inherited-member-not-allowed
-        void navigate_to_pose(const Position& pos, int action_id) override;
-        void lift(const float z, std::function<void()> send_nav_goal, rclcpp::Time start, int action_id);
+        void navigate_to_pose(const MoveAction& action) override;
+        void lift(rclcpp::Time start, const MoveAction action);
     };
 
 

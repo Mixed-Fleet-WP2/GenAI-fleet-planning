@@ -43,37 +43,20 @@ ForkliftController::ForkliftController() : Navigatable() {
     );
 
     // https://github.com/gazebosim/ros_gz/pull/380
-    object_pose_setter_client_ = this->create_client<ros_gz_interfaces::srv::SetEntityPose>("/set_model_pose");
+
+    // Use the nav callback group with the object pose setter. It does not matter
+    // significantly because the operation returning takes minimal time and
+    // the actions are not used together.
+    object_pose_setter_client_ = this->create_client<ros_gz_interfaces::srv::SetEntityPose>(
+        "/world/warehouse/set_pose",
+        rclcpp::ServicesQoS(), 
+        nav_callback_group_);
 
 
 }
 void ForkliftController::move_fork_callback_(const std_msgs::msg::String::ConstSharedPtr msg) {
 
-    try {
-        const std::string &msg_str = msg->data;
-        
-       auto action = parse_json(msg_str, this);
-        
-        if (!action.has_value()){
-            return;
-        }
-
-        auto args = action->command_arguments;
-
-        float z = args.at("z").get<float>();
-
-        move_fork(z, action->action_id);
-
-        
-    }catch (json::type_error &e){
-        RCLCPP_ERROR_STREAM(get_logger(), e.what());
-    // If json does not have the key
-    }catch (std::out_of_range &e){
-        RCLCPP_ERROR_STREAM(get_logger(), e.what());
-    }catch(std::invalid_argument &e){
-        // If strings cannot be parsed to floats
-        RCLCPP_ERROR_STREAM(get_logger(), e.what());
-    }
+    
 
 }
 
@@ -100,66 +83,134 @@ void ForkliftController::move_fork(float z, int action_id) {
     );
 
 }
-void ForkliftController::navigate_to_pose(const Position &pos, int action_id) {
-    send_nav_goal(pos, action_id);
+void ForkliftController::navigate_to_pose(const MoveAction& action) {
+    send_nav_goal(action);
 };
 
 void ForkliftController::pick_up_callback_(const std_msgs::msg::String::ConstSharedPtr msg){
 
-    try {
-        const std::string &msg_str = msg->data;
-        
-       auto action = parse_json(msg_str, this);
-        
-        if (!action.has_value()){
-            send_feedback({-1, ERROR, "Failed to parse payload. Is the json in correct format?"});
-            return;
-        }
+    const std::string &msg_str = msg->data;
 
-        auto args = action->command_arguments;
-
-        std::string object_name = args.at("object").get<std::string>();
-
-        pick_up(object_name);
-
-        
-    }catch (json::type_error &e){
-        RCLCPP_ERROR_STREAM(get_logger(), e.what());
-    // If json does not have the key
-    }catch (std::out_of_range &e){
-        RCLCPP_ERROR_STREAM(get_logger(), e.what());
-    }catch(std::invalid_argument &e){
-        // If the object name cannot be converted to string
-        RCLCPP_ERROR_STREAM(get_logger(), e.what());
+    auto action = parse_json<PickUpAction>(msg_str, this);
+    
+    if (!action.has_value()){
+        RCLCPP_INFO_STREAM(get_logger(), "RETURNED EMPTY");
+        return;
     }
+
+    pick_up(action.value());
 
 }
 
-void ForkliftController::pick_up(std::string object){
+void ForkliftController::pick_up(const PickUpAction& action){
     
+    const std::string object = action.object;
+    const int id = action.action_id;
+
     try {
     // https://docs.ros.org/en/foxy/Tutorials/Intermediate/Tf2/Writing-A-Tf2-Listener-Cpp.html
-    auto buffer = tf2_ros::Buffer(this->get_clock(), tf2::Duration(tf2::BUFFER_CORE_DEFAULT_CACHE_TIME), this);
+    auto buffer = tf2_ros::Buffer(
+        this->get_clock(), 
+        tf2::Duration(tf2::BUFFER_CORE_DEFAULT_CACHE_TIME), this
+    );
 
     auto tf_listener = tf2_ros::TransformListener(buffer);
 
-    auto transform = buffer.lookupTransform("map", "fork_1", rclcpp::Time(0), rclcpp::Duration::from_seconds(10));
-    auto rotation = transform.transform.rotation;
-    auto translation = transform.transform.translation;
+
+    // Get fork's pose in the map frame i.e. global pose
+    auto transform = buffer.lookupTransform(
+        "map",
+        "fork_1",
+        rclcpp::Time(0),
+        rclcpp::Duration::from_seconds(10)
+    );
+
+    auto fork_global_rotation = transform.transform.rotation;
+    auto [fork_global_x, fork_global_y, fork_global_z] = transform.transform.translation;
+
+    // Service definitions:
+    // https://docs.ros.org/en/iron/p/ros_gz_interfaces/interfaces/srv/SetEntityPose.html
+    // https://docs.ros.org/en/iron/p/ros_gz_interfaces/interfaces/msg/Entity.html
+    auto move_request = std::make_shared<ros_gz_interfaces::srv::SetEntityPose::Request>();
+
+    static const float DISTANCE_BETWEEN_FORK_ORIGINS = 0.4;
+
+    auto position = geometry_msgs::msg::Point();
+    position.x = static_cast<float>(fork_global_x);
+    position.y = static_cast<float>(fork_global_y - DISTANCE_BETWEEN_FORK_ORIGINS / 2);
+    position.z = static_cast<float>(fork_global_z);
+    
+    // See urdf fork_attach_offsets for where these come from
+    //const float FORK_WIDTH = 0.1;
+    
+
+    move_request->pose.orientation = fork_global_rotation;
+    move_request->pose.position = position;
+
+    // Specify the request type with an enum, in this case
+    // a model (object) is moved
+    move_request->entity.type = move_request->entity.MODEL;
+    move_request->entity.name = object;
+
+    auto future = object_pose_setter_client_->async_send_request(
+    move_request);
+    
+    // A timeout is set in case the simulation returns no response (unlikely)
+    // in real scenario this would be checked with sensors inside a timer
+    // but simulation returns a boolean.
+    auto status = future.wait_for(std::chrono::seconds(10));
+    
+    // https://en.cppreference.com/w/cpp/thread/future/wait_for.html
+    if (status == std::future_status::timeout){
+        send_feedback({id, ERROR, "Picking up object " + object + " failed. Timeout exceeded"});
+        return;
+    }
+   
+    auto result= future.get();
+
+    if (!result->success){
+        send_feedback({
+            id,
+            ERROR, 
+            "Picking up object " + object + " failed"
+        });
+    }else{
+        send_feedback({
+            id,
+            SUCCESS, 
+            "Picking up object " + object + " succeeded"
+        });
+    }
 
     }
     catch(const tf2::TransformException & ex) {
-          RCLCPP_INFO_STREAM(get_logger(), "Unable to get transform!");
-          return;
-        }
+        send_feedback({id, ERROR, ex.what()});
+        return;
+    }
 }
 
-void ForkliftController::joint_states_callback_(const sensor_msgs::msg::JointState::ConstSharedPtr joint_states){
+void ForkliftController::joint_states_callback_(
+    const sensor_msgs::msg::JointState::ConstSharedPtr joint_states){
+    
+    // Message definition for JointState:
+    // https://docs.ros2.org/foxy/api/sensor_msgs/msg/JointState.html
 
-    // The topic only publishes the state of the fork_plate joint so the
-    // array's length is always one
-    current_fork_pos_ = joint_states->position[0];
-    RCLCPP_INFO_STREAM(get_logger(), "THE POSITION OF THE FORK IS: " + std::to_string(current_fork_pos_));
+    // The topic only publishes the state of the joints if alphabetic
+    // order so fork_plate is the first item
+    // Just in case this ever changes, add a guard that uses std::find
+    if (joint_states->name.at(0) != "fork_plate_joint"){
+        
+        RCLCPP_INFO_STREAM(get_logger(), "Using std::find");
+        std::vector<std::string> joint_names = joint_states->name;
+
+        const auto iter = std::find(joint_names.begin(), joint_names.end(), "fork_plate_joint");
+        // https://stackoverflow.com/questions/1425349/how-do-i-find-an-element-position-in-stdvector
+        auto joint_index = std::distance(joint_names.begin(), iter);
+        current_fork_pos_ = joint_states->position.at(joint_index);
+
+    }
+
+    current_fork_pos_ = joint_states->position.at(0);
 }
 
 int main(int argc, char * argv[])

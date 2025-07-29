@@ -173,9 +173,9 @@
     </sensor>
   </gazebo>
 
-  <gazebo reference="rplidar_joint">
+  <!-- <gazebo reference="rplidar_joint">
     <preserveFixedJoint>true</preserveFixedJoint>
-  </gazebo>
+  </gazebo> -->
 
   <!--https://medium.com/@alitekes1/gazebo-sim-plugin-and-sensors-for-acquire-data-from-simulation-environment-681d8e2ad853-->
 

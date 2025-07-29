@@ -38,8 +38,8 @@ class Navigatable : public rclcpp::Node {
         rclcpp::Subscription<OdomMsg>::SharedPtr odom_subsciber_;
 
         void odom_received_callback(const std::shared_ptr<OdomMsg> msg);
-        virtual void navigate_to_pose(const Position& pos, int action_id) = 0;
-        void send_nav_goal(const Position& pos, int action_id);
+        virtual void navigate_to_pose(const MoveAction&) = 0;
+        void send_nav_goal(const MoveAction&);
         void nav_result_callback(const rclcpp_action::ClientGoalHandle<NavToPoseAction>::WrappedResult &result, int action_id);
         void nav_feedback_callback(std::shared_ptr<NavToPoseGoalHandle> g, const std::shared_ptr<const NavToPoseAction::Feedback> feedback, int action_id);
         void nav_goal_acknowledged_callback(std::shared_ptr<rclcpp_action::ClientGoalHandle<NavToPoseAction>> goal, int action_id);

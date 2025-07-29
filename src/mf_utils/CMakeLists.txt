@@ -8,6 +8,7 @@ endif()
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_action REQUIRED)
 find_package(nav2_msgs REQUIRED)
+find_package(ament_cmake_python REQUIRED)
 
 add_library(mf_utils SHARED src/navigatable.cpp)
 
@@ -41,5 +42,10 @@ install(
     RUNTIME DESTINATION bin
     INCLUDES DESTINATION include
 )
+
+# The argument to ament_python_install_package() 
+# is the name of the directory alongside the CMakeLists.txt that contains the Python file. 
+# See: https://docs.ros.org/en/foxy/How-To-Guides/Ament-CMake-Python-Documentation.html
+ament_python_install_package(${PROJECT_NAME})
 
 ament_package()
