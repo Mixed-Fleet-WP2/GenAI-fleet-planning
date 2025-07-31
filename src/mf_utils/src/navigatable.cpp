@@ -69,6 +69,7 @@ void Navigatable::nav_goal_acknowledged_callback(std::shared_ptr<NavToPoseGoalHa
 void Navigatable::move_to_pose_callback(
     const std::shared_ptr<std_msgs::msg::String> msg){
     
+    RCLCPP_INFO_STREAM(get_logger(), "RECEIVED NAV REQUEST");
     const std::string &msg_str = msg->data;
     
     auto action = parse_json<MoveAction>(msg_str, this);
@@ -122,7 +123,7 @@ void Navigatable::odom_received_callback(const std::shared_ptr<OdomMsg> msg) {
 ////https://robotics.stackexchange.com/questions/107697/turtlebot4-nav2-how-to-call-action-navigatetopose-from-node-in-cpp
 void Navigatable::nav_result_callback(
     const NavToPoseGoalHandle::WrappedResult &result, int action_id){
-    
+     RCLCPP_INFO_STREAM(get_logger(), "CALLBACKS");
     Feedback feedback = {};
     feedback.action_id = action_id;
     
@@ -130,21 +131,21 @@ void Navigatable::nav_result_callback(
         case rclcpp_action::ResultCode::SUCCEEDED:
             feedback.type = SUCCESS;
             feedback.message = "Navigation succeeded";
-            return;
+            break;
         case rclcpp_action::ResultCode::ABORTED:
             feedback.type = ERROR;
             feedback.message = result.result->error_msg;
-            return;
+            break;
         case rclcpp_action::ResultCode::CANCELED:
             feedback.type = CANCELLED;
             feedback.message = "Goal was canceled";
-            return;
+            break;
         default:
             feedback.type = ERROR;
             feedback.message = "Unknow status code received from navigation";
-            
-            return;
+            break;
         }
+    RCLCPP_INFO_STREAM(get_logger(), "SENDIN NAV FEED");
     send_feedback(feedback);
 }
 

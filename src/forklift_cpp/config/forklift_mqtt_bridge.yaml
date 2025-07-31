@@ -29,32 +29,34 @@
     #ROS topics with the starting slash are considered as global topics (not namespaced by ros2)
       ros2mqtt:
         ros_topics: 
-          - feedback
+          - /feedback
           - /pallet_1_pos
-        feedback:
+        /feedback:
           mqtt_topic: feedback
+          ros_type: std_msgs/msg/String
+          primitive: true
         /pallet_1_pos:
           mqtt_topic: pallet_1_pos
       mqtt2ros:
         mqtt_topics: 
-          - move
-          - drop
-          - pick_up
-          - move_fork
-        move:
-          ros_topic: move
+          - <robot_namespace>/move
+          - <robot_namespace>/drop
+          - <robot_namespace>/pick_up
+          - <robot_namespace>/move_fork
+        <robot_namespace>/move:
+          ros_topic: /<robot_namespace>/move
           ros_type: std_msgs/msg/String
           primitive: true
-        drop:
-          ros_topic: drop
+        <robot_namespace>/drop:
+          ros_topic: /<robot_namespace>/drop
           ros_type: std_msgs/msg/String
           primitive: true
-        pick_up:
-          ros_topic: pick_up
+        <robot_namespace>/pick_up:
+          ros_topic: /<robot_namespace>/pick_up
           ros_type: std_msgs/msg/String
           primitive: true
-        move_fork:
-          ros_topic: move_fork
+        <robot_namespace>/move_fork:
+          ros_topic: /<robot_namespace>/move_fork
           ros_type: std_msgs/msg/String
           primitive: true
         

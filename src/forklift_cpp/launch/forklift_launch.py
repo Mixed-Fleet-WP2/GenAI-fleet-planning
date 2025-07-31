@@ -149,7 +149,7 @@ def generate_launch_description():
 
     forklift_mqtt_config_file = ReplaceString(
         source_file=forklift_mqtt_config_file,
-        replacements={'<robot_namespace>':('/', namespace)}
+        replacements={'<robot_namespace>':(namespace)}
     )
     
     

@@ -121,7 +121,7 @@ class Controller():
             
             # Get a feedback item or block until available
             feedback: Feedback = self.__waiting_feedbacks.get()
-
+            print("RECEIVED", str(feedback), flush=True)
             feedback_type = feedback["type"]
             
             self.__progress_callback.emit(feedback["message"])
