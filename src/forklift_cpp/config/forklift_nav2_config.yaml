@@ -219,7 +219,7 @@ local_costmap:
         cost_scaling_factor: 2.0
         # Half of the longest cross diagonal of the robot, diagonal of box (height, width, length) 2x0.895x2.29
         # See blender files for visualization
-        inflation_radius: 2.5
+        inflation_radius: 1.5
  
       # static_layer:
       #   plugin: "nav2_costmap_2d::StaticLayer"
@@ -290,7 +290,7 @@ global_costmap:
         cost_scaling_factor: 2.0
         # Half of the longest cross diagonal of the robot, diagonal of box (height, width, length) 2x0.895x2.29
         # See blender files for visualization
-        inflation_radius: 2.5
+        inflation_radius: 1.5
       always_send_full_costmap: True
 
 # The yaml_filename does not need to be specified since it going to be set by defaults in launch.

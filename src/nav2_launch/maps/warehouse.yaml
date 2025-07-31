@@ -1,4 +1,4 @@
-image: warehouse.pgm
+image: warehouse_simple.pgm
 mode: trinary
 resolution: 0.03
 origin: [-15.1, -25, 0]
