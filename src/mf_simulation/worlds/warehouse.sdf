@@ -83,7 +83,7 @@
       <!--See setting environment variable in multi_robot_launch.py-->
       <uri>model://euro_pallet</uri>
       <name>pallet_1</name>
-      <pose>11.0 -5.0 0.1 0 0 1.57</pose>
+      <pose>14.0 -10.0 0.1 0 0 1.57</pose>
     </include>
 
     <!-- Shelves -->

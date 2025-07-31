@@ -94,7 +94,7 @@
   </library_effects>
   <library_images>
     <image id="Image_0_png_002" name="Image_0_png_002">
-      <init_from>Image_0.png.002.png</init_from>
+      <init_from>Image_0.png</init_from>
     </image>
   </library_images>
   <library_materials>

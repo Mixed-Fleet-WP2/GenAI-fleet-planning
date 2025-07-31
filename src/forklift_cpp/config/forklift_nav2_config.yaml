@@ -98,13 +98,16 @@ controller_server:
       stateful: True
       plugin: "nav2_controller::SimpleGoalChecker"
       xy_goal_tolerance: 0.5 #Increase or decrease this value to change the distance to the goal
-      yaw_goal_tolerance: 0.1
+      yaw_goal_tolerance: 0.05
     # DWB parameters
     FollowPath:
+      #plugin: "nav2_rotation_shim_controller::RotationShimController"
       plugin: "dwb_core::DWBLocalPlanner"
       debug_trajectory_details: True
-      min_vel_x: 0.0
-      min_vel_y: 0.0
+      # Allow robot to move in reverse
+      # See: https://robotics.stackexchange.com/questions/109841/ros2-navigation2-local-plan-does-not-avoid-obstacle
+      min_vel_x: -0.3
+      min_vel_y: -0.3
       max_vel_x: 2.0 #change this to affect the speed of the robot
       max_vel_y: 0.0
       max_vel_theta: 2.0 #Increase or decrease this value to change the speed of the robot (rotation)
@@ -214,7 +217,9 @@ local_costmap:
         #The higher the value, the faster the cost decays
         #Credit to: https://automaticaddison.com/ros-2-navigation-tuning-guide-nav2/
         cost_scaling_factor: 2.0
-        inflation_radius: 1.0 #Half of the longest cross diagonal of the robot, diagonal of box 3.29x2.0x0.895=2.0
+        # Half of the longest cross diagonal of the robot, diagonal of box (height, width, length) 2x0.895x2.29
+        # See blender files for visualization
+        inflation_radius: 2.5
  
       # static_layer:
       #   plugin: "nav2_costmap_2d::StaticLayer"
@@ -283,7 +288,9 @@ global_costmap:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 2.0
-        inflation_radius: 0.5 #Half of the longest cross diagonal of the robot, diagonal of box 3.29x2.0x0.895
+        # Half of the longest cross diagonal of the robot, diagonal of box (height, width, length) 2x0.895x2.29
+        # See blender files for visualization
+        inflation_radius: 2.5
       always_send_full_costmap: True
 
 # The yaml_filename does not need to be specified since it going to be set by defaults in launch.
