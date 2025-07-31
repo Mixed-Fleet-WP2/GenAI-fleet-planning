@@ -1,0 +1,6 @@
+{
+    "build": {
+        # https://discourse.openrobotics.org/t/optimizations-cpp-ros2-node-colcon-build/41048
+        "cmake-args": ["-DCMAKE_BUILD_TYPE=Release"]
+    }
+}

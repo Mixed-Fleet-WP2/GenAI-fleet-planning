@@ -32,6 +32,7 @@ endif()
 
 #https://docs.ros.org/en/foxy/How-To-Guides/Ament-CMake-Documentation.html
 add_executable(forklift_controller src/forklift_controller.cpp)
+
 ament_target_dependencies(forklift_controller rclcpp tf2_ros sensor_msgs mf_utils ros_gz_interfaces)
 
 install(TARGETS 
