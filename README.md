@@ -1,23 +1,12 @@
-# FORKLIFT AI SIMULATION USING ROS2 AND GAZEBO HARMONIC
+# Mixed Fleet WP2
 
-## Credits
+## Programming robotic fleets utilising large language models
 
-Model used:
+This repository contains research code for the Mixed Fleet project
+researched at Tampere University. The work is associated
+with **Work Package 2: Programming Multi-Machine Fleets (WP2)** of the project which you can read more about [here](https://blogs.tuni.fi/cs/projects/mixed-fleet-cross-disciplinary-work-towards-seamless-collaboration-between-mobile-work-machines-and-humans/). The aim of the code in this repository is to provide a proof-of-concept about leveraging Large Language Models in the programming of robotic fleets. Blog post concerning the subject can be read [here](https://blogs.tuni.fi/cs/projects/first-steps-towards-programming-mixed-fleet-systems-by-domain-experts/).
 
-“Forklift low poly” by Ricardo Sanchez (https://sketchfab.com/3d-models/forklift-low-poly-8ab650b3982243f8b661142de50f79c9), licensed under a CC BY 2.0 licence.
+**This document will be continously updated during the course of the project**
 
-The wheels, the body and the plate to which the forks are attached to were separated in order
-to be used as individual meshes in the urdf. The forks were removed and replaced with simple shapes.
 
-The cardboard model used by Open Robotics. If you use the model, cite as following:
 
-<cite> @online{GazeboFuel-german-Cardboard-Box,
-	title={Cardboard Box},
-	organization={Open Robotics},
-	date={2018},
-	month={January},
-	day={2},
-	author={german},
-	url={https://fuel.gazebosim.org/1.0/german/models/Cardboard Box},
-}
-</cite>
