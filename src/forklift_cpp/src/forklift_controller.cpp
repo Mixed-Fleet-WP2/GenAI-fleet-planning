@@ -65,13 +65,61 @@ void ForkliftController::move_fork_callback_(const std_msgs::msg::String::ConstS
         return;
     }
 
+    //Async action because of timer
     move_fork(action.value());
 
 }
 
+void ForkliftController::drop(const ObjectAction &action){
+
+    const int id = action.action_id;
+    const std::string object = action.object;
+
+
+    // See fork_attach_offsets in robot_core.xacro for where these come from
+    // Simply, this is the straight distance from the link origin
+    // of fork_1 to fork_2
+    static const float DISTANCE_BETWEEN_FORK_ORIGINS = 0.4;
+    static const float DISTANCE_FROM_FORK_1_TO_CENTER = DISTANCE_BETWEEN_FORK_ORIGINS / 2;
+    //Check forklift.urdf.xacro and fork.xacro for what these come from
+    static const float FORK_LENGTH = 1.0;
+
+    //Assume everything is on pallets with dimensions 1.2x0.8x0.144m (see euro_pallet model)
+    const float PALLET_LENGTH = 0.8;
+
+    const bool drop_success = move_object_relative_to_fork(
+        object, 
+        (FORK_LENGTH / 2 + PALLET_LENGTH / 2),
+        -DISTANCE_FROM_FORK_1_TO_CENTER
+    );
+
+    if (!drop_success){
+        send_feedback({
+            id,
+            ERROR, 
+            "Picking up object " + object + " failed"
+        });
+    
+    }else{
+        send_feedback({
+            id,
+            SUCCESS, 
+            "Picking up object " + object + " succeeded"
+        });
+    }
+}
+
+
 void ForkliftController::drop_callback_(const std_msgs::msg::String::ConstSharedPtr msg){
 
+    const std::string &msg_str = msg->data;
+    auto action = parse_json<ObjectAction>(msg_str, this);
 
+    if (!action.has_value()){
+        return;
+    }
+
+    drop(action.value());
 
 
 
@@ -106,6 +154,60 @@ void ForkliftController::move_fork(const JointPositionAction& action) {
 
 void ForkliftController::navigate_to_pose(const MoveAction& action) {
     send_nav_goal(action);
+}
+
+/**
+ * @brief Utility function to move/teleport an object relative
+ * to a forklift's fork number one. 
+ * @note Without offsets, the object is move to the center
+ * of the fork_1's coordinate frame (see forklift.urdf.xacro and fork.xacro for details)
+ */
+bool ForkliftController::move_object_relative_to_fork(
+        const std::string object, float offset_x = 0.0, 
+        float offset_y = 0.0, float offset_z = 0.0) {
+
+    auto pose_in_frame = get_coords_in_other_frame(this, "map", "fork_1");
+
+    if (!pose_in_frame.has_value()){
+        return false;
+    }
+
+    auto [translation, fork_global_rotation] = pose_in_frame.value();
+    auto [fork_global_x, fork_global_y, fork_global_z] = translation;
+
+    // Service definitions:
+    // https://docs.ros.org/en/iron/p/ros_gz_interfaces/interfaces/srv/SetEntityPose.html
+    // https://docs.ros.org/en/iron/p/ros_gz_interfaces/interfaces/msg/Entity.html
+    auto move_request = std::make_shared<ros_gz_interfaces::srv::SetEntityPose::Request>();
+
+    auto position = geometry_msgs::msg::Point();
+    position.x = static_cast<float>(fork_global_x + offset_x);
+    position.y = static_cast<float>(fork_global_y + offset_y);
+    position.z = static_cast<float>(fork_global_z + offset_z);
+    
+    move_request->pose.orientation = fork_global_rotation;
+    move_request->pose.position = position;
+
+    // Specify the request type with an enum, in this case
+    // a model (object) is moved
+    move_request->entity.type = move_request->entity.MODEL;
+    move_request->entity.name = object;
+
+    auto future = object_pose_setter_client_->async_send_request(
+    move_request);
+    
+    // A timeout is set in case the simulation returns no response (unlikely)
+    // in real scenario this would be checked with sensors inside a timer
+    // but simulation returns a boolean.
+    auto status = future.wait_for(std::chrono::seconds(10));
+    
+    // https://en.cppreference.com/w/cpp/thread/future/wait_for.html
+    if (status == std::future_status::timeout){
+        return false;
+    }
+
+    return future.get()->success;
+
 };
 
 void ForkliftController::pick_up_callback_(const std_msgs::msg::String::ConstSharedPtr msg){
@@ -127,58 +229,21 @@ void ForkliftController::pick_up(const ObjectAction& action){
     const std::string object = action.object;
     const int id = action.action_id;
 
-    auto pose_in_frame = get_coords_in_other_frame(this, "map", "fork_1");
-
-    if (!pose_in_frame .has_value()){
-        return;
-    }
-
-    auto [translation, fork_global_rotation] = pose_in_frame .value();
-    auto [fork_global_x, fork_global_y, fork_global_z] = translation;
-
-    // Service definitions:
-    // https://docs.ros.org/en/iron/p/ros_gz_interfaces/interfaces/srv/SetEntityPose.html
-    // https://docs.ros.org/en/iron/p/ros_gz_interfaces/interfaces/msg/Entity.html
-    auto move_request = std::make_shared<ros_gz_interfaces::srv::SetEntityPose::Request>();
-
     // See fork_attach_offsets in robot_core.xacro for where these come from
+    // Simply, this is the straight distance from the link origin
+    // of fork_1 to fork_2
     static const float DISTANCE_BETWEEN_FORK_ORIGINS = 0.4;
+    static const float DISTANCE_FROM_FORK_1_TO_CENTER = DISTANCE_BETWEEN_FORK_ORIGINS / 2;
 
-    auto position = geometry_msgs::msg::Point();
-    position.x = static_cast<float>(fork_global_x);
-    position.y = static_cast<float>(fork_global_y - DISTANCE_BETWEEN_FORK_ORIGINS / 2);
-    position.z = static_cast<float>(fork_global_z);
-    
-    move_request->pose.orientation = fork_global_rotation;
-    move_request->pose.position = position;
-
-    // Specify the request type with an enum, in this case
-    // a model (object) is moved
-    move_request->entity.type = move_request->entity.MODEL;
-    move_request->entity.name = object;
-
-    auto future = object_pose_setter_client_->async_send_request(
-    move_request);
-    
-    // A timeout is set in case the simulation returns no response (unlikely)
-    // in real scenario this would be checked with sensors inside a timer
-    // but simulation returns a boolean.
-    auto status = future.wait_for(std::chrono::seconds(10));
-    
-    // https://en.cppreference.com/w/cpp/thread/future/wait_for.html
-    if (status == std::future_status::timeout){
-        send_feedback({id, ERROR, "Picking up object " + object + " failed. Timeout exceeded"});
-        return;
-    }
+    const bool pick_up_success = move_object_relative_to_fork(object, 0.0, -DISTANCE_FROM_FORK_1_TO_CENTER, 0.0);
    
-    auto result= future.get();
-
-    if (!result->success){
+    if (!pick_up_success){
         send_feedback({
             id,
             ERROR, 
             "Picking up object " + object + " failed"
         });
+    
     }else{
         send_feedback({
             id,
@@ -188,6 +253,7 @@ void ForkliftController::pick_up(const ObjectAction& action){
     }
 
 }
+
 
 void ForkliftController::joint_states_callback_(
     const sensor_msgs::msg::JointState::ConstSharedPtr joint_states){

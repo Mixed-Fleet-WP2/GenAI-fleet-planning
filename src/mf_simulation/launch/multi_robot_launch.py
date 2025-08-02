@@ -41,7 +41,6 @@ def create_robot_instances(context, *args, **kwargs):
     nav_instances_cmds = []
     
     for robot in robots:
-        print("ROBOT COUNTER", flush=True)
         robot_name = robot["name"]
         robot_package = robot["package"]
         launch_file = robot["launch_file"]

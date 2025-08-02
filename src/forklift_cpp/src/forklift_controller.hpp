@@ -47,7 +47,9 @@ class ForkliftController : public Navigatable {
         void joint_states_callback_(const sensor_msgs::msg::JointState::ConstSharedPtr joint_states);
         void move_fork(const JointPositionAction& action);
         void pick_up(const ObjectAction& action);
+        void drop(const ObjectAction& action);
         void navigate_to_pose(const MoveAction& action) override;
+        bool move_object_relative_to_fork(const std::string object, float offset_x = 0.0, float offset_y = 0.0, float offset_z = 0.0);
 
 };
 
