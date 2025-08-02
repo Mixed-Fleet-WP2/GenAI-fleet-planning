@@ -6,6 +6,13 @@
 #include <optional>
 #include <utility>
 #include "mf_utils/types.hpp"
+#include "tf2_ros/transform_broadcaster.h"
+#include "tf2_ros/transform_listener.h"
+#include "tf2_ros/buffer.h"
+#include "geometry_msgs/msg/transform_stamped.h"
+#include <string>
+#include "geometry_msgs/msg/vector3.h"
+#include "geometry_msgs/msg/quaternion.h"
 
 // https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
 
@@ -88,6 +95,48 @@ std::optional<ToType> parse_json(std::string msg_str, T node)
         node->send_feedback({-1, ERROR, e.what()});
         return std::nullopt;
     }
+}
+
+/**
+ * Get a transform from one coordinate frame to another (i.e. express the coordinates in
+ * one coordinate frame in another). 
+ * 
+ * @param node A rclcpp::Node instance
+ * @param target_frame Coordinate frame to convert to
+ * @param source_frame Coordinate frame to convert from
+ * 
+ * @return Pair where the first item is translation and second rotation. Nullopt if
+ * transform could not be retrieved.
+ */
+template <typename NodeType>
+std::optional<std::pair<geometry_msgs::msg::Vector3, geometry_msgs::msg::Quaternion>> get_coords_in_other_frame(NodeType node,
+    const std::string& target_frame, const std::string& source_frame){
+
+    try{
+        // https://docs.ros.org/en/foxy/Tutorials/Intermediate/Tf2/Writing-A-Tf2-Listener-Cpp.html
+        auto buffer = tf2_ros::Buffer(
+            node->get_clock(), 
+            tf2::Duration(tf2::BUFFER_CORE_DEFAULT_CACHE_TIME), this
+        );
+
+        auto tf_listener = tf2_ros::TransformListener(buffer);
+
+        // Get fork's pose in the map frame i.e. global pose
+        auto transform = buffer.lookupTransform(
+            target_frame,
+            source_frame,
+            rclcpp::Time(0),
+            rclcpp::Duration::from_seconds(10)
+        );
+
+        const auto translation_and_rotation = std::make_pair(transform.transform.translation, transform.transform.rotation);
+        return translation_and_rotation;
+
+    }catch(const tf2::TransformException & ex) {
+        node->send_feedback({id, ERROR, ex.what()});
+        return std::nullopt;
+    }
+
 }
 
 

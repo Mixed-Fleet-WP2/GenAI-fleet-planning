@@ -69,8 +69,12 @@ void ForkliftController::move_fork_callback_(const std_msgs::msg::String::ConstS
 
 }
 
-void ForkliftController::drop_callback_(const std_msgs::msg::String::ConstSharedPtr msg)
-{
+void ForkliftController::drop_callback_(const std_msgs::msg::String::ConstSharedPtr msg){
+
+
+
+
+
 }
 
 void ForkliftController::move_fork(const JointPositionAction& action) {
@@ -78,7 +82,7 @@ void ForkliftController::move_fork(const JointPositionAction& action) {
     auto msg = std_msgs::msg::Float64();
     msg.data = action.position;
     fork_control_publisher_->publish(msg);
-    RCLCPP_INFO_STREAM(get_logger(), "Movement");
+
     // Periodically check if the desired height has been reached
     // (simulates sensor input/hardware interrrupts)
     lift_timer_ = this->create_wall_timer(std::chrono::milliseconds(100),
@@ -123,26 +127,15 @@ void ForkliftController::pick_up(const ObjectAction& action){
     const std::string object = action.object;
     const int id = action.action_id;
 
-    try {
-    // https://docs.ros.org/en/foxy/Tutorials/Intermediate/Tf2/Writing-A-Tf2-Listener-Cpp.html
-    auto buffer = tf2_ros::Buffer(
-        this->get_clock(), 
-        tf2::Duration(tf2::BUFFER_CORE_DEFAULT_CACHE_TIME), this
-    );
+    
 
-    auto tf_listener = tf2_ros::TransformListener(buffer);
+    auto result = get_coords_in_other_frame(this, "map", "fork_1");
+    if (!result.has_value()){
+        return;
+    }
 
-
-    // Get fork's pose in the map frame i.e. global pose
-    auto transform = buffer.lookupTransform(
-        "map",
-        "fork_1",
-        rclcpp::Time(0),
-        rclcpp::Duration::from_seconds(10)
-    );
-
-    auto fork_global_rotation = transform.transform.rotation;
-    auto [fork_global_x, fork_global_y, fork_global_z] = transform.transform.translation;
+    auto [translation, fork_global_rotation] = result.value();
+    auto [fork_global_x, fork_global_y, fork_global_z] = translation;
 
     // Service definitions:
     // https://docs.ros.org/en/iron/p/ros_gz_interfaces/interfaces/srv/SetEntityPose.html
@@ -195,11 +188,6 @@ void ForkliftController::pick_up(const ObjectAction& action){
         });
     }
 
-    }
-    catch(const tf2::TransformException & ex) {
-        send_feedback({id, ERROR, ex.what()});
-        return;
-    }
 }
 
 void ForkliftController::joint_states_callback_(
