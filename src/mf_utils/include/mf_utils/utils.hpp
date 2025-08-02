@@ -38,10 +38,10 @@ std::tuple<float, float, float> quaternion_to_euler(float x, float y, float z, f
 // 
 
 /**
- * Convert roll, pitch and yaw in euler to quaternion
- * @param roll roll in radians
- * @param pitch pitch in radians
- * @param yaw yaw in radians
+ * @brief Convert roll, pitch and yaw in euler to quaternion
+ * @arg roll roll in radians
+ * @arg pitch pitch in radians
+ * @arg yaw yaw in radians
  * @return tuple that contains x, y, z, w parts of the quaternion in this order
  */
 std::tuple<float, float, float, float>euler_to_quaternion(double roll, double pitch, double yaw) // roll (x), pitch (y), yaw (z), angles are in radians
@@ -63,8 +63,18 @@ std::tuple<float, float, float, float>euler_to_quaternion(double roll, double pi
     return {x,y,z, w};
 }
 
-template <typename ToType, typename T>
-std::optional<ToType> parse_json(std::string msg_str, T node)
+
+/**
+ * Parses a json-formatted string into a type specified 
+ * by caller.
+ * @arg msg_str Json formatted string
+ * @arg node Ros2 node that implements send_feedback
+ * @tparam ToType The type to convert the string to
+ * @tparam NodeLike Object that inherits from
+ * rclcpp::Node and implements send_feedback
+ */
+template <typename ToType, typename NodeLike>
+std::optional<ToType> parse_json(std::string msg_str, NodeLike node)
  {
     
     try {
@@ -101,22 +111,24 @@ std::optional<ToType> parse_json(std::string msg_str, T node)
  * Get a transform from one coordinate frame to another (i.e. express the coordinates in
  * one coordinate frame in another). 
  * 
- * @param node A rclcpp::Node instance
- * @param target_frame Coordinate frame to convert to
- * @param source_frame Coordinate frame to convert from
+ * @arg node A rclcpp::Node instance
+ * @arg target_frame Coordinate frame to convert to
+ * @arg source_frame Coordinate frame to convert from
+ * @tparam NodeLike Object that inherits from rclcpp::Node. Needed
+ * to infer the namespace the coordinate frames live in
  * 
  * @return Pair where the first item is translation and second rotation. Nullopt if
  * transform could not be retrieved.
  */
-template <typename NodeType>
-std::optional<std::pair<geometry_msgs::msg::Vector3, geometry_msgs::msg::Quaternion>> get_coords_in_other_frame(NodeType node,
+template <typename NodeLike>
+std::optional<std::pair<geometry_msgs::msg::Vector3, geometry_msgs::msg::Quaternion>> get_coords_in_other_frame(NodeLike node,
     const std::string& target_frame, const std::string& source_frame){
 
     try{
         // https://docs.ros.org/en/foxy/Tutorials/Intermediate/Tf2/Writing-A-Tf2-Listener-Cpp.html
         auto buffer = tf2_ros::Buffer(
             node->get_clock(), 
-            tf2::Duration(tf2::BUFFER_CORE_DEFAULT_CACHE_TIME), this
+            tf2::Duration(tf2::BUFFER_CORE_DEFAULT_CACHE_TIME), node
         );
 
         auto tf_listener = tf2_ros::TransformListener(buffer);
@@ -133,12 +145,9 @@ std::optional<std::pair<geometry_msgs::msg::Vector3, geometry_msgs::msg::Quatern
         return translation_and_rotation;
 
     }catch(const tf2::TransformException & ex) {
-        node->send_feedback({id, ERROR, ex.what()});
         return std::nullopt;
     }
 
 }
-
-
 
 #endif

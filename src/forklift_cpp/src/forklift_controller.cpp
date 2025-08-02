@@ -127,14 +127,13 @@ void ForkliftController::pick_up(const ObjectAction& action){
     const std::string object = action.object;
     const int id = action.action_id;
 
-    
+    auto pose_in_frame = get_coords_in_other_frame(this, "map", "fork_1");
 
-    auto result = get_coords_in_other_frame(this, "map", "fork_1");
-    if (!result.has_value()){
+    if (!pose_in_frame .has_value()){
         return;
     }
 
-    auto [translation, fork_global_rotation] = result.value();
+    auto [translation, fork_global_rotation] = pose_in_frame .value();
     auto [fork_global_x, fork_global_y, fork_global_z] = translation;
 
     // Service definitions:
@@ -142,7 +141,7 @@ void ForkliftController::pick_up(const ObjectAction& action){
     // https://docs.ros.org/en/iron/p/ros_gz_interfaces/interfaces/msg/Entity.html
     auto move_request = std::make_shared<ros_gz_interfaces::srv::SetEntityPose::Request>();
 
-    // See urdf fork_attach_offsets for where these come from
+    // See fork_attach_offsets in robot_core.xacro for where these come from
     static const float DISTANCE_BETWEEN_FORK_ORIGINS = 0.4;
 
     auto position = geometry_msgs::msg::Point();

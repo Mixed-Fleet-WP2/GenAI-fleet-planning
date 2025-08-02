@@ -132,7 +132,7 @@ def generate_launch_description():
 
     declare_robot_sdf = DeclareLaunchArgument(
         name="robot_sdf",
-        default_value=os.path.join(pkg_share, 'urdf', 'robot.urdf.xacro'),
+        default_value=os.path.join(pkg_share, 'urdf', 'forklift.urdf.xacro'),
         description="Path to the robot sdf/urdf"
     )
 
