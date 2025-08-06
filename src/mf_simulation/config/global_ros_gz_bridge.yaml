@@ -13,6 +13,13 @@
   ros_type_name: "tf2_msgs/msg/TFMessage"
   direction: GZ_TO_ROS
 
+- gz_topic_name: "/model/pallet_2/pose"
+  ros_topic_name: "/object_state_updates_gz"
+  gz_type_name: "gz.msgs.Pose_V"
+  ros_type_name: "tf2_msgs/msg/TFMessage"
+  direction: GZ_TO_ROS
+
+
 # - gz_topic_name: "/world/warehouse/set_pose"
 #   gz_type_name: "gz.msgs.Pose@gz.msgs.Boolean"
 #   ros_topic_name: "/set_model_pose"

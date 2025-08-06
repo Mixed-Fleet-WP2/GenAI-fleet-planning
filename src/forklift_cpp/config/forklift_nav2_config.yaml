@@ -101,20 +101,20 @@ controller_server:
       yaw_goal_tolerance: 0.05
     # DWB parameters
     FollowPath:
-      #plugin: "nav2_rotation_shim_controller::RotationShimController"
-      plugin: "dwb_core::DWBLocalPlanner"
+      plugin: "nav2_rotation_shim_controller::RotationShimController"
+      primary_controller: "dwb_core::DWBLocalPlanner"
       debug_trajectory_details: True
       # Allow robot to move in reverse
       # See: https://robotics.stackexchange.com/questions/109841/ros2-navigation2-local-plan-does-not-avoid-obstacle
       min_vel_x: -0.3
       min_vel_y: -0.3
-      max_vel_x: 2.0 #change this to affect the speed of the robot
+      max_vel_x: 1.5 #change this to affect the speed of the robot
       max_vel_y: 0.0
-      max_vel_theta: 2.0 #Increase or decrease this value to change the speed of the robot (rotation)
-      min_speed_xy: 0.0  #?
-      max_speed_xy: 2.0 #Increase or decrease this value to change the speed of the robot
+      max_vel_theta: 1.0 #Increase or decrease this value to change the speed of the robot (rotation)
+      min_speed_xy: -1.0  #?
+      max_speed_xy: 1.5 #Increase or decrease this value to change the speed of the robot
       min_speed_theta: 0.0
-      acc_lim_x: 2.5
+      acc_lim_x: 2.0
       acc_lim_y: 0.0
       acc_lim_theta: 3.2
       decel_lim_x: -2.5

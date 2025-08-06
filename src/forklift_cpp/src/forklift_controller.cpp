@@ -163,8 +163,8 @@ void ForkliftController::navigate_to_pose(const MoveAction& action) {
  * of the fork_1's coordinate frame (see forklift.urdf.xacro and fork.xacro for details)
  */
 bool ForkliftController::move_object_relative_to_fork(
-        const std::string object, float offset_x = 0.0, 
-        float offset_y = 0.0, float offset_z = 0.0) {
+        const std::string object, float offset_x, 
+        float offset_y, float offset_z) {
 
     auto pose_in_frame = get_coords_in_other_frame(this, "map", "fork_1");
 
