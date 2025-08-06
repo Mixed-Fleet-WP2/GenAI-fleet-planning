@@ -47,7 +47,7 @@
             to document the intention.
             -->
             <self_collide>false</self_collide>
-
+            <static>true</static>
             <visual name="visual">
                 <geometry>
                     <mesh>
@@ -159,7 +159,7 @@
             </collision>
 
             <inertial>
-                <mass>25.0</mass>
+                <mass>1.0</mass>
                 <inertia>
                     <ixx>1.3765</ixx>
                     <ixy>0.0</ixy>

@@ -99,14 +99,14 @@ controller_server:
       plugin: "nav2_controller::SimpleGoalChecker"
       xy_goal_tolerance: 0.5 #Increase or decrease this value to change the distance to the goal
       # About 1.4 degrees of difference in orientation
-      yaw_goal_tolerance: 0.03
+      yaw_goal_tolerance: 0.1
     # DWB parameters
     FollowPath:
       #plugin: "nav2_rotation_shim_controller::RotationShimController"
       plugin: "nav2_regulated_pure_pursuit_controller::RegulatedPurePursuitController"
-      desired_linear_vel: 1.3
-      max_linear_accel: 2.5
-      max_linear_decel: 2.5
+      desired_linear_vel: 1.2
+      max_linear_accel: 2.0
+      max_linear_decel: 2.0
       # THIS NEEDS TO TAKE INTO ACCOUNT THE ROBOT SIZE
       # The robot is 2.345m long, lidar is at the center of the robot, so set
       # the lookahead distance to be ~1.25 times the robot length
@@ -125,7 +125,8 @@ controller_server:
       use_cost_regulated_linear_velocity_scaling: false
       regulated_linear_scaling_min_radius: 0.75
       regulated_linear_scaling_min_speed: 0.25
-      use_rotate_to_heading: true
+      use_rotate_to_heading: true # !!!
+      allow_reversing: false
       rotate_to_heading_min_angle: 0.5
       max_angular_accel: 1.75
       cost_scaling_dist: 0.3

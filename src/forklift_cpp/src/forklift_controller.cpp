@@ -51,9 +51,22 @@ ForkliftController::ForkliftController() : Navigatable() {
         "/world/warehouse/set_pose",
         rclcpp::ServicesQoS(), 
         nav_callback_group_);
+    
+    // Use the nav callback group with the object pose setter. It does not matter
+    // significantly because the operation returning takes minimal time and
+    // the actions are not used together.
+    entity_delete_client_ = this->create_client<ros_gz_interfaces::srv::DeleteEntity>(
+        "/world/warehouse/remove",
+        rclcpp::ServicesQoS(), 
+        nav_callback_group_);
 
+    entity_spawn_client_ = this->create_client<ros_gz_interfaces::srv::SpawnEntity>(
+        "/world/warehouse/create",
+        rclcpp::ServicesQoS(), 
+        nav_callback_group_);
 
-}
+    }
+    
 void ForkliftController::move_fork_callback_(const std_msgs::msg::String::ConstSharedPtr msg) {
 
     RCLCPP_INFO_STREAM(get_logger(), "RECEIVED MOVE FORK");
@@ -89,6 +102,7 @@ void ForkliftController::drop(const ObjectAction &action){
 
     const bool drop_success = move_object_relative_to_fork(
         object, 
+        false,
         (FORK_LENGTH / 2 + PALLET_LENGTH / 2),
         -DISTANCE_FROM_FORK_1_TO_CENTER
     );
@@ -131,6 +145,8 @@ void ForkliftController::move_fork(const JointPositionAction& action) {
     msg.data = action.position;
     fork_control_publisher_->publish(msg);
 
+    auto desired_pos = 
+
     // Periodically check if the desired height has been reached
     // (simulates sensor input/hardware interrrupts)
     lift_timer_ = this->create_wall_timer(std::chrono::milliseconds(100),
@@ -163,8 +179,10 @@ void ForkliftController::navigate_to_pose(const MoveAction& action) {
  * of the fork_1's coordinate frame (see forklift.urdf.xacro and fork.xacro for details)
  */
 bool ForkliftController::move_object_relative_to_fork(
-        const std::string object, float offset_x, 
-        float offset_y, float offset_z) {
+        const std::string object, 
+        bool from_static_to_non_static, float offset_x, 
+        float offset_y, float offset_z
+        ) {
 
     auto pose_in_frame = get_coords_in_other_frame(this, "map", "fork_1");
 
@@ -175,19 +193,21 @@ bool ForkliftController::move_object_relative_to_fork(
     auto [translation, fork_global_rotation] = pose_in_frame.value();
     auto [fork_global_x, fork_global_y, fork_global_z] = translation;
 
-    // Service definitions:
-    // https://docs.ros.org/en/iron/p/ros_gz_interfaces/interfaces/srv/SetEntityPose.html
-    // https://docs.ros.org/en/iron/p/ros_gz_interfaces/interfaces/msg/Entity.html
-    auto move_request = std::make_shared<ros_gz_interfaces::srv::SetEntityPose::Request>();
-
     auto position = geometry_msgs::msg::Point();
     position.x = static_cast<float>(fork_global_x + offset_x);
     position.y = static_cast<float>(fork_global_y + offset_y);
     position.z = static_cast<float>(fork_global_z + offset_z);
+
+    RCLCPP_INFO_STREAM(get_logger(), "New x: " << position.x);
+    RCLCPP_INFO_STREAM(get_logger(), "New y: " << position.y);
+    RCLCPP_INFO_STREAM(get_logger(), "New z: " << position.z);
+
+    // Service definitions:
+    // https://docs.ros.org/en/iron/p/ros_gz_interfaces/interfaces/srv/SetEntityPose.html
+    // https://docs.ros.org/en/iron/p/ros_gz_interfaces/interfaces/msg/Entity.html
+    auto move_request = std::make_shared<ros_gz_interfaces::srv::SetEntityPose::Request>();
     
     move_request->pose.orientation = fork_global_rotation;
-    const auto [roll, pitch, yaw] = quaternion_to_euler(fork_global_rotation.x, fork_global_rotation.y, fork_global_rotation.z, fork_global_rotation.w);
-    RCLCPP_INFO_STREAM(get_logger(), "The yaw is: " + std::to_string(yaw)); 
     move_request->pose.position = position;
 
     // Specify the request type with an enum, in this case
@@ -195,20 +215,21 @@ bool ForkliftController::move_object_relative_to_fork(
     move_request->entity.type = move_request->entity.MODEL;
     move_request->entity.name = object;
 
-    auto future = object_pose_setter_client_->async_send_request(
-    move_request);
-    
-    // A timeout is set in case the simulation returns no response (unlikely)
-    // in real scenario this would be checked with sensors inside a timer
-    // but simulation returns a boolean.
-    auto status = future.wait_for(std::chrono::seconds(10));
-    
-    // https://en.cppreference.com/w/cpp/thread/future/wait_for.html
-    if (status == std::future_status::timeout){
+    return true;
+    // Delete the old instance of the entity and
+    // check if it was successfull
+    if (!delete_entity(object, entity_delete_client_)){
         return false;
     }
 
-    return future.get()->success;
+    RCLCPP_INFO_STREAM(get_logger(), "Entity deleted");
+
+    if (!spawn_model(object, entity_spawn_client_, from_static_to_non_static, position, fork_global_rotation)){
+        RCLCPP_INFO_STREAM(get_logger(), "Spawn failed");
+        return false;
+    }
+
+    return true;
 
 };
 
@@ -237,7 +258,7 @@ void ForkliftController::pick_up(const ObjectAction& action){
     static const float DISTANCE_BETWEEN_FORK_ORIGINS = 0.4;
     static const float DISTANCE_FROM_FORK_1_TO_CENTER = DISTANCE_BETWEEN_FORK_ORIGINS / 2;
 
-    const bool pick_up_success = move_object_relative_to_fork(object, 0.0, -DISTANCE_FROM_FORK_1_TO_CENTER, 0.0);
+    const bool pick_up_success = move_object_relative_to_fork(object, true, 0.0, -DISTANCE_FROM_FORK_1_TO_CENTER, 0.0);
    
     if (!pick_up_success){
         send_feedback({

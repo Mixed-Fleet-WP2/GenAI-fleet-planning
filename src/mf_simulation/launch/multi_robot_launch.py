@@ -89,7 +89,6 @@ def create_robot_instances(context, *args, **kwargs):
                 # Only publish static map->odom transform if the odom is ground truth and amcl is not used
                 Node(
                     condition=IfCondition(str(use_pure_odom)),
-                    name="map_odom_transformer",
                     package="tf2_ros",
                     executable="static_transform_publisher",
                     output="screen",
@@ -241,12 +240,26 @@ def generate_launch_description():
         # extra params, because services cannot yet be defined with yaml
         # although ros_gz_bridge itself supports launching them
 
-        extra_bridge_params=[{"bridge_names": ["service_bridge"],
+        extra_bridge_params=[{"bridge_names": ["service_bridge", "create_bridge", "delete_bridge"],
         "bridges.service_bridge.service_name": "/world/warehouse/set_pose",
         "bridges.service_bridge.ros_type_name": "ros_gz_interfaces/srv/SetEntityPose",
         "bridges.service_bridge.gz_req_type_name": "gz.msgs.Pose",
         "bridges.service_bridge.gz_rep_type_name": "gz.msgs.Boolean",
-        "bridges.service_bridge.direction": "BIDIRECTIONALuuu"
+        "bridges.service_bridge.direction": "BIDIRECTIONAL",
+
+        "bridges.create_bridge.service_name": "/world/warehouse/create",
+        "bridges.create_bridge.ros_type_name": "ros_gz_interfaces/srv/SpawnEntity",
+        "bridges.create_bridge.gz_req_type_name": "gz.msgs.EntityFactory",
+        "bridges.create_bridge.gz_rep_type_name": "gz.msgs.Boolean",
+        "bridges.create_bridge.direction": "BIDIRECTIONAL",
+
+        "bridges.delete_bridge.service_name": "/world/warehouse/remove",
+        "bridges.delete_bridge.ros_type_name": "ros_gz_interfaces/srv/DeleteEntity",
+        "bridges.delete_bridge.gz_req_type_name": "gz.msgs.Entity",
+        "bridges.delete_bridge.gz_rep_type_name": "gz.msgs.Boolean",
+        "bridges.delete_bridge.direction": "BIDIRECTIONAL",
+
+
         }]
     )
 

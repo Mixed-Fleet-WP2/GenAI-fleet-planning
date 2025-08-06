@@ -7,13 +7,13 @@
   direction: GZ_TO_ROS
 
 #This topic is not namespaced by ros2 because it is absolute
-- gz_topic_name: "/model/pallet_1/pose"
+- gz_topic_name: "/model/euro_pallet_1/pose"
   ros_topic_name: "/object_state_updates_gz"
   gz_type_name: "gz.msgs.Pose_V"
   ros_type_name: "tf2_msgs/msg/TFMessage"
   direction: GZ_TO_ROS
 
-- gz_topic_name: "/model/pallet_2/pose"
+- gz_topic_name: "/model/euro_pallet_2/pose"
   ros_topic_name: "/object_state_updates_gz"
   gz_type_name: "gz.msgs.Pose_V"
   ros_type_name: "tf2_msgs/msg/TFMessage"

@@ -51,6 +51,7 @@ def generate_launch_description():
     forklift_mqtt_config_file = LaunchConfiguration('forklift_mqtt_config_file')
     forklift_gz_bridge_config = LaunchConfiguration("forklift_gz_bridge_config")
     robot_sdf = LaunchConfiguration('robot_sdf')
+    use_pure_odom = LaunchConfiguration('use_pure_odom')
 
     remappings = [('/tf', 'tf'), ('/tf_static', 'tf_static')]
 
@@ -62,6 +63,10 @@ def generate_launch_description():
         'pitch': LaunchConfiguration('pitch'),
         'yaw': LaunchConfiguration('yaw')
     }
+
+    declare_use_pure_odom = DeclareLaunchArgument(
+        'use_pure_odom', default_value='False', description="Whether to rely on odometry for localization without amcl"
+    )
 
     
     declare_use_gz = DeclareLaunchArgument(
@@ -167,6 +172,7 @@ def generate_launch_description():
             'autostart': autostart,
             'use_composition': use_composition,
             'use_respawn': use_respawn,
+            'use_pure_odom': use_pure_odom,
             **pose
         }.items(),
     )
@@ -271,6 +277,7 @@ def generate_launch_description():
     ld.add_action(bringup_cmd)
     ld.add_action(spawn_model)
     ld.add_action(forklift_controller)
+    ld.add_action(declare_use_pure_odom)
 
     return ld
 
