@@ -2,9 +2,53 @@
 
 ForkliftController::ForkliftController() : Navigatable() {
 
+
+    // Deattach the pallets
+    const auto PALLETS = std::vector<std::string>{"euro_pallet_2"};
+
+    rclcpp::SubscriptionOptions options;
+    options.callback_group = odom_callback_group_;
+    for (const auto &pallet : PALLETS){
+        pallet_subscriptions_.push_back(
+            this->create_subscription<std_msgs::msg::String>(
+                "/" + pallet + "/state", 10, 
+                [this, pallet](const std_msgs::msg::String::ConstSharedPtr msg) {
+                    
+                    if (msg->data == "attached") {
+                        RCLCPP_INFO_STREAM(get_logger(), "Pallet " << pallet << " is attached");
+                        pallet_statues_[pallet] = true;
+                    } else if (msg->data == "detached") {
+                        RCLCPP_INFO_STREAM(get_logger(), "Pallet " << pallet << " is detached");
+                        pallet_statues_[pallet] = false;
+                    }
+                    
+                }, options
+            )
+        );
+        pallet_statues_[pallet] = true; // Assume all pallets are attached at the start
+    }
+
+    for (const auto &pallet : PALLETS){
+        auto publisher = this->create_publisher<std_msgs::msg::Empty>(
+            "/" + pallet + "/detach", 10
+        );
+        auto msg = std_msgs::msg::Empty();
+
+            // If the pallet is attached, loop until it is detached
+            while (pallet_statues_[pallet]) {
+                publisher->publish(msg);
+                // Refactor in the future
+                rclcpp::spin_some(this->get_node_base_interface());
+            }
+            
+        // Give Gazebo some time to process the detach
+        rclcpp::sleep_for(std::chrono::milliseconds(100));
+    }
+
     move_to_pose_subscriber_ = this->create_subscription<std_msgs::msg::String>(
         "move", 10, 
         [this](const std::shared_ptr<std_msgs::msg::String> msg) {
+             RCLCPP_INFO_STREAM(get_logger(), "Move callback triggered with: " << msg->data);
             this->move_to_pose_callback(msg);
         }
     );
@@ -42,6 +86,16 @@ ForkliftController::ForkliftController() : Navigatable() {
         "fork_control", 10
     );
 
+    rclcpp::SubscriptionOptions options2;
+    options2.callback_group = odom_callback_group_;
+    ground_truth_tf_subscription_ = this->create_subscription<tf2_msgs::msg::TFMessage>(
+        "pose", 10,
+        [this](const tf2_msgs::msg::TFMessage::ConstSharedPtr msg) {
+            forklift_location_ = msg->transforms[0].transform.translation;
+            forklift_orientation_ = msg->transforms[0].transform.rotation;
+        }, options2
+    );
+
     // https://github.com/gazebosim/ros_gz/pull/380
 
     // Use the nav callback group with the object pose setter. It does not matter
@@ -51,25 +105,11 @@ ForkliftController::ForkliftController() : Navigatable() {
         "/world/warehouse/set_pose",
         rclcpp::ServicesQoS(), 
         nav_callback_group_);
-    
-    // Use the nav callback group with the object pose setter. It does not matter
-    // significantly because the operation returning takes minimal time and
-    // the actions are not used together.
-    entity_delete_client_ = this->create_client<ros_gz_interfaces::srv::DeleteEntity>(
-        "/world/warehouse/remove",
-        rclcpp::ServicesQoS(), 
-        nav_callback_group_);
-
-    entity_spawn_client_ = this->create_client<ros_gz_interfaces::srv::SpawnEntity>(
-        "/world/warehouse/create",
-        rclcpp::ServicesQoS(), 
-        nav_callback_group_);
 
     }
     
 void ForkliftController::move_fork_callback_(const std_msgs::msg::String::ConstSharedPtr msg) {
 
-    RCLCPP_INFO_STREAM(get_logger(), "RECEIVED MOVE FORK");
     const std::string &msg_str = msg->data;
 
     auto action = parse_json<JointPositionAction>(msg_str, this);
@@ -88,7 +128,6 @@ void ForkliftController::drop(const ObjectAction &action){
     const int id = action.action_id;
     const std::string object = action.object;
 
-
     // See fork_attach_offsets in robot_core.xacro for where these come from
     // Simply, this is the straight distance from the link origin
     // of fork_1 to fork_2
@@ -100,9 +139,22 @@ void ForkliftController::drop(const ObjectAction &action){
     //Assume everything is on pallets with dimensions 1.2x0.8x0.144m (see euro_pallet model)
     const float PALLET_LENGTH = 0.8;
 
+    // Detach the object
+    auto detach_publisher = this->create_publisher<std_msgs::msg::Empty>(
+        "/" + object + "/detach", 10
+    );
+
+    auto msg = std_msgs::msg::Empty();
+    while(pallet_statues_[object]) {
+        detach_publisher->publish(msg);
+        // Refactor in the future
+       rclcpp::sleep_for(std::chrono::milliseconds(100));
+    };
+
+    rclcpp::sleep_for(std::chrono::milliseconds(200));
+
     const bool drop_success = move_object_relative_to_fork(
         object, 
-        false,
         (FORK_LENGTH / 2 + PALLET_LENGTH / 2),
         -DISTANCE_FROM_FORK_1_TO_CENTER
     );
@@ -111,16 +163,17 @@ void ForkliftController::drop(const ObjectAction &action){
         send_feedback({
             id,
             ERROR, 
-            "Picking up object " + object + " failed"
+            "Dropping the object " + object + " failed"
         });
     
-    }else{
-        send_feedback({
-            id,
-            SUCCESS, 
-            "Picking up object " + object + " succeeded"
-        });
     }
+    
+    send_feedback({
+        id,
+        SUCCESS, 
+        "Dropping the object " + object + " succeeded"
+    });
+    
 }
 
 
@@ -169,6 +222,7 @@ void ForkliftController::move_fork(const JointPositionAction& action) {
 }
 
 void ForkliftController::navigate_to_pose(const MoveAction& action) {
+    RCLCPP_INFO_STREAM(get_logger(), "Navigating to pose");
     send_nav_goal(action);
 }
 
@@ -179,35 +233,47 @@ void ForkliftController::navigate_to_pose(const MoveAction& action) {
  * of the fork_1's coordinate frame (see forklift.urdf.xacro and fork.xacro for details)
  */
 bool ForkliftController::move_object_relative_to_fork(
-        const std::string object, 
-        bool from_static_to_non_static, float offset_x, 
+        const std::string object,  float offset_x, 
         float offset_y, float offset_z
         ) {
+    
+    // Hardcode transformations
 
-    auto pose_in_frame = get_coords_in_other_frame(this, "map", "fork_1");
+    /**
+     * - header:
+    stamp:
+      sec: 20
+      nanosec: 970000000
+    frame_id: forklift_1
+  child_frame_id: forklift_1/fork_1
+  transform:
+    translation:
+      x: 1.6999999952900167
+      y: 0.20000000650070746
+      z: -0.5549995100742626
+    rotation:
+      x: -7.301019404737875e-08
+      y: -5.2422970161522105e-08
+      z: -2.0704110233432486e-11
+      w: 0.999999999999996
+     */
+    auto fork_pos_x_wrt_world = forklift_location_.x + 1.7;
+    auto fork_pos_y_wrt_world = forklift_location_.y + 0.2;
+    auto fork_pos_z_wrt_world = forklift_location_.z - 0.5;
 
-    if (!pose_in_frame.has_value()){
-        return false;
-    }
-
-    auto [translation, fork_global_rotation] = pose_in_frame.value();
-    auto [fork_global_x, fork_global_y, fork_global_z] = translation;
 
     auto position = geometry_msgs::msg::Point();
-    position.x = static_cast<float>(fork_global_x + offset_x);
-    position.y = static_cast<float>(fork_global_y + offset_y);
-    position.z = static_cast<float>(fork_global_z + offset_z);
-
-    RCLCPP_INFO_STREAM(get_logger(), "New x: " << position.x);
-    RCLCPP_INFO_STREAM(get_logger(), "New y: " << position.y);
-    RCLCPP_INFO_STREAM(get_logger(), "New z: " << position.z);
+    position.x = static_cast<float>(fork_pos_x_wrt_world + offset_x);
+    position.y = static_cast<float>(fork_pos_y_wrt_world + offset_y);
+    position.z = static_cast<float>(fork_pos_z_wrt_world + offset_z);
 
     // Service definitions:
     // https://docs.ros.org/en/iron/p/ros_gz_interfaces/interfaces/srv/SetEntityPose.html
     // https://docs.ros.org/en/iron/p/ros_gz_interfaces/interfaces/msg/Entity.html
     auto move_request = std::make_shared<ros_gz_interfaces::srv::SetEntityPose::Request>();
     
-    move_request->pose.orientation = fork_global_rotation;
+    // Forks have same orientation as the forklift
+    move_request->pose.orientation = forklift_orientation_;
     move_request->pose.position = position;
 
     // Specify the request type with an enum, in this case
@@ -215,21 +281,26 @@ bool ForkliftController::move_object_relative_to_fork(
     move_request->entity.type = move_request->entity.MODEL;
     move_request->entity.name = object;
 
-    return true;
-    // Delete the old instance of the entity and
-    // check if it was successfull
-    if (!delete_entity(object, entity_delete_client_)){
+    RCLCPP_INFO_STREAM(get_logger(), "Moving object: " << object);
+    RCLCPP_INFO_STREAM(get_logger(), "Position: " << position.x << ", " << position.y << ", " << position.z);
+    RCLCPP_INFO_STREAM(get_logger(), "Orientation: " << forklift_orientation_.x << ", " 
+        << forklift_orientation_.y << ", " << forklift_orientation_.z << ", " 
+        << forklift_orientation_.w);
+    // Send the request to the service
+    auto future = object_pose_setter_client_->async_send_request(move_request);
+
+    auto status = future.wait_for(std::chrono::seconds(10));
+
+    if (status == std::future_status::timeout) {
+        RCLCPP_ERROR_STREAM(get_logger(), "Timeout while moving object: " << object);
         return false;
     }
 
-    RCLCPP_INFO_STREAM(get_logger(), "Entity deleted");
 
-    if (!spawn_model(object, entity_spawn_client_, from_static_to_non_static, position, fork_global_rotation)){
-        RCLCPP_INFO_STREAM(get_logger(), "Spawn failed");
-        return false;
-    }
+    RCLCPP_INFO_STREAM(get_logger(), "Object " << object << " attached to fork_1");
 
-    return true;
+    return future.get()->success;
+    
 
 };
 
@@ -258,22 +329,41 @@ void ForkliftController::pick_up(const ObjectAction& action){
     static const float DISTANCE_BETWEEN_FORK_ORIGINS = 0.4;
     static const float DISTANCE_FROM_FORK_1_TO_CENTER = DISTANCE_BETWEEN_FORK_ORIGINS / 2;
 
-    const bool pick_up_success = move_object_relative_to_fork(object, true, 0.0, -DISTANCE_FROM_FORK_1_TO_CENTER, 0.0);
-   
+    const bool pick_up_success = move_object_relative_to_fork(object, 0.0, -DISTANCE_FROM_FORK_1_TO_CENTER, 0.0);
+
+    // A small timeout to allow Gazebo to process the request
+    // (otherwise the object is necessarily not in the right place
+    // before the attach request is sent)
+    rclcpp::sleep_for(std::chrono::milliseconds(200));
+
     if (!pick_up_success){
         send_feedback({
             id,
             ERROR, 
             "Picking up object " + object + " failed"
         });
-    
-    }else{
-        send_feedback({
-            id,
-            SUCCESS, 
-            "Picking up object " + object + " succeeded"
-        });
+        return;
     }
+
+    //Attach the object to the fork_1 link
+    auto attach_publisher = this->create_publisher<std_msgs::msg::Empty>(
+        "/" + object + "/attach", 10
+    );
+
+    auto msg = std_msgs::msg::Empty();
+    while(!pallet_statues_[object]) {
+        attach_publisher->publish(msg);
+        // Refactor in the future
+       rclcpp::sleep_for(std::chrono::milliseconds(100));
+    };
+
+   
+    send_feedback({
+        id,
+        SUCCESS, 
+        "Picking up object " + object + " succeeded"
+    });
+    
 
 }
 

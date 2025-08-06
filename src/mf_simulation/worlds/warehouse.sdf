@@ -57,6 +57,11 @@
       <static>true</static>
       <link name='link'>
         <collision name='collision'>
+          <!-- <surface>
+            <contact>
+              <collide_bitmask>0x02</collide_bitmask>
+            </contact>
+          </surface> -->
           <geometry>
             <plane>
               <normal>0.0 0.0 1</normal>

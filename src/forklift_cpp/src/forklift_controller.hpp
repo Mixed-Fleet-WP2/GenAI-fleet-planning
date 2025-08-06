@@ -12,6 +12,7 @@
 #include "tf2_ros/buffer.h"
 #include "std_msgs/msg/string.hpp"
 #include "std_msgs/msg/float64.hpp"
+#include "std_msgs/msg/empty.hpp"
 #include "nav2_msgs/action/navigate_to_pose.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "nav2_msgs/action/navigate_to_pose.hpp"
@@ -44,6 +45,7 @@ class ForkliftController : public Navigatable {
         rclcpp::Client<ros_gz_interfaces::srv::SetEntityPose>::SharedPtr object_pose_setter_client_;
         rclcpp::Client<ros_gz_interfaces::srv::DeleteEntity>::SharedPtr entity_delete_client_;
         rclcpp::Client<ros_gz_interfaces::srv::SpawnEntity>::SharedPtr entity_spawn_client_ ;
+        rclcpp::Subscription<tf2_msgs::msg::TFMessage>::SharedPtr ground_truth_tf_subscription_;
 
         float current_fork_pos_;
         void move_fork_callback_(const std_msgs::msg::String::ConstSharedPtr msg);
@@ -54,7 +56,12 @@ class ForkliftController : public Navigatable {
         void pick_up(const ObjectAction& action);
         void drop(const ObjectAction& action);
         void navigate_to_pose(const MoveAction& action) override;
-        bool move_object_relative_to_fork(const std::string object, bool from_static_to_non_static, float offset_x = 0.0, float offset_y = 0.0, float offset_z = 0.0);
+        std::unordered_map<std::string, bool> pallet_statues_;
+        std::vector<rclcpp::Subscription<std_msgs::msg::String>::SharedPtr> pallet_subscriptions_;
+        bool move_object_relative_to_fork(const std::string object, float offset_x = 0.0, float offset_y = 0.0, float offset_z = 0.0);
+
+        geometry_msgs::msg::Vector3 forklift_location_;
+        geometry_msgs::msg::Quaternion forklift_orientation_;
 
 };
 
