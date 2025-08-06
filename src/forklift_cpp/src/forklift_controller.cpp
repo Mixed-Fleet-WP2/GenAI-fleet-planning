@@ -186,6 +186,8 @@ bool ForkliftController::move_object_relative_to_fork(
     position.z = static_cast<float>(fork_global_z + offset_z);
     
     move_request->pose.orientation = fork_global_rotation;
+    const auto [roll, pitch, yaw] = quaternion_to_euler(fork_global_rotation.x, fork_global_rotation.y, fork_global_rotation.z, fork_global_rotation.w);
+    RCLCPP_INFO_STREAM(get_logger(), "The yaw is: " + std::to_string(yaw)); 
     move_request->pose.position = position;
 
     // Specify the request type with an enum, in this case

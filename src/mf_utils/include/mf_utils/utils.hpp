@@ -16,6 +16,14 @@
 
 // https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
 
+/**
+ * @brief Convert a quaternion to euler angles
+ * @param x X component of the quaternion
+ * @param y Y component of the quaternion
+ * @param z Z component of the quaternion
+ * @param w W component of the quaternion
+ * @returns Tuple containing roll, pitch and yaw (in this order)
+ */
 std::tuple<float, float, float> quaternion_to_euler(float x, float y, float z, float w){
 
     double sinr_cosp = 2 * (w * x + y * z);
