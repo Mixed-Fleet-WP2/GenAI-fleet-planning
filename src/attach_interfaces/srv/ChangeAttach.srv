@@ -1,0 +1,5 @@
+string robot_name
+string object_name
+bool attach
+---
+bool success

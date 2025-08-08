@@ -7,7 +7,8 @@
                 "/opt/ros/jazzy/include/**",
                 "/opt/ros/jazzy/include/nav_msgs",
                 "${workspaceFolder}",
-                "${workspaceFolder}/mf_utils/include/**"
+                "${workspaceFolder}/mf_utils/include/**",
+                "${workspaceFolder}/../install/attach_interfaces/include/**"
             ],
             "defines": [],
             "compilerPath": "/usr/lib/ccache/gcc",

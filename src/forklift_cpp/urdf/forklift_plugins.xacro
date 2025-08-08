@@ -59,9 +59,9 @@
        <parent_link>fork_1</parent_link>
        <child_model>euro_pallet_2</child_model>
        <child_link>link</child_link>
-       <detach_topic>/euro_pallet_2/detach</detach_topic>
-       <attach_topic>/euro_pallet_2/attach</attach_topic>
-       <output_topic>/euro_pallet_2/state</output_topic>
+       <detach_topic>${namespace}/euro_pallet_2/detach</detach_topic>
+       <attach_topic>${namespace}/euro_pallet_2/attach</attach_topic>
+       <output_topic>${namespace}/euro_pallet_2/state</output_topic>
       </plugin>
 
       <plugin filename="gz-sim-joint-state-publisher-system"

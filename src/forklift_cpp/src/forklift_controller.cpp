@@ -281,11 +281,11 @@ bool ForkliftController::move_object_relative_to_fork(
     move_request->entity.type = move_request->entity.MODEL;
     move_request->entity.name = object;
 
-    RCLCPP_INFO_STREAM(get_logger(), "Moving object: " << object);
-    RCLCPP_INFO_STREAM(get_logger(), "Position: " << position.x << ", " << position.y << ", " << position.z);
-    RCLCPP_INFO_STREAM(get_logger(), "Orientation: " << forklift_orientation_.x << ", " 
-        << forklift_orientation_.y << ", " << forklift_orientation_.z << ", " 
-        << forklift_orientation_.w);
+    // RCLCPP_INFO_STREAM(get_logger(), "Moving object: " << object);
+    // RCLCPP_INFO_STREAM(get_logger(), "Position: " << position.x << ", " << position.y << ", " << position.z);
+    // RCLCPP_INFO_STREAM(get_logger(), "Orientation: " << forklift_orientation_.x << ", " 
+    //     << forklift_orientation_.y << ", " << forklift_orientation_.z << ", " 
+    //     << forklift_orientation_.w);
     // Send the request to the service
     auto future = object_pose_setter_client_->async_send_request(move_request);
 
