@@ -297,15 +297,23 @@ def generate_launch_description():
                 name='global_mqtt_client',
                 parameters=[global_mqtt_config_file],
                 extra_arguments=[{'use_intra_process_comms': True}],
-            ),
-            ComposableNode(
-                package='state_bridge',
-                plugin='state_bridge::StateBridge',
-                name='state_bridge_exec',
-                parameters=[{'use_sim_time': True}],
-                extra_arguments=[{'use_intra_process_comms': True}],
-            ),
+             ),
+            # ComposableNode(
+            #     package='state_bridge',
+            #     plugin='state_bridge::StateBridge',
+            #     name='state_bridge_component',
+            #     parameters=[{'use_sim_time': True}],
+            #     extra_arguments=[{'use_intra_process_comms': True}],
+            # ),
         ]
+    )
+
+    standalone_state_bridge = Node(
+        package='state_bridge',
+        executable='state_bridge_exe',
+        name='state_bridge',
+        output='screen',
+        parameters=[{'use_sim_time': True}],
     )
 
     set_env_vars_resources = AppendEnvironmentVariable(
@@ -347,6 +355,7 @@ def generate_launch_description():
     ld.add_action(start_interface)
     #ld.add_action(service_bridge)
     ld.add_action(gz_bridge)
+    ld.add_action(standalone_state_bridge)
     
 
     # Use OpaqueFunction to create robot instances after resolving the YAML path

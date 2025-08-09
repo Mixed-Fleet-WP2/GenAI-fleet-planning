@@ -79,7 +79,7 @@ void StateBridge::pose_callback(const tf2_msgs::msg::TFMessage::SharedPtr msg)
         }
 
         if (!success){
-                throw std::runtime_error("Unable to detach objects, simulation is unusable!!");
+                RCLCPP_WARN_STREAM(get_logger(), "The object could not be deattached. Simulation might be unusable");
             }
     }
 
@@ -103,6 +103,16 @@ bool StateBridge::detach_object(const std::string & object_name)
 
     const static auto msg = std_msgs::msg::Empty();
 
+    auto temp_detach_state_subscriber = this->create_subscription<std_msgs::msg::String>(
+        "/" + object_name + "/state", 10,
+        [&promise, this](const std_msgs::msg::String::ConstSharedPtr msg) {
+            RCLCPP_INFO_STREAM(get_logger(), "THE DATA IS: " + msg->data);
+            if (msg->data == "detached") {
+                promise.set_value(true);
+            }    
+        }, sub_options_
+    );
+
     // timer and temp_detach_state_subscriber run in the same callback group
     // in other of two the available threads
 
@@ -110,18 +120,7 @@ bool StateBridge::detach_object(const std::string & object_name)
     timer_ = this->create_wall_timer(std::chrono::milliseconds(100), [this, temp_detach_publisher](){
         temp_detach_publisher->publish(msg);
     }, cb_group_);
-    
 
-    auto temp_detach_state_subscriber = this->create_subscription<std_msgs::msg::String>(
-        "/" + object_name + "/state", 10,
-        [&promise, this](const std_msgs::msg::String::ConstSharedPtr msg) {
-            if (msg->data == "detached") {
-                promise.set_value(true);
-            }    
-        }, sub_options_
-    );
-
-    temp_detach_publisher->publish(msg);
 
     // Wait fot detach to be completed (or fail)
     auto status = future.wait_for(std::chrono::seconds(5));
@@ -141,26 +140,7 @@ void state_bridge::StateBridge::attach_srv_callback(const attach_interfaces::srv
 {
 }
 
-// https://docs.ros.org/en/jazzy/Tutorials/Intermediate/Writing-a-Composable-Node.html
-#ifndef IS_COMPOSED
 
-// When running this as composable node
-// it needs to be mounted to a component_container_mt instead of component_container
-// See the above link
-int main(int argc, char * argv[])
-{
-  rclcpp::init(argc, argv);
-    // Assign 3 threads: the main thread and two other for the two callback groups
-    auto executor = rclcpp::executors::MultiThreadedExecutor(rclcpp::ExecutorOptions(), 2);
-    auto node = std::make_shared<StateBridge>();
-    executor.add_node(node);
-    executor.spin();
-    rclcpp::shutdown();
-    return 0;
-}
-
-#else
-    #include <rclcpp_components/register_node_macro.hpp>
-    //Namespace is needed here despite using namespace because macros are expanded before namespaces are checked
-    RCLCPP_COMPONENTS_REGISTER_NODE(state_bridge::StateBridge)
-#endif
+#include <rclcpp_components/register_node_macro.hpp>
+//Namespace is needed here despite using namespace because macros are expanded before namespaces are checked
+RCLCPP_COMPONENTS_REGISTER_NODE(state_bridge::StateBridge)

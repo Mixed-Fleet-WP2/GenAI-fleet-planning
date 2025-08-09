@@ -4,46 +4,46 @@ ForkliftController::ForkliftController() : Navigatable() {
 
 
     // Deattach the pallets
-    const auto PALLETS = std::vector<std::string>{"euro_pallet_2"};
+    // const auto PALLETS = std::vector<std::string>{"euro_pallet_2"};
 
-    rclcpp::SubscriptionOptions options;
-    options.callback_group = odom_callback_group_;
-    for (const auto &pallet : PALLETS){
-        pallet_subscriptions_.push_back(
-            this->create_subscription<std_msgs::msg::String>(
-                "/" + pallet + "/state", 10, 
-                [this, pallet](const std_msgs::msg::String::ConstSharedPtr msg) {
+    // rclcpp::SubscriptionOptions options;
+    // options.callback_group = odom_callback_group_;
+    // for (const auto &pallet : PALLETS){
+    //     pallet_subscriptions_.push_back(
+    //         this->create_subscription<std_msgs::msg::String>(
+    //             "/" + pallet + "/state", 10, 
+    //             [this, pallet](const std_msgs::msg::String::ConstSharedPtr msg) {
                     
-                    if (msg->data == "attached") {
-                        RCLCPP_INFO_STREAM(get_logger(), "Pallet " << pallet << " is attached");
-                        pallet_statues_[pallet] = true;
-                    } else if (msg->data == "detached") {
-                        RCLCPP_INFO_STREAM(get_logger(), "Pallet " << pallet << " is detached");
-                        pallet_statues_[pallet] = false;
-                    }
+    //                 if (msg->data == "attached") {
+    //                     RCLCPP_INFO_STREAM(get_logger(), "Pallet " << pallet << " is attached");
+    //                     pallet_statues_[pallet] = true;
+    //                 } else if (msg->data == "detached") {
+    //                     RCLCPP_INFO_STREAM(get_logger(), "Pallet " << pallet << " is detached");
+    //                     pallet_statues_[pallet] = false;
+    //                 }
                     
-                }, options
-            )
-        );
-        pallet_statues_[pallet] = true; // Assume all pallets are attached at the start
-    }
+    //             }, options
+    //         )
+    //     );
+    //     pallet_statues_[pallet] = true; // Assume all pallets are attached at the start
+    // }
 
-    for (const auto &pallet : PALLETS){
-        auto publisher = this->create_publisher<std_msgs::msg::Empty>(
-            "/" + pallet + "/detach", 10
-        );
-        auto msg = std_msgs::msg::Empty();
+    // for (const auto &pallet : PALLETS){
+    //     auto publisher = this->create_publisher<std_msgs::msg::Empty>(
+    //         "/" + pallet + "/detach", 10
+    //     );
+    //     auto msg = std_msgs::msg::Empty();
 
-            // If the pallet is attached, loop until it is detached
-            while (pallet_statues_[pallet]) {
-                publisher->publish(msg);
-                // Refactor in the future
-                rclcpp::spin_some(this->get_node_base_interface());
-            }
+    //         // If the pallet is attached, loop until it is detached
+    //         while (pallet_statues_[pallet]) {
+    //             publisher->publish(msg);
+    //             // Refactor in the future
+    //             rclcpp::spin_some(this->get_node_base_interface());
+    //         }
             
-        // Give Gazebo some time to process the detach
-        rclcpp::sleep_for(std::chrono::milliseconds(100));
-    }
+    //     // Give Gazebo some time to process the detach
+    //     rclcpp::sleep_for(std::chrono::milliseconds(100));
+    // }
 
     move_to_pose_subscriber_ = this->create_subscription<std_msgs::msg::String>(
         "move", 10, 

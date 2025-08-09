@@ -19,24 +19,6 @@
   ros_type_name: "tf2_msgs/msg/TFMessage"
   direction: GZ_TO_ROS
 
-- gz_topic_name: "/euro_pallet_2/attach"
-  ros_topic_name: "/euro_pallet_2/attach"
-  gz_type_name: "gz.msgs.Empty"
-  ros_type_name: "std_msgs/msg/Empty"
-  direction: ROS_TO_GZ
-
-- gz_topic_name: "/euro_pallet_2/detach"
-  ros_topic_name: "/euro_pallet_2/detach"
-  gz_type_name: "gz.msgs.Empty"
-  ros_type_name: "std_msgs/msg/Empty"
-  direction: ROS_TO_GZ
-
-- gz_topic_name: "/euro_pallet_2/state"
-  ros_topic_name: "/euro_pallet_2/state"
-  gz_type_name: "gz.msgs.StringMsg"
-  ros_type_name: "std_msgs/msg/String"
-  direction: GZ_TO_ROS
-
 - gz_topic_name: "/model/forklift_1/pose"
   # Will be namespaced by ROS2
   ros_topic_name: "/forklift_1/pose"
@@ -44,7 +26,15 @@
   ros_type_name: "tf2_msgs/msg/TFMessage"
   direction: GZ_TO_ROS
 
+- topic_name: "/euro_pallet_2/detach"
+  gz_type_name: "gz.msgs.Empty"
+  ros_type_name: "std_msgs/msg/Empty"
+  direction: ROS_TO_GZ
 
+- topic_name: "/euro_pallet_2/state"
+  gz_type_name: "gz.msgs.StringMsg"
+  ros_type_name: "std_msgs/msg/String"
+  direction: GZ_TO_ROS
 
 # - gz_topic_name: "/world/warehouse/set_pose"
 #   gz_type_name: "gz.msgs.Pose@gz.msgs.Boolean"
