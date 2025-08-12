@@ -27,6 +27,7 @@ namespace state_bridge {
         rclcpp::Subscription<tf2_msgs::msg::TFMessage>::SharedPtr pose_subscriber_;
         void pose_callback(const tf2_msgs::msg::TFMessage::SharedPtr msg);
         std::unordered_set<std::string> object_names_;
+        bool StateBridge::attach_object(const std::string &object_name, const std::string &attach_to_target);
         bool detach_object(const std::string & object_name);
         rclcpp::CallbackGroup::SharedPtr cb_group_;
         rclcpp::TimerBase::SharedPtr timer_;

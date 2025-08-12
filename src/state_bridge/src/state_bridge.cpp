@@ -13,25 +13,28 @@ StateBridge::StateBridge(const rclcpp::NodeOptions & option) : rclcpp::Node("sta
     cb_group_ = create_callback_group(rclcpp::CallbackGroupType::Reentrant);
     sub_options_ = rclcpp::SubscriptionOptions();
     sub_options_.callback_group = cb_group_;
+    
     // Create messages that are publisher through mqtt_bridge
     pose_publisher_ = this->create_publisher<std_msgs::msg::String>("/object_state_updates", 10);
+    
     pose_subscriber_ = this->create_subscription<tf2_msgs::msg::TFMessage>(
         "/object_state_updates_gz", 10, [this](const tf2_msgs::msg::TFMessage::SharedPtr msg) {
             this->pose_callback(msg);
-        }, sub_options_
+        }
     );
 
-    
-
-    attach_srv_ = this->create_service<ChangeAttach>("/change_attach", [this](const ChangeAttach::Request::SharedPtr req, ChangeAttach::Response::SharedPtr res){
-        attach_srv_callback(req, res);
-
-    });
+    attach_srv_ = this->create_service<ChangeAttach>(
+        "/change_attach", 
+        [this](const ChangeAttach::Request::SharedPtr req, ChangeAttach::Response::SharedPtr res){
+            attach_srv_callback(req, res);
+        }, 
+        rclcpp::ServicesQoS(),
+        cb_group_
+    );
 
 }
 
-void StateBridge::pose_callback(const tf2_msgs::msg::TFMessage::SharedPtr msg)
-{   
+void StateBridge::pose_callback(const tf2_msgs::msg::TFMessage::SharedPtr msg){   
     // The object poses are published by gazebos PosePublisher
     // In this case, the Pose_V type of gazebo is bridged to tf message type
     // in order to get the object name, which is the child_frame_id of the first (and only) transform
@@ -87,6 +90,46 @@ void StateBridge::pose_callback(const tf2_msgs::msg::TFMessage::SharedPtr msg)
 
 }
 
+bool StateBridge::attach_object(const std::string &object_name, const std::string &attach_to_target){
+
+    std::promise<bool> promise;
+    std::future<bool> future = promise.get_future();
+    // Detach the object from the fork_1 link
+    auto temp_attach_publisher = this->create_publisher<std_msgs::msg::Empty>(
+        "/" + attach_to_target + "/" + object_name + "/attach", 10
+    );
+
+    const static auto msg = std_msgs::msg::Empty();
+
+    auto temp_attach_state_subscriber = this->create_subscription<std_msgs::msg::String>(
+        "/" + object_name + "/state", 10,
+        [&promise, this](const std_msgs::msg::String::ConstSharedPtr msg) {
+            RCLCPP_INFO_STREAM(get_logger(), "THE DATA IS: " + msg->data);
+            if (msg->data == "attached") {
+                promise.set_value(true);
+            }    
+        }, sub_options_
+    );
+
+    // Send the detach request every 1/10s
+    timer_ = this->create_wall_timer(std::chrono::milliseconds(100), [this, temp_attach_publisher, object_name](){
+        temp_attach_publisher->publish(msg);
+    }, cb_group_);
+
+
+    // Wait fot attach to be completed (or fail)
+    auto status = future.wait_for(std::chrono::seconds(5));
+    // Stop sending deattach messages
+    timer_->cancel();
+
+    if (status == std::future_status::timeout){
+        return false;
+    }
+
+    return true;
+    
+}
+
 bool StateBridge::detach_object(const std::string & object_name)
 {   
 
@@ -102,8 +145,6 @@ bool StateBridge::detach_object(const std::string & object_name)
     auto temp_detach_publisher = this->create_publisher<std_msgs::msg::Empty>(
         "/" + object_name + "/detach", 10
     );
-
-    bool object_detached = false;
 
     const static auto msg = std_msgs::msg::Empty();
 
@@ -123,13 +164,11 @@ bool StateBridge::detach_object(const std::string & object_name)
     // Send the detach request every 1/10s
     timer_ = this->create_wall_timer(std::chrono::milliseconds(100), [this, temp_detach_publisher, object_name](){
         temp_detach_publisher->publish(msg);
-        RCLCPP_INFO_STREAM(get_logger(), "SENDING DETACH FOR: " + object_name);
     }, cb_group_);
 
 
     // Wait fot detach to be completed (or fail)
     auto status = future.wait_for(std::chrono::seconds(5));
-    RCLCPP_INFO_STREAM(get_logger(), "STOP WAITING");
     // Stop sending deattach messages
     timer_->cancel();
 
@@ -144,6 +183,19 @@ bool StateBridge::detach_object(const std::string & object_name)
 
 void state_bridge::StateBridge::attach_srv_callback(const attach_interfaces::srv::ChangeAttach::Request::SharedPtr req, attach_interfaces::srv::ChangeAttach::Response::SharedPtr res)
 {
+    const std::string object = req->object_name;
+    const bool is_attach = req->attach;
+    const std::string robot_to_attach_to = req->robot_name;
+
+    bool success = false;
+    if (!is_attach){
+        success = detach_object(object);
+    }else{
+        success = attach_object(object, robot_to_attach_to);
+    }
+
+    res->success = success;
+
 }
 
 
