@@ -1,0 +1,60 @@
+#MIT License
+
+#Copyright (c) 2022 Institute for Automotive Engineering of RWTH Aachen University
+#
+#Permission is hereby granted, free of charge, to any person obtaining a copy
+#of this software and associated documentation files (the "Software"), to deal
+#in the Software without restriction, including without limitation the rights
+#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+#copies of the Software, and to permit persons to whom the Software is
+#furnished to do so, subject to the following conditions:
+#
+#The above copyright notice and this permission notice shall be included in all
+#copies or substantial portions of the Software.
+#
+#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+#OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+#SOFTWARE.
+
+/**/*:
+  ros__parameters:
+    broker:
+      host: localhost
+      port: 1883
+    bridge:
+    #ROS topics with the starting slash are considered as global topics (not namespaced by ros2)
+      ros2mqtt:
+        ros_topics: 
+          - feedback
+          - /pallet_1_pos
+        feedback:
+          mqtt_topic: feedback
+        /pallet_1_pos:
+          mqtt_topic: pallet_1_pos
+      mqtt2ros:
+        mqtt_topics: 
+          - move
+          - drop
+          - pick_up
+          - move_fork
+        move:
+          ros_topic: move
+          ros_type: std_msgs/msg/String
+          primitive: true
+        drop:
+          ros_topic: drop
+          ros_type: std_msgs/msg/String
+          primitive: true
+        pick_up:
+          ros_topic: pick_up
+          ros_type: std_msgs/msg/String
+          primitive: true
+        move_fork:
+          ros_topic: move_fork
+          ros_type: std_msgs/msg/String
+          primitive: true
+        

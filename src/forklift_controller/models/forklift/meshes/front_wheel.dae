@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <asset>
+    <contributor>
+      <author>Blender User</author>
+      <authoring_tool>Blender 2.80.75 commit date:2019-07-29, commit time:14:47, hash:f6cb5f54494e</authoring_tool>
+    </contributor>
+    <created>2024-07-22T09:27:58</created>
+    <modified>2024-07-22T09:27:58</modified>
+    <unit name="meter" meter="1"/>
+    <up_axis>Z_UP</up_axis>
+  </asset>
+  <library_effects>
+    <effect id="Loader_car_Material_001-effect">
+      <profile_COMMON>
+        <newparam sid="Image_0_png-surface">
+          <surface type="2D">
+            <init_from>Image_0_png</init_from>
+          </surface>
+        </newparam>
+        <newparam sid="Image_0_png-sampler">
+          <sampler2D>
+            <source>Image_0_png-surface</source>
+          </sampler2D>
+        </newparam>
+        <technique sid="common">
+          <lambert>
+            <emission>
+              <color sid="emission">0 0 0 1</color>
+            </emission>
+            <diffuse>
+              <texture texture="Image_0_png-sampler" texcoord="Loader_car_Loader_car_Material_0_004-mesh-map-0"/>
+            </diffuse>
+            <index_of_refraction>
+              <float sid="ior">1.45</float>
+            </index_of_refraction>
+          </lambert>
+        </technique>
+      </profile_COMMON>
+    </effect>
+  </library_effects>
+  <library_images>
+    <image id="Image_0_png" name="Image_0_png">
+      <init_from>Image_0.png</init_from>
+    </image>
+  </library_images>
+  <library_materials>
+    <material id="Loader_car_Material_001-material" name="Loader_car_Material.001">
+      <instance_effect url="#Loader_car_Material_001-effect"/>
+    </material>
+  </library_materials>
+  <library_geometries>
+    <geometry id="Loader_car_Loader_car_Material_0_004-mesh" name="Loader_car_Loader_car_Material_0.004">
+      <mesh>
+        <source id="Loader_car_Loader_car_Material_0_004-mesh-positions">
+          <float_array id="Loader_car_Loader_car_Material_0_004-mesh-positions-array" count="144">-8.92128 34.43245 0.1216071 8.843789 34.43248 0.1216071 8.843789 29.90112 -16.78969 -8.92128 29.90112 -16.78969 8.843789 17.52118 -29.16963 -8.92128 17.52118 -29.16963 8.843789 0.6098642 -33.701 -8.92128 0.6098642 -33.70099 8.843789 -16.30144 -29.16963 -8.921269 -16.30144 -29.16963 8.843789 -28.68134 -16.7897 -8.921269 -28.68134 -16.7897 8.843789 -33.21274 0.121588 -8.921269 -33.21274 0.1215956 8.843789 -28.68134 17.03289 -8.921269 -28.68134 17.03289 8.8438 -16.30145 29.41282 -8.921269 -16.30145 29.41283 8.8438 0.609849 33.9442 -8.921269 0.609849 33.94421 8.843789 17.52116 29.41284 -8.921269 17.52116 29.41284 8.843789 29.9011 17.03292 -8.921269 29.9011 17.03292 8.843789 34.43248 0.1216071 8.843789 -28.68134 -16.7897 8.843789 -28.68134 17.03289 8.843789 -16.30144 -29.16963 8.8438 -16.30145 29.41282 8.8438 0.609849 33.9442 8.843789 0.6098642 -33.701 8.843789 17.52116 29.41284 8.843789 17.52118 -29.16963 8.843789 29.9011 17.03292 8.843789 29.90112 -16.78969 8.843789 34.43248 0.1216071 -8.921269 -28.68134 17.03289 -8.921269 -28.68134 -16.7897 -8.921269 -33.21274 0.1215956 -8.921269 -16.30145 29.41283 -8.921269 -16.30144 -29.16963 -8.921269 0.609849 33.94421 -8.92128 0.6098642 -33.70099 -8.921269 17.52116 29.41284 -8.92128 17.52118 -29.16963 -8.921269 29.9011 17.03292 -8.92128 29.90112 -16.78969 -8.92128 34.43245 0.1216071</float_array>
+          <technique_common>
+            <accessor source="#Loader_car_Loader_car_Material_0_004-mesh-positions-array" count="48" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Loader_car_Loader_car_Material_0_004-mesh-normals">
+          <float_array id="Loader_car_Loader_car_Material_0_004-mesh-normals-array" count="48">0 0.9659304 -0.2588022 0 0.8660317 -0.4999893 0 0.4999893 -0.8660317 0 0 -1 0 -0.4999893 -0.8660317 0 -0.8660317 -0.4999893 0 -1 0 0 -0.8660317 0.4999893 0 -0.4999893 0.8660317 0 0 1 0 0.4999893 0.8660317 0 0.8660317 0.4999893 0 0.8174818 0.5759544 0 0.9659304 0.2588022 1 0 0 -1 0 0</float_array>
+          <technique_common>
+            <accessor source="#Loader_car_Loader_car_Material_0_004-mesh-normals-array" count="16" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Loader_car_Loader_car_Material_0_004-mesh-map-0">
+          <float_array id="Loader_car_Loader_car_Material_0_004-mesh-map-0-array" count="252">0.5570021 0.4986841 0.5570021 0.3554387 0.5331278 0.3554387 0.5570021 0.4986841 0.5331278 0.3554387 0.5331278 0.4986841 0.5331278 0.4986841 0.5331278 0.3554387 0.5092535 0.3554387 0.5331278 0.4986841 0.5092535 0.3554387 0.5092535 0.4986841 0.5092535 0.4986841 0.5092535 0.3554387 0.4853792 0.3554387 0.5092535 0.4986841 0.4853792 0.3554387 0.4853792 0.4986841 0.4853792 0.4986841 0.4853792 0.3554387 0.4615052 0.3554387 0.4853792 0.4986841 0.4615052 0.3554387 0.4615052 0.4986841 0.4615052 0.4986841 0.4615052 0.3554387 0.4376308 0.3554387 0.4615052 0.4986841 0.4376308 0.3554387 0.4376308 0.4986841 0.4376308 0.4986841 0.4376308 0.3554387 0.4137563 0.3554387 0.4376308 0.4986841 0.4137563 0.3554387 0.4137563 0.4986841 0.4137563 0.4986841 0.4137563 0.3554387 0.3898822 0.3554387 0.4137563 0.4986841 0.3898822 0.3554387 0.3898822 0.4986841 0.3898822 0.4986841 0.3898822 0.3554387 0.3660081 0.3554387 0.3898822 0.4986841 0.3660081 0.3554387 0.3660081 0.4986841 0.3660081 0.4986841 0.3660081 0.3554387 0.3421337 0.3554387 0.3660081 0.4986841 0.3421337 0.3554387 0.3421337 0.4986841 0.3421337 0.4986841 0.3421337 0.3554387 0.3182595 0.3554387 0.3421337 0.4986841 0.3182595 0.3554387 0.3182595 0.4986841 0.3182595 0.4986841 0.3182595 0.3554387 0.2943851 0.3554387 0.3182595 0.4986841 0.2943851 0.3554387 0.2943851 0.4986841 0.2943851 0.4986841 0.2943851 0.3554387 0.2705108 0.3554387 0.7548292 0.2775519 0.811033 0.2624628 0.8260821 0.2363678 0.7548292 0.2775519 0.8260821 0.2363678 0.7287343 0.2625029 0.7287343 0.2625029 0.8260821 0.2363678 0.7136598 0.2364224 0.7136598 0.2364224 0.8260821 0.2363678 0.8260674 0.2062442 0.7136598 0.2364224 0.8260674 0.2062442 0.7136452 0.2062989 0.7136452 0.2062989 0.8260674 0.2062442 0.810993 0.1801638 0.7136452 0.2062989 0.810993 0.1801638 0.7286942 0.1802039 0.7286942 0.1802039 0.810993 0.1801638 0.784898 0.1651148 0.7286942 0.1802039 0.784898 0.1651148 0.7547745 0.1651294 0.7703685 0.406274 0.8367834 0.4240698 0.8011917 0.4240698 0.8367834 0.4240698 0.7703685 0.406274 0.7525726 0.3754507 0.8367834 0.4240698 0.7525726 0.3754507 0.8676068 0.406274 0.8676068 0.406274 0.7525726 0.3754507 0.7525725 0.339859 0.8676068 0.406274 0.7525725 0.339859 0.8854025 0.3754507 0.8854025 0.3754507 0.7525725 0.339859 0.7703685 0.3090357 0.8854025 0.3754507 0.7703685 0.3090357 0.8854026 0.3398589 0.8854026 0.3398589 0.7703685 0.3090357 0.8011918 0.2912397 0.8854026 0.3398589 0.8011918 0.2912397 0.8676067 0.3090355 0.8676067 0.3090355 0.8011918 0.2912397 0.8367834 0.2912397</float_array>
+          <technique_common>
+            <accessor source="#Loader_car_Loader_car_Material_0_004-mesh-map-0-array" count="126" stride="2">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="Loader_car_Loader_car_Material_0_004-mesh-vertices">
+          <input semantic="POSITION" source="#Loader_car_Loader_car_Material_0_004-mesh-positions"/>
+        </vertices>
+        <triangles material="Loader_car_Material_001-material" count="42">
+          <input semantic="VERTEX" source="#Loader_car_Loader_car_Material_0_004-mesh-vertices" offset="0"/>
+          <input semantic="NORMAL" source="#Loader_car_Loader_car_Material_0_004-mesh-normals" offset="1"/>
+          <input semantic="TEXCOORD" source="#Loader_car_Loader_car_Material_0_004-mesh-map-0" offset="2" set="0"/>
+          <p>0 0 0 1 0 1 2 1 2 0 0 3 2 1 4 3 1 5 3 1 6 2 1 7 4 2 8 3 1 9 4 2 10 5 2 11 5 2 12 4 2 13 6 3 14 5 2 15 6 3 16 7 3 17 7 3 18 6 3 19 8 4 20 7 3 21 8 4 22 9 4 23 9 4 24 8 4 25 10 5 26 9 4 27 10 5 28 11 5 29 11 5 30 10 5 31 12 6 32 11 5 33 12 6 34 13 6 35 13 6 36 12 6 37 14 7 38 13 6 39 14 7 40 15 7 41 15 7 42 14 7 43 16 8 44 15 7 45 16 8 46 17 8 47 17 8 48 16 8 49 18 9 50 17 8 51 18 9 52 19 9 53 19 9 54 18 9 55 20 10 56 19 9 57 20 10 58 21 10 59 21 10 60 20 10 61 22 11 62 21 10 63 22 11 64 23 12 65 23 12 66 22 11 67 24 13 68 26 14 69 25 14 70 27 14 71 26 14 72 27 14 73 28 14 74 28 14 75 27 14 76 29 14 77 29 14 78 27 14 79 30 14 80 29 14 81 30 14 82 31 14 83 31 14 84 30 14 85 32 14 86 31 14 87 32 14 88 33 14 89 33 14 90 32 14 91 34 14 92 33 14 93 34 14 94 35 14 95 36 15 96 37 15 97 38 15 98 37 15 99 36 15 100 39 15 101 37 15 102 39 15 103 40 15 104 40 15 105 39 15 106 41 15 107 40 15 108 41 15 109 42 15 110 42 15 111 41 15 112 43 15 113 42 15 114 43 15 115 44 15 116 44 15 117 43 15 118 45 15 119 44 15 120 45 15 121 46 15 122 46 15 123 45 15 124 47 15 125</p>
+        </triangles>
+      </mesh>
+    </geometry>
+  </library_geometries>
+  <library_visual_scenes>
+    <visual_scene id="Scene" name="Scene">
+      <node id="wheel_front" name="wheel_front" type="NODE">
+        <matrix sid="transform">1 0 0 -12.5032 0 1 0 -9.596063 0 0 1 15.64578 0 0 0 1</matrix>
+        <instance_geometry url="#Loader_car_Loader_car_Material_0_004-mesh" name="wheel_front">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="Loader_car_Material_001-material" target="#Loader_car_Material_001-material">
+                <bind_vertex_input semantic="Loader_car_Loader_car_Material_0_004-mesh-map-0" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+    </visual_scene>
+  </library_visual_scenes>
+  <scene>
+    <instance_visual_scene url="#Scene"/>
+  </scene>
+</COLLADA>

@@ -1,0 +1,22 @@
+robots:
+  # - name: drone_1
+  #   package: "drone_cpp"
+  #   type: "drone"
+  #   starting_position: [3.0, 0.0, 0.75]
+  #   starting_orientation: [0.0, 0.0, 0.0]
+  #   gz_bridge_config: "drone_ros_gz_bridge.yaml"
+  #   nav2_config: "drone_nav2_config.yaml"
+  #   use_pure_odom: false
+  #   # Path to parameter file that does not use AMCL
+  #   # nav2_config: "nav2_config_perfect_odom.yaml"
+  #   # use_pure_odom: true
+  #   launch_file: "drone_launch.py"
+  - name: forklift_1
+    package: "forklift_cpp"
+    type: "forklift"
+    starting_position: [3.0, 0.0, 0.75]
+    # roll, pitch, yaw in radians
+    starting_orientation: [0.0, 0.0, 0.0]
+    gz_bridge_config: "forklift_ros_gz_bridge.yaml"
+    nav2_config: "forklift_nav2_config.yaml"
+    launch_file: "forklift_launch.py"

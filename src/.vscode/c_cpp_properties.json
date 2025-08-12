@@ -1,0 +1,20 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/opt/ros/jazzy/include/**",
+                "/opt/ros/jazzy/include/nav_msgs",
+                "${workspaceFolder}",
+                "${workspaceFolder}/mf_utils/include/**"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/lib/ccache/gcc",
+            "cStandard": "c17",
+            "cppStandard": "gnu++17",
+            "intelliSenseMode": "linux-gcc-x64"
+        }
+    ],
+    "version": 4
+}

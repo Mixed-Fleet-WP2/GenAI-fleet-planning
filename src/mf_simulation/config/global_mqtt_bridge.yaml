@@ -1,0 +1,20 @@
+/**:
+  ros__parameters:
+    broker:
+      host: localhost
+    bridge:
+    #ROS topics with the starting slash are considered as global topics (not namespaced by ros2)
+      ros2mqtt:
+        ros_topics: 
+          - /robot_state_updates
+          - /object_state_updates
+        /robot_state_updates:
+          mqtt_topic: robot_state_updates
+          ros_type: std_msgs/msg/String
+          primitive: true
+        /object_state_updates:
+          mqtt_topic: object_state_updates
+          ros_type: std_msgs/msg/String
+          primitive: true
+      
+        

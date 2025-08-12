@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+
+<!-- 
+  Copyright (c) Elmeri Pohjois-Koivisto
+  See robot.urdf.xacro for licensing
+-->
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name="fork" params="id mass scale fork_attach_offsets">
+    <xacro:include filename="inertial_macros.xacro" />
+    
+
+    <!--
+    Dimensions are defined when viewing link from the front:
+      height is up
+      length is forward (towards you)
+      width is sideways (left/right)
+    -->
+
+    <xacro:property name="fork_attach_height" value="0.5" />
+    <xacro:property name="fork_attach_length" value="0.1" />
+    <xacro:property name="fork_attach_width" value="0.025" />
+    <xacro:property name="fork_visual_offset" value="0.04" />
+
+    <xacro:property name="fork_height" value="0.04" />
+    <xacro:property name="fork_length" value="1.0" />
+    <xacro:property name="fork_width" value="0.1" />
+
+    <link name="fork_${id}_attach">
+      <visual>
+        <origin xyz="0 0 0" rpy="${pi/2} ${pi/2} 0" />
+
+        <geometry>
+          <box size="${fork_attach_height} ${fork_attach_width} ${fork_attach_length}" />
+        </geometry>
+        <material name="darkgray" />
+      </visual>
+
+      <collision>
+        <origin xyz="0 0 0" rpy="${pi/2} ${pi/2} 0" />
+        <geometry>
+          <box size="${fork_attach_height} ${fork_attach_width} ${fork_attach_length}" />
+        </geometry>
+      </collision>
+
+      <xacro:inertial_box mass="${mass / 2}" x="${fork_attach_height}" y="${fork_attach_width}"
+        z="${fork_attach_length}">
+        <origin xyz="0 0 0" rpy="0 0 0" />
+      </xacro:inertial_box>
+    </link>
+
+  
+    <link name="fork_${id}">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+
+        <geometry>
+          <box size="${fork_length} ${fork_width} ${fork_height}" />
+        </geometry>
+        <material name="darkgray" />
+      </visual>
+
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <box size="${fork_length} ${fork_width} ${fork_height}" />
+        </geometry>
+    
+      </collision>
+      
+      <xacro:inertial_box mass="${mass / 2}" x="${fork_length}" y="${fork_width}" z="${fork_height}">
+        <origin xyz="0 0 0" rpy="0 0 0" />
+      </xacro:inertial_box>
+
+    </link>
+ 
+
+    <joint name="fork_attach_${id}_joint" type="fixed">
+      <parent link="fork_plate" />
+      <child link="fork_${id}_attach" />
+      <origin xyz="${fork_attach_offsets}" rpy="0 0 0" />
+    </joint>
+    
+    <joint name="fork_${id}_joint" type="fixed">
+      <parent link="fork_${id}_attach" />
+      <child link="fork_${id}" />
+      <origin xyz="${fork_length/2} 0 -${fork_attach_height/2-fork_height/2}" rpy="0 0 0" />
+    </joint>
+  
+    <!-- https://osrf-migration.github.io/sdformat-gh-pages/#!/osrf/sdformat/issues/131/page/1-->
+
+  </xacro:macro>
+
+</robot>

@@ -1,0 +1,298 @@
+#include "forklift_controller.hpp"
+
+ForkliftController::ForkliftController() : Navigatable() {
+
+    move_to_pose_subscriber_ = this->create_subscription<std_msgs::msg::String>(
+        "move", 10, 
+        [this](const std::shared_ptr<std_msgs::msg::String> msg) {
+            this->move_to_pose_callback(msg);
+        }
+    );
+
+    move_fork_subscription_ = this->create_subscription<std_msgs::msg::String>(
+        "move_fork", 10, 
+        [this](const std_msgs::msg::String::ConstSharedPtr msg){
+            this->move_fork_callback_(msg);
+        }
+    );
+
+    pick_up_subscription_ = this->create_subscription<std_msgs::msg::String>(
+        "pick_up", 10,
+        [this](const std_msgs::msg::String::ConstSharedPtr msg){
+            pick_up_callback_(msg);
+        }
+    );
+
+    drop_subscription_ = this->create_subscription<std_msgs::msg::String>(
+        "drop", 10,
+        [this](const std_msgs::msg::String::ConstSharedPtr msg){
+            this->drop_callback_(msg);
+        }
+    );
+
+    joint_state_subscription_ = this->create_subscription<sensor_msgs::msg::JointState>(
+        "joint_states", 10,
+        [this](const sensor_msgs::msg::JointState::ConstSharedPtr msg){
+            this->joint_states_callback_(msg);
+        }
+
+    );
+
+    fork_control_publisher_ = this->create_publisher<std_msgs::msg::Float64>(
+        "fork_control", 10
+    );
+
+    // https://github.com/gazebosim/ros_gz/pull/380
+
+    // Use the nav callback group with the object pose setter. It does not matter
+    // significantly because the operation returning takes minimal time and
+    // the actions are not used together.
+    object_pose_setter_client_ = this->create_client<ros_gz_interfaces::srv::SetEntityPose>(
+        "/world/warehouse/set_pose",
+        rclcpp::ServicesQoS(), 
+        nav_callback_group_);
+
+
+}
+void ForkliftController::move_fork_callback_(const std_msgs::msg::String::ConstSharedPtr msg) {
+
+    RCLCPP_INFO_STREAM(get_logger(), "RECEIVED MOVE FORK");
+    const std::string &msg_str = msg->data;
+
+    auto action = parse_json<JointPositionAction>(msg_str, this);
+    
+    if (!action.has_value()){
+        return;
+    }
+
+    //Async action because of timer
+    move_fork(action.value());
+
+}
+
+void ForkliftController::drop(const ObjectAction &action){
+
+    const int id = action.action_id;
+    const std::string object = action.object;
+
+
+    // See fork_attach_offsets in robot_core.xacro for where these come from
+    // Simply, this is the straight distance from the link origin
+    // of fork_1 to fork_2
+    static const float DISTANCE_BETWEEN_FORK_ORIGINS = 0.4;
+    static const float DISTANCE_FROM_FORK_1_TO_CENTER = DISTANCE_BETWEEN_FORK_ORIGINS / 2;
+    //Check forklift.urdf.xacro and fork.xacro for what these come from
+    static const float FORK_LENGTH = 1.0;
+
+    //Assume everything is on pallets with dimensions 1.2x0.8x0.144m (see euro_pallet model)
+    const float PALLET_LENGTH = 0.8;
+
+    const bool drop_success = move_object_relative_to_fork(
+        object, 
+        (FORK_LENGTH / 2 + PALLET_LENGTH / 2),
+        -DISTANCE_FROM_FORK_1_TO_CENTER
+    );
+
+    if (!drop_success){
+        send_feedback({
+            id,
+            ERROR, 
+            "Picking up object " + object + " failed"
+        });
+    
+    }else{
+        send_feedback({
+            id,
+            SUCCESS, 
+            "Picking up object " + object + " succeeded"
+        });
+    }
+}
+
+
+void ForkliftController::drop_callback_(const std_msgs::msg::String::ConstSharedPtr msg){
+
+    const std::string &msg_str = msg->data;
+    auto action = parse_json<ObjectAction>(msg_str, this);
+
+    if (!action.has_value()){
+        return;
+    }
+
+    drop(action.value());
+
+
+
+}
+
+void ForkliftController::move_fork(const JointPositionAction& action) {
+    
+    auto msg = std_msgs::msg::Float64();
+    msg.data = action.position;
+    fork_control_publisher_->publish(msg);
+
+    // Periodically check if the desired height has been reached
+    // (simulates sensor input/hardware interrrupts)
+    lift_timer_ = this->create_wall_timer(std::chrono::milliseconds(100),
+        [this, action]() {
+            // Smaller error possible because the gz sim joint controller is basically
+            // as accurate as ground truth
+            const float error = std::abs(current_fork_pos_ - action.position);
+            RCLCPP_INFO_STREAM(get_logger(), std::to_string(error));
+            if (error < 0.025){
+                lift_timer_->cancel();
+                send_feedback({
+                    action.action_id, 
+                    SUCCESS, 
+                    "Fork raised to elevation: " + std::to_string(action.position)
+                });
+            }
+        }
+    );
+
+}
+
+void ForkliftController::navigate_to_pose(const MoveAction& action) {
+    send_nav_goal(action);
+}
+
+/**
+ * @brief Utility function to move/teleport an object relative
+ * to a forklift's fork number one. 
+ * @note Without offsets, the object is move to the center
+ * of the fork_1's coordinate frame (see forklift.urdf.xacro and fork.xacro for details)
+ */
+bool ForkliftController::move_object_relative_to_fork(
+        const std::string object, float offset_x, 
+        float offset_y, float offset_z) {
+
+    auto pose_in_frame = get_coords_in_other_frame(this, "map", "fork_1");
+
+    if (!pose_in_frame.has_value()){
+        return false;
+    }
+
+    auto [translation, fork_global_rotation] = pose_in_frame.value();
+    auto [fork_global_x, fork_global_y, fork_global_z] = translation;
+
+    // Service definitions:
+    // https://docs.ros.org/en/iron/p/ros_gz_interfaces/interfaces/srv/SetEntityPose.html
+    // https://docs.ros.org/en/iron/p/ros_gz_interfaces/interfaces/msg/Entity.html
+    auto move_request = std::make_shared<ros_gz_interfaces::srv::SetEntityPose::Request>();
+
+    auto position = geometry_msgs::msg::Point();
+    position.x = static_cast<float>(fork_global_x + offset_x);
+    position.y = static_cast<float>(fork_global_y + offset_y);
+    position.z = static_cast<float>(fork_global_z + offset_z);
+    
+    move_request->pose.orientation = fork_global_rotation;
+    const auto [roll, pitch, yaw] = quaternion_to_euler(fork_global_rotation.x, fork_global_rotation.y, fork_global_rotation.z, fork_global_rotation.w);
+    RCLCPP_INFO_STREAM(get_logger(), "The yaw is: " + std::to_string(yaw)); 
+    move_request->pose.position = position;
+
+    // Specify the request type with an enum, in this case
+    // a model (object) is moved
+    move_request->entity.type = move_request->entity.MODEL;
+    move_request->entity.name = object;
+
+    auto future = object_pose_setter_client_->async_send_request(
+    move_request);
+    
+    // A timeout is set in case the simulation returns no response (unlikely)
+    // in real scenario this would be checked with sensors inside a timer
+    // but simulation returns a boolean.
+    auto status = future.wait_for(std::chrono::seconds(10));
+    
+    // https://en.cppreference.com/w/cpp/thread/future/wait_for.html
+    if (status == std::future_status::timeout){
+        return false;
+    }
+
+    return future.get()->success;
+
+};
+
+void ForkliftController::pick_up_callback_(const std_msgs::msg::String::ConstSharedPtr msg){
+
+    const std::string &msg_str = msg->data;
+
+    auto action = parse_json<ObjectAction>(msg_str, this);
+    
+    if (!action.has_value()){
+        return;
+    }
+
+    pick_up(action.value());
+
+}
+
+void ForkliftController::pick_up(const ObjectAction& action){
+    
+    const std::string object = action.object;
+    const int id = action.action_id;
+
+    // See fork_attach_offsets in robot_core.xacro for where these come from
+    // Simply, this is the straight distance from the link origin
+    // of fork_1 to fork_2
+    static const float DISTANCE_BETWEEN_FORK_ORIGINS = 0.4;
+    static const float DISTANCE_FROM_FORK_1_TO_CENTER = DISTANCE_BETWEEN_FORK_ORIGINS / 2;
+
+    const bool pick_up_success = move_object_relative_to_fork(object, 0.0, -DISTANCE_FROM_FORK_1_TO_CENTER, 0.0);
+   
+    if (!pick_up_success){
+        send_feedback({
+            id,
+            ERROR, 
+            "Picking up object " + object + " failed"
+        });
+    
+    }else{
+        send_feedback({
+            id,
+            SUCCESS, 
+            "Picking up object " + object + " succeeded"
+        });
+    }
+
+}
+
+
+void ForkliftController::joint_states_callback_(
+    const sensor_msgs::msg::JointState::ConstSharedPtr joint_states){
+    
+    // Message definition for JointState:
+    // https://docs.ros2.org/foxy/api/sensor_msgs/msg/JointState.html
+
+    // The topic only publishes the state of the joints if alphabetic
+    // order so fork_plate is the first item
+    // Just in case this ever changes, add a guard that uses std::find
+    if (joint_states->name.at(0) != "fork_plate_joint"){
+        
+        RCLCPP_INFO_STREAM(get_logger(), "Using std::find");
+        std::vector<std::string> joint_names = joint_states->name;
+
+        const auto iter = std::find(joint_names.begin(), joint_names.end(), "fork_plate_joint");
+        // https://stackoverflow.com/questions/1425349/how-do-i-find-an-element-position-in-stdvector
+        auto joint_index = std::distance(joint_names.begin(), iter);
+        current_fork_pos_ = joint_states->position.at(joint_index);
+
+    }
+
+    current_fork_pos_ = joint_states->position.at(0);
+}
+
+int main(int argc, char * argv[])
+{
+    rclcpp::init(argc, argv);
+    
+    // Assign 3 threads: the main thread and two other for the two callback groups
+    auto executor = rclcpp::executors::MultiThreadedExecutor(rclcpp::ExecutorOptions(), 3);
+    auto node = std::make_shared<ForkliftController>();
+    executor.add_node(node);
+    executor.spin();
+
+    rclcpp::shutdown();
+
+    rclcpp::shutdown();
+    return 0;
+}
