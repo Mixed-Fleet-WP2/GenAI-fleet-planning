@@ -2,50 +2,7 @@
 
 ForkliftController::ForkliftController() : Navigatable() {
 
-
-    // Deattach the pallets
-    // const auto PALLETS = std::vector<std::string>{"euro_pallet_2"};
-
-    // rclcpp::SubscriptionOptions options;
-    // options.callback_group = odom_callback_group_;
-    // for (const auto &pallet : PALLETS){
-    //     pallet_subscriptions_.push_back(
-    //         this->create_subscription<std_msgs::msg::String>(
-    //             "/" + pallet + "/state", 10, 
-    //             [this, pallet](const std_msgs::msg::String::ConstSharedPtr msg) {
-                    
-    //                 if (msg->data == "attached") {
-    //                     RCLCPP_INFO_STREAM(get_logger(), "Pallet " << pallet << " is attached");
-    //                     pallet_statues_[pallet] = true;
-    //                 } else if (msg->data == "detached") {
-    //                     RCLCPP_INFO_STREAM(get_logger(), "Pallet " << pallet << " is detached");
-    //                     pallet_statues_[pallet] = false;
-    //                 }
-                    
-    //             }, options
-    //         )
-    //     );
-    //     pallet_statues_[pallet] = true; // Assume all pallets are attached at the start
-    // }
-
-    // for (const auto &pallet : PALLETS){
-    //     auto publisher = this->create_publisher<std_msgs::msg::Empty>(
-    //         "/" + pallet + "/detach", 10
-    //     );
-    //     auto msg = std_msgs::msg::Empty();
-
-    //         // If the pallet is attached, loop until it is detached
-    //         while (pallet_statues_[pallet]) {
-    //             publisher->publish(msg);
-    //             // Refactor in the future
-    //             rclcpp::spin_some(this->get_node_base_interface());
-    //         }
-            
-    //     // Give Gazebo some time to process the detach
-    //     rclcpp::sleep_for(std::chrono::milliseconds(100));
-    // }
-
-    move_to_pose_subscriber_ = this->create_subscription<std_msgs::msg::String>(
+  move_to_pose_subscriber_ = this->create_subscription<std_msgs::msg::String>(
         "move", 10, 
         [this](const std::shared_ptr<std_msgs::msg::String> msg) {
              RCLCPP_INFO_STREAM(get_logger(), "Move callback triggered with: " << msg->data);
@@ -138,20 +95,6 @@ void ForkliftController::drop(const ObjectAction &action){
 
     //Assume everything is on pallets with dimensions 1.2x0.8x0.144m (see euro_pallet model)
     const float PALLET_LENGTH = 0.8;
-
-    // Detach the object
-    auto detach_publisher = this->create_publisher<std_msgs::msg::Empty>(
-        "/" + object + "/detach", 10
-    );
-
-    auto msg = std_msgs::msg::Empty();
-    while(pallet_statues_[object]) {
-        detach_publisher->publish(msg);
-        // Refactor in the future
-       rclcpp::sleep_for(std::chrono::milliseconds(100));
-    };
-
-    rclcpp::sleep_for(std::chrono::milliseconds(200));
 
     const bool drop_success = move_object_relative_to_fork(
         object, 

@@ -81,12 +81,7 @@ def generate_launch_description():
             source_file=params_file,
             root_key=namespace,
             # https://docs.nav2.org/migration/Iron.html#rewrittenyaml-could-add-new-parameters-to-yamls
-            param_rewrites={'amcl.ros__parameters.initial_pose.x': pose['x'],
-                            'amcl.ros__parameters.initial_pose.y': pose['y'],
-                            'amcl.ros__parameters.initial_pose.z': pose['z'],
-                            'amcl.ros__parameters.initial_pose.yaw': pose['yaw'],
-                            'autostart': autostart
-                            },
+            param_rewrites=param_rewrites,
             convert_types=True,
         ))
 

@@ -155,13 +155,16 @@ def generate_launch_description():
         'use_pure_odom', default_value='False', description="Whether to rely on odometry for localization without amcl"
     )
 
+    container_name = [namespace, "_nav2_container"]
+    
+
     # Specify the actions
     bringup_cmd_group = GroupAction(
         [
             PushROSNamespace(condition=IfCondition(use_namespace), namespace=namespace),
             Node(
                 condition=IfCondition(use_composition),
-                name='nav2_container',
+                name=container_name,
                 package='rclcpp_components',
                 executable='component_container_isolated',
                 parameters=[configured_params],
@@ -194,7 +197,7 @@ def generate_launch_description():
                     'params_file': params_file,
                     'use_composition': use_composition,
                     'use_respawn': use_respawn,
-                    'container_name': 'nav2_container',
+                    'container_name': container_name,
                 }.items(),
             ),
             IncludeLaunchDescription(
@@ -211,7 +214,7 @@ def generate_launch_description():
                     'params_file': params_file,
                     'use_composition': use_composition,
                     'use_respawn': use_respawn,
-                    'container_name': 'nav2_container',
+                    'container_name': container_name,
                     'use_amcl': PythonExpression(['not ', use_pure_odom]),
                     **pose
                 }.items(),

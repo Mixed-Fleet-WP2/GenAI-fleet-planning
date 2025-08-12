@@ -157,8 +157,6 @@ def generate_launch_description():
         replacements={'<robot_namespace>':(namespace)}
     )
     
-    
-
     bringup_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(os.path.join(nav_launch_dir, 'launch', 'bringup_launch.py')),
         launch_arguments={

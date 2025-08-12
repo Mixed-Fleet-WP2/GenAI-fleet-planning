@@ -9,17 +9,19 @@ using namespace attach_interfaces::srv;
 
 StateBridge::StateBridge(const rclcpp::NodeOptions & option) : rclcpp::Node("state_bridge", option) 
 {   
+
+    cb_group_ = create_callback_group(rclcpp::CallbackGroupType::Reentrant);
+    sub_options_ = rclcpp::SubscriptionOptions();
+    sub_options_.callback_group = cb_group_;
     // Create messages that are publisher through mqtt_bridge
     pose_publisher_ = this->create_publisher<std_msgs::msg::String>("/object_state_updates", 10);
     pose_subscriber_ = this->create_subscription<tf2_msgs::msg::TFMessage>(
         "/object_state_updates_gz", 10, [this](const tf2_msgs::msg::TFMessage::SharedPtr msg) {
             this->pose_callback(msg);
-        }
+        }, sub_options_
     );
 
-    cb_group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
-    sub_options_ = rclcpp::SubscriptionOptions();
-    sub_options_.callback_group = cb_group_;
+    
 
     attach_srv_ = this->create_service<ChangeAttach>("/change_attach", [this](const ChangeAttach::Request::SharedPtr req, ChangeAttach::Response::SharedPtr res){
         attach_srv_callback(req, res);
@@ -101,6 +103,8 @@ bool StateBridge::detach_object(const std::string & object_name)
         "/" + object_name + "/detach", 10
     );
 
+    bool object_detached = false;
+
     const static auto msg = std_msgs::msg::Empty();
 
     auto temp_detach_state_subscriber = this->create_subscription<std_msgs::msg::String>(
@@ -117,13 +121,15 @@ bool StateBridge::detach_object(const std::string & object_name)
     // in other of two the available threads
 
     // Send the detach request every 1/10s
-    timer_ = this->create_wall_timer(std::chrono::milliseconds(100), [this, temp_detach_publisher](){
+    timer_ = this->create_wall_timer(std::chrono::milliseconds(100), [this, temp_detach_publisher, object_name](){
         temp_detach_publisher->publish(msg);
+        RCLCPP_INFO_STREAM(get_logger(), "SENDING DETACH FOR: " + object_name);
     }, cb_group_);
 
 
     // Wait fot detach to be completed (or fail)
     auto status = future.wait_for(std::chrono::seconds(5));
+    RCLCPP_INFO_STREAM(get_logger(), "STOP WAITING");
     // Stop sending deattach messages
     timer_->cancel();
 

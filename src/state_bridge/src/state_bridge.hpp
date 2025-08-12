@@ -3,6 +3,7 @@
 
 #include <unordered_set>
 #include <future>
+#include <thread>
 #include "geometry_msgs/msg/pose.hpp"
 #include "std_msgs/msg/string.hpp"
 #include "rclcpp/rclcpp.hpp"

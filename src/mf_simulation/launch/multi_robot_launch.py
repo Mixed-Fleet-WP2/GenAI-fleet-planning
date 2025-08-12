@@ -206,7 +206,8 @@ def generate_launch_description():
     simulation_container = Node(
         name='sim_env_container',
         package='rclcpp_components',
-        executable='component_container',
+        executable='component_container_mt',
+        # arguments=["--use_multi_threaded_executor"],
         output='both'
     )
 
@@ -264,26 +265,26 @@ def generate_launch_description():
     )
 
     # Unused for now in favor of RosGzBridge- action
-    service_bridge = Node(
-        name="service_bridge",
-        package="ros_gz_bridge",
-        executable="parameter_bridge",
-        # These handle the parameters
-        # https://github.com/gazebosim/ros_gz/blob/77522600db37d49a23e349c6e109b08caa621188/ros_gz_bridge/src/ros_gz_bridge.cpp#L36
-        # https://github.com/gazebosim/ros_gz/blob/2b0f0a045bb232fab6aac59beeefe46bc7e082ab/ros_gz_bridge/src/bridge_config.cpp
-        parameters=[{
-            'config_file': global_gz_bridge_config_file
-        } 
-        ],
-        # Pass the service bridge definition as plain arguments because the RosGzBridge doesnt support services
-        # from yaml files when using the version from apt (as of 24.7.2025).
-        # In the future, when changes are available, services can be listed in the yaml
-        # See: https://github.com/gazebosim/ros_gz/commit/f69a10d73b3d32fdd4efaea40359a6b62a7f27b2 
+    # service_bridge = Node(
+    #     name="service_bridge",
+    #     package="ros_gz_bridge",
+    #     executable="parameter_bridge",
+    #     # These handle the parameters
+    #     # https://github.com/gazebosim/ros_gz/blob/77522600db37d49a23e349c6e109b08caa621188/ros_gz_bridge/src/ros_gz_bridge.cpp#L36
+    #     # https://github.com/gazebosim/ros_gz/blob/2b0f0a045bb232fab6aac59beeefe46bc7e082ab/ros_gz_bridge/src/bridge_config.cpp
+    #     parameters=[{
+    #         'config_file': global_gz_bridge_config_file
+    #     } 
+    #     ],
+    #     # Pass the service bridge definition as plain arguments because the RosGzBridge doesnt support services
+    #     # from yaml files when using the version from apt (as of 24.7.2025).
+    #     # In the future, when changes are available, services can be listed in the yaml
+    #     # See: https://github.com/gazebosim/ros_gz/commit/f69a10d73b3d32fdd4efaea40359a6b62a7f27b2 
 
-        # This handles the arguments:
-        # https://github.com/gazebosim/ros_gz/blob/2b0f0a045bb232fab6aac59beeefe46bc7e082ab/ros_gz_bridge/src/parameter_bridge.cpp
-        arguments=["/world/warehouse/set_pose@ros_gz_interfaces/srv/SetEntityPose@gz.msgs.Pose@gz.msgs.Boolean"]
-    )
+    #     # This handles the arguments:
+    #     # https://github.com/gazebosim/ros_gz/blob/2b0f0a045bb232fab6aac59beeefe46bc7e082ab/ros_gz_bridge/src/parameter_bridge.cpp
+    #     arguments=["/world/warehouse/set_pose@ros_gz_interfaces/srv/SetEntityPose@gz.msgs.Pose@gz.msgs.Boolean"]
+    # )
 
     # https://docs.ros.org/en/jazzy/How-To-Guides/Launching-composable-nodes.html
 
@@ -298,23 +299,16 @@ def generate_launch_description():
                 parameters=[global_mqtt_config_file],
                 extra_arguments=[{'use_intra_process_comms': True}],
              ),
-            # ComposableNode(
-            #     package='state_bridge',
-            #     plugin='state_bridge::StateBridge',
-            #     name='state_bridge_component',
-            #     parameters=[{'use_sim_time': True}],
-            #     extra_arguments=[{'use_intra_process_comms': True}],
-            # ),
+            ComposableNode(
+                package='state_bridge',
+                plugin='state_bridge::StateBridge',
+                name='state_bridge_component',
+                parameters=[{'use_sim_time': True}],
+                extra_arguments=[{'use_intra_process_comms': True}],
+            ),
         ]
     )
 
-    standalone_state_bridge = Node(
-        package='state_bridge',
-        executable='state_bridge_exe',
-        name='state_bridge',
-        output='screen',
-        parameters=[{'use_sim_time': True}],
-    )
 
     set_env_vars_resources = AppendEnvironmentVariable(
         'GZ_SIM_RESOURCE_PATH', os.path.join(pkg_share, 'models'))
@@ -355,7 +349,7 @@ def generate_launch_description():
     ld.add_action(start_interface)
     #ld.add_action(service_bridge)
     ld.add_action(gz_bridge)
-    ld.add_action(standalone_state_bridge)
+    #ld.add_action(standalone_state_bridge)
     
 
     # Use OpaqueFunction to create robot instances after resolving the YAML path

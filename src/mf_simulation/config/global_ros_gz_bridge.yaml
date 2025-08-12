@@ -36,6 +36,16 @@
   ros_type_name: "std_msgs/msg/String"
   direction: GZ_TO_ROS
 
+- topic_name: "/euro_pallet_1/detach"
+  gz_type_name: "gz.msgs.Empty"
+  ros_type_name: "std_msgs/msg/Empty"
+  direction: ROS_TO_GZ
+
+- topic_name: "/euro_pallet_1/state"
+  gz_type_name: "gz.msgs.StringMsg"
+  ros_type_name: "std_msgs/msg/String"
+  direction: GZ_TO_ROS
+
 # - gz_topic_name: "/world/warehouse/set_pose"
 #   gz_type_name: "gz.msgs.Pose@gz.msgs.Boolean"
 #   ros_topic_name: "/set_model_pose"
