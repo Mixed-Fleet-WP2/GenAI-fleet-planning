@@ -10,7 +10,7 @@
   <xacro:macro name="fork" params="id mass scale fork_attach_offsets">
     <xacro:include filename="inertial_macros.xacro" />
     
-
+   
     <!--
     Dimensions are defined when viewing link from the front:
       height is up
@@ -38,6 +38,13 @@
       </visual>
 
       <collision>
+        <gazebo>
+          <surface>
+            <contact>
+              <collide_bitmask>0x01</collide_bitmask>
+            </contact>
+          </surface>
+        </gazebo>
         <origin xyz="0 0 0" rpy="${pi/2} ${pi/2} 0" />
         <geometry>
           <box size="${fork_attach_height} ${fork_attach_width} ${fork_attach_length}" />
@@ -87,6 +94,38 @@
       <child link="fork_${id}" />
       <origin xyz="${fork_length/2} 0 -${fork_attach_height/2-fork_height/2}" rpy="0 0 0" />
     </joint>
+
+  <gazebo reference="fork_${id}_attach">
+    <collision name="your_collision_name">
+      <surface>
+        <collide_bitmask>0x01</collide_bitmask>
+        <contact>
+          <collide_bitmask>0x01</collide_bitmask>
+        </contact>
+      </surface>
+    </collision>
+</gazebo>
+
+<gazebo reference="fork_${id}">
+    <collision name="your_collision_name">
+      <surface>
+        <collide_bitmask>0x01</collide_bitmask>
+        <contact>
+          <collide_bitmask>0x01</collide_bitmask>
+        </contact>
+      </surface>
+    </collision>
+</gazebo>
+
+<gazebo reference="fork_${id}_joint">
+    <preserveFixedJoint>true</preserveFixedJoint>
+  </gazebo>
+
+  <gazebo reference="fork_attach_${id}_joint">
+    <disableFixedJointLumping>true</disableFixedJointLumping> 
+    <preserveFixedJoint>true</preserveFixedJoint>
+  </gazebo>
+  
   
     <!-- https://osrf-migration.github.io/sdformat-gh-pages/#!/osrf/sdformat/issues/131/page/1-->
 

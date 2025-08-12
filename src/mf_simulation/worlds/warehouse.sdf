@@ -57,6 +57,11 @@
       <static>true</static>
       <link name='link'>
         <collision name='collision'>
+          <!-- <surface>
+            <contact>
+              <collide_bitmask>0x02</collide_bitmask>
+            </contact>
+          </surface> -->
           <geometry>
             <plane>
               <normal>0.0 0.0 1</normal>
@@ -66,6 +71,34 @@
         </collision>
       </link>
       <pose>0 0 0 0 0 0</pose>
+    </model>
+
+    <model name="object_attach">
+      <static>true</static>
+        <link name='link'>
+        <collision name='collision'>
+          <!-- <surface>
+            <contact>
+              <collide_bitmask>0x02</collide_bitmask>
+            </contact>
+          </surface> -->
+          <geometry>
+            <plane>
+              <normal>0.0 0.0 1</normal>
+              <size>0 0</size>
+            </plane>
+          </geometry>
+        </collision>
+      </link>
+
+      <include>
+      <!--In order for gazebo to find this, an appropriate mode.config must exist-->
+      <!--See setting environment variable in multi_robot_launch.py-->
+      <uri>model://euro_pallet</uri>
+      <name>euro_pallet_3</name>
+      <pose>5 -5.0 0 0 0 0</pose>
+    </include>
+        
     </model>
 
     <!-- Base -->
@@ -82,16 +115,16 @@
       <!--In order for gazebo to find this, an appropriate mode.config must exist-->
       <!--See setting environment variable in multi_robot_launch.py-->
       <uri>model://euro_pallet</uri>
-      <name>pallet_1</name>
-      <pose>14.25 -10.0 0.1 0 0 0</pose>
+      <name>euro_pallet_1</name>
+      <pose>14.25 -10.0 0 0 0 0</pose>
     </include>
 
     <include>
       <!--In order for gazebo to find this, an appropriate mode.config must exist-->
       <!--See setting environment variable in multi_robot_launch.py-->
       <uri>model://euro_pallet</uri>
-      <name>pallet_2</name>
-      <pose>-5.0 13.0 -0.1 0 0 0</pose>
+      <name>euro_pallet_2</name>
+      <pose>-5.0 13.5 0 0 0 0</pose>
     </include>
 
     <!-- Shelves -->

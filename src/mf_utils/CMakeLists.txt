@@ -11,10 +11,11 @@ find_package(nav2_msgs REQUIRED)
 find_package(ament_cmake_python REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(ros_gz_interfaces REQUIRED)
 
 add_library(mf_utils SHARED src/navigatable.cpp)
 
-ament_target_dependencies(mf_utils rclcpp nav2_msgs rclcpp_action geometry_msgs tf2_ros)
+ament_target_dependencies(mf_utils rclcpp nav2_msgs rclcpp_action geometry_msgs tf2_ros ros_gz_interfaces)
 
 # Make header files findable for both user of this target as well as the target itself
 # https://leimao.github.io/blog/CMake-Public-Private-Interface/
@@ -32,7 +33,8 @@ ament_export_dependencies(
     rclcpp_action
     nav2_msgs
     tf2_ros
-    geometry_msgs)
+    geometry_msgs
+    ros_gz_interfaces)
 
 # Install header files
 install(DIRECTORY include/

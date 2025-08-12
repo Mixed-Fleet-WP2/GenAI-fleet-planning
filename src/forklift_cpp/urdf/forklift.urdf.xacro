@@ -98,7 +98,7 @@
     <child link="fork_plate" />
     <origin xyz="1.15 0 0.025" rpy="0 0 0" />
     <axis xyz="0 0 1" />
-    <limit effort="2500" lower="0.0" upper="5.0" velocity="0.5" />
+    <limit effort="2500" lower="0.0" upper="2.0" velocity="0.5" />
   </joint>
 
   <xacro:fork id="1" mass="15" scale="1" fork_attach_offsets="0.05 0.2 -0.35"></xacro:fork>
@@ -148,7 +148,7 @@
 
   <gazebo reference="rplidar_link">
     <sensor name="rplidar" type="gpu_lidar">
-      <update_rate>10.0</update_rate>
+      <update_rate>40.0</update_rate>
       <visualize>true</visualize>
       <always_on>true</always_on>
       <gz_frame_id>rplidar_link</gz_frame_id>
@@ -156,7 +156,7 @@
       <lidar>
         <scan>
           <horizontal>
-            <samples>360</samples>
+            <samples>180</samples>
             <resolution>1.0</resolution>
             <min_angle>0.000</min_angle>
             <max_angle>6.280000</max_angle>
@@ -182,6 +182,28 @@
     <disableFixedJointLumping>true</disableFixedJointLumping>
   </gazebo>
   -->
+
+  <gazebo reference="base_link">
+    <collision name="your_collision_name">
+      <surface>
+        <collide_bitmask>0x01</collide_bitmask>
+        <contact>
+          <collide_bitmask>0x01</collide_bitmask>
+        </contact>
+      </surface>
+    </collision>
+</gazebo>
+
+<gazebo reference="fork_plate">
+    <collision name="your_collision_name">
+      <surface>
+        <collide_bitmask>0x01</collide_bitmask>
+        <contact>
+          <collide_bitmask>0x01</collide_bitmask>
+        </contact>
+      </surface>
+    </collision>
+</gazebo>
 
   <xacro:plugins namespace="$(arg namespace)"></xacro:plugins>
 

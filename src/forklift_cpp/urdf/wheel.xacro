@@ -33,6 +33,17 @@
       </xacro:inertial_cylinder>
     </link>
 
+    <gazebo reference="${name}">
+    <collision name="your_collision_name">
+      <surface>
+        <collide_bitmask>0x01</collide_bitmask>
+        <contact>
+          <collide_bitmask>0x01</collide_bitmask>
+        </contact>
+      </surface>
+    </collision>
+</gazebo>
+
 
   </xacro:macro>
 

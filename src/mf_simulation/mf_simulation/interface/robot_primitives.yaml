@@ -11,9 +11,9 @@ forklift:
       args_type: ["float", "float", "float", "float", "float", "float"]
       description: "Move the forklift to a specified position in 3D space. Coordinates are absolute"
     drop:
-      args: []
-      args_type: []
-      description: "Drop a currently held object."
+      args: ["object"]
+      args_type: ["string"]
+      description: "Drop an object that has been picked up."
     pick_up:
       args: ["object"]
       args_type: ["string"]

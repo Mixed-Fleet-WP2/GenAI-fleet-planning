@@ -7,6 +7,7 @@ from typing import TypedDict, cast
 from enum import Enum
 from PySide6.QtCore import SignalInstance
 from queue import Queue
+from pydantic import BaseModel
 
 @dataclass
 class ExecutableAction():
@@ -28,11 +29,8 @@ class ExecutableAction():
         self.prerequisites.discard(action_id)
 
         if len(self.prerequisites) == 0:
-            print("no PREREQS", flush=True)
             return True
         else:
-            print(str(self.prerequisites), flush=True)
-            print("len is: ", len(self.prerequisites), flush=True)
             return False
     
     def run(self, client: mqtt.Client):

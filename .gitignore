@@ -5,4 +5,4 @@ install/
 instructions.json
 .env
 *log*
-.vscode
+**/.vscode

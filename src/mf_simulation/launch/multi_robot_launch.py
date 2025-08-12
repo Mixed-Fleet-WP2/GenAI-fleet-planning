@@ -89,7 +89,6 @@ def create_robot_instances(context, *args, **kwargs):
                 # Only publish static map->odom transform if the odom is ground truth and amcl is not used
                 Node(
                     condition=IfCondition(str(use_pure_odom)),
-                    name="map_odom_transformer",
                     package="tf2_ros",
                     executable="static_transform_publisher",
                     output="screen",
@@ -161,7 +160,7 @@ def generate_launch_description():
     
     declare_use_rviz_cmd = DeclareLaunchArgument(
         'use_rviz', 
-        default_value='True', 
+        default_value='False', 
         description='Whether to start RVIZ'
     )
     
@@ -207,7 +206,8 @@ def generate_launch_description():
     simulation_container = Node(
         name='sim_env_container',
         package='rclcpp_components',
-        executable='component_container',
+        executable='component_container_mt',
+        # arguments=["--use_multi_threaded_executor"],
         output='both'
     )
 
@@ -241,36 +241,50 @@ def generate_launch_description():
         # extra params, because services cannot yet be defined with yaml
         # although ros_gz_bridge itself supports launching them
 
-        extra_bridge_params=[{"bridge_names": ["service_bridge"],
+        extra_bridge_params=[{"bridge_names": ["service_bridge", "create_bridge", "delete_bridge"],
         "bridges.service_bridge.service_name": "/world/warehouse/set_pose",
         "bridges.service_bridge.ros_type_name": "ros_gz_interfaces/srv/SetEntityPose",
         "bridges.service_bridge.gz_req_type_name": "gz.msgs.Pose",
         "bridges.service_bridge.gz_rep_type_name": "gz.msgs.Boolean",
-        "bridges.service_bridge.direction": "BIDIRECTIONALuuu"
+        "bridges.service_bridge.direction": "BIDIRECTIONAL",
+
+        "bridges.create_bridge.service_name": "/world/warehouse/create",
+        "bridges.create_bridge.ros_type_name": "ros_gz_interfaces/srv/SpawnEntity",
+        "bridges.create_bridge.gz_req_type_name": "gz.msgs.EntityFactory",
+        "bridges.create_bridge.gz_rep_type_name": "gz.msgs.Boolean",
+        "bridges.create_bridge.direction": "BIDIRECTIONAL",
+
+        "bridges.delete_bridge.service_name": "/world/warehouse/remove",
+        "bridges.delete_bridge.ros_type_name": "ros_gz_interfaces/srv/DeleteEntity",
+        "bridges.delete_bridge.gz_req_type_name": "gz.msgs.Entity",
+        "bridges.delete_bridge.gz_rep_type_name": "gz.msgs.Boolean",
+        "bridges.delete_bridge.direction": "BIDIRECTIONAL",
+
+
         }]
     )
 
     # Unused for now in favor of RosGzBridge- action
-    service_bridge = Node(
-        name="service_bridge",
-        package="ros_gz_bridge",
-        executable="parameter_bridge",
-        # These handle the parameters
-        # https://github.com/gazebosim/ros_gz/blob/77522600db37d49a23e349c6e109b08caa621188/ros_gz_bridge/src/ros_gz_bridge.cpp#L36
-        # https://github.com/gazebosim/ros_gz/blob/2b0f0a045bb232fab6aac59beeefe46bc7e082ab/ros_gz_bridge/src/bridge_config.cpp
-        parameters=[{
-            'config_file': global_gz_bridge_config_file
-        } 
-        ],
-        # Pass the service bridge definition as plain arguments because the RosGzBridge doesnt support services
-        # from yaml files when using the version from apt (as of 24.7.2025).
-        # In the future, when changes are available, services can be listed in the yaml
-        # See: https://github.com/gazebosim/ros_gz/commit/f69a10d73b3d32fdd4efaea40359a6b62a7f27b2 
+    # service_bridge = Node(
+    #     name="service_bridge",
+    #     package="ros_gz_bridge",
+    #     executable="parameter_bridge",
+    #     # These handle the parameters
+    #     # https://github.com/gazebosim/ros_gz/blob/77522600db37d49a23e349c6e109b08caa621188/ros_gz_bridge/src/ros_gz_bridge.cpp#L36
+    #     # https://github.com/gazebosim/ros_gz/blob/2b0f0a045bb232fab6aac59beeefe46bc7e082ab/ros_gz_bridge/src/bridge_config.cpp
+    #     parameters=[{
+    #         'config_file': global_gz_bridge_config_file
+    #     } 
+    #     ],
+    #     # Pass the service bridge definition as plain arguments because the RosGzBridge doesnt support services
+    #     # from yaml files when using the version from apt (as of 24.7.2025).
+    #     # In the future, when changes are available, services can be listed in the yaml
+    #     # See: https://github.com/gazebosim/ros_gz/commit/f69a10d73b3d32fdd4efaea40359a6b62a7f27b2 
 
-        # This handles the arguments:
-        # https://github.com/gazebosim/ros_gz/blob/2b0f0a045bb232fab6aac59beeefe46bc7e082ab/ros_gz_bridge/src/parameter_bridge.cpp
-        arguments=["/world/warehouse/set_pose@ros_gz_interfaces/srv/SetEntityPose@gz.msgs.Pose@gz.msgs.Boolean"]
-    )
+    #     # This handles the arguments:
+    #     # https://github.com/gazebosim/ros_gz/blob/2b0f0a045bb232fab6aac59beeefe46bc7e082ab/ros_gz_bridge/src/parameter_bridge.cpp
+    #     arguments=["/world/warehouse/set_pose@ros_gz_interfaces/srv/SetEntityPose@gz.msgs.Pose@gz.msgs.Boolean"]
+    # )
 
     # https://docs.ros.org/en/jazzy/How-To-Guides/Launching-composable-nodes.html
 
@@ -284,16 +298,17 @@ def generate_launch_description():
                 name='global_mqtt_client',
                 parameters=[global_mqtt_config_file],
                 extra_arguments=[{'use_intra_process_comms': True}],
-            ),
+             ),
             ComposableNode(
                 package='state_bridge',
                 plugin='state_bridge::StateBridge',
-                name='state_bridge_exec',
+                name='state_bridge_component',
                 parameters=[{'use_sim_time': True}],
                 extra_arguments=[{'use_intra_process_comms': True}],
             ),
         ]
     )
+
 
     set_env_vars_resources = AppendEnvironmentVariable(
         'GZ_SIM_RESOURCE_PATH', os.path.join(pkg_share, 'models'))
@@ -334,6 +349,7 @@ def generate_launch_description():
     ld.add_action(start_interface)
     #ld.add_action(service_bridge)
     ld.add_action(gz_bridge)
+    #ld.add_action(standalone_state_bridge)
     
 
     # Use OpaqueFunction to create robot instances after resolving the YAML path

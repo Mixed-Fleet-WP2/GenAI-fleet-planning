@@ -5,6 +5,8 @@
 #include <tuple>
 #include <optional>
 #include <utility>
+#include <future>
+#include <thread>
 #include "mf_utils/types.hpp"
 #include "tf2_ros/transform_broadcaster.h"
 #include "tf2_ros/transform_listener.h"
@@ -13,6 +15,10 @@
 #include <string>
 #include "geometry_msgs/msg/vector3.h"
 #include "geometry_msgs/msg/quaternion.h"
+#include "geometry_msgs/msg/point.hpp"
+#include "ros_gz_interfaces/srv/set_entity_pose.hpp"
+#include "ros_gz_interfaces/srv/spawn_entity.hpp"
+#include "ros_gz_interfaces/srv/delete_entity.hpp"
 
 // https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
 
@@ -156,6 +162,91 @@ std::optional<std::pair<geometry_msgs::msg::Vector3, geometry_msgs::msg::Quatern
         return std::nullopt;
     }
 
+}
+
+bool delete_entity(std::string entity_name, std::shared_ptr<rclcpp::Client<ros_gz_interfaces::srv::DeleteEntity>> delete_client){
+
+    auto delete_request = std::make_shared<ros_gz_interfaces::srv::DeleteEntity::Request>();
+    // Remove the object on the fork if dropping or the one on the ground if picking
+
+    // Specify the request type with an enum, in this case
+    // a model (object) is deleted
+    delete_request->entity.name = entity_name;
+    delete_request->entity.type = delete_request->entity.MODEL;
+
+
+    auto delete_future = delete_client->async_send_request(delete_request);
+    
+    // A timeout is set in case the simulation returns no response (unlikely)
+    // in real scenario this would be checked with sensors inside a timer
+    // but simulation returns a boolean.
+    auto status = delete_future.wait_for(std::chrono::seconds(10));
+    
+    // https://en.cppreference.com/w/cpp/thread/future/wait_for.html
+    if (status == std::future_status::timeout){
+        return false;
+    }
+
+    return delete_future.get()->success;
+
+}
+
+bool spawn_model(std::string entity_name, 
+    std::shared_ptr<rclcpp::Client<ros_gz_interfaces::srv::SpawnEntity>> spawn_client,
+    bool from_static_to_non_static,
+    geometry_msgs::msg::Point spawn_pos,
+    geometry_msgs::msg::Quaternion spawn_orientation
+){
+
+    // Get the sdf name of the model (name without the id which is preceeded by _)
+    std::string model_prefix = entity_name.substr(0, entity_name.find_last_of('_'));
+
+    // Get home directory
+    char* home_env = std::getenv("HOME");
+    if (!home_env) {
+        throw std::runtime_error("HOME environment variable not set");
+    }
+
+    // https://stackoverflow.com/questions/6297738/how-to-build-a-full-path-string-safely-from-separate-strings
+    const static auto HOME_DIR = std::filesystem::path(home_env);
+    const static auto SIM_MODEL_FOLDER = std::filesystem::path("forklift_sim/install/mf_simulation/share/mf_simulation/models/");
+    const static auto FULL_MODEL_PATH = HOME_DIR / SIM_MODEL_FOLDER;
+    
+    // Change the sdf according to if we want to use the static or non-static model
+    // Note: non-static is spawned if the object to spawn is intended to move
+    // with the robot (e.g. the forklift) and static if the model just
+    // exists in the world (in order to not infere with the navigation)
+    std::string filename = model_prefix + (from_static_to_non_static ? ".sdf" : "_static.sdf");
+    auto model_path = std::filesystem::path(model_prefix) / filename;
+    // https://stackoverflow.com/questions/65692822/trying-to-convert-filesystem-output-to-a-string
+    std::string sdf_path = (FULL_MODEL_PATH / model_path).string();
+
+    auto spawn_request = std::make_shared<ros_gz_interfaces::srv::SpawnEntity::Request>();
+    std::cout << "Preparing to spawn" << std::flush << std::endl;
+    spawn_request->entity_factory.sdf_filename = sdf_path;
+    spawn_request->entity_factory.name = entity_name;
+    spawn_request->entity_factory.relative_to = "forklift_1::base_link";
+    spawn_request->entity_factory.pose.position.x = 0.55;
+    spawn_request->entity_factory.pose.position.y = 0.20;
+    spawn_request->entity_factory.pose.position.z = -0.5;
+    spawn_request->entity_factory.pose.orientation = spawn_orientation;
+
+    
+    // A small timeout so that gazebo has time to remove
+    // the element from its bookkeeping
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    auto spawn_future = spawn_client->async_send_request(spawn_request);
+
+    auto status = spawn_future.wait_for(std::chrono::seconds(10));
+    
+    // https://en.cppreference.com/w/cpp/thread/future/wait_for.html
+    if (status == std::future_status::timeout){
+        std::cout << "FAILED DUE TO TIMOUET" << std::flush << std::endl;
+        return false;
+    }
+
+    return spawn_future.get()->success;
+    
 }
 
 #endif
