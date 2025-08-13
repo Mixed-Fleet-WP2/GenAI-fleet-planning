@@ -50,7 +50,7 @@ def create_robot_instances(context, *args, **kwargs):
         use_pure_odom = robot.get("use_pure_odom", False)
         
         pkg = get_package_share_directory(robot_package)
-
+        print("odom use is:", use_pure_odom, flush=True)
         nav2_params_file = os.path.join(pkg, 'config', nav2_config)
         
         group = GroupAction([  
@@ -136,7 +136,7 @@ def generate_launch_description():
     
     declare_map_yaml_cmd = DeclareLaunchArgument(
         'map',
-        default_value=os.path.join(nav_launch_dir, 'maps', 'warehouse.yaml'),
+        default_value=os.path.join(nav_launch_dir, 'maps', 'warehouse_with_racks.yaml'),
         description='Full path to map file to load',
     )
     
@@ -160,7 +160,7 @@ def generate_launch_description():
     
     declare_use_rviz_cmd = DeclareLaunchArgument(
         'use_rviz', 
-        default_value='False', 
+        default_value='True', 
         description='Whether to start RVIZ'
     )
     

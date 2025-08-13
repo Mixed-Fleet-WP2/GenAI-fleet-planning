@@ -17,7 +17,7 @@ robots:
     # roll, pitch, yaw in radians
     starting_orientation: [0.0, 0.0, 0.0]
     gz_bridge_config: "forklift_ros_gz_bridge.yaml"
-    use_pure_odom: false
+    use_pure_odom: true
     nav2_config: "forklift_nav2_config.yaml"
     launch_file: "forklift_launch.py"
   # - name: forklift_2

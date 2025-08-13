@@ -43,15 +43,6 @@ ForkliftController::ForkliftController() : Navigatable() {
         "fork_control", 10
     );
 
-    rclcpp::SubscriptionOptions options2;
-    options2.callback_group = odom_callback_group_;
-    ground_truth_tf_subscription_ = this->create_subscription<tf2_msgs::msg::TFMessage>(
-        "pose", 10,
-        [this](const tf2_msgs::msg::TFMessage::ConstSharedPtr msg) {
-            forklift_location_ = msg->transforms[0].transform.translation;
-            forklift_orientation_ = msg->transforms[0].transform.rotation;
-        }, options2
-    );
 
     // https://github.com/gazebosim/ros_gz/pull/380
 
@@ -169,6 +160,7 @@ void ForkliftController::navigate_to_pose(const MoveAction& action) {
     send_nav_goal(action);
 }
 
+
 /**
  * @brief Utility function to move/teleport an object relative
  * to a forklift's fork number one. 
@@ -176,47 +168,31 @@ void ForkliftController::navigate_to_pose(const MoveAction& action) {
  * of the fork_1's coordinate frame (see forklift.urdf.xacro and fork.xacro for details)
  */
 bool ForkliftController::move_object_relative_to_fork(
-        const std::string object,  float offset_x, 
-        float offset_y, float offset_z
-        ) {
-    
-    // Hardcode transformations
+        const std::string object, float offset_x, 
+        float offset_y, float offset_z) {
 
-    /**
-     * - header:
-    stamp:
-      sec: 20
-      nanosec: 970000000
-    frame_id: forklift_1
-  child_frame_id: forklift_1/fork_1
-  transform:
-    translation:
-      x: 1.6999999952900167
-      y: 0.20000000650070746
-      z: -0.5549995100742626
-    rotation:
-      x: -7.301019404737875e-08
-      y: -5.2422970161522105e-08
-      z: -2.0704110233432486e-11
-      w: 0.999999999999996
-     */
-    auto fork_pos_x_wrt_world = forklift_location_.x + 1.7;
-    auto fork_pos_y_wrt_world = forklift_location_.y + 0.2;
-    auto fork_pos_z_wrt_world = forklift_location_.z - 0.5;
+    auto pose_in_frame = get_coords_in_other_frame(this, "map", "fork_1");
 
+    if (!pose_in_frame.has_value()){
+        return false;
+    }
 
-    auto position = geometry_msgs::msg::Point();
-    position.x = static_cast<float>(fork_pos_x_wrt_world + offset_x);
-    position.y = static_cast<float>(fork_pos_y_wrt_world + offset_y);
-    position.z = static_cast<float>(fork_pos_z_wrt_world + offset_z);
+    auto [translation, fork_global_rotation] = pose_in_frame.value();
+    auto [fork_global_x, fork_global_y, fork_global_z] = translation;
 
     // Service definitions:
     // https://docs.ros.org/en/iron/p/ros_gz_interfaces/interfaces/srv/SetEntityPose.html
     // https://docs.ros.org/en/iron/p/ros_gz_interfaces/interfaces/msg/Entity.html
     auto move_request = std::make_shared<ros_gz_interfaces::srv::SetEntityPose::Request>();
+
+    auto position = geometry_msgs::msg::Point();
+    position.x = static_cast<float>(fork_global_x + offset_x);
+    position.y = static_cast<float>(fork_global_y + offset_y);
+    position.z = static_cast<float>(fork_global_z + offset_z);
     
-    // Forks have same orientation as the forklift
-    move_request->pose.orientation = forklift_orientation_;
+    move_request->pose.orientation = fork_global_rotation;
+    const auto [roll, pitch, yaw] = quaternion_to_euler(fork_global_rotation.x, fork_global_rotation.y, fork_global_rotation.z, fork_global_rotation.w);
+    RCLCPP_INFO_STREAM(get_logger(), "The yaw is: " + std::to_string(yaw)); 
     move_request->pose.position = position;
 
     // Specify the request type with an enum, in this case
@@ -224,26 +200,20 @@ bool ForkliftController::move_object_relative_to_fork(
     move_request->entity.type = move_request->entity.MODEL;
     move_request->entity.name = object;
 
-    // RCLCPP_INFO_STREAM(get_logger(), "Moving object: " << object);
-    // RCLCPP_INFO_STREAM(get_logger(), "Position: " << position.x << ", " << position.y << ", " << position.z);
-    // RCLCPP_INFO_STREAM(get_logger(), "Orientation: " << forklift_orientation_.x << ", " 
-    //     << forklift_orientation_.y << ", " << forklift_orientation_.z << ", " 
-    //     << forklift_orientation_.w);
-    // Send the request to the service
-    auto future = object_pose_setter_client_->async_send_request(move_request);
-
+    auto future = object_pose_setter_client_->async_send_request(
+    move_request);
+    
+    // A timeout is set in case the simulation returns no response (unlikely)
+    // in real scenario this would be checked with sensors inside a timer
+    // but simulation returns a boolean.
     auto status = future.wait_for(std::chrono::seconds(10));
-
-    if (status == std::future_status::timeout) {
-        RCLCPP_ERROR_STREAM(get_logger(), "Timeout while moving object: " << object);
+    
+    // https://en.cppreference.com/w/cpp/thread/future/wait_for.html
+    if (status == std::future_status::timeout){
         return false;
     }
 
-
-    RCLCPP_INFO_STREAM(get_logger(), "Object " << object << " attached to fork_1");
-
     return future.get()->success;
-    
 
 };
 
@@ -350,3 +320,47 @@ int main(int argc, char * argv[])
     rclcpp::shutdown();
     return 0;
 }
+
+/**
+ * Implementation where the amcl and unreliable odom is used
+ * 
+ *  // Hardcode transformations
+
+    
+    - header:
+    stamp:
+      sec: 20
+      nanosec: 970000000
+    frame_id: forklift_1
+  child_frame_id: forklift_1/fork_1
+  transform:
+    translation:
+      x: 1.6999999952900167
+      y: 0.20000000650070746
+      z: -0.5549995100742626
+    rotation:
+      x: -7.301019404737875e-08
+      y: -5.2422970161522105e-08
+      z: -2.0704110233432486e-11
+      w: 0.999999999999996
+    
+    // auto fork_pos_x_wrt_world = forklift_location_.x + 1.7;
+    // auto fork_pos_y_wrt_world = forklift_location_.y + 0.2;
+    // auto fork_pos_z_wrt_world = forklift_location_.z - 0.5;
+
+
+    // auto position = geometry_msgs::msg::Point();
+    // position.x = static_cast<float>(fork_pos_x_wrt_world + offset_x);
+    // position.y = static_cast<float>(fork_pos_y_wrt_world + offset_y);
+    // position.z = static_cast<float>(fork_pos_z_wrt_world + offset_z);
+
+    // rclcpp::SubscriptionOptions options2;
+    // options2.callback_group = odom_callback_group_;
+    // ground_truth_tf_subscription_ = this->create_subscription<tf2_msgs::msg::TFMessage>(
+    //     "pose", 10,
+    //     [this](const tf2_msgs::msg::TFMessage::ConstSharedPtr msg) {
+    //         forklift_location_ = msg->transforms[0].transform.translation;
+    //         forklift_orientation_ = msg->transforms[0].transform.rotation;
+    //     }, options2
+    // );
+ */

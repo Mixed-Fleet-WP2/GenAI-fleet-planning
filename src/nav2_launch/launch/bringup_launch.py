@@ -109,7 +109,7 @@ def generate_launch_description():
     )
 
     declare_map_yaml_cmd = DeclareLaunchArgument(
-        'map', default_value=os.path.join(pkg_share, 'maps', 'warehouse.yaml'), description='Full path to map yaml file to load'
+        'map', default_value=os.path.join(pkg_share, 'maps', 'warehouse_with_racks.yaml'), description='Full path to map yaml file to load'
     )
 
     declare_use_localization_cmd = DeclareLaunchArgument(
