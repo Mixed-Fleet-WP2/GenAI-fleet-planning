@@ -327,6 +327,5 @@ def generate_launch_description():
     # Add the actions to launch all of the navigation nodes
     ld.add_action(load_nodes)
     ld.add_action(load_composable_nodes)
-    launch_print("Param file for navigation:", configured_params.param_file[0], launch_description=ld)
 
     return ld

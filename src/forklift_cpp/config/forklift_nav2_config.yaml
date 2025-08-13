@@ -99,7 +99,7 @@ controller_server:
       plugin: "nav2_controller::SimpleGoalChecker"
       xy_goal_tolerance: 0.5 #Increase or decrease this value to change the distance to the goal
       # About 1.4 degrees of difference in orientation
-      yaw_goal_tolerance: 0.1
+      yaw_goal_tolerance: 0.3
     # DWB parameters
     FollowPath:
       #plugin: "nav2_rotation_shim_controller::RotationShimController"
@@ -110,13 +110,13 @@ controller_server:
       # THIS NEEDS TO TAKE INTO ACCOUNT THE ROBOT SIZE
       # The robot is 2.345m long, lidar is at the center of the robot, so set
       # the lookahead distance to be ~1.25 times the robot length
+      use_velocity_scaled_lookahead_dist: false
       lookahead_dist: 3.0
       min_lookahead_dist: 0.5
       max_lookahead_dist: 0.9
       lookahead_time: 1.5
       rotate_to_heading_angular_vel: 0.5
       transform_tolerance: 0.1
-      use_velocity_scaled_lookahead_dist: false
       approach_velocity_scaling_distance: 1.5
       min_approach_linear_velocity: 0.05
       use_approach_linear_velocity_scaling: true
@@ -193,7 +193,7 @@ local_costmap:
       #These need to be changed with the size of the robot (for example when we scale the forklift)
       width: 12
       height: 12
-      resolution: 0.05
+      resolution: 0.03
       #https://docs.nav2.org/setup_guides/footprint/setup_footprint.html
       #For local costmap, the robot footprint is a rectangle
       footprint: "[[ 2.345,  0.4475 ],[ 2.345, -0.4475 ],[-0.945, -0.4475 ],[-0.945,  0.4475 ]]"
@@ -266,7 +266,7 @@ global_costmap:
       global_frame: map
       robot_base_frame: base_link
       footprint: "[[ 2.345,  0.4475 ],[ 2.345, -0.4475 ],[-0.945, -0.4475 ],[-0.945,  0.4475 ]]"
-      resolution: 0.05
+      resolution: 0.03
       track_unknown_space: true
       plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
       
@@ -445,3 +445,7 @@ collision_monitor:
       min_height: 0.15
       max_height: 2.0
       enabled: True
+
+slam_toolbox:
+  ros__parameters:
+    resolution: 0.03

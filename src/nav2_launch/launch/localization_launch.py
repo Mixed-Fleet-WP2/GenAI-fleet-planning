@@ -25,7 +25,7 @@ from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, GroupAction
-from launch.actions import SetEnvironmentVariable, OpaqueFunction
+from launch.actions import SetEnvironmentVariable
 from launch.conditions import IfCondition
 from launch.substitutions import EqualsSubstitution
 from launch.substitutions import LaunchConfiguration, PythonExpression
@@ -299,7 +299,6 @@ def generate_launch_description():
     # Add the actions to launch all of the localiztion nodes
     ld.add_action(load_nodes)
     ld.add_action(load_composable_nodes)
-    launch_print("Param file for localization:", configured_params.param_file[0], launch_description=ld)
     launch_print("AMCL USE CONDITION:", use_amcl, launch_description=ld)
     
     return ld

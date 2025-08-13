@@ -25,9 +25,9 @@
         <wheel_separation>0.890</wheel_separation>
         <wheel_radius>0.25</wheel_radius>
         <odom_publish_frequency>30</odom_publish_frequency>
-        <odom_topic>${namespace}/odom</odom_topic>
+        <!-- <odom_topic>${namespace}/odom</odom_topic> -->
         <frame_id>odom</frame_id>
-        <tf_topic>${namespace}/tf</tf_topic>
+        <!-- <tf_topic>${namespace}/tf</tf_topic> -->
         <topic>${namespace}/cmd_vel</topic>
         <child_frame_id>base_link</child_frame_id>
 
@@ -42,7 +42,7 @@
       </plugin>
 
       <!--Ground truth odom instead of the "realistic" odom provided by diff drive-->
-      <!-- <plugin
+      <plugin
         filename="gz-sim-odometry-publisher-system"
         name="gz::sim::systems::OdometryPublisher">
         <dimensions>2</dimensions>
@@ -50,9 +50,9 @@
         <tf_topic>$(arg namespace)/tf</tf_topic>
         <robot_base_frame>base_link</robot_base_frame>
 
-        <odom_frame>true_odom</odom_frame>
+        <odom_frame>odom</odom_frame>
         <odom_publish_frequency>50</odom_publish_frequency>
-    </plugin> -->
+    </plugin>
 
        <plugin filename="gz-sim-detachable-joint-system"
               name="gz::sim::systems::DetachableJoint">

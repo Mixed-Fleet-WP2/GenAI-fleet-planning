@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<sdf version="1.6">
+  <model name="pallet_rack">
+    <static>true</static>
+    <link name="link">
+      <pose>0 0 0 0 0 0</pose>
+      <collision name="collision">
+        <pose relative_to="link">0 0 1.25 0 0 0</pose>
+        <geometry>
+           <!-- <mesh>
+            <uri>model://pallet_rack/meshes/rack.dae</uri>
+            <scale>1 1 1</scale>
+          </mesh> -->
+          <box>
+            <size>1.6 1.4 2.5</size>
+          </box>
+          
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+          <!-- <box>
+            <size>1.6 1.4 2.5</size>
+          </box> -->
+          <mesh>
+            <uri>model://pallet_rack/meshes/rack.dae</uri>
+            <scale>1 1 1</scale>
+          </mesh>
+        </geometry>
+        <pose relative_to="link">0 0 1.25 0 0 0</pose>
+      </visual>
+
+      <!--https://www.omnicalculator.com/physics/mass-moment-of-inertia-->
+      <!-- <inertial>
+        
+                <mass>2.5</mass>
+                <inertia>
+                    <ixx>1.7104</ixx>
+                    <ixy>0.0</ixy>
+                    <ixz>0.0</ixz>
+                    <iyy>1.8354</iyy>
+                    <iyz>0.0</iyz>
+                    <izz>4.3333</izz>
+                </inertia>
+                <pose>0 0 0.072 0 0 0</pose>
+            </inertial> -->
+
+
+    </link>
+  </model>
+</sdf>
