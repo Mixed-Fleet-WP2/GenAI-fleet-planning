@@ -13,7 +13,7 @@ robots:
   - name: forklift_1
     package: "forklift_cpp"
     type: "forklift"
-    starting_position: [3.0, 0.0, 0.75]
+    starting_position: [0.0, 0.0, 0.75]
     # roll, pitch, yaw in radians
     starting_orientation: [0.0, 0.0, 0.0]
     gz_bridge_config: "forklift_ros_gz_bridge.yaml"

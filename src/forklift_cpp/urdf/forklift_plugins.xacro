@@ -45,13 +45,13 @@
       <plugin
         filename="gz-sim-odometry-publisher-system"
         name="gz::sim::systems::OdometryPublisher">
-        <dimensions>2</dimensions>
+        <dimensions>3</dimensions>
         <odom_topic>$(arg namespace)/odom</odom_topic>
         <tf_topic>$(arg namespace)/tf</tf_topic>
         <robot_base_frame>base_link</robot_base_frame>
-
+        <gaussian_noise>0.5</gaussian_noise>
         <odom_frame>odom</odom_frame>
-        <odom_publish_frequency>50</odom_publish_frequency>
+        <odom_publish_frequency>30</odom_publish_frequency>
     </plugin>
 
        <plugin filename="gz-sim-detachable-joint-system"

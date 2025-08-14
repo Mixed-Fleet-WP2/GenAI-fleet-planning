@@ -99,11 +99,15 @@ controller_server:
       plugin: "nav2_controller::SimpleGoalChecker"
       xy_goal_tolerance: 0.5 #Increase or decrease this value to change the distance to the goal
       # About 1.4 degrees of difference in orientation
-      yaw_goal_tolerance: 0.3
+      yaw_goal_tolerance: 0.2
     # DWB parameters
     FollowPath:
-      #plugin: "nav2_rotation_shim_controller::RotationShimController"
-      plugin: "nav2_regulated_pure_pursuit_controller::RegulatedPurePursuitController"
+      plugin: "nav2_rotation_shim_controller::RotationShimController"
+      angular_dist_threshold: 0.4
+      angular_disengage_threshold: 0.2
+      # THe robot is 2.345m long, so the forward sampling distance is longer than default 0.5m
+      forward_sampling_distance: 1.5
+      primary_controller: "nav2_regulated_pure_pursuit_controller::RegulatedPurePursuitController"
       desired_linear_vel: 1.2
       max_linear_accel: 2.0
       max_linear_decel: 2.0
@@ -445,7 +449,3 @@ collision_monitor:
       min_height: 0.15
       max_height: 2.0
       enabled: True
-
-slam_toolbox:
-  ros__parameters:
-    resolution: 0.03

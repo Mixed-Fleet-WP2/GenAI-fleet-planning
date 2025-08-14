@@ -101,7 +101,7 @@ def generate_launch_description():
 
     declare_slam = DeclareLaunchArgument(
         name='slam',
-        default_value='True',
+        default_value='False',
         description='Whether to use slam'
     )
 

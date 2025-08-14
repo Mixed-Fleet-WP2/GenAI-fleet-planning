@@ -47,6 +47,9 @@ def create_robot_instances(context, *args, **kwargs):
         nav2_config = robot["nav2_config"]
         start_pos = robot.get("starting_position", [3.0, -1.0, 0.0])
         start_orient = robot.get("starting_orientation", [0.0, 0.0, 0.0])
+
+        print("odom from file:", robot["use_pure_odom"], flush=True)
+
         use_pure_odom = robot.get("use_pure_odom", False)
         
         pkg = get_package_share_directory(robot_package)
@@ -136,7 +139,7 @@ def generate_launch_description():
     
     declare_map_yaml_cmd = DeclareLaunchArgument(
         'map',
-        default_value=os.path.join(nav_launch_dir, 'maps', 'warehouse_with_racks.yaml'),
+        default_value=os.path.join(nav_launch_dir, 'maps', 'warehouse.yaml'),
         description='Full path to map file to load',
     )
     
