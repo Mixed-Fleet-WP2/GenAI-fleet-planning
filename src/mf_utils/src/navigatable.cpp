@@ -18,6 +18,12 @@ Navigatable::Navigatable() : Node("default_name"){
         nav_callback_group_
     );
 
+    nav_through_poses_client_ = rclcpp_action::create_client<FollowWaypointsAction>(
+        this,
+        "follow_waypoints",
+        nav_callback_group_
+    );
+
     move_to_pose_subscriber_ = this->create_subscription<std_msgs::msg::String>(
         "move", 10, 
         [this](const std::shared_ptr<std_msgs::msg::String> msg) {
@@ -49,27 +55,10 @@ Navigatable::Navigatable() : Node("default_name"){
 
 }
 
-void Navigatable::nav_feedback_callback(std::shared_ptr<NavToPoseGoalHandle>, const std::shared_ptr<const NavToPoseAction::Feedback> feedback, int action_id){
-    auto curr_pose_x = feedback->current_pose.pose.position.x;
-    auto curr_pose_y = feedback->current_pose.pose.position.y;
-
-    //RCLCPP_INFO(get_logger(), "Current pose (%f, %f)", curr_pose_x, curr_pose_y);
-}
-
-void Navigatable::nav_goal_acknowledged_callback(std::shared_ptr<NavToPoseGoalHandle> goal, int action_id){
-    if (!goal) {
-        Feedback feedback = {action_id, ERROR, "Failed to send nav goal to action server"};
-        send_feedback(feedback);
-    }else{
-        RCLCPP_INFO(get_logger(), "Sent goal to server");
-    }
-
-}
 
 void Navigatable::move_to_pose_callback(
     const std::shared_ptr<std_msgs::msg::String> msg){
     
-    RCLCPP_INFO_STREAM(get_logger(), "RECEIVED NAV REQUEST");
     const std::string &msg_str = msg->data;
     
     auto action = parse_json<MoveAction>(msg_str, this);
@@ -78,6 +67,7 @@ void Navigatable::move_to_pose_callback(
         return;
     }
 
+    // Calls send_nav_goal eventually
     navigate_to_pose(action.value());
 
 }
@@ -119,35 +109,6 @@ void Navigatable::odom_received_callback(const std::shared_ptr<OdomMsg> msg) {
     status_publisher_->publish(message);
     
 };
-
-////https://robotics.stackexchange.com/questions/107697/turtlebot4-nav2-how-to-call-action-navigatetopose-from-node-in-cpp
-void Navigatable::nav_result_callback(
-    const NavToPoseGoalHandle::WrappedResult &result, int action_id){
-     RCLCPP_INFO_STREAM(get_logger(), "CALLBACKS");
-    Feedback feedback = {};
-    feedback.action_id = action_id;
-    
-    switch (result.code) {
-        case rclcpp_action::ResultCode::SUCCEEDED:
-            feedback.type = SUCCESS;
-            feedback.message = "Navigation succeeded";
-            break;
-        case rclcpp_action::ResultCode::ABORTED:
-            feedback.type = ERROR;
-            feedback.message = result.result->error_msg;
-            break;
-        case rclcpp_action::ResultCode::CANCELED:
-            feedback.type = CANCELLED;
-            feedback.message = "Goal was canceled";
-            break;
-        default:
-            feedback.type = ERROR;
-            feedback.message = "Unknow status code received from navigation";
-            break;
-        }
-    RCLCPP_INFO_STREAM(get_logger(), "SENDIN NAV FEED");
-    send_feedback(feedback);
-}
 
 void Navigatable::send_nav_goal(const MoveAction& action){
 
@@ -195,16 +156,74 @@ void Navigatable::send_nav_goal(const MoveAction& action){
 
     send_goal_options.feedback_callback = [this, id](std::shared_ptr<NavToPoseGoalHandle> g,
         const std::shared_ptr<const NavToPoseAction::Feedback> feedback){
-            this->nav_feedback_callback(g, feedback, id);
+            this->nav_feedback_callback<NavToPoseGoalHandle, NavToPoseAction>(g, feedback, id);
         };
 
     send_goal_options.result_callback = 
         [this, id](const NavToPoseGoalHandle::WrappedResult
             &result){
-                this->nav_result_callback(result, id);
+                this->nav_result_callback<NavToPoseGoalHandle>(result, id);
             };
     
     future_goal_handle_ = nav_to_pose_client_->async_send_goal(goal, send_goal_options);
+
+}
+
+void Navigatable::send_nav_goals(std::vector<MoveAction> waypoints){
+
+    // The actions are a bundle that shares the id
+    int id = waypoints.at(0).action_id;
+
+    if (!nav_to_pose_client_->wait_for_action_server(std::chrono::seconds(10))){
+        RCLCPP_ERROR(this->get_logger(), "Action server not available after waiting");
+        return;
+    }
+
+    std::vector<PoseStampedMsg> points;
+    points.reserve(waypoints.size());
+
+    std::transform(waypoints.begin(), waypoints.end(),
+               std::back_inserter(points),
+        [this](const MoveAction &action) {
+            auto [qx,qy,qz,qw] = euler_to_quaternion(action.roll, action.pitch, action.yaw);
+            PoseStampedMsg goal_msg;
+            goal_msg.header.frame_id = "map";
+            goal_msg.header.stamp = this->get_clock()->now();
+            goal_msg.pose.position.x = action.x;
+            goal_msg.pose.position.y = action.y;
+            goal_msg.pose.position.z = action.z;
+            goal_msg.pose.orientation.x = qx;
+            goal_msg.pose.orientation.y = qy;
+            goal_msg.pose.orientation.z = qz;
+            goal_msg.pose.orientation.w = qw;
+            return goal_msg;
+    });
+
+    
+
+    FollowWaypointsAction::Goal goals;
+    
+    goals.poses = points;
+
+    auto send_goal_options = rclcpp_action::Client<FollowWaypointsAction>::SendGoalOptions();
+
+    send_goal_options.goal_response_callback = [this, id](const 
+            FollowWaypointsActionGoalHandle::SharedPtr &goal){
+            this->nav_goal_acknowledged_callback(goal, id);
+        };
+
+    send_goal_options.feedback_callback = [this, id](std::shared_ptr<FollowWaypointsActionGoalHandle> g,
+        const std::shared_ptr<const FollowWaypointsAction::Feedback> feedback){
+            this->nav_feedback_callback<FollowWaypointsActionGoalHandle, FollowWaypointsAction>(g, feedback, id);
+        };
+
+    send_goal_options.result_callback = 
+        [this, id](const FollowWaypointsActionGoalHandle::WrappedResult
+            &result){
+                this->nav_result_callback<FollowWaypointsActionGoalHandle>(result, id);
+            };
+    
+    waypoint_future_goal_handle_ = nav_through_poses_client_->async_send_goal(goals, send_goal_options);
 
 }
 
