@@ -63,6 +63,8 @@ class Feedback(TypedDict):
     action_id: int
     type: FeedbackType
     message: str
+    # Must be at least empty
+    return_value: dict[str, float|int|str]
 
 def feedback_str_to_enum(curr_dict):
 

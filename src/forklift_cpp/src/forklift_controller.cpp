@@ -66,7 +66,7 @@ void ForkliftController::move_fork_callback_(const std_msgs::msg::String::ConstS
         return;
     }
 
-    //Async action because of timer
+    // Async action because of timer
     move_fork(action.value());
 
 }

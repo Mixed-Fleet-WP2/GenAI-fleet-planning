@@ -41,9 +41,11 @@ struct JointPositionAction {
     float position;
 };
 
+struct SearchAction{
+    int action_id;
+};
 
 void from_json(const json& j, ObjectAction& action) {
-    std::cout << "Parsing PickUpAction, JSON: " << j.dump() << std::flush << std::endl;
     j.at("action_id").get_to(action.action_id);
     j.at("command_arguments").at("object").get_to(action.object);
 }
@@ -51,6 +53,10 @@ void from_json(const json& j, ObjectAction& action) {
 void from_json(const json& j, JointPositionAction& action) {
     j.at("action_id").get_to(action.action_id);
     j.at("command_arguments").at("position").get_to(action.position);
+}
+
+void from_json(const json& j, SearchAction& action) {
+    j.at("action_id").get_to(action.action_id);
 }
 
 
@@ -83,9 +89,10 @@ struct Feedback{
     int action_id;
     FeedbackType type;
     std::string message;
+    json return_value = {};
 };
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Feedback, action_id, type, message);
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Feedback, action_id, type, message, return_value);
 
 
 struct Position{

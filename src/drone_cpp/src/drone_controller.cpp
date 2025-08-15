@@ -5,6 +5,10 @@ DroneController::DroneController() : Navigatable(){
     
     lift_publisher_  = create_publisher<TwistMsg>("cmd_vel", 10);
     pid_controller_ = PIDController(lift_interval_, 0.18, 0.0, 0.4);
+
+    search_subscription_ = this->create_subscription<std_msgs::msg::String>("search", 10, [this](const std_msgs::msg::String::ConstSharedPtr msg){
+        this->search_callback(msg);
+    });
     
 }
 
@@ -36,6 +40,21 @@ void DroneController::lift(rclcpp::Time start, const MoveAction action){
     //RCLCPP_INFO_STREAM(get_logger(), "CONTROL VALUE IS: " + std::to_string(control_value));
     twist_msg.linear.z = control_value;
     lift_publisher_->publish(twist_msg);
+
+}
+
+void DroneController::search_callback(std_msgs::msg::String::ConstSharedPtr msg){
+
+    // No command arguments to parse but at least check that action id is present
+    auto action = parse_json<SearchAction>(msg->data, this);
+
+
+
+}
+
+void DroneController::search(){
+
+    
 
 }
 
