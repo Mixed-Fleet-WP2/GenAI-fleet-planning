@@ -5,14 +5,14 @@
     <link name="link">
       <pose>0 0 0 0 0 0</pose>
       <collision name="collision">
-        <pose relative_to="link">0 0 1.25 0 0 0</pose>
+        <pose relative_to="link">0 0 0 0 0 0</pose>
         <geometry>
            <!-- <mesh>
             <uri>model://pallet_rack/meshes/rack.dae</uri>
             <scale>1 1 1</scale>
           </mesh> -->
           <box>
-            <size>1.6 1.4 2.5</size>
+            <size>1.6 1.4 0.1</size>
           </box>
           
         </geometry>
@@ -27,7 +27,7 @@
             <scale>1 1 1</scale>
           </mesh>
         </geometry>
-        <pose relative_to="link">0 0 1.25 0 0 0</pose>
+        <pose relative_to="link">0 0 0 0 0 0</pose>
       </visual>
 
       <!--https://www.omnicalculator.com/physics/mass-moment-of-inertia-->
