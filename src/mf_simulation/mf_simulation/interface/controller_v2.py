@@ -122,9 +122,6 @@ class Controller():
             
             self.__progress_callback.emit(feedback["message"])
             
-            with open(os.path.expanduser('~/action_log')) as f:
-                f.write(str(feedback["message"]))
-            
             if  feedback_type == FeedbackType.ERROR:
                     return False
             
@@ -157,7 +154,7 @@ class Controller():
         self.__progress_callback.emit("Running plan")
 
         for action in plan.actions:
-            
+            print("Running this action", flush=True)
             prerequisites = action.prerequisites
             action_id = action.action_id
 
@@ -175,6 +172,7 @@ class Controller():
 
             # Run actions that dont have precondition immediately
             if not action.prerequisites:
+                print("Running this action", flush=True)
                 pending_action.run(self.mqtt_client)
 
 

@@ -7,6 +7,7 @@ from pydantic import ValidationError
 import sys
 from threading import Thread
 import os
+from mf_simulation.interface.progress_notifier import ProgressNotifier
 
 
 
@@ -33,20 +34,19 @@ class JsonClient():
         self.__mqtt_client.disconnect()
     
     def on_message(self, client, userdata, message:mqtt.MQTTMessage):
-
-        print(f"Received message: {message.topic}: {message.payload}", flush=True)
         
         #payload = json.loads(message.payload)
         topic = message.topic
         payload = message.payload.decode()
-        print()
-        print(f"Decoded payload: {payload}")
+        #print()
+        #print(f"Decoded payload: {payload}", flush=True)
 
         if topic == "/plan":
             try:
                 plan: Plan = Plan.model_validate_json(payload)
 
-                #Thread(None, self.__controller.run_plan, args=[plan, ProgressNotifier()])
+                plan_thread = Thread(None, self.__controller.run_plan, args=[plan, ProgressNotifier()])
+                plan_thread.start()
 
             except ValidationError as e:
                 print(e, file=sys.stderr, flush=True)
