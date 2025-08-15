@@ -117,7 +117,7 @@ class DroneController: public Navigatable{
         void navigate_to_pose(const MoveAction& action) override;
         //void lift(rclcpp::Time start, const MoveAction action);
         void search_callback(std_msgs::msg::String::ConstSharedPtr msg);
-        void search();
+        void search(SearchAction action);
 
 
         template <typename SuccessCallback>

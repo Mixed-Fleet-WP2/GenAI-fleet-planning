@@ -16,8 +16,13 @@
       mqtt2ros:
         mqtt_topics: 
           - <robot_namespace>/move
+          - <robot_namespace>/search
         <robot_namespace>/move:
           ros_topic: /<robot_namespace>/move
+          ros_type: std_msgs/msg/String
+          primitive: true
+        <robot_namespace>/search:
+          ros_topic: /<robot_namespace>/search
           ros_type: std_msgs/msg/String
           primitive: true
         

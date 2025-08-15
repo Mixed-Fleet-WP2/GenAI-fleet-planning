@@ -15,16 +15,52 @@ DroneController::DroneController() : Navigatable(){
 
 void DroneController::search_callback(std_msgs::msg::String::ConstSharedPtr msg){
 
+    RCLCPP_INFO_STREAM(get_logger(), "Received search");
     // No command arguments to parse but at least check that action id is present
     auto action = parse_json<SearchAction>(msg->data, this);
+
+    if (!action.has_value()){
+        return;
+    }
+
+    search(action.value());
 
 
 
 }
 
-void DroneController::search(){
+void DroneController::search(SearchAction action){
 
-    
+    const static MoveAction rack_1 = {action.action_id,
+                                    -12, 3.25, 1.7, 0.0, 0.0, -1.57};
+    const static MoveAction rack_2 = {action.action_id,
+                                    1.0, -16.7, 1.7, 0,0,-1.57};
+    const static MoveAction rack_3 = {action.action_id, 11, 22, 1.7, 0, 0, 3.14};
+     
+    // Rack 2 is the "found rack" so it is last
+    std::vector<MoveAction> nav_goals = {rack_3, rack_1, rack_2};
+
+    // If the drone needs to move in the z-axis, execute the lift operation
+    // in a timer callback and after that run the 2D navigation
+
+    // Dimensions are in meters
+
+    // Actions share the z axis, so use the z of first
+    if (std::abs(current_pos_.z - rack_1.z) > 0.05) {
+        pid_controller_.set_new_goal(rack_1.z, current_pos_.z);
+        // Run the lift operation in a callback based timer that is assigned its own callback group
+        // After lift, the callback calls 2d navigation
+        auto start_time = this->now();
+        lift_timer_ = this->create_wall_timer(std::chrono::milliseconds(lift_interval_),
+        // Lift needs the action id of some action to send feedback
+        // since all MoveActions in search share the same action id (because they are under the search-action)
+        // pass the first action
+        [this, nav_goals, start_time]() {this->lift(start_time, nav_goals.at(0), [this, nav_goals](){send_nav_goals(nav_goals);});}, nav_callback_group_);
+        
+        return;
+    }
+
+    send_nav_goals(nav_goals);
 
 }
 
