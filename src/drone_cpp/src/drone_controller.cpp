@@ -25,8 +25,6 @@ void DroneController::search_callback(std_msgs::msg::String::ConstSharedPtr msg)
 
     search(action.value());
 
-
-
 }
 
 void DroneController::search(SearchAction action){

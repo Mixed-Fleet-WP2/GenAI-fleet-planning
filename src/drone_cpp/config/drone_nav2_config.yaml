@@ -98,11 +98,16 @@ controller_server:
     general_goal_checker:
       stateful: True
       plugin: "nav2_controller::SimpleGoalChecker"
-      xy_goal_tolerance: 0.1 #Increase or decrease this value to change the distance to the goal
+      xy_goal_tolerance: 0.3 #Increase or decrease this value to change the distance to the goal
       yaw_goal_tolerance: 0.25
     # DWB parameters
     FollowPath:
-      plugin: "dwb_core::DWBLocalPlanner"
+      plugin: "nav2_rotation_shim_controller::RotationShimController"
+      angular_dist_threshold: 0.3
+      angular_disengage_threshold: 0.3
+      # THe robot is 2.345m long, so the forward sampling distance is longer than default 0.5m
+      forward_sampling_distance: 2.0
+      primary_controller: "dwb_core::DWBLocalPlanner"
       debug_trajectory_details: True
       min_vel_x: 0.0
       min_vel_y: 0.0
@@ -110,7 +115,7 @@ controller_server:
       max_vel_y: 0.0
       max_vel_theta: 0.3 #Increase or decrease this value to change the speed of the robot (rotation)
       min_speed_xy: 0.0 
-      max_speed_xy: 0.75  #Increase or decrease this value to change the speed of the robot
+      max_speed_xy: 2.0  #Increase or decrease this value to change the speed of the robot
       min_speed_theta: 0.0
       acc_lim_x: 2.5
       acc_lim_y: 0.0
@@ -157,7 +162,7 @@ local_costmap:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0
-        inflation_radius: 0.55
+        inflation_radius: 1.0
       voxel_layer:
         plugin: "nav2_costmap_2d::VoxelLayer"
         enabled: True
@@ -237,7 +242,7 @@ map_saver:
 
 planner_server:
   ros__parameters:
-    expected_planner_frequency: 20.0
+    expected_planner_frequency: 10.0
     costmap_update_timeout: 1.0
     planner_plugins: ["GridBased"]
     GridBased:
