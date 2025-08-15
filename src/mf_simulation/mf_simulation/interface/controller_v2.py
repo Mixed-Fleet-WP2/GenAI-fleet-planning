@@ -1,14 +1,14 @@
 import paho.mqtt.client as mqtt
 import json
 from typing import Optional
-from mf_simulation.interface.llm_utils import Plan, Action
+from mf_simulation.interface.plan_format import Plan, PlanFromLLM
 from dataclasses import dataclass
 from typing import TypedDict, cast
 from enum import Enum
 from PySide6.QtCore import SignalInstance
 from queue import Queue
-from pydantic import BaseModel
-
+import os
+from mf_simulation.interface.progress_notifier import ProgressNotifier
 @dataclass
 class ExecutableAction():
     command_arguments: dict[str, str | float]
@@ -16,7 +16,8 @@ class ExecutableAction():
     command: str
     executing_robot: str
     action_id: int
-    feedback_signal: SignalInstance
+    # Write feedback to file or the gui (if using llm)
+    feedback_signal: SignalInstance | ProgressNotifier
 
     def remove_prerequisite(self, action_id: int) -> bool:
         """
@@ -75,7 +76,7 @@ class Controller():
         self.mqtt_client = mqtt.Client()
         self.mqtt_client.connect("localhost")
 
-        self.__progress_callback: SignalInstance
+        self.__progress_callback: SignalInstance | ProgressNotifier
         
         #Start the mqtt client in a separate thread
         self.mqtt_client.loop_start()
@@ -98,8 +99,6 @@ class Controller():
         self.mqtt_client.disconnect()
     
     def on_message(self, client, userdata, message:mqtt.MQTTMessage):
-
-        print(f"Received message: {message.topic}: {message.payload}", flush=True)
         
         payload = json.loads(message.payload)
         topic = message.topic
@@ -119,10 +118,12 @@ class Controller():
             
             # Get a feedback item or block until available
             feedback: Feedback = self.__waiting_feedbacks.get()
-            print("RECEIVED", str(feedback), flush=True)
             feedback_type = feedback["type"]
             
             self.__progress_callback.emit(feedback["message"])
+            
+            with open(os.path.expanduser('~/action_log')) as f:
+                f.write(str(feedback["message"]))
             
             if  feedback_type == FeedbackType.ERROR:
                     return False
@@ -148,9 +149,10 @@ class Controller():
                         action.run(self.mqtt_client)
                     
 
-    def run_plan(self, plan: Plan, feedback_signal: SignalInstance):
-
-        self.__progress_callback = feedback_signal
+    def run_plan(self, plan: Plan | PlanFromLLM, feedback_signal: SignalInstance | ProgressNotifier):
+        
+        if feedback_signal:
+            self.__progress_callback = feedback_signal
 
         self.__progress_callback.emit("Running plan")
 

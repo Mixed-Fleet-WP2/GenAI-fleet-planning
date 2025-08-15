@@ -11,6 +11,7 @@ from anthropic import Anthropic
 from anthropic.types import Message, ContentBlock
 from enum import Enum
 from types import MappingProxyType
+from mf_simulation.interface.plan_format import Plan
 
 class LLMModel(Enum):
     def __init__(self, plain_name:str, model_name:str):
@@ -62,37 +63,6 @@ LLM_ROLE = "You are a central controller responsible for managing a multi-robot 
 
 class LLMError(Exception):
     pass
-
-# See example: # https://docs.pydantic.dev/2.3/usage/types/dicts_mapping/#typeddict
-ActionID = NewType("ActionID", int)
-
-class Formattable(BaseModel):
-    
-    def to_format(self, format: Literal["json", "yaml"] ="json"):
-        if format == "json":
-            return self.model_dump_json(indent=2)
-        else:
-            return yaml.dump(self.model_dump(), indent=2)
-
-class Action(BaseModel):
-    action_id: int
-    executing_robot: str
-    command: str
-    command_arguments: dict[str, str | float]
-    prerequisites: list[int]
-
-class ActionWithReasoning(Action):
-    """
-    Action with reasoning for the action, used to generate a plan
-    """
-    reasoning: str
-
-class Plan(Formattable):
-    actions: list[Action]
-    
-class PlanWithReasoning(Formattable):
-    actions: list[ActionWithReasoning]
-
 
 class PromptGenerator():
 
