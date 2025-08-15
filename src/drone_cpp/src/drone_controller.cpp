@@ -12,36 +12,6 @@ DroneController::DroneController() : Navigatable(){
     
 }
 
-void DroneController::lift(rclcpp::Time start, const MoveAction action){
-    auto twist_msg = TwistMsg();
-
-    const int id = action.action_id;
-    const auto elapsed_time = (this->now() - start).seconds();
-    float error = id - current_pos_.z;
-
-    // Preempt the action if it takes too long
-    if (elapsed_time > 30.0){
-        Feedback feedback = {id, CANCELLED, "Drone lift timeout!"};
-        send_feedback(feedback);
-
-    }
-
-    if (std::abs(error) < 0.05) {
-        lift_timer_->cancel();
-        RCLCPP_INFO_STREAM(get_logger(), "Stopping lift");
-        // Send stop command
-        twist_msg.linear.z = 0.0;
-        lift_publisher_->publish(twist_msg);
-        send_nav_goal(action);
-        return;
-    }
-
-    float control_value = pid_controller_.calculate_input(error);
-    //RCLCPP_INFO_STREAM(get_logger(), "CONTROL VALUE IS: " + std::to_string(control_value));
-    twist_msg.linear.z = control_value;
-    lift_publisher_->publish(twist_msg);
-
-}
 
 void DroneController::search_callback(std_msgs::msg::String::ConstSharedPtr msg){
 
@@ -65,13 +35,12 @@ void DroneController::navigate_to_pose(const MoveAction& action){
 
     // Dimensions are in meters
     if (std::abs(current_pos_.z - action.z) > 0.05) {
-        RCLCPP_INFO_STREAM(get_logger(), "LIFT IN PROGRESS");
         pid_controller_.set_new_goal(action.z, current_pos_.z);
         // Run the lift operation in a callback based timer that is assigned its own callback group
         // After lift, the callback calls 2d navigation
         auto start_time = this->now();
         lift_timer_ = this->create_wall_timer(std::chrono::milliseconds(lift_interval_),
-        [this, action, start_time]() {this->lift(start_time, action);}, nav_callback_group_);
+        [this, action, start_time]() {this->lift(start_time, action, [this, action](){send_nav_goal(action);});}, nav_callback_group_);
         
         return;
     }

@@ -115,9 +115,44 @@ class DroneController: public Navigatable{
         std::unique_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
         //https://stackoverflow.com/questions/15117591/why-is-inherited-member-not-allowed
         void navigate_to_pose(const MoveAction& action) override;
-        void lift(rclcpp::Time start, const MoveAction action);
+        //void lift(rclcpp::Time start, const MoveAction action);
         void search_callback(std_msgs::msg::String::ConstSharedPtr msg);
         void search();
+
+
+        template <typename SuccessCallback>
+        void lift(rclcpp::Time start, const MoveAction action, SuccessCallback cb){
+            auto twist_msg = TwistMsg();
+
+            const int id = action.action_id;
+            const auto elapsed_time = (this->now() - start).seconds();
+            float error = action.z - current_pos_.z;
+
+            // Preempt the action if it takes too long
+            if (elapsed_time > 30.0){
+                Feedback feedback = {id, CANCELLED, "Drone lift timeout!"};
+                send_feedback(feedback);
+
+            }
+
+            if (std::abs(error) < 0.05) {
+                lift_timer_->cancel();
+                RCLCPP_INFO_STREAM(get_logger(), "Stopping lift");
+                // Send stop command
+                twist_msg.linear.z = 0.0;
+                lift_publisher_->publish(twist_msg);
+                cb();
+                return;
+            }
+
+            float control_value = pid_controller_.calculate_input(error);
+            //RCLCPP_INFO_STREAM(get_logger(), "CONTROL VALUE IS: " + std::to_string(control_value));
+            twist_msg.linear.z = control_value;
+            lift_publisher_->publish(twist_msg);
+
+    }
+
+
     };
 
 
