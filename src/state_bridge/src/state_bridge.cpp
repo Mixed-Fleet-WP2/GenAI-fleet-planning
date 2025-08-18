@@ -94,9 +94,13 @@ bool StateBridge::attach_object(const std::string &object_name, const std::strin
 
     std::promise<bool> promise;
     std::future<bool> future = promise.get_future();
+
+    const std::string attach_topic = "/" + attach_to_target + "/" + object_name + "/attach";
+    RCLCPP_INFO_STREAM(get_logger(), attach_topic);
+
     // Detach the object from the fork_1 link
     auto temp_attach_publisher = this->create_publisher<std_msgs::msg::Empty>(
-        "/" + attach_to_target + "/" + object_name + "/attach", 10
+        attach_topic, 10
     );
 
     const static auto msg = std_msgs::msg::Empty();
@@ -113,6 +117,7 @@ bool StateBridge::attach_object(const std::string &object_name, const std::strin
 
     // Send the detach request every 1/10s
     timer_ = this->create_wall_timer(std::chrono::milliseconds(100), [this, temp_attach_publisher, object_name](){
+        RCLCPP_INFO_STREAM(get_logger(), "Attaching");
         temp_attach_publisher->publish(msg);
     }, cb_group_);
 
@@ -187,10 +192,13 @@ void state_bridge::StateBridge::attach_srv_callback(const attach_interfaces::srv
     const bool is_attach = req->attach;
     const std::string robot_to_attach_to = req->robot_name;
 
+    RCLCPP_INFO_STREAM(get_logger(), "Received request");
+
     bool success = false;
     if (!is_attach){
         success = detach_object(object);
     }else{
+        RCLCPP_INFO_STREAM(get_logger(), "Attaching!");
         success = attach_object(object, robot_to_attach_to);
     }
 

@@ -54,8 +54,13 @@ ForkliftController::ForkliftController() : Navigatable() {
         rclcpp::ServicesQoS(), 
         nav_callback_group_);
 
-    }
+    object_attach_client_ = this->create_client<attach_interfaces::srv::ChangeAttach>(
+        "/change_attach",
+        rclcpp::ServicesQoS(), 
+        nav_callback_group_);
     
+    };
+
 void ForkliftController::move_fork_callback_(const std_msgs::msg::String::ConstSharedPtr msg) {
 
     const std::string &msg_str = msg->data;
@@ -132,8 +137,6 @@ void ForkliftController::move_fork(const JointPositionAction& action) {
     msg.data = action.position;
     fork_control_publisher_->publish(msg);
 
-    auto desired_pos = 
-
     // Periodically check if the desired height has been reached
     // (simulates sensor input/hardware interrrupts)
     lift_timer_ = this->create_wall_timer(std::chrono::milliseconds(100),
@@ -171,7 +174,7 @@ bool ForkliftController::move_object_relative_to_fork(
         const std::string object, float offset_x, 
         float offset_y, float offset_z) {
 
-    auto pose_in_frame = get_coords_in_other_frame(this, "map", "fork_1");
+    auto pose_in_frame = get_coords_in_other_frame(this, "odom", "fork_1");
 
     if (!pose_in_frame.has_value()){
         return false;
@@ -192,7 +195,6 @@ bool ForkliftController::move_object_relative_to_fork(
     
     move_request->pose.orientation = fork_global_rotation;
     const auto [roll, pitch, yaw] = quaternion_to_euler(fork_global_rotation.x, fork_global_rotation.y, fork_global_rotation.z, fork_global_rotation.w);
-    RCLCPP_INFO_STREAM(get_logger(), "The yaw is: " + std::to_string(yaw)); 
     move_request->pose.position = position;
 
     // Specify the request type with an enum, in this case
@@ -241,13 +243,9 @@ void ForkliftController::pick_up(const ObjectAction& action){
     // of fork_1 to fork_2
     static const float DISTANCE_BETWEEN_FORK_ORIGINS = 0.4;
     static const float DISTANCE_FROM_FORK_1_TO_CENTER = DISTANCE_BETWEEN_FORK_ORIGINS / 2;
+    static const float OFFSET_Z = 0.02;
 
-    const bool pick_up_success = move_object_relative_to_fork(object, 0.0, -DISTANCE_FROM_FORK_1_TO_CENTER, 0.0);
-
-    // A small timeout to allow Gazebo to process the request
-    // (otherwise the object is necessarily not in the right place
-    // before the attach request is sent)
-    rclcpp::sleep_for(std::chrono::milliseconds(200));
+    const bool pick_up_success = move_object_relative_to_fork(object, 0.0, -DISTANCE_FROM_FORK_1_TO_CENTER, OFFSET_Z);
 
     if (!pick_up_success){
         send_feedback({
@@ -258,26 +256,32 @@ void ForkliftController::pick_up(const ObjectAction& action){
         return;
     }
 
-    //Attach the object to the fork_1 link
-    auto attach_publisher = this->create_publisher<std_msgs::msg::Empty>(
-        "/" + object + "/attach", 10
-    );
+    // Attach the object
 
-    auto msg = std_msgs::msg::Empty();
-    while(!pallet_statues_[object]) {
-        attach_publisher->publish(msg);
-        // Refactor in the future
-       rclcpp::sleep_for(std::chrono::milliseconds(100));
-    };
+    auto req = std::make_shared<attach_interfaces::srv::ChangeAttach::Request>();
 
-   
-    send_feedback({
-        id,
-        SUCCESS, 
-        "Picking up object " + object + " succeeded"
+    req->attach = true;
+    req->object_name = action.object;
+    req->robot_name = this->get_name();
+
+    // https://robotics.stackexchange.com/questions/107877/how-to-create-timeout-to-ros2-async-client-service
+    object_attach_client_->async_send_request(req, 
+        [this, id, object](rclcpp::Client<attach_interfaces::srv::ChangeAttach>::SharedFuture future){
+
+            if (future.get()->success){
+                send_feedback({
+                id,
+                SUCCESS, 
+                "Picking up object " + object + " succeeded"
+                });
+            }else{
+                send_feedback({
+            id,
+            ERROR, 
+            "Picking up object " + object + " failed"
+            });
+            }           
     });
-    
-
 }
 
 

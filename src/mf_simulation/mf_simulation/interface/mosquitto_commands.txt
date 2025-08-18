@@ -7,3 +7,5 @@
  mosquitto_pub -h localhost -p 1883 -t "/plan" -m ' {"actions":[{"executing_robot":"drone_1","command":"move","command_arguments":{"x":1,"y":2,"z":1,"roll":0,"pitch":0,"yaw":0},"action_id":1,"prerequisites":[]}]}' 
 
   mosquitto_pub -h localhost -p 1883 -t "/plan" -m ' {"actions":[{"executing_robot":"drone_1","command":"search","command_arguments":{},"action_id":1,"prerequisites":[]}]}'
+
+mosquitto_pub -h localhost -p 1883 -t "/plan" -m '{"actions":[{"executing_robot":"forklift_1","command":"pick_up","command_arguments":{"object":"euro_pallet_1"},"action_id":1,"prerequisites":[]}]}'

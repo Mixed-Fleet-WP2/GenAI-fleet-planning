@@ -35,4 +35,18 @@
         }
   ]
 }
-    
+
+
+{
+  "actions": [
+    {
+            "executing_robot": "forklift_1",
+            "command": "pick_up",
+            "command_arguments": {
+                "object": "euro_pallet_1"
+            },
+            "action_id": 1,
+            "prerequisites": []
+        }
+  ]
+}

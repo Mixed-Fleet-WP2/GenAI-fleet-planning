@@ -39,7 +39,7 @@
         </plugin>
 
 
-        <static>false</static>
+        <static>true</static>
         <link name="link">
             <!--
             Avoid self-collision between the five collision geometries
@@ -47,7 +47,6 @@
             to document the intention.
             -->
             <self_collide>false</self_collide>
-            <static>false</static>
             <visual name="visual">
                 <geometry>
                     <mesh>

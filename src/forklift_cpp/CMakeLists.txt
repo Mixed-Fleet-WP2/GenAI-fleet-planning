@@ -7,6 +7,7 @@ find_package(mf_utils REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(ros_gz_interfaces REQUIRED)
+find_package(attach_interfaces REQUIRED)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -33,7 +34,7 @@ endif()
 #https://docs.ros.org/en/foxy/How-To-Guides/Ament-CMake-Documentation.html
 add_executable(forklift_controller src/forklift_controller.cpp)
 
-ament_target_dependencies(forklift_controller rclcpp tf2_ros sensor_msgs mf_utils ros_gz_interfaces)
+ament_target_dependencies(forklift_controller rclcpp tf2_ros sensor_msgs mf_utils ros_gz_interfaces attach_interfaces)
 
 install(TARGETS 
   forklift_controller

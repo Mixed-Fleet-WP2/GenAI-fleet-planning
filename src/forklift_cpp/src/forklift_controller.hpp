@@ -28,6 +28,7 @@
 #include "ros_gz_interfaces/srv/set_entity_pose.hpp"
 #include "ros_gz_interfaces/srv/spawn_entity.hpp"
 #include "ros_gz_interfaces/srv/delete_entity.hpp"
+#include "attach_interfaces/srv/change_attach.hpp"
 
 class ForkliftController : public Navigatable {
 
@@ -46,6 +47,7 @@ class ForkliftController : public Navigatable {
         rclcpp::Client<ros_gz_interfaces::srv::DeleteEntity>::SharedPtr entity_delete_client_;
         rclcpp::Client<ros_gz_interfaces::srv::SpawnEntity>::SharedPtr entity_spawn_client_ ;
         rclcpp::Subscription<tf2_msgs::msg::TFMessage>::SharedPtr ground_truth_tf_subscription_;
+        rclcpp::Client<attach_interfaces::srv::ChangeAttach>::SharedPtr object_attach_client_;
 
         float current_fork_pos_;
         void move_fork_callback_(const std_msgs::msg::String::ConstSharedPtr msg);
