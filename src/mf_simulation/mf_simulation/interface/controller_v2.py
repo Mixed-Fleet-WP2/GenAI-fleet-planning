@@ -3,12 +3,14 @@ import json
 from typing import Optional
 from mf_simulation.interface.plan_format import Plan, PlanFromLLM
 from dataclasses import dataclass
-from typing import TypedDict, cast
+from typing import TypedDict
 from enum import Enum
 from PySide6.QtCore import SignalInstance
 from queue import Queue
-import os
+
+# Used with no plan gui
 from mf_simulation.interface.progress_notifier import ProgressNotifier
+
 @dataclass
 class ExecutableAction():
     command_arguments: dict[str, str | float]
@@ -68,13 +70,16 @@ class Feedback(TypedDict):
 
 def feedback_str_to_enum(curr_dict):
 
-    curr_dict["type"] = FeedbackType(curr_dict["type"])
+    # Handle nested dicts
+    if "type" in curr_dict:
+        curr_dict["type"] = FeedbackType(curr_dict["type"])
     return curr_dict
 
 class Controller():
 
     def __init__(self):
         
+        self.__return_vals = {}
         self.mqtt_client = mqtt.Client()
         self.mqtt_client.connect("localhost")
 
@@ -108,6 +113,8 @@ class Controller():
         if topic == "feedback":
             # object hook allows specifying how certain strings should be converted
             # to python types. In this case enums
+            print("Feedback is: ", flush=True)
+            print(json.loads(message.payload), flush=True)
             payload:Feedback = json.loads(message.payload, object_hook=feedback_str_to_enum)
             # Add a processable item to a feedback queue
             self.__waiting_feedbacks.put(payload)
@@ -131,6 +138,12 @@ class Controller():
                 
                 completed_action_id = feedback["action_id"]
 
+                # Add the return value if it is not empty (guaranteed to be at least empty by the c++ backend):
+                return_value = feedback["return_value"]
+                if return_value:
+                    self.__return_vals[completed_action_id] = return_value
+
+                print("Return values after success: ", self.__return_vals, flush=True)
                 # Remove completed action from all actions
                 del self.__actions[completed_action_id]
                 

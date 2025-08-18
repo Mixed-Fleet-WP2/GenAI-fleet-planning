@@ -53,7 +53,7 @@ class Navigatable : public rclcpp::Node {
         //void nav_goal_acknowledged_callback(std::shared_ptr<rclcpp_action::ClientGoalHandle<NavToPoseAction>> goal, int action_id);
         void move_to_pose_callback(const std::shared_ptr<std_msgs::msg::String> msg);
 
-        void send_nav_goals(std::vector<MoveAction> waypoints);
+        void send_nav_goals(std::vector<MoveAction> waypoints, std::function<void(const FollowWaypointsActionGoalHandle::WrappedResult&, int)> result_callback = nullptr);
 
         // NavAction = NavToPoseAction | NavThroughPosesAction
         // NavActionGoalHandle = NavToPoseGoalHandle | NavThroughPosesGoalHandle
@@ -72,11 +72,10 @@ class Navigatable : public rclcpp::Node {
                 RCLCPP_INFO(get_logger(), "Sent goal to server");
             }
         }
-        ////https://robotics.stackexchange.com/questions/107697/turtlebot4-nav2-how-to-call-action-navigatetopose-from-node-in-cpp
+        //https://robotics.stackexchange.com/questions/107697/turtlebot4-nav2-how-to-call-action-navigatetopose-from-node-in-cpp
         template <typename NavActionGoalHandle>
         void nav_result_callback(
             const typename NavActionGoalHandle::WrappedResult &result, int action_id){
-            RCLCPP_INFO_STREAM(get_logger(), "CALLBACKS");
             Feedback feedback = {};
             feedback.action_id = action_id;
             

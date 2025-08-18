@@ -15,7 +15,6 @@ DroneController::DroneController() : Navigatable(){
 
 void DroneController::search_callback(std_msgs::msg::String::ConstSharedPtr msg){
 
-    RCLCPP_INFO_STREAM(get_logger(), "Received search");
     // No command arguments to parse but at least check that action id is present
     auto action = parse_json<SearchAction>(msg->data, this);
 
@@ -30,13 +29,30 @@ void DroneController::search_callback(std_msgs::msg::String::ConstSharedPtr msg)
 void DroneController::search(SearchAction action){
 
     const static MoveAction rack_1 = {action.action_id,
-                                    -12, 3.25, 1.7, 0.0, 0.0, -1.57};
+                                    -12, 3.25, 2.0, 0.0, 0.0, -1.57};
     const static MoveAction rack_2 = {action.action_id,
-                                    1.0, -16.7, 1.7, 0,0,-1.57};
-    const static MoveAction rack_3 = {action.action_id, 11, 22, 1.7, 0, 0, 3.14};
+                                    1.0, -16.7, 2.0, 0,0,-1.57};
+    const static MoveAction rack_3 = {action.action_id, 11, 22, 2.0, 0, 0, 3.14};
      
     // Rack 2 is the "found rack" so it is last
-    std::vector<MoveAction> nav_goals = {rack_3, rack_1, rack_2};
+    //rack_3, rack_1, 
+    std::vector<MoveAction> nav_goals = {{action.action_id,
+                                    1.0, -1.0, 0.5, 0,0,-1.57}};
+    
+
+    std::function<void(const FollowWaypointsActionGoalHandle::WrappedResult&, int)> success_callback = [this](const FollowWaypointsActionGoalHandle::WrappedResult &result, int action_id){
+            if(result.code == rclcpp_action::ResultCode::SUCCEEDED){
+                Position rack_position = {1.0, -16.7, 0.2, 0, 0, -1.57};
+                Feedback fb;
+                fb.type = SUCCESS;
+                fb.action_id = action_id;
+                fb.message = "Search success";
+                fb.return_value = rack_position;
+                send_feedback(fb);
+            }else{
+                send_feedback({action_id, ERROR, "Search failed", {}});
+            }
+    };
 
     // If the drone needs to move in the z-axis, execute the lift operation
     // in a timer callback and after that run the 2D navigation
@@ -53,12 +69,15 @@ void DroneController::search(SearchAction action){
         // Lift needs the action id of some action to send feedback
         // since all MoveActions in search share the same action id (because they are under the search-action)
         // pass the first action
-        [this, nav_goals, start_time]() {this->lift(start_time, nav_goals.at(0), [this, nav_goals](){send_nav_goals(nav_goals);});}, nav_callback_group_);
+        [this, nav_goals, start_time, success_callback]() {this->lift(start_time, nav_goals.at(0), [this, nav_goals, success_callback](){send_nav_goals(nav_goals, success_callback);});}, nav_callback_group_);
         
         return;
     }
 
-    send_nav_goals(nav_goals);
+    
+
+    // Pass a custom success callback
+    send_nav_goals(nav_goals, success_callback);
 
 }
 

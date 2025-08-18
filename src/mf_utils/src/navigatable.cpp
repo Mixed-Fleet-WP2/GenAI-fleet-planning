@@ -169,12 +169,13 @@ void Navigatable::send_nav_goal(const MoveAction& action){
 
 }
 
-void Navigatable::send_nav_goals(std::vector<MoveAction> waypoints){
+void Navigatable::send_nav_goals(std::vector<MoveAction> waypoints, std::function<void(const FollowWaypointsActionGoalHandle::WrappedResult&, int)> result_callback){
 
     // The actions are a bundle that shares the id
     int id = waypoints.at(0).action_id;
+    //RCLCPP_INFO_STREAM(get_logger(), std::to_string(result_callback));
 
-    if (!nav_to_pose_client_->wait_for_action_server(std::chrono::seconds(10))){
+    if (!nav_through_poses_client_->wait_for_action_server(std::chrono::seconds(10))){
         RCLCPP_ERROR(this->get_logger(), "Action server not available after waiting");
         return;
     }
@@ -216,13 +217,20 @@ void Navigatable::send_nav_goals(std::vector<MoveAction> waypoints){
         const std::shared_ptr<const FollowWaypointsAction::Feedback> feedback){
             this->nav_feedback_callback<FollowWaypointsActionGoalHandle, FollowWaypointsAction>(g, feedback, id);
         };
-
-    send_goal_options.result_callback = 
-        [this, id](const FollowWaypointsActionGoalHandle::WrappedResult
-            &result){
-                this->nav_result_callback<FollowWaypointsActionGoalHandle>(result, id);
-            };
     
+    
+    auto callback = [this, id, result_callback](const FollowWaypointsActionGoalHandle::WrappedResult &result) {
+        if (result_callback) {
+            RCLCPP_INFO_STREAM(get_logger(), "Using custom callback");
+            result_callback(result, id);
+        } else {
+            RCLCPP_INFO_STREAM(get_logger(), "Using default callback");
+            this->nav_result_callback<FollowWaypointsActionGoalHandle>(result, id);
+        }
+    };
+
+    send_goal_options.result_callback = callback;
+
     waypoint_future_goal_handle_ = nav_through_poses_client_->async_send_goal(goals, send_goal_options);
 
 }
