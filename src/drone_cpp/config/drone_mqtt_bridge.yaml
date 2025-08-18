@@ -6,13 +6,6 @@
     bridge:
     #ROS topics with the starting slash are considered as global topics (not namespaced by ros2)
     # feedback is namespaced by the robot namespace
-      ros2mqtt:
-        ros_topics: 
-          - /feedback
-        /feedback:
-          mqtt_topic: feedback
-          ros_type: std_msgs/msg/String
-          primitive: true
       mqtt2ros:
         mqtt_topics: 
           - <robot_namespace>/move

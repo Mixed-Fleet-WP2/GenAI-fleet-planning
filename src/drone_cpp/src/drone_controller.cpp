@@ -37,7 +37,7 @@ void DroneController::search(SearchAction action){
     // Rack 2 is the "found rack" so it is last
     //rack_3, rack_1, 
     std::vector<MoveAction> nav_goals = {{action.action_id,
-                                    1.0, -1.0, 0.5, 0,0,-1.57}};
+                                    1.0, 0.0, 0.5, 0,0,-1.57}};
     
 
     std::function<void(const FollowWaypointsActionGoalHandle::WrappedResult&, int)> success_callback = [this](const FollowWaypointsActionGoalHandle::WrappedResult &result, int action_id){

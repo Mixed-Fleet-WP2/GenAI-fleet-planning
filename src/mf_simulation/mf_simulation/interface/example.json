@@ -50,3 +50,22 @@
         }
   ]
 }
+
+{
+  "actions":[
+    {"executing_robot":"drone_1",
+    "command":"search",
+    "command_arguments":{},
+    "action_id":1,
+    "prerequisites":[]
+    },
+
+  {"executing_robot":"forklift_1",
+    "command":"move",
+    "command_arguments":{},
+    "action_id":2,
+    "prerequisites":[2],
+    "input_from_action_id" : 2
+    }
+  
+]}

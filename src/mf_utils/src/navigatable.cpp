@@ -237,7 +237,7 @@ void Navigatable::send_nav_goals(std::vector<MoveAction> waypoints, std::functio
 
 void Navigatable::send_feedback(Feedback feedback){
 
-    RCLCPP_INFO_STREAM(get_logger(), feedback.message);
+    RCLCPP_INFO_STREAM(get_logger(), "Sending feedback msg: " + feedback.message);
     // Implicit conversion
     json feedback_json = feedback;
 

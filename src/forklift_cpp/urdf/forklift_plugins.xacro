@@ -43,7 +43,7 @@
         <odom_publish_frequency>30</odom_publish_frequency>
     </plugin>
 
-       <plugin filename="gz-sim-detachable-joint-system"
+       <!-- <plugin filename="gz-sim-detachable-joint-system"
               name="gz::sim::systems::DetachableJoint">
        <parent_link>fork_1</parent_link>
        <child_model>euro_pallet_2</child_model>
@@ -51,7 +51,7 @@
        <detach_topic>/euro_pallet_2/detach</detach_topic>
        <attach_topic>/${namespace}/euro_pallet_2/attach</attach_topic>
        <output_topic>/euro_pallet_2/state</output_topic>
-      </plugin>
+      </plugin> -->
 
       <plugin filename="gz-sim-detachable-joint-system"
               name="gz::sim::systems::DetachableJoint">

@@ -8,4 +8,6 @@
 
   mosquitto_pub -h localhost -p 1883 -t "/plan" -m ' {"actions":[{"executing_robot":"drone_1","command":"search","command_arguments":{},"action_id":1,"prerequisites":[]}]}'
 
+mosquitto_pub -h localhost -p 1883 -t "/plan" -m   '{"actions":[{"executing_robot":"drone_1","command":"search","command_arguments":{},"action_id":1,"prerequisites":[]},{"executing_robot":"forklift_1","command":"move","command_arguments":{},"action_id":2,"prerequisites":[1],"input_from_action_id":1}]}'
+
 mosquitto_pub -h localhost -p 1883 -t "/plan" -m '{"actions":[{"executing_robot":"forklift_1","command":"pick_up","command_arguments":{"object":"euro_pallet_1"},"action_id":1,"prerequisites":[]}]}'
