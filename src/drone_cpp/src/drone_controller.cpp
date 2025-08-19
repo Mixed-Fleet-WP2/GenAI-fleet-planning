@@ -29,15 +29,14 @@ void DroneController::search_callback(std_msgs::msg::String::ConstSharedPtr msg)
 void DroneController::search(SearchAction action){
 
     const static MoveAction rack_1 = {action.action_id,
-                                    -12, 3.25, 2.0, 0.0, 0.0, -1.57};
+                                    -12, 3.25, 3.5, 0.0, 0.0, -1.57};
     const static MoveAction rack_2 = {action.action_id,
-                                    1.0, -16.7, 2.0, 0,0,-1.57};
-    const static MoveAction rack_3 = {action.action_id, 11, 22, 2.0, 0, 0, 3.14};
+                                    1.0, -16.7, 3.5, 0,0,-1.57};
+    const static MoveAction rack_3 = {action.action_id, 11, 22, 3.5, 0, 0, 3.14};
      
     // Rack 2 is the "found rack" so it is last
     //rack_3, rack_1, 
-    std::vector<MoveAction> nav_goals = {{action.action_id,
-                                    1.0, 0.0, 0.5, 0,0,-1.57}};
+    std::vector<MoveAction> nav_goals = {rack_3, rack_1, rack_2};
     
 
     std::function<void(const FollowWaypointsActionGoalHandle::WrappedResult&, int)> success_callback = [this](const FollowWaypointsActionGoalHandle::WrappedResult &result, int action_id){
