@@ -157,7 +157,6 @@ class Controller():
                 # Remove the id of the completed action from each action
                 # that it is prerequisite for
                 for id, action in self.__actions.items():
-                    print("REMOVING PREREQS", flush=True)
                     if action.remove_prerequisite(completed_action_id):
                         # If action args should become from another action's return value,
                         # get the stored return value and replace arguments:
@@ -185,11 +184,9 @@ class Controller():
                 executing_robot=action.executing_robot,
                 action_id=action_id,
                 feedback_signal=feedback_signal,
-                #ActionFromLLM does not have the input_from_action_id and for Action the default is None
+                # ActionFromLLM does not have the input_from_action_id and for Action the default is None
                 input_from_action_id= action.input_from_action_id if type(action) == Action else None
             )
-
-            print("Adding an action with id of: ", action_id, flush=True)
             self.__actions[action_id] =  pending_action
 
             # Run actions that dont have precondition immediately
