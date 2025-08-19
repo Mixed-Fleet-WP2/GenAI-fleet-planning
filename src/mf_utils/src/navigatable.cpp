@@ -9,7 +9,7 @@ Navigatable::Navigatable() : Node("default_name"){
     auto odom_subsciber_options = rclcpp::SubscriptionOptions();
     odom_subsciber_options.callback_group = odom_callback_group_;
 
-    nav_callback_group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
+    nav_callback_group_ = create_callback_group(rclcpp::CallbackGroupType::Reentrant);
 
     // Run the navigation client in a separate cb group/in a separate thread
     nav_to_pose_client_ = rclcpp_action::create_client<NavToPoseAction>(

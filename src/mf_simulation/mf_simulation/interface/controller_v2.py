@@ -161,8 +161,8 @@ class Controller():
                         # If action args should become from another action's return value,
                         # get the stored return value and replace arguments:
                         if action.input_from_action_id:
-                            print("USING ACTION WITH ARGS: ", self.__return_vals[completed_action_id], flush=True)
-                            action.command_arguments = self.__return_vals[completed_action_id]
+                            input_action_id = action.input_from_action_id
+                            action.command_arguments = self.__return_vals[input_action_id]
                         action.run(self.mqtt_client)
                     
 

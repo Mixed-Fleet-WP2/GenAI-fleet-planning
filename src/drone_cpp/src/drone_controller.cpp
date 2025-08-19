@@ -42,7 +42,7 @@ void DroneController::search(SearchAction action){
 
     std::function<void(const FollowWaypointsActionGoalHandle::WrappedResult&, int)> success_callback = [this](const FollowWaypointsActionGoalHandle::WrappedResult &result, int action_id){
             if(result.code == rclcpp_action::ResultCode::SUCCEEDED){
-                Position rack_position = {1.0, -16.7, 0.2, 0, 0, -1.57};
+                Position rack_position = {1.0, -16.9, 0.2, 0, 0, -1.57};
                 Feedback fb;
                 fb.type = SUCCESS;
                 fb.action_id = action_id;
