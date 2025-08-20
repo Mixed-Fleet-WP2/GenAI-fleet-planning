@@ -6,4 +6,4 @@
 plan=$(cat ./plan.json)
 
 # Publish the plan to the MQTT topic
-mosquitto_pub -h localhost -t "/plan" -m "$plan"
+mosquitto_pub -h 2883 -t "/plan" -m "$plan"

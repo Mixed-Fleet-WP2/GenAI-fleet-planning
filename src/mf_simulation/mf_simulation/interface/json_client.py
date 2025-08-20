@@ -19,7 +19,7 @@ class JsonClient():
 
         self.__mqtt_client = mqtt.Client()
 
-        self.__mqtt_client.connect("localhost")
+        self.__mqtt_client.connect("153.1.162.49", 2883)
 
         self.__mqtt_client.subscribe([("/plan", 2)])
         self.__mqtt_client.on_message = self.on_message
@@ -44,7 +44,8 @@ class JsonClient():
         if topic == "/plan":
             try:
                 plan: Plan = Plan.model_validate_json(payload)
-
+                print("MESSAGE RECEIVED", flush=True)
+                return
                 plan_thread = Thread(None, self.__controller.run_plan, args=[plan, ProgressNotifier()])
                 plan_thread.start()
 

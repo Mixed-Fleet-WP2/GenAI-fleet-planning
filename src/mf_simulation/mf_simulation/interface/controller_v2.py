@@ -82,7 +82,7 @@ class Controller():
         
         self.__return_vals = {}
         self.mqtt_client = mqtt.Client()
-        self.mqtt_client.connect("localhost")
+        self.mqtt_client.connect("153.1.162.49", 2883)
 
         self.__progress_callback: SignalInstance | ProgressNotifier
         

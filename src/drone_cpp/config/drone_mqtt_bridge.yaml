@@ -1,8 +1,8 @@
 /**/*:
   ros__parameters:
     broker:
-      host: localhost
-      port: 1883
+      host: "153.1.162.49"
+      port: 2883
     bridge:
     #ROS topics with the starting slash are considered as global topics (not namespaced by ros2)
     # feedback is namespaced by the robot namespace
