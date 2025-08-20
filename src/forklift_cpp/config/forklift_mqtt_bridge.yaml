@@ -23,8 +23,8 @@
 /**/*:
   ros__parameters:
     broker:
-      host: "153.1.162.49"
-      port: 2883
+      host: <hostname>
+      port: <port>
     bridge:
     #ROS topics with the starting slash are considered as global topics (not namespaced by ros2)
       # ros2mqtt:

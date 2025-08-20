@@ -13,13 +13,13 @@ from mf_simulation.interface.progress_notifier import ProgressNotifier
 
 class JsonClient():
 
-    def __init__(self):
+    def __init__(self, mqtt_host: str = "localhost", mqtt_port: int = 1883):
 
-        self.__controller = Controller()
+        self.__controller = Controller(mqtt_host, mqtt_port)
 
         self.__mqtt_client = mqtt.Client()
 
-        self.__mqtt_client.connect("153.1.162.49", 2883)
+        self.__mqtt_client.connect(mqtt_host, mqtt_port)
 
         self.__mqtt_client.subscribe([("/plan", 2)])
         self.__mqtt_client.on_message = self.on_message
@@ -44,8 +44,8 @@ class JsonClient():
         if topic == "/plan":
             try:
                 plan: Plan = Plan.model_validate_json(payload)
-                print("MESSAGE RECEIVED", flush=True)
-                return
+                
+                
                 plan_thread = Thread(None, self.__controller.run_plan, args=[plan, ProgressNotifier()])
                 plan_thread.start()
 
@@ -53,7 +53,10 @@ class JsonClient():
                 print(e, file=sys.stderr, flush=True)
 
 def main():
-    JsonClient()
+    mqtt_host = sys.argv[1] if len(sys.argv) > 1 else "localhost"
+    mqtt_port = int(sys.argv[2]) if len(sys.argv) > 2 else 1883
+    print("Starting JsonClient with MQTT host:", mqtt_host, "and port:", mqtt_port, flush=True)
+    JsonClient(mqtt_host, mqtt_port)
 
 if __name__ == "__main__":
     main()

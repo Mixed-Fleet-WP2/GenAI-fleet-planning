@@ -22,7 +22,9 @@ from ros_gz_sim.actions import GzServer
 from launch_ros.descriptions import ComposableNode
 from launch.event_handlers import OnShutdown
 import yaml
-from launch.conditions import IfCondition
+from launch.conditions import IfCondition, UnlessCondition
+from nav2_common.launch import ReplaceString, RewrittenYaml
+from launch_ros.descriptions import ParameterFile
 
 def create_robot_instances(context, *args, **kwargs):
     """Function to create robot instances based on the robots YAML file"""
@@ -129,6 +131,9 @@ def generate_launch_description():
     use_robot_state_pub = LaunchConfiguration('use_robot_state_pub')
     use_rviz = LaunchConfiguration('use_rviz')
     robots_file = LaunchConfiguration('robots_file')
+    headless = LaunchConfiguration('headless')
+    mqtt_port = LaunchConfiguration('mqtt_port')
+    mqtt_host = LaunchConfiguration('mqtt_host')
     
     # Declare the launch arguments
     declare_world_cmd = DeclareLaunchArgument(
@@ -184,7 +189,31 @@ def generate_launch_description():
         default_value=os.path.join(pkg_share, 'config', 'global_ros_gz_bridge.yaml'),
         description="Path to gz bridge configuration"
     )
-    
+
+    declare_headless = DeclareLaunchArgument(
+        name='headless',
+        default_value='True',
+        description="Whether to run the LLM gui or not"
+    )
+
+    declare_mqtt_port = DeclareLaunchArgument(
+        name="mqtt_port",
+        default_value='1883',
+        description="Port for the MQTT broker"
+    )
+
+    declare_mqtt_host = DeclareLaunchArgument(
+        name="mqtt_host",
+        default_value='localhost',
+        description="Host for the MQTT broker"
+    )
+
+    global_mqtt_config_file = ReplaceString(
+        source_file=global_mqtt_config_file,
+        replacements={
+            '<hostname>':(mqtt_host),
+            '<port>':(mqtt_port)}
+    )
     
     # At the moment there is a bug where processes started with shell=True are not shut down by launch
     # this is why the launch file from ros_gz_sim package is not used
@@ -199,11 +228,21 @@ def generate_launch_description():
     )
 
 
+    start_headless_client = ExecuteProcess(
+        cmd=['ros2', 'run', 'mf_simulation', 'json_client', mqtt_host, mqtt_port],
+        name='mf_simulation_json_client',
+        output='screen',
+        shell=False,
+        condition=IfCondition(headless)
+    )
+
+
     start_interface = ExecuteProcess(
         cmd=['ros2', 'run', 'mf_simulation', 'interface'],
         name='mf_simulation_interface',
         output='screen',
         shell=False,
+        condition=UnlessCondition(headless)
     )
 
     simulation_container = Node(
@@ -340,6 +379,9 @@ def generate_launch_description():
     ld.add_action(declare_rviz_config_file_cmd)
     ld.add_action(declare_use_robot_state_pub_cmd)
     ld.add_action(declare_robots_file)
+    ld.add_action(declare_headless)
+    ld.add_action(declare_mqtt_port)
+    ld.add_action(declare_mqtt_host)
     ld.add_action(set_env_vars_resources)
 
     ld.add_action(simulation_container)
@@ -350,8 +392,10 @@ def generate_launch_description():
     ld.add_action(gazebo_server)
     ld.add_action(gazebo_client)
     ld.add_action(start_interface)
+    ld.add_action(start_headless_client)
     #ld.add_action(service_bridge)
     ld.add_action(gz_bridge)
+    
     #ld.add_action(standalone_state_bridge)
     
 

@@ -36,10 +36,23 @@ void DroneController::search(SearchAction action){
      
     // Rack 2 is the "found rack" so it is last
     //rack_3, rack_1, 
-    std::vector<MoveAction> nav_goals = {rack_3, rack_1, rack_2};
+    std::vector<MoveAction> nav_goals = {rack_2};
     
 
     std::function<void(const FollowWaypointsActionGoalHandle::WrappedResult&, int)> success_callback = [this](const FollowWaypointsActionGoalHandle::WrappedResult &result, int action_id){
+            
+        const std::string static sysml_feedback_topic = "search/feedback";
+        // https://docs.ros.org/en/rolling/Concepts/Intermediate/About-Quality-of-Service-Settings.html
+        rclcpp::QoS qos(1);
+        // This keeps messages in buffer for late subscribers (i.e mqtt client)
+        qos.transient_local();
+        // Quarantee sending
+        qos.reliable();  
+
+        const auto temp_publisher = this->create_publisher<std_msgs::msg::String>(sysml_feedback_topic, qos);
+        
+        std_msgs::msg::String msg = std_msgs::msg::String();
+
             if(result.code == rclcpp_action::ResultCode::SUCCEEDED){
                 Position rack_position = {1.0, -16.9, 0.2, 0, 0, -1.57};
                 Feedback fb;
@@ -48,9 +61,40 @@ void DroneController::search(SearchAction action){
                 fb.message = "Search success";
                 fb.return_value = rack_position;
                 send_feedback(fb);
+                
+                // THIS PART IS ONLY FOR SENDING FEEDBACK TO THE SYSML CLIENT
+                // NOT THE CENTRAL CONTROLLER
+                
+                json json_msg = {
+                    {"empty_location", {
+                        {"X", 1.0},
+                        {"Y", -16.9},
+                        {"Z", 0.2}
+                    }},
+                    {"status", 200}
+                };
+
+                msg.data = json_msg.dump();
+
             }else{
                 send_feedback({action_id, ERROR, "Search failed", {}});
+                
+                json json_msg = {
+                    {"empty_location", {
+                        {}
+                    }},
+                    {"status", 401}
+                };
+
+                msg.data = json_msg.dump();
+
             }
+            RCLCPP_INFO_STREAM(get_logger(), "Sending message with data: " + msg.data);
+
+
+            temp_publisher->publish(msg);
+            // Sleep a bit so message is sent
+            rclcpp::sleep_for(std::chrono::nanoseconds(3000000000));
     };
 
     // If the drone needs to move in the z-axis, execute the lift operation

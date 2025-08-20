@@ -78,11 +78,11 @@ def feedback_str_to_enum(curr_dict):
 
 class Controller():
 
-    def __init__(self):
+    def __init__(self, mqtt_host: str = "localhost", mqtt_port: int = 1883):
         
         self.__return_vals = {}
         self.mqtt_client = mqtt.Client()
-        self.mqtt_client.connect("153.1.162.49", 2883)
+        self.mqtt_client.connect(mqtt_host, mqtt_port)
 
         self.__progress_callback: SignalInstance | ProgressNotifier
         
