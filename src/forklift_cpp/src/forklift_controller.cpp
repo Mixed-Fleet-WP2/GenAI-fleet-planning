@@ -106,11 +106,12 @@ void ForkliftController::drop(const ObjectAction &action){
             const float EXTRA = 0.3;
 
             if (!future.get()->success){
-                 send_feedback({
-            id,
-            ERROR, 
-            "Dropping object " + object + " failed. Deattachment failed"
-            });
+                send_feedback({
+                    id,
+                    ERROR, 
+                    "Dropping object " + object + " failed. Deattachment failed"
+                });
+                send_sysml_feedback("drop/feedback", {{"status", 401}});
             return;
             }      
             
@@ -126,12 +127,14 @@ void ForkliftController::drop(const ObjectAction &action){
             ERROR, 
             "Dropping the object " + object + " failed due to drop failing."
         });
+        send_sysml_feedback("drop/feedback", {{"status", 401}});
     }else{
         send_feedback({
             id,
             ERROR, 
             "Dropping the object " + object + " succeeded"
         });
+        send_sysml_feedback("drop/feedback", {{"status", 401}});
     }
     }); 
 }
@@ -237,6 +240,7 @@ bool ForkliftController::move_object_relative_to_fork(
 
 void ForkliftController::pick_up_callback_(const std_msgs::msg::String::ConstSharedPtr msg){
 
+    RCLCPP_INFO_STREAM(get_logger(), "Received pick up request!");
     const std::string &msg_str = msg->data;
 
     auto action = parse_json<ObjectAction>(msg_str, this);
@@ -269,32 +273,9 @@ void ForkliftController::pick_up(const ObjectAction& action){
             ERROR, 
             "Picking up object " + object + " failed"
         });
+        send_sysml_feedback("pick_up/feedback", {{"status", 401}});
         return;
-    }else{
-        RCLCPP_INFO_STREAM(get_logger(), "Pick up success!");
-        // Send sysml feedback
-                const std::string static sysml_feedback_topic = "pick_up/feedback";
-                // https://docs.ros.org/en/rolling/Concepts/Intermediate/About-Quality-of-Service-Settings.html
-                rclcpp::QoS qos(1);
-                // This keeps messages in buffer for late subscribers (i.e mqtt client)
-                qos.transient_local();
-                // Quarantee sending
-                qos.reliable();  
-
-                const auto temp_publisher = this->create_publisher<std_msgs::msg::String>(sysml_feedback_topic, qos);
-                
-                std_msgs::msg::String msg = std_msgs::msg::String();
-
-                json json_msg = {
-                        {"status", 200}
-                    };
-                    msg.data = json_msg.dump();
-                    temp_publisher->publish(msg);
-                    // Sleep a bit so message is sent
-                    rclcpp::sleep_for(std::chrono::nanoseconds(3000000000));
     }
-
-    return;
 
     // Attach the object
     // Sleep to wait for object movement
@@ -317,25 +298,7 @@ void ForkliftController::pick_up(const ObjectAction& action){
                 "Picking up object " + object + " succeeded"
                 });
                 // Send sysml feedback
-                const std::string static sysml_feedback_topic = "search/feedback";
-                // https://docs.ros.org/en/rolling/Concepts/Intermediate/About-Quality-of-Service-Settings.html
-                rclcpp::QoS qos(1);
-                // This keeps messages in buffer for late subscribers (i.e mqtt client)
-                qos.transient_local();
-                // Quarantee sending
-                qos.reliable();  
-
-                const auto temp_publisher = this->create_publisher<std_msgs::msg::String>(sysml_feedback_topic, qos);
-                
-                std_msgs::msg::String msg = std_msgs::msg::String();
-
-                json json_msg = {
-                        {"status", 200}
-                    };
-                    msg.data = json_msg.dump();
-                    temp_publisher->publish(msg);
-                    // Sleep a bit so message is sent
-                    rclcpp::sleep_for(std::chrono::nanoseconds(3000000000));
+                send_sysml_feedback("pick_up/feedback", {{"status", 401}});
 
             }else{
                 send_feedback({

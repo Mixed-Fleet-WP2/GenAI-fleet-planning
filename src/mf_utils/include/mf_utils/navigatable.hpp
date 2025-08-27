@@ -53,6 +53,8 @@ class Navigatable : public rclcpp::Node {
         //void nav_goal_acknowledged_callback(std::shared_ptr<rclcpp_action::ClientGoalHandle<NavToPoseAction>> goal, int action_id);
         void move_to_pose_callback(const std::shared_ptr<std_msgs::msg::String> msg);
 
+        void send_sysml_feedback(std::string topic_without_namespace, json msg);
+
         void send_nav_goals(std::vector<MoveAction> waypoints, std::function<void(const FollowWaypointsActionGoalHandle::WrappedResult&, int)> result_callback = nullptr);
 
         // NavAction = NavToPoseAction | NavThroughPosesAction
@@ -79,55 +81,23 @@ class Navigatable : public rclcpp::Node {
             Feedback feedback = {};
             feedback.action_id = action_id;
             
-            const std::string static sysml_feedback_topic = "move/feedback";
-        // https://docs.ros.org/en/rolling/Concepts/Intermediate/About-Quality-of-Service-Settings.html
-        rclcpp::QoS qos(1);
-        // This keeps messages in buffer for late subscribers (i.e mqtt client)
-        qos.transient_local();
-        // Quarantee sending
-        qos.reliable();  
-
-        const auto temp_publisher = this->create_publisher<std_msgs::msg::String>(sysml_feedback_topic, qos);
-        
-        std_msgs::msg::String msg = std_msgs::msg::String();
-
             switch (result.code) {
                 case rclcpp_action::ResultCode::SUCCEEDED:{
                     feedback.type = SUCCESS;
                     feedback.message = "Navigation succeeded";
-                    json json_msg1 = {
-                        {"status", 200}
-                    };
-                    msg.data = json_msg1.dump();
-                    temp_publisher->publish(msg);
-                    // Sleep a bit so message is sent
-                    rclcpp::sleep_for(std::chrono::nanoseconds(3000000000));
+                    send_sysml_feedback("move/feedback", {{"status", 200}});
                     break;
                 }
                 case rclcpp_action::ResultCode::ABORTED: {
                     feedback.type = ERROR;
                     feedback.message = result.result->error_msg;
-                    json json_msg2 = {
-                        {"status", 401}
-                    };
-                    
-                    msg.data = json_msg2.dump();
+                    send_sysml_feedback("move/feedback", {{"status", 401}});
                     RCLCPP_INFO_STREAM(get_logger(), "Goal abort");
-                    RCLCPP_INFO_STREAM(get_logger(), "Sending on topic: " + sysml_feedback_topic);
-                    temp_publisher->publish(msg);
-                    // Sleep a bit so message is sent
-                    rclcpp::sleep_for(std::chrono::nanoseconds(3000000000));
                     break;
                 }
                 case rclcpp_action::ResultCode::CANCELED: {
-                    json json_msg2 = {
-                        {"status", 401}
-                    };
-                    msg.data = json_msg2.dump();
+                    send_sysml_feedback("move/feedback", {{"status", 401}});
                     RCLCPP_INFO_STREAM(get_logger(), "Goal cancel");
-                    temp_publisher->publish(msg);
-                    // Sleep a bit so message is sent
-                    rclcpp::sleep_for(std::chrono::nanoseconds(3000000000));
                     feedback.type = CANCELLED;
                     feedback.message = "Goal was canceled";
                     break;

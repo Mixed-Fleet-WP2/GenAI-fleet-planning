@@ -247,3 +247,23 @@ void Navigatable::send_feedback(Feedback feedback){
     feedback_publisher_->publish(msg);
 
 }
+
+void Navigatable::send_sysml_feedback(std::string topic_without_namespace, json json_object){
+
+        // https://docs.ros.org/en/rolling/Concepts/Intermediate/About-Quality-of-Service-Settings.html
+        rclcpp::QoS qos(1);
+        // This keeps messages in buffer for late subscribers (i.e mqtt client)
+        qos.transient_local();
+        // Quarantee sending
+        qos.reliable();  
+
+        const auto temp_publisher = this->create_publisher<std_msgs::msg::String>(topic_without_namespace, qos);
+        
+        std_msgs::msg::String msg = std_msgs::msg::String();
+
+        msg.data = json_object.dump();
+        temp_publisher->publish(msg);
+        // Sleep a bit so message is sent before publisher is destroyed
+        rclcpp::sleep_for(std::chrono::seconds(2));
+
+}
