@@ -270,10 +270,35 @@ void ForkliftController::pick_up(const ObjectAction& action){
             "Picking up object " + object + " failed"
         });
         return;
+    }else{
+        RCLCPP_INFO_STREAM(get_logger(), "Pick up success!");
+        // Send sysml feedback
+                const std::string static sysml_feedback_topic = "pick_up/feedback";
+                // https://docs.ros.org/en/rolling/Concepts/Intermediate/About-Quality-of-Service-Settings.html
+                rclcpp::QoS qos(1);
+                // This keeps messages in buffer for late subscribers (i.e mqtt client)
+                qos.transient_local();
+                // Quarantee sending
+                qos.reliable();  
+
+                const auto temp_publisher = this->create_publisher<std_msgs::msg::String>(sysml_feedback_topic, qos);
+                
+                std_msgs::msg::String msg = std_msgs::msg::String();
+
+                json json_msg = {
+                        {"status", 200}
+                    };
+                    msg.data = json_msg.dump();
+                    temp_publisher->publish(msg);
+                    // Sleep a bit so message is sent
+                    rclcpp::sleep_for(std::chrono::nanoseconds(3000000000));
     }
 
-    // Attach the object
+    return;
 
+    // Attach the object
+    // Sleep to wait for object movement
+    rclcpp::sleep_for(std::chrono::nanoseconds(2000000000));
     auto req = std::make_shared<attach_interfaces::srv::ChangeAttach::Request>();
 
     req->attach = true;
@@ -285,11 +310,33 @@ void ForkliftController::pick_up(const ObjectAction& action){
         [this, id, object](rclcpp::Client<attach_interfaces::srv::ChangeAttach>::SharedFuture future){
 
             if (future.get()->success){
+                //Send planner feedback
                 send_feedback({
                 id,
                 SUCCESS, 
                 "Picking up object " + object + " succeeded"
                 });
+                // Send sysml feedback
+                const std::string static sysml_feedback_topic = "search/feedback";
+                // https://docs.ros.org/en/rolling/Concepts/Intermediate/About-Quality-of-Service-Settings.html
+                rclcpp::QoS qos(1);
+                // This keeps messages in buffer for late subscribers (i.e mqtt client)
+                qos.transient_local();
+                // Quarantee sending
+                qos.reliable();  
+
+                const auto temp_publisher = this->create_publisher<std_msgs::msg::String>(sysml_feedback_topic, qos);
+                
+                std_msgs::msg::String msg = std_msgs::msg::String();
+
+                json json_msg = {
+                        {"status", 200}
+                    };
+                    msg.data = json_msg.dump();
+                    temp_publisher->publish(msg);
+                    // Sleep a bit so message is sent
+                    rclcpp::sleep_for(std::chrono::nanoseconds(3000000000));
+
             }else{
                 send_feedback({
             id,

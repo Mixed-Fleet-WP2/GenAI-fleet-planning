@@ -75,7 +75,9 @@
         "stop_token": "cpp",
         "thread": "cpp",
         "typeindex": "cpp",
-        "valarray": "cpp"
+        "valarray": "cpp",
+        "bitset": "cpp",
+        "__nullptr": "cpp"
     },
     "python.analysis.typeCheckingMode": "standard"
 }

@@ -79,24 +79,65 @@ class Navigatable : public rclcpp::Node {
             Feedback feedback = {};
             feedback.action_id = action_id;
             
+            const std::string static sysml_feedback_topic = "move/feedback";
+        // https://docs.ros.org/en/rolling/Concepts/Intermediate/About-Quality-of-Service-Settings.html
+        rclcpp::QoS qos(1);
+        // This keeps messages in buffer for late subscribers (i.e mqtt client)
+        qos.transient_local();
+        // Quarantee sending
+        qos.reliable();  
+
+        const auto temp_publisher = this->create_publisher<std_msgs::msg::String>(sysml_feedback_topic, qos);
+        
+        std_msgs::msg::String msg = std_msgs::msg::String();
+
             switch (result.code) {
-                case rclcpp_action::ResultCode::SUCCEEDED:
+                case rclcpp_action::ResultCode::SUCCEEDED:{
                     feedback.type = SUCCESS;
                     feedback.message = "Navigation succeeded";
+                    json json_msg1 = {
+                        {"status", 200}
+                    };
+                    msg.data = json_msg1.dump();
+                    temp_publisher->publish(msg);
+                    // Sleep a bit so message is sent
+                    rclcpp::sleep_for(std::chrono::nanoseconds(3000000000));
                     break;
-                case rclcpp_action::ResultCode::ABORTED:
+                }
+                case rclcpp_action::ResultCode::ABORTED: {
                     feedback.type = ERROR;
                     feedback.message = result.result->error_msg;
+                    json json_msg2 = {
+                        {"status", 401}
+                    };
+                    
+                    msg.data = json_msg2.dump();
+                    RCLCPP_INFO_STREAM(get_logger(), "Goal abort");
+                    RCLCPP_INFO_STREAM(get_logger(), "Sending on topic: " + sysml_feedback_topic);
+                    temp_publisher->publish(msg);
+                    // Sleep a bit so message is sent
+                    rclcpp::sleep_for(std::chrono::nanoseconds(3000000000));
                     break;
-                case rclcpp_action::ResultCode::CANCELED:
+                }
+                case rclcpp_action::ResultCode::CANCELED: {
+                    json json_msg2 = {
+                        {"status", 401}
+                    };
+                    msg.data = json_msg2.dump();
+                    RCLCPP_INFO_STREAM(get_logger(), "Goal cancel");
+                    temp_publisher->publish(msg);
+                    // Sleep a bit so message is sent
+                    rclcpp::sleep_for(std::chrono::nanoseconds(3000000000));
                     feedback.type = CANCELLED;
                     feedback.message = "Goal was canceled";
                     break;
-                default:
+                }
+                default: {
                     feedback.type = ERROR;
                     feedback.message = "Unknow status code received from navigation";
                     break;
                 }
+            }
             RCLCPP_INFO_STREAM(get_logger(), "SENDIN NAV FEED");
             send_feedback(feedback);
         }

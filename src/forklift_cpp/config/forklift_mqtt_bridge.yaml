@@ -26,12 +26,13 @@
       host: <hostname>
       port: <port>
     bridge:
-    #ROS topics with the starting slash are considered as global topics (not namespaced by ros2)
-      # ros2mqtt:
-      #   ros_topics: 
-      #     - /pallet_1_pos
-      #   /pallet_1_pos:
-      #     mqtt_topic: pallet_1_pos
+      ros2mqtt:
+        ros_topics: 
+          - /<robot_namespace>/move/feedback
+        /<robot_namespace>/move/feedback:
+          mqtt_topic: <robot_namespace>/move/feedback
+          primitive: true
+          ros_type: std_msgs/msg/String
       mqtt2ros:
         mqtt_topics: 
           - <robot_namespace>/move

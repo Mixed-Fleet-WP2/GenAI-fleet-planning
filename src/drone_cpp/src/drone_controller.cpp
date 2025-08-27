@@ -69,7 +69,10 @@ void DroneController::search(SearchAction action){
                     {"empty_location", {
                         {"X", 1.0},
                         {"Y", -16.9},
-                        {"Z", 0.2}
+                        {"Z", 0.2},
+                        {"yaw", -1.57},
+                        {"roll", 0.0},
+                        {"pitch", 0.0},
                     }},
                     {"status", 200}
                 };

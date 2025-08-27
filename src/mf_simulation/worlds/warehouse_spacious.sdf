@@ -89,7 +89,7 @@
       <!--See setting environment variable in multi_robot_launch.py-->
       <uri>model://euro_pallet</uri>
       <name>euro_pallet_1</name>
-      <pose>4 3 0 0 0 0</pose>
+      <pose>-1.20 5 0 0 0 0</pose>
     </include>
 
     <!-- <include>
