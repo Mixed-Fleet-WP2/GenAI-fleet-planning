@@ -2,6 +2,8 @@ ros2 run tf2_ros tf2_echo map fork_1 --ros-args -r __ns:=/forklift_1 -r /tf:=tf 
 
 ros2 run tf2_tools view_frames --ros-args -r __ns:=/robot1 -r /tf:=tf -r /tf_static:=tf_static
 
-ros2 topic pub --once /forklift_1/pick_up std_msgs/msg/String "{data: '{\"action_id\": 1, \"command_arguments\": { \"object\": \"pallet_1\"} }' }"
+ros2 topic pub --once /forklift_1/pick_up std_msgs/msg/String "{data: '{\"action_id\": 1, \"command_arguments\": { \"object\": \"euro_pallet_1\"} }' }"
 
 ros2 topic pub --once /forklift_1/move_fork std_msgs/msg/String "{data: '{\"action_id\": 1, \"command_arguments\": { \"position\": 0.3} }' }"
+
+ros2 topic pub --once /drone_1/move std_msgs/msg/String "{data: '{\"action_id\": 1, \"command_arguments\": { \"destination\": {\"x\": 0.0,  \"y\": 0.0,  \"z\": 1.0,  \"roll\": 0.0,  \"pitch\": 0.0,  \"yaw\": 0.0} } }' }"

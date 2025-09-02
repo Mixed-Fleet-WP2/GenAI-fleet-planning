@@ -1,23 +1,28 @@
 /**/*:
   ros__parameters:
     broker:
-      host: localhost
-      port: 1883
+      host: <hostname>
+      port: <port>
     bridge:
     #ROS topics with the starting slash are considered as global topics (not namespaced by ros2)
     # feedback is namespaced by the robot namespace
       ros2mqtt:
         ros_topics: 
-          - /feedback
-        /feedback:
-          mqtt_topic: feedback
-          ros_type: std_msgs/msg/String
+          - /<robot_namespace>/search/feedback
+        /<robot_namespace>/search/feedback:
+          mqtt_topic: <robot_namespace>/search/feedback
           primitive: true
+          ros_type: std_msgs/msg/String
       mqtt2ros:
         mqtt_topics: 
           - <robot_namespace>/move
+          - <robot_namespace>/search
         <robot_namespace>/move:
           ros_topic: /<robot_namespace>/move
+          ros_type: std_msgs/msg/String
+          primitive: true
+        <robot_namespace>/search:
+          ros_topic: /<robot_namespace>/search
           ros_type: std_msgs/msg/String
           primitive: true
         

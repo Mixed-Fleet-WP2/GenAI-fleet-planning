@@ -3,17 +3,6 @@
   <xacro:macro name="plugins" params="namespace">
 
     <gazebo>
-
-      <plugin
-      filename="gz-sim-pose-publisher-system"
-      name="gz::sim::systems::PosePublisher">
-      <publish_link_pose>false</publish_link_pose>
-      <publish_collision_pose>false</publish_collision_pose>
-      <publish_visual_pose>false</publish_visual_pose>
-      <publish_nested_model_pose>true</publish_nested_model_pose>
-      <use_pose_vector_msg>true</use_pose_vector_msg>
-    </plugin>
-
       <plugin
         filename="gz-sim-diff-drive-system"
         name="gz::sim::systems::DiffDrive">
@@ -45,16 +34,16 @@
       <plugin
         filename="gz-sim-odometry-publisher-system"
         name="gz::sim::systems::OdometryPublisher">
-        <dimensions>2</dimensions>
+        <dimensions>3</dimensions>
         <odom_topic>$(arg namespace)/odom</odom_topic>
         <tf_topic>$(arg namespace)/tf</tf_topic>
         <robot_base_frame>base_link</robot_base_frame>
-
+        <!-- <gaussian_noise>0.5</gaussian_noise> -->
         <odom_frame>odom</odom_frame>
-        <odom_publish_frequency>50</odom_publish_frequency>
+        <odom_publish_frequency>30</odom_publish_frequency>
     </plugin>
 
-       <plugin filename="gz-sim-detachable-joint-system"
+       <!-- <plugin filename="gz-sim-detachable-joint-system"
               name="gz::sim::systems::DetachableJoint">
        <parent_link>fork_1</parent_link>
        <child_model>euro_pallet_2</child_model>
@@ -62,7 +51,7 @@
        <detach_topic>/euro_pallet_2/detach</detach_topic>
        <attach_topic>/${namespace}/euro_pallet_2/attach</attach_topic>
        <output_topic>/euro_pallet_2/state</output_topic>
-      </plugin>
+      </plugin> -->
 
       <plugin filename="gz-sim-detachable-joint-system"
               name="gz::sim::systems::DetachableJoint">
@@ -76,18 +65,6 @@
 
       <plugin filename="gz-sim-joint-state-publisher-system"
         name="gz::sim::systems::JointStatePublisher">
-        <!--
-      <joint_name>left_wheel_joint</joint_name>
-      <joint_name>right_wheel_joint</joint_name>
-      <joint_name>left_wheel_back_joint</joint_name>
-      <joint_name>right_wheel_back_joint</joint_name>
-      <joint_name>fork_attach_1_joint</joint_name>
-      <joint_name>fork_attach_2_joint</joint_name>
-      <joint_name>fork_1_joint</joint_name>
-      <joint_name>fork_2_joint</joint_name>
-      <joint_name>fork_plate</joint_name>
-      -->
-        <!-- <joint_name>fork_plate</joint_name> -->
         <topic>${namespace}/joint_states</topic>
       </plugin>
 

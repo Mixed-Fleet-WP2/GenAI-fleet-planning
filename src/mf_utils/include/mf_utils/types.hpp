@@ -41,9 +41,11 @@ struct JointPositionAction {
     float position;
 };
 
+struct SearchAction{
+    int action_id;
+};
 
 void from_json(const json& j, ObjectAction& action) {
-    std::cout << "Parsing PickUpAction, JSON: " << j.dump() << std::flush << std::endl;
     j.at("action_id").get_to(action.action_id);
     j.at("command_arguments").at("object").get_to(action.object);
 }
@@ -53,17 +55,21 @@ void from_json(const json& j, JointPositionAction& action) {
     j.at("command_arguments").at("position").get_to(action.position);
 }
 
+void from_json(const json& j, SearchAction& action) {
+    j.at("action_id").get_to(action.action_id);
+}
+
 
 // https://github.com/nlohmann/json/issues/2199
 
 void from_json(const json& j, MoveAction& action) {
     j.at("action_id").get_to(action.action_id);
-    j.at("command_arguments").at("x").get_to(action.x);
-    j.at("command_arguments").at("y").get_to(action.y);
-    j.at("command_arguments").at("z").get_to(action.z);
-    j.at("command_arguments").at("roll").get_to(action.roll);
-    j.at("command_arguments").at("pitch").get_to(action.pitch);
-    j.at("command_arguments").at("yaw").get_to(action.yaw);
+    j.at("command_arguments").at("destination").at("X").get_to(action.x);
+    j.at("command_arguments").at("destination").at("Y").get_to(action.y);
+    j.at("command_arguments").at("destination").at("Z").get_to(action.z);
+    j.at("command_arguments").at("destination").at("roll").get_to(action.roll);
+    j.at("command_arguments").at("destination").at("pitch").get_to(action.pitch);
+    j.at("command_arguments").at("destination").at("yaw").get_to(action.yaw);
 }
 
 enum FeedbackType{
@@ -83,9 +89,10 @@ struct Feedback{
     int action_id;
     FeedbackType type;
     std::string message;
+    json return_value = {};
 };
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Feedback, action_id, type, message);
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Feedback, action_id, type, message, return_value);
 
 
 struct Position{

@@ -72,6 +72,8 @@ def generate_launch_description():
     drone_gz_bridge_config = LaunchConfiguration('drone_gz_bridge_config')
     robot_sdf = LaunchConfiguration('robot_sdf')
     use_pure_odom = LaunchConfiguration('use_pure_odom')
+    mqtt_port = LaunchConfiguration('mqtt_port')
+    mqtt_host = LaunchConfiguration('mqtt_host')
 
     pose = {
         'x': LaunchConfiguration('x_pose'),
@@ -171,6 +173,20 @@ def generate_launch_description():
         'use_pure_odom', default_value='False', description="Whether to rely on odometry for localization without amcl"
     )
 
+    declare_mqtt_port = DeclareLaunchArgument(
+        name="mqtt_port",
+        default_value='1883',
+        description="Port for the MQTT broker"
+    )
+
+    declare_mqtt_host = DeclareLaunchArgument(
+        name="mqtt_host",
+        default_value='localhost',
+        description="Host for the MQTT broker"
+    )
+
+    
+
     #https://robotics.stackexchange.com/questions/89531/how-to-exit-from-a-ros2-lifecycle-launch-script
     #https://github.com/ros2/launch/blob/a89671962220c8691ea4f128717bca599c711cda/launch/examples/launch_counters.py#L96-L98
     #https://docs.ros.org/en/galactic/Tutorials/Intermediate/Launch/Using-Event-Handlers.html
@@ -184,7 +200,11 @@ def generate_launch_description():
 
     drone_mqtt_config_file = ReplaceString(
         source_file=drone_mqtt_config_file,
-        replacements={'<robot_namespace>':(namespace)}
+        replacements={
+            '<robot_namespace>':(namespace),
+            '<hostname>':(mqtt_host),
+            '<port>':(mqtt_port)
+        }
     )
 
     # Get the launch directory
@@ -331,6 +351,8 @@ def generate_launch_description():
     ld.add_action(declare_map_yaml_file)
     ld.add_action(declare_mqtt_config_file)
     ld.add_action(declare_gz_bridge_path)
+    ld.add_action(declare_mqtt_host)
+    ld.add_action(declare_mqtt_port)
     
     ld.add_action(set_env_vars_resources)
   

@@ -54,8 +54,13 @@ ForkliftController::ForkliftController() : Navigatable() {
         rclcpp::ServicesQoS(), 
         nav_callback_group_);
 
-    }
+    object_attach_client_ = this->create_client<attach_interfaces::srv::ChangeAttach>(
+        "/change_attach",
+        rclcpp::ServicesQoS(), 
+        nav_callback_group_);
     
+    };
+
 void ForkliftController::move_fork_callback_(const std_msgs::msg::String::ConstSharedPtr msg) {
 
     const std::string &msg_str = msg->data;
@@ -66,7 +71,7 @@ void ForkliftController::move_fork_callback_(const std_msgs::msg::String::ConstS
         return;
     }
 
-    //Async action because of timer
+    // Async action because of timer
     move_fork(action.value());
 
 }
@@ -76,38 +81,62 @@ void ForkliftController::drop(const ObjectAction &action){
     const int id = action.action_id;
     const std::string object = action.object;
 
-    // See fork_attach_offsets in robot_core.xacro for where these come from
-    // Simply, this is the straight distance from the link origin
-    // of fork_1 to fork_2
-    static const float DISTANCE_BETWEEN_FORK_ORIGINS = 0.4;
-    static const float DISTANCE_FROM_FORK_1_TO_CENTER = DISTANCE_BETWEEN_FORK_ORIGINS / 2;
-    //Check forklift.urdf.xacro and fork.xacro for what these come from
-    static const float FORK_LENGTH = 1.0;
+    
 
-    //Assume everything is on pallets with dimensions 1.2x0.8x0.144m (see euro_pallet model)
-    const float PALLET_LENGTH = 0.8;
+    auto req = std::make_shared<attach_interfaces::srv::ChangeAttach::Request>();
 
-    const bool drop_success = move_object_relative_to_fork(
-        object, 
-        (FORK_LENGTH / 2 + PALLET_LENGTH / 2),
-        -DISTANCE_FROM_FORK_1_TO_CENTER
-    );
+    req->attach = false;
+    req->object_name = action.object;
+    req->robot_name = this->get_name();
 
-    if (!drop_success){
+    // https://robotics.stackexchange.com/questions/107877/how-to-create-timeout-to-ros2-async-client-service
+    object_attach_client_->async_send_request(req, 
+        [this, id, object](rclcpp::Client<attach_interfaces::srv::ChangeAttach>::SharedFuture future){
+
+            // See fork_attach_offsets in robot_core.xacro for where these come from
+            // Simply, this is the straight distance from the link origin
+            // of fork_1 to fork_2
+            static const float DISTANCE_BETWEEN_FORK_ORIGINS = 0.4;
+            static const float DISTANCE_FROM_FORK_1_TO_CENTER = DISTANCE_BETWEEN_FORK_ORIGINS / 2;
+            //Check forklift.urdf.xacro and fork.xacro for what these come from
+            static const float FORK_LENGTH = 1.0;
+
+            //Assume everything is on pallets with dimensions 1.2x0.8x0.144m (see euro_pallet model)
+            const float PALLET_LENGTH = 0.8;
+            const float EXTRA = 0.3;
+
+            if (!future.get()->success){
+                send_feedback({
+                    id,
+                    ERROR, 
+                    "Dropping object " + object + " failed. Deattachment failed"
+                });
+                send_sysml_feedback("drop/feedback", {{"status", 401}});
+            return;
+            }      
+            
+        const bool drop_success = move_object_relative_to_fork(
+            object, 
+            (FORK_LENGTH / 2 + PALLET_LENGTH / 2 + EXTRA),
+            -DISTANCE_FROM_FORK_1_TO_CENTER
+        );
+
+        if (!drop_success){
         send_feedback({
             id,
             ERROR, 
-            "Dropping the object " + object + " failed"
+            "Dropping the object " + object + " failed due to drop failing."
         });
-    
+        send_sysml_feedback("drop/feedback", {{"status", 401}});
+    }else{
+        send_feedback({
+            id,
+            ERROR, 
+            "Dropping the object " + object + " succeeded"
+        });
+        send_sysml_feedback("drop/feedback", {{"status", 401}});
     }
-    
-    send_feedback({
-        id,
-        SUCCESS, 
-        "Dropping the object " + object + " succeeded"
-    });
-    
+    }); 
 }
 
 
@@ -131,8 +160,6 @@ void ForkliftController::move_fork(const JointPositionAction& action) {
     auto msg = std_msgs::msg::Float64();
     msg.data = action.position;
     fork_control_publisher_->publish(msg);
-
-    auto desired_pos = 
 
     // Periodically check if the desired height has been reached
     // (simulates sensor input/hardware interrrupts)
@@ -168,57 +195,52 @@ void ForkliftController::navigate_to_pose(const MoveAction& action) {
  * of the fork_1's coordinate frame (see forklift.urdf.xacro and fork.xacro for details)
  */
 bool ForkliftController::move_object_relative_to_fork(
-        const std::string object, float offset_x, 
+        const std::string object, float offset_x,
         float offset_y, float offset_z) {
-
-    auto pose_in_frame = get_coords_in_other_frame(this, "map", "fork_1");
-
+    auto pose_in_frame = get_coords_in_other_frame(this, "odom", "fork_1");
     if (!pose_in_frame.has_value()){
         return false;
     }
-
     auto [translation, fork_global_rotation] = pose_in_frame.value();
     auto [fork_global_x, fork_global_y, fork_global_z] = translation;
-
-    // Service definitions:
-    // https://docs.ros.org/en/iron/p/ros_gz_interfaces/interfaces/srv/SetEntityPose.html
-    // https://docs.ros.org/en/iron/p/ros_gz_interfaces/interfaces/msg/Entity.html
-    auto move_request = std::make_shared<ros_gz_interfaces::srv::SetEntityPose::Request>();
-
-    auto position = geometry_msgs::msg::Point();
-    position.x = static_cast<float>(fork_global_x + offset_x);
-    position.y = static_cast<float>(fork_global_y + offset_y);
-    position.z = static_cast<float>(fork_global_z + offset_z);
     
+    // Convert quaternion to yaw angle for 2D transformation
+    const auto [roll, pitch, yaw] = quaternion_to_euler(
+        fork_global_rotation.x, fork_global_rotation.y, 
+        fork_global_rotation.z, fork_global_rotation.w
+    );
+    
+    // Transform the relative offsets to world coordinates
+    // courtesy of Claude
+    float world_offset_x = offset_x * cos(yaw) - offset_y * sin(yaw);
+    float world_offset_y = offset_x * sin(yaw) + offset_y * cos(yaw);
+    float world_offset_z = offset_z;
+    
+    auto move_request = std::make_shared<ros_gz_interfaces::srv::SetEntityPose::Request>();
+    auto position = geometry_msgs::msg::Point();
+    
+    // Now add the transformed offsets
+    position.x = static_cast<float>(fork_global_x + world_offset_x);
+    position.y = static_cast<float>(fork_global_y + world_offset_y);
+    position.z = static_cast<float>(fork_global_z + world_offset_z);
+   
     move_request->pose.orientation = fork_global_rotation;
-    const auto [roll, pitch, yaw] = quaternion_to_euler(fork_global_rotation.x, fork_global_rotation.y, fork_global_rotation.z, fork_global_rotation.w);
-    RCLCPP_INFO_STREAM(get_logger(), "The yaw is: " + std::to_string(yaw)); 
     move_request->pose.position = position;
-
-    // Specify the request type with an enum, in this case
-    // a model (object) is moved
     move_request->entity.type = move_request->entity.MODEL;
     move_request->entity.name = object;
-
-    auto future = object_pose_setter_client_->async_send_request(
-    move_request);
     
-    // A timeout is set in case the simulation returns no response (unlikely)
-    // in real scenario this would be checked with sensors inside a timer
-    // but simulation returns a boolean.
+    auto future = object_pose_setter_client_->async_send_request(move_request);
     auto status = future.wait_for(std::chrono::seconds(10));
-    
-    // https://en.cppreference.com/w/cpp/thread/future/wait_for.html
+   
     if (status == std::future_status::timeout){
         return false;
     }
-
     return future.get()->success;
-
-};
+}
 
 void ForkliftController::pick_up_callback_(const std_msgs::msg::String::ConstSharedPtr msg){
 
+    RCLCPP_INFO_STREAM(get_logger(), "Received pick up request!");
     const std::string &msg_str = msg->data;
 
     auto action = parse_json<ObjectAction>(msg_str, this);
@@ -241,13 +263,9 @@ void ForkliftController::pick_up(const ObjectAction& action){
     // of fork_1 to fork_2
     static const float DISTANCE_BETWEEN_FORK_ORIGINS = 0.4;
     static const float DISTANCE_FROM_FORK_1_TO_CENTER = DISTANCE_BETWEEN_FORK_ORIGINS / 2;
+    static const float OFFSET_Z = 0.02;
 
-    const bool pick_up_success = move_object_relative_to_fork(object, 0.0, -DISTANCE_FROM_FORK_1_TO_CENTER, 0.0);
-
-    // A small timeout to allow Gazebo to process the request
-    // (otherwise the object is necessarily not in the right place
-    // before the attach request is sent)
-    rclcpp::sleep_for(std::chrono::milliseconds(200));
+    const bool pick_up_success = move_object_relative_to_fork(object, 0.0, -DISTANCE_FROM_FORK_1_TO_CENTER, OFFSET_Z);
 
     if (!pick_up_success){
         send_feedback({
@@ -255,29 +273,41 @@ void ForkliftController::pick_up(const ObjectAction& action){
             ERROR, 
             "Picking up object " + object + " failed"
         });
+        send_sysml_feedback("pick_up/feedback", {{"status", 401}});
         return;
     }
 
-    //Attach the object to the fork_1 link
-    auto attach_publisher = this->create_publisher<std_msgs::msg::Empty>(
-        "/" + object + "/attach", 10
-    );
+    // Attach the object
+    // Sleep to wait for object movement
+    rclcpp::sleep_for(std::chrono::nanoseconds(2000000000));
+    auto req = std::make_shared<attach_interfaces::srv::ChangeAttach::Request>();
 
-    auto msg = std_msgs::msg::Empty();
-    while(!pallet_statues_[object]) {
-        attach_publisher->publish(msg);
-        // Refactor in the future
-       rclcpp::sleep_for(std::chrono::milliseconds(100));
-    };
+    req->attach = true;
+    req->object_name = action.object;
+    req->robot_name = this->get_name();
 
-   
-    send_feedback({
-        id,
-        SUCCESS, 
-        "Picking up object " + object + " succeeded"
+    // https://robotics.stackexchange.com/questions/107877/how-to-create-timeout-to-ros2-async-client-service
+    object_attach_client_->async_send_request(req, 
+        [this, id, object](rclcpp::Client<attach_interfaces::srv::ChangeAttach>::SharedFuture future){
+
+            if (future.get()->success){
+                //Send planner feedback
+                send_feedback({
+                id,
+                SUCCESS, 
+                "Picking up object " + object + " succeeded"
+                });
+                // Send sysml feedback
+                send_sysml_feedback("pick_up/feedback", {{"status", 401}});
+
+            }else{
+                send_feedback({
+            id,
+            ERROR, 
+            "Picking up object " + object + " failed"
+            });
+            }           
     });
-    
-
 }
 
 

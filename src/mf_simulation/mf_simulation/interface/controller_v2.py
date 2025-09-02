@@ -1,13 +1,15 @@
 import paho.mqtt.client as mqtt
 import json
 from typing import Optional
-from mf_simulation.interface.llm_utils import Plan, Action
+from mf_simulation.interface.plan_format import Plan, PlanFromLLM, Action, ActionFromLLM
 from dataclasses import dataclass
-from typing import TypedDict, cast
+from typing import TypedDict
 from enum import Enum
 from PySide6.QtCore import SignalInstance
 from queue import Queue
-from pydantic import BaseModel
+
+# Used with no plan gui
+from mf_simulation.interface.progress_notifier import ProgressNotifier
 
 @dataclass
 class ExecutableAction():
@@ -16,7 +18,9 @@ class ExecutableAction():
     command: str
     executing_robot: str
     action_id: int
-    feedback_signal: SignalInstance
+    # Write feedback to file or the gui (if using llm)
+    feedback_signal: SignalInstance | ProgressNotifier
+    input_from_action_id: Optional[int] = None
 
     def remove_prerequisite(self, action_id: int) -> bool:
         """
@@ -62,20 +66,25 @@ class Feedback(TypedDict):
     action_id: int
     type: FeedbackType
     message: str
+    # Must be at least empty
+    return_value: dict[str, float|int|str]
 
 def feedback_str_to_enum(curr_dict):
 
-    curr_dict["type"] = FeedbackType(curr_dict["type"])
+    # Handle nested dicts
+    if "type" in curr_dict:
+        curr_dict["type"] = FeedbackType(curr_dict["type"])
     return curr_dict
 
 class Controller():
 
-    def __init__(self):
+    def __init__(self, mqtt_host: str = "localhost", mqtt_port: int = 1883):
         
+        self.__return_vals = {}
         self.mqtt_client = mqtt.Client()
-        self.mqtt_client.connect("localhost")
+        self.mqtt_client.connect(mqtt_host, mqtt_port)
 
-        self.__progress_callback: SignalInstance
+        self.__progress_callback: SignalInstance | ProgressNotifier
         
         #Start the mqtt client in a separate thread
         self.mqtt_client.loop_start()
@@ -98,16 +107,16 @@ class Controller():
         self.mqtt_client.disconnect()
     
     def on_message(self, client, userdata, message:mqtt.MQTTMessage):
-
-        print(f"Received message: {message.topic}: {message.payload}", flush=True)
         
         payload = json.loads(message.payload)
         topic = message.topic
 
         if topic == "feedback":
+            #print("RECEIVED FEEDBACK!!!", flush=True)
             # object hook allows specifying how certain strings should be converted
             # to python types. In this case enums
             payload:Feedback = json.loads(message.payload, object_hook=feedback_str_to_enum)
+            #print("FEEDBACK IS: ", payload, flush=True)
             # Add a processable item to a feedback queue
             self.__waiting_feedbacks.put(payload)
             
@@ -119,7 +128,6 @@ class Controller():
             
             # Get a feedback item or block until available
             feedback: Feedback = self.__waiting_feedbacks.get()
-            print("RECEIVED", str(feedback), flush=True)
             feedback_type = feedback["type"]
             
             self.__progress_callback.emit(feedback["message"])
@@ -131,7 +139,14 @@ class Controller():
                 
                 completed_action_id = feedback["action_id"]
 
+                # Add the return value if it is not empty (guaranteed to be at least empty by the c++ backend):
+                return_value = feedback["return_value"]
+                if return_value:
+                    self.__return_vals[completed_action_id] = return_value
+
+                #print("Return values after success: ", self.__return_vals, flush=True)
                 # Remove completed action from all actions
+                print("Removing action id: ", completed_action_id, flush=True)
                 del self.__actions[completed_action_id]
                 
                 # All actions have been completed
@@ -142,20 +157,23 @@ class Controller():
                 # Remove the id of the completed action from each action
                 # that it is prerequisite for
                 for id, action in self.__actions.items():
-                    print("REMOVING PREREQS", flush=True)
                     if action.remove_prerequisite(completed_action_id):
-                        print("NO PREREQS LEFT", flush=True)
+                        # If action args should become from another action's return value,
+                        # get the stored return value and replace arguments:
+                        if action.input_from_action_id:
+                            input_action_id = action.input_from_action_id
+                            action.command_arguments = self.__return_vals[input_action_id]
                         action.run(self.mqtt_client)
                     
 
-    def run_plan(self, plan: Plan, feedback_signal: SignalInstance):
-
-        self.__progress_callback = feedback_signal
+    def run_plan(self, plan: Plan | PlanFromLLM, feedback_signal: SignalInstance | ProgressNotifier):
+        
+        if feedback_signal:
+            self.__progress_callback = feedback_signal
 
         self.__progress_callback.emit("Running plan")
 
         for action in plan.actions:
-            
             prerequisites = action.prerequisites
             action_id = action.action_id
 
@@ -165,10 +183,10 @@ class Controller():
                 command=action.command,
                 executing_robot=action.executing_robot,
                 action_id=action_id,
-                feedback_signal=feedback_signal
+                feedback_signal=feedback_signal,
+                # ActionFromLLM does not have the input_from_action_id and for Action the default is None
+                input_from_action_id= action.input_from_action_id if type(action) == Action else None
             )
-
-
             self.__actions[action_id] =  pending_action
 
             # Run actions that dont have precondition immediately

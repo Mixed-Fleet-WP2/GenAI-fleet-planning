@@ -52,6 +52,8 @@ def generate_launch_description():
     forklift_gz_bridge_config = LaunchConfiguration("forklift_gz_bridge_config")
     robot_sdf = LaunchConfiguration('robot_sdf')
     use_pure_odom = LaunchConfiguration('use_pure_odom')
+    mqtt_port = LaunchConfiguration('mqtt_port')
+    mqtt_host = LaunchConfiguration('mqtt_host')
 
     remappings = [('/tf', 'tf'), ('/tf_static', 'tf_static')]
 
@@ -101,7 +103,7 @@ def generate_launch_description():
 
     declare_slam = DeclareLaunchArgument(
         name='slam',
-        default_value='True',
+        default_value='False',
         description='Whether to use slam'
     )
 
@@ -152,9 +154,27 @@ def generate_launch_description():
         default_value=os.path.join(pkg_share, 'config', 'forklift_mqtt_bridge.yaml')
     )
 
+    
+
+    declare_mqtt_port = DeclareLaunchArgument(
+        name="mqtt_port",
+        default_value='1883',
+        description="Port for the MQTT broker"
+    )
+
+    declare_mqtt_host = DeclareLaunchArgument(
+        name="mqtt_host",
+        default_value='localhost',
+        description="Host for the MQTT broker"
+    )
+
     forklift_mqtt_config_file = ReplaceString(
         source_file=forklift_mqtt_config_file,
-        replacements={'<robot_namespace>':(namespace)}
+        replacements={
+            '<robot_namespace>':(namespace),
+            '<hostname>':(mqtt_host),
+            '<port>':(mqtt_port)
+        }
     )
     
     bringup_cmd = IncludeLaunchDescription(
@@ -264,7 +284,10 @@ def generate_launch_description():
     ld.add_action(declare_use_composition)
     ld.add_action(declare_use_respawn)
     ld.add_action(declare_map_yaml_file)
+    ld.add_action(declare_mqtt_host)
+    ld.add_action(declare_mqtt_port)
     ld.add_action(declare_mqtt_config_file)
+
     ld.add_action(run_robot_state_publisher)
     
     ld.add_action(set_env_vars_resources)

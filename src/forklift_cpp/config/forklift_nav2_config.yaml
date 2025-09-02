@@ -57,6 +57,7 @@ bt_navigator:
       plugin: "nav2_bt_navigator::NavigateToPoseNavigator"
     navigate_through_poses:
       plugin: "nav2_bt_navigator::NavigateThroughPosesNavigator"
+    default_nav_to_pose_bt_xml: $(find-pkg-share forklift_cpp)/config/navigate_to_pose_w_replanning_and_recovery.xml
     # 'default_nav_through_poses_bt_xml' and 'default_nav_to_pose_bt_xml' are use defaults:
     # nav2_bt_navigator/navigate_to_pose_w_replanning_and_recovery.xml
     # nav2_bt_navigator/navigate_through_poses_w_replanning_and_recovery.xml
@@ -89,20 +90,20 @@ controller_server:
       plugin: "nav2_controller::SimpleProgressChecker"
       required_movement_radius: 0.2 #0.5
       movement_time_allowance: 10.0
-    #In theory one could swithc between the two goal checkers, for example:
-    # 1. Use the general goal checker to check if the robot is moving
-    # 2. If the robot is not moving, use the precise goal checker to check if the robot is at the goa
-    #In practice, this could be done by computing the path, calling followPath with simple commander
-    #and supplying the general_goal_checker or precise_goal_checker with goal_checker_id param
     general_goal_checker:
       stateful: True
       plugin: "nav2_controller::SimpleGoalChecker"
       xy_goal_tolerance: 0.5 #Increase or decrease this value to change the distance to the goal
       # About 1.4 degrees of difference in orientation
-      yaw_goal_tolerance: 0.3
+      yaw_goal_tolerance: 0.05
     # DWB parameters
     FollowPath:
-      #plugin: "nav2_rotation_shim_controller::RotationShimController"
+      # plugin: "nav2_rotation_shim_controller::RotationShimController"
+      # angular_dist_threshold: 0.15
+      # angular_disengage_threshold: 0.15
+      # # THe robot is 2.345m long, so the forward sampling distance is longer than default 0.5m
+      # forward_sampling_distance: 2.0
+      
       plugin: "nav2_regulated_pure_pursuit_controller::RegulatedPurePursuitController"
       desired_linear_vel: 1.2
       max_linear_accel: 2.0
@@ -127,7 +128,7 @@ controller_server:
       regulated_linear_scaling_min_speed: 0.25
       use_rotate_to_heading: true # !!!
       allow_reversing: false
-      rotate_to_heading_min_angle: 0.5
+      rotate_to_heading_min_angle: 0.15
       max_angular_accel: 1.75
       cost_scaling_dist: 0.3
       cost_scaling_gain: 1.0
@@ -193,7 +194,7 @@ local_costmap:
       #These need to be changed with the size of the robot (for example when we scale the forklift)
       width: 12
       height: 12
-      resolution: 0.03
+      resolution: 0.05
       #https://docs.nav2.org/setup_guides/footprint/setup_footprint.html
       #For local costmap, the robot footprint is a rectangle
       footprint: "[[ 2.345,  0.4475 ],[ 2.345, -0.4475 ],[-0.945, -0.4475 ],[-0.945,  0.4475 ]]"
@@ -266,7 +267,7 @@ global_costmap:
       global_frame: map
       robot_base_frame: base_link
       footprint: "[[ 2.345,  0.4475 ],[ 2.345, -0.4475 ],[-0.945, -0.4475 ],[-0.945,  0.4475 ]]"
-      resolution: 0.03
+      resolution: 0.05
       track_unknown_space: true
       plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
       
@@ -445,7 +446,3 @@ collision_monitor:
       min_height: 0.15
       max_height: 2.0
       enabled: True
-
-slam_toolbox:
-  ros__parameters:
-    resolution: 0.03

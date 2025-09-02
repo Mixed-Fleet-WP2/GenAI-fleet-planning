@@ -77,6 +77,7 @@ def generate_launch_description():
                             'autostart': autostart
                             }
 
+    
     configured_params =  ParameterFile(RewrittenYaml(
             source_file=params_file,
             root_key=namespace,
@@ -84,6 +85,8 @@ def generate_launch_description():
             param_rewrites=param_rewrites,
             convert_types=True,
         ))
+    
+    #configured_params = params_file
 
     stdout_linebuf_envvar = SetEnvironmentVariable(
         'RCUTILS_LOGGING_BUFFERED_STREAM', '1'

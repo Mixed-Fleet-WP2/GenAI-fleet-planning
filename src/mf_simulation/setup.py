@@ -44,7 +44,8 @@ setup(
     # https://github.com/ros2/ros2_documentation/issues/4727
     entry_points={
         'console_scripts': [
-            'interface = mf_simulation.interface.interface:main'
+            'interface = mf_simulation.interface.interface:main',
+            'json_client = mf_simulation.interface.json_client:main'
         ],
     },
     extras_require =  {
