@@ -116,8 +116,7 @@ void Navigatable::send_nav_goal(const MoveAction& action){
 
     if (std::abs(action.x - current_pos_.x) < 0.1 &&
         (std::abs(action.y - current_pos_.y) < 0.1) &&
-        (std::abs(action.yaw - current_pos_.yaw)) < 5) {
-            RCLCPP_INFO_STREAM(get_logger(), "GOAL DONE");
+        (std::abs(action.yaw - current_pos_.yaw)) < 0.05) {
             send_feedback({id, SUCCESS, "Navigation to goal complete"});
             return;
         }
