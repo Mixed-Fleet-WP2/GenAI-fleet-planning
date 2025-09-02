@@ -53,8 +53,6 @@ class Navigatable : public rclcpp::Node {
         //void nav_goal_acknowledged_callback(std::shared_ptr<rclcpp_action::ClientGoalHandle<NavToPoseAction>> goal, int action_id);
         void move_to_pose_callback(const std::shared_ptr<std_msgs::msg::String> msg);
 
-        void send_sysml_feedback(std::string topic_without_namespace, json msg);
-
         void send_nav_goals(std::vector<MoveAction> waypoints, std::function<void(const FollowWaypointsActionGoalHandle::WrappedResult&, int)> result_callback = nullptr);
 
         // NavAction = NavToPoseAction | NavThroughPosesAction
@@ -85,18 +83,14 @@ class Navigatable : public rclcpp::Node {
                 case rclcpp_action::ResultCode::SUCCEEDED:{
                     feedback.type = SUCCESS;
                     feedback.message = "Navigation succeeded";
-                    send_sysml_feedback("move/feedback", {{"status", 200}});
                     break;
                 }
                 case rclcpp_action::ResultCode::ABORTED: {
                     feedback.type = ERROR;
                     feedback.message = result.result->error_msg;
-                    send_sysml_feedback("move/feedback", {{"status", 401}});
-                    RCLCPP_INFO_STREAM(get_logger(), "Goal abort");
                     break;
                 }
                 case rclcpp_action::ResultCode::CANCELED: {
-                    send_sysml_feedback("move/feedback", {{"status", 401}});
                     RCLCPP_INFO_STREAM(get_logger(), "Goal cancel");
                     feedback.type = CANCELLED;
                     feedback.message = "Goal was canceled";

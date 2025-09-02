@@ -111,7 +111,6 @@ void ForkliftController::drop(const ObjectAction &action){
                     ERROR, 
                     "Dropping object " + object + " failed. Deattachment failed"
                 });
-                send_sysml_feedback("drop/feedback", {{"status", 401}});
             return;
             }      
             
@@ -127,14 +126,12 @@ void ForkliftController::drop(const ObjectAction &action){
             ERROR, 
             "Dropping the object " + object + " failed due to drop failing."
         });
-        send_sysml_feedback("drop/feedback", {{"status", 401}});
     }else{
         send_feedback({
             id,
             ERROR, 
             "Dropping the object " + object + " succeeded"
         });
-        send_sysml_feedback("drop/feedback", {{"status", 401}});
     }
     }); 
 }
@@ -273,7 +270,6 @@ void ForkliftController::pick_up(const ObjectAction& action){
             ERROR, 
             "Picking up object " + object + " failed"
         });
-        send_sysml_feedback("pick_up/feedback", {{"status", 401}});
         return;
     }
 
@@ -297,9 +293,6 @@ void ForkliftController::pick_up(const ObjectAction& action){
                 SUCCESS, 
                 "Picking up object " + object + " succeeded"
                 });
-                // Send sysml feedback
-                send_sysml_feedback("pick_up/feedback", {{"status", 401}});
-
             }else{
                 send_feedback({
             id,

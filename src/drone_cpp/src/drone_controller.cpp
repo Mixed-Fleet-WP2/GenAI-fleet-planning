@@ -49,23 +49,7 @@ void DroneController::search(SearchAction action){
                 fb.message = "Search success";
                 fb.return_value = rack_position;
                 send_feedback(fb);
-                
-                // THIS PART IS ONLY FOR SENDING FEEDBACK TO THE SYSML CLIENT
-                // NOT THE CENTRAL CONTROLLER
-                json json_msg = {
-                    {"empty_location", {
-                        {"X", 1.0},
-                        {"Y", -16.9},
-                        {"Z", 0.2},
-                        {"yaw", -1.57},
-                        {"roll", 0.0},
-                        {"pitch", 0.0},
-                    }},
-                    {"status", 200}
-                };
-
-                send_sysml_feedback("search/feedback", json_msg);
-
+            
             }else{
                 send_feedback({action_id, ERROR, "Search failed", {}});
                 
