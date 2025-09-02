@@ -13,14 +13,6 @@ class Formattable(BaseModel):
         else:
             return yaml.dump(self.model_dump(), indent=2)
 
-class Action(BaseModel):
-    action_id: int
-    executing_robot: str
-    command: str
-    command_arguments: dict[str, str | float]
-    prerequisites: list[int]
-    input_from_action_id: Optional[int] = None
-
 class ActionFromLLM(BaseModel):
     action_id: int
     executing_robot: str
@@ -31,7 +23,3 @@ class ActionFromLLM(BaseModel):
 
 class PlanFromLLM(BaseModel):
     actions: list[ActionFromLLM]
-
-class Plan(Formattable):
-    actions: list[Action]
-    

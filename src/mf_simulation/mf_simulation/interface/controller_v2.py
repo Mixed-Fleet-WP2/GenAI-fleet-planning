@@ -166,7 +166,7 @@ class Controller():
                         action.run(self.mqtt_client)
                     
 
-    def run_plan(self, plan: Plan | PlanFromLLM, feedback_signal: SignalInstance | ProgressNotifier):
+    def run_plan(self, plan: PlanFromLLM, feedback_signal: SignalInstance):
         
         if feedback_signal:
             self.__progress_callback = feedback_signal
