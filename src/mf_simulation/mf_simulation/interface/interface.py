@@ -23,7 +23,7 @@ import signal
 
 from enum import Enum
 from mf_simulation.interface.combo_box import ComboBox
-from mf_simulation.interface.llm_utils import PromptGenerator, Plan, GPTModel, ClaudeModel, LLamaModel, MODELS
+from mf_simulation.interface.llm_utils import PromptGenerator, PlanFromLLM, GPTModel, ClaudeModel, LLamaModel, MODELS
 
 from mf_simulation.interface.controller_v2 import Controller
 from typing import cast
@@ -91,7 +91,7 @@ class Interface(QMainWindow):
         self.current_model_: GPTModel | ClaudeModel | LLamaModel = ClaudeModel.CLAUDE_3_7_SONNET
 
         self.current_format_ = Formats.JSON
-        self.plan_: None | Plan = None
+        self.plan_: None | PlanFromLLM = None
     
         self.dropdown_widget_ = self.create_dropdown_group()
         self.main_view_widget_ = self.create_views()
@@ -240,7 +240,7 @@ class Interface(QMainWindow):
 
         self.threadpool.start(worker)
     
-    def update_gui(self, result: tuple[str, Plan]):
+    def update_gui(self, result: tuple[str, PlanFromLLM]):
         prompt, plan = result
         self.plan_ = plan
 

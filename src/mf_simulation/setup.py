@@ -45,7 +45,7 @@ setup(
     entry_points={
         'console_scripts': [
             'interface = mf_simulation.interface.interface:main',
-            'json_client = mf_simulation.interface.json_client:main'
+            'local_llm_server = mf_simulation.interface.local_llm_server:main'
         ],
     },
     extras_require =  {

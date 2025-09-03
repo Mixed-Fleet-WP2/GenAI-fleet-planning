@@ -21,5 +21,5 @@ class ActionFromLLM(BaseModel):
     prerequisites: list[int]
     reasoning: str
 
-class PlanFromLLM(BaseModel):
+class PlanFromLLM(Formattable):
     actions: list[ActionFromLLM]

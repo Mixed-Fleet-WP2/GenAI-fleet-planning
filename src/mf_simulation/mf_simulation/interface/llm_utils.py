@@ -11,7 +11,8 @@ from anthropic import Anthropic
 from anthropic.types import Message, ContentBlock
 from enum import Enum
 from types import MappingProxyType
-from mf_simulation.interface.plan_format import Plan
+from mf_simulation.interface.plan_format import PlanFromLLM, ActionFromLLM
+import requests
 
 class LLMModel(Enum):
     def __init__(self, plain_name:str, model_name:str):
@@ -39,7 +40,9 @@ class LLamaModel(LLMModel):
     LLAMA_3_70B = ("LLama3 70B", "llama3-70b-8192")
     LLAMA_3_8B = ("LLama3 8B", "llama3-8b-8192")
     LLAMA_3_3_70B = ("LLama3.3 70B", "llama-3.3-70b-versatile")
-    LLAMA_3_1_8B = ("LLama3.1 8B", "llama-3.1-8b-instant")
+
+    LLAMA_3_1_8B = ("LLama3.1 8B", "llama-3.1-8b-instruct") # Local model with llama.cpp
+    LLAMA_3_2_8B = ("LLama3.2 8B", "llama-3.2-8b-instruct") # Local model with llama.cpp
 
 
 SCRIPT_PATH = os.path.realpath(os.path.dirname(__file__))
@@ -100,7 +103,7 @@ class PromptGenerator():
         except Exception as e:
             raise LLMError("Filling out the prompt template failed")
 
-    def generate_plan(self, task: str, model: GPTModel | ClaudeModel | LLamaModel, feedback_signal) -> tuple[str, Plan]:
+    def generate_plan(self, task: str, model: GPTModel | ClaudeModel | LLamaModel, feedback_signal) -> tuple[str, PlanFromLLM]:
         """
         Generate an action plan for available robots using an llm that
         attempts to achieve a given task. 
@@ -126,6 +129,7 @@ class PromptGenerator():
                 response = self.__send_open_ai_request(prompt, model.model_name)
             elif isinstance(model, ClaudeModel):
                 response = self.__send_anthtropic_request(prompt, model.model_name)
+            elif isinstance(model, LLamaModel):
             else:
                 raise LLMError("Invalid model supplied")
 
@@ -133,7 +137,7 @@ class PromptGenerator():
         except LLMError:
             raise
             
-    def __send_open_ai_request(self, content:str, model:str) -> Plan:
+    def __send_open_ai_request(self, content:str, model:str) -> PlanFromLLM:
         """
         Send a reguest to the OpenAI api and receive a response
 
@@ -156,11 +160,11 @@ class PromptGenerator():
                     {"role": "user",
                     "content": content}
                 ],
-                text_format=Plan
+                text_format=PlanFromLLM
             )
-            
-            plan: Plan | None = res.output_parsed
-            
+
+            plan: PlanFromLLM | None = res.output_parsed
+
             if plan == None:
                 raise LLMError("Failed to parse API response")
             
@@ -172,10 +176,10 @@ class PromptGenerator():
             raise LLMError("Error trying to get response from OpenAI API")
        
             
-    def __send_anthtropic_request(self, content:str, model:str) -> Plan:
+    def __send_anthtropic_request(self, content:str, model:str) -> PlanFromLLM:
         
         #https://docs.pydantic.dev/latest/concepts/json_schema/#generating-json-schema
-        plan_schema: dict[str, Any] = Plan.model_json_schema()
+        plan_schema: dict[str, Any] = PlanFromLLM.model_json_schema()
 
         # https://docs.anthropic.com/en/docs/agents-and-tools/tool-use/overview#json-mode
         try:
@@ -206,10 +210,37 @@ class PromptGenerator():
         except Exception as e:
             raise LLMError("Error trying to get response from Anthropic API", e)
 
+    def __send_llama_request(self, content:str, model:str) -> PlanFromLLM:
+        # Placeholder for local LLaMA model inference code
+        raise NotImplementedError("LLaMA model inference not implemented yet")
+
+
+    def __send_local__llm_request(self, content:str, base_url:str = "http://127.0.0.1:8080") -> PlanFromLLM:
+        response = requests.post(
+        f"{base_url}/v1/chat/completions",
+        headers={"Content-Type": "application/json"},
+        json={
+            "max_tokens": 800,
+            "messages": [
+                {
+                    "role": "system",
+                    "content": LLM_ROLE
+                },  
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": content},
+                        
+                    ]
+                }
+            ]
+        }
+    )
+
     def __validate_output(self, output: object):
         
         try:
-            return Plan.model_validate(output)
+            return PlanFromLLM.model_validate(output)
         except ValidationError:
             raise
             

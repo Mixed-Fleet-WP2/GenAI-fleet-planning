@@ -1,15 +1,12 @@
 import paho.mqtt.client as mqtt
 import json
 from typing import Optional
-from mf_simulation.interface.plan_format import Plan, PlanFromLLM, Action, ActionFromLLM
+from mf_simulation.interface.plan_format import PlanFromLLM,  ActionFromLLM
 from dataclasses import dataclass
 from typing import TypedDict
 from enum import Enum
 from PySide6.QtCore import SignalInstance
 from queue import Queue
-
-# Used with no plan gui
-from mf_simulation.interface.progress_notifier import ProgressNotifier
 
 @dataclass
 class ExecutableAction():
@@ -19,9 +16,7 @@ class ExecutableAction():
     executing_robot: str
     action_id: int
     # Write feedback to file or the gui (if using llm)
-    feedback_signal: SignalInstance | ProgressNotifier
-    input_from_action_id: Optional[int] = None
-
+    feedback_signal: SignalInstance 
     def remove_prerequisite(self, action_id: int) -> bool:
         """
         Args:
@@ -84,7 +79,7 @@ class Controller():
         self.mqtt_client = mqtt.Client()
         self.mqtt_client.connect(mqtt_host, mqtt_port)
 
-        self.__progress_callback: SignalInstance | ProgressNotifier
+        self.__progress_callback: SignalInstance 
         
         #Start the mqtt client in a separate thread
         self.mqtt_client.loop_start()
@@ -158,11 +153,6 @@ class Controller():
                 # that it is prerequisite for
                 for id, action in self.__actions.items():
                     if action.remove_prerequisite(completed_action_id):
-                        # If action args should become from another action's return value,
-                        # get the stored return value and replace arguments:
-                        if action.input_from_action_id:
-                            input_action_id = action.input_from_action_id
-                            action.command_arguments = self.__return_vals[input_action_id]
                         action.run(self.mqtt_client)
                     
 
@@ -184,8 +174,6 @@ class Controller():
                 executing_robot=action.executing_robot,
                 action_id=action_id,
                 feedback_signal=feedback_signal,
-                # ActionFromLLM does not have the input_from_action_id and for Action the default is None
-                input_from_action_id= action.input_from_action_id if type(action) == Action else None
             )
             self.__actions[action_id] =  pending_action
 
