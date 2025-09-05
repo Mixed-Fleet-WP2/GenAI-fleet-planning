@@ -12,7 +12,8 @@ from anthropic.types import Message, ContentBlock
 from enum import Enum
 from types import MappingProxyType
 from mf_simulation.interface.plan_format import PlanFromLLM, ActionFromLLM
-import requests
+
+import instructor
 
 class LLMModel(Enum):
     def __init__(self, plain_name:str, model_name:str):
@@ -130,6 +131,8 @@ class PromptGenerator():
             elif isinstance(model, ClaudeModel):
                 response = self.__send_anthtropic_request(prompt, model.model_name)
             elif isinstance(model, LLamaModel):
+                print("Using local LLaMA model")
+                response = self.__send_local_llm_request(prompt)
             else:
                 raise LLMError("Invalid model supplied")
 
@@ -157,8 +160,7 @@ class PromptGenerator():
                 model=model,
                 input=[
                     {"role": "system", "content": LLM_ROLE},
-                    {"role": "user",
-                    "content": content}
+                    {"role": "user", "content": content}
                 ],
                 text_format=PlanFromLLM
             )
@@ -215,27 +217,42 @@ class PromptGenerator():
         raise NotImplementedError("LLaMA model inference not implemented yet")
 
 
-    def __send_local__llm_request(self, content:str, base_url:str = "http://127.0.0.1:8080") -> PlanFromLLM:
-        response = requests.post(
-        f"{base_url}/v1/chat/completions",
-        headers={"Content-Type": "application/json"},
-        json={
-            "max_tokens": 800,
-            "messages": [
-                {
-                    "role": "system",
-                    "content": LLM_ROLE
-                },  
-                {
-                    "role": "user",
-                    "content": [
-                        {"type": "text", "text": content},
-                        
-                    ]
-                }
-            ]
-        }
-    )
+    def __send_local_llm_request(self, content:str, base_url:str = "http://127.0.0.1:8080") -> PlanFromLLM:
+        
+        try: 
+            # Create OpenAI client for the llama-server
+            client = OpenAI(
+                base_url="ip",  # llama-server OpenAI-compatible endpoint
+                api_key="test"
+            )
+            
+            # Wrap the client with instructor
+
+            # For the function calling (which is the default mode i.e instructor.Mode.TOOLS), the server needs
+            # to be run with the --jinja flag
+            # https://github.com/ggml-org/llama.cpp/blob/master/docs/function-calling.md
+
+            # If the function calling is not desired, use instructor.Mode.JSON
+            instructor_client = instructor.from_openai(client, mode=instructor.Mode.JSON)
+            
+            # https://python.useinstructor.com/#quick-start-extract-structured-data-in-3-lines
+
+            # Instructor internally validates the response against the model
+            response = instructor_client.chat.completions.create(
+                model="does-not-matter", 
+                messages=[
+                    {"role": "system", "content": LLM_ROLE},
+                    {"role": "user", "content": content}
+
+                ],
+                response_model=PlanFromLLM,
+                max_tokens=5000,
+            )
+            return response
+        except ValidationError as ve:
+            raise LLMError("Failed to parse API response", ve)
+        except Exception as e:
+            raise LLMError("Error trying to get response from local LLM server", e)
 
     def __validate_output(self, output: object):
         
