@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from jinja2 import Environment, PackageLoader
 from mf_simulation.interface.database import Database
 from pydantic import BaseModel, ValidationError
-from typing import Any, Literal
+from typing import  Literal
 from openai import OpenAI
 from anthropic import Anthropic
 from anthropic.types import Message, ContentBlock
@@ -41,8 +41,7 @@ class LLamaModel(LLMModel):
     LLAMA_3_70B = ("LLama3 70B", "llama3-70b-8192")
     LLAMA_3_8B = ("LLama3 8B", "llama3-8b-8192")
     LLAMA_3_3_70B = ("LLama3.3 70B", "llama-3.3-70b-versatile")
-
-    LLAMA_3_1_8B = ("LLama3.1 8B", "llama-3.1-8b-instruct") # Local model with llama.cpp
+    LLAMA_3_1_8B = ("LLama3.1 8B", "llama-3.1-8B") # Local model with llama.cpp ONLY THAT WORKS
     LLAMA_3_2_8B = ("LLama3.2 8B", "llama-3.2-8b-instruct") # Local model with llama.cpp
 
 
@@ -157,6 +156,7 @@ class PromptGenerator():
         except ValidationError as ve:
             raise LLMError("Response from LLM did not match expected format") from ve
         except Exception as e:
+            print("Exception when calling LLM API:", e, flush=True)
             raise LLMError("Error trying to get response from LLM API") from e
         
     def __create_client(self, model: AIModel) -> instructor.Instructor:
@@ -172,11 +172,12 @@ class PromptGenerator():
             case LLamaModel():
                 provider = "ollama"
                 api_key = "not-required"
-                base_url = "http://http://192.168.0.104:11434/v1"
+                base_url = "http://192.168.0.104:11434/v1"
             case _:
                 raise LLMError("Invalid model supplied")
         
         if base_url is not None:
+            print("Sending request to url:", base_url, flush=True)
             client = instructor.from_provider(
                 f"{provider}/{model.model_name}",
                 api_key=api_key,
@@ -186,6 +187,7 @@ class PromptGenerator():
                 async_client=False
             )
         else:
+   
             client = instructor.from_provider(
                 f"{provider}/{model.model_name}",
                 api_key=api_key,

@@ -23,14 +23,10 @@ import signal
 
 from enum import Enum
 from mf_simulation.interface.combo_box import ComboBox
-from mf_simulation.interface.llm_utils import PromptGenerator, PlanFromLLM, GPTModel, ClaudeModel, LLamaModel, MODELS
+from mf_simulation.interface.llm_utils_v2 import PromptGenerator, PlanFromLLM, GPTModel, ClaudeModel, LLamaModel, MODELS
 
 from mf_simulation.interface.controller_v2 import Controller
 from typing import cast
-
-
-
-# Save this for the gu
 
 UBUNTU_ORANGE = "#E95420"
 
