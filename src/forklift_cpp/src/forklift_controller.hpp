@@ -37,6 +37,12 @@ class ForkliftController : public Navigatable {
 
     private:
 
+        /** PRIMITIVES */
+        void move_fork(const JointPositionAction& action);
+        void pick_up(const ObjectAction& action);
+        void drop(const ObjectAction& action);
+        void navigate_to_pose(const MoveAction& action) override;
+
         rclcpp::TimerBase::SharedPtr lift_timer_;
         rclcpp::Subscription<std_msgs::msg::String>::SharedPtr pick_up_subscription_;
         rclcpp::Subscription<std_msgs::msg::String>::SharedPtr drop_subscription_;
@@ -54,14 +60,10 @@ class ForkliftController : public Navigatable {
         void drop_callback_(const std_msgs::msg::String::ConstSharedPtr msg);
         void pick_up_callback_(const std_msgs::msg::String::ConstSharedPtr msg);
         void joint_states_callback_(const sensor_msgs::msg::JointState::ConstSharedPtr joint_states);
-        void move_fork(const JointPositionAction& action);
-        void pick_up(const ObjectAction& action);
-        void drop(const ObjectAction& action);
-        void navigate_to_pose(const MoveAction& action) override;
+        
         std::unordered_map<std::string, bool> pallet_statues_;
         std::vector<rclcpp::Subscription<std_msgs::msg::String>::SharedPtr> pallet_subscriptions_;
         bool move_object_relative_to_fork(const std::string object, float offset_x = 0.0, float offset_y = 0.0, float offset_z = 0.0);
-
         geometry_msgs::msg::Vector3 forklift_location_;
         geometry_msgs::msg::Quaternion forklift_orientation_;
 

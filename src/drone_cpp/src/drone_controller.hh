@@ -104,6 +104,10 @@ class DroneController: public Navigatable{
         //~DroneController() noexcept;
     private:
         
+        /** PRIMITIVES */
+        void search(SearchAction action);
+        void navigate_to_pose(const MoveAction& action) override;
+
         rclcpp::TimerBase::SharedPtr lift_timer_;
 
         //Interval for the timer callback for lifting the drone up runs (in ms)
@@ -117,9 +121,7 @@ class DroneController: public Navigatable{
         void navigate_to_pose(const MoveAction& action) override;
         //void lift(rclcpp::Time start, const MoveAction action);
         void search_callback(std_msgs::msg::String::ConstSharedPtr msg);
-        void search(SearchAction action);
-
-
+        
         template <typename SuccessCallback>
         void lift(rclcpp::Time start, const MoveAction action, SuccessCallback cb){
             auto twist_msg = TwistMsg();

@@ -33,14 +33,17 @@ struct MoveAction{
 
 struct ObjectAction {
     int action_id;
+    /* Name of the object (corresponding to the name in the Gazebo world or even real-life)*/
     std::string object;
 };
 
 struct JointPositionAction {
     int action_id;
+    /** Position to move a joint to (relative to the 0 position of the fork) */
     float position;
 };
 
+/** Make a robot perform a search operation of predefined route */
 struct SearchAction{
     int action_id;
 };
