@@ -1,11 +1,10 @@
 import paho.mqtt.client as mqtt
 import json
 from typing import Optional
-from mf_simulation.interface.plan_format import Plan, PlanFromLLM, Action, ActionFromLLM
+from mf_simulation.interface.plan_format import Plan, PlanFromLLM, Action
 from dataclasses import dataclass
 from typing import TypedDict
 from enum import Enum
-from PySide6.QtCore import SignalInstance
 from queue import Queue
 
 # Used with no plan gui
@@ -18,8 +17,8 @@ class ExecutableAction():
     command: str
     executing_robot: str
     action_id: int
-    # Write feedback to file or the gui (if using llm)
-    feedback_signal: SignalInstance | ProgressNotifier
+    # Write feedback to file
+    feedback_signal: ProgressNotifier
     input_from_action_id: Optional[int] = None
 
     def remove_prerequisite(self, action_id: int) -> bool:
@@ -84,13 +83,11 @@ class Controller():
         self.mqtt_client = mqtt.Client()
         self.mqtt_client.connect(mqtt_host, mqtt_port)
 
-        self.__progress_callback: SignalInstance | ProgressNotifier
+        self.__progress_callback: ProgressNotifier
         
         #Start the mqtt client in a separate thread
         self.mqtt_client.loop_start()
    
-        self.received_feedback: SignalInstance | None = None
-
         self.mqtt_client.subscribe([("feedback", 2)])
 
         # Also runs in the same thread that is started with loop_start()
@@ -112,11 +109,9 @@ class Controller():
         topic = message.topic
 
         if topic == "feedback":
-            #print("RECEIVED FEEDBACK!!!", flush=True)
             # object hook allows specifying how certain strings should be converted
             # to python types. In this case enums
             payload:Feedback = json.loads(message.payload, object_hook=feedback_str_to_enum)
-            #print("FEEDBACK IS: ", payload, flush=True)
             # Add a processable item to a feedback queue
             self.__waiting_feedbacks.put(payload)
             
@@ -144,7 +139,6 @@ class Controller():
                 if return_value:
                     self.__return_vals[completed_action_id] = return_value
 
-                #print("Return values after success: ", self.__return_vals, flush=True)
                 # Remove completed action from all actions
                 print("Removing action id: ", completed_action_id, flush=True)
                 del self.__actions[completed_action_id]
@@ -166,13 +160,14 @@ class Controller():
                         action.run(self.mqtt_client)
                     
 
-    def run_plan(self, plan: Plan | PlanFromLLM, feedback_signal: SignalInstance | ProgressNotifier):
+    def run_plan(self, plan: Plan , feedback_signal: ProgressNotifier):
         
         if feedback_signal:
             self.__progress_callback = feedback_signal
 
         self.__progress_callback.emit("Running plan")
 
+        # Process actions sequentially in the order they appear in the plan
         for action in plan.actions:
             prerequisites = action.prerequisites
             action_id = action.action_id

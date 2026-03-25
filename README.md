@@ -8,5 +8,19 @@ with **Work Package 2: Programming Multi-Machine Fleets (WP2)** of the project w
 
 **This document will be continously updated during the course of the project**
 
+## Running the Meteor simulation
+
+### Prerequisites
+
+The simulation in this repository uses [ROS2 (Robot Operating System)](https://docs.ros.org/en/jazzy/index.html) and the open-source robotics simulator [Gazebo](https://gazebosim.org/home). The used environment is as follows:
+
+- ROS2 version Jazzy Jalisco
+- Gazebo version Harmonic
+- Ubuntu 24.04 Noble Numbat
+
+
+
+
+
 
 
