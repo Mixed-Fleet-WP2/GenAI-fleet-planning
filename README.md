@@ -43,7 +43,7 @@ The simulation in this repository uses [ROS2 (Robot Operating System)](https://d
     source /opt/ros/jazzy/setup.bash
     ```
     If you want to do this automatically, add sourcing to your bash profile. For example:
-    ```
+    ```console
     echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc
     ```
 
@@ -65,24 +65,24 @@ The simulation in this repository uses [ROS2 (Robot Operating System)](https://d
     the ROS2 installation does not install globally
 
 7. Install the Python dependencies used by the project
-    ```
+    ```console
     pip install -r requirements.txt
     ```
 
 8. Before building the project, run the below command to ensure that all the ROS dependencies have been installed
-    ```
+    ```console
     rosdep install -i --from-path src --rosdistro jazzy -y
     ```
 9. Build the project by entering the the following command while inside the project directory/workspace
-    ```
+    ```console
     colcon build
     ```
 10. **_In a new terminal_, navigate to the project directory and source the built setup files** (remember to activate the virtual environment again)
-    ```
+    ```console
     source install/setup.bash
     ```
 11. **Run the simulation with one forklift (forklift_1) and one drone (drone_1**)
-    ```
+    ```console
     ros2 launch mf_simulation multi_robot_launch.py
     ```
 
