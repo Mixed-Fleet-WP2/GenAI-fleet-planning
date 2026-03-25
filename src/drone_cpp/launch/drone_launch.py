@@ -185,19 +185,6 @@ def generate_launch_description():
         description="Host for the MQTT broker"
     )
 
-    
-
-    #https://robotics.stackexchange.com/questions/89531/how-to-exit-from-a-ros2-lifecycle-launch-script
-    #https://github.com/ros2/launch/blob/a89671962220c8691ea4f128717bca599c711cda/launch/examples/launch_counters.py#L96-L98
-    #https://docs.ros.org/en/galactic/Tutorials/Intermediate/Launch/Using-Event-Handlers.html
-    # handler = RegisterEventHandler(
-    #     OnProcessExit(
-    #         target_action=px4_launch,
-    #         on_exit=lambda e, context: cancel_launch(e, context)
-    #     )
-    # )   
-
-
     drone_mqtt_config_file = ReplaceString(
         source_file=drone_mqtt_config_file,
         replacements={

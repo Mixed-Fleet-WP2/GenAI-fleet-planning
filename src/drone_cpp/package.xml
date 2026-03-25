@@ -15,7 +15,7 @@
   <test_depend>ament_lint_common</test_depend>
   <depend>rclcpp</depend>
   <depend>rclpy</depend>
-  <depend>px4_msgs</depend>
+  <depend>mqtt_client</depend>
   <depend>sdformat_urdf</depend>
   <depend>sensor_msgs</depend>
   <depend>mf_utils</depend>
