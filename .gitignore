@@ -6,3 +6,4 @@ instructions.json
 .env
 *log*
 **/.vscode
+**/.ros_venv

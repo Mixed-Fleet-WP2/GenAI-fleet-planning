@@ -66,6 +66,10 @@ The simulation in this repository uses [ROS2 (Robot Operating System)](https://d
 
 7. Install the Python dependencies used by the project
     ```console
+    pip install lark
+    pip install empy
+    pip install numpy
+    pip install catkin_pkg
     pip install -r requirements.txt
     ```
 
