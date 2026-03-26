@@ -131,7 +131,6 @@ def generate_launch_description():
     use_robot_state_pub = LaunchConfiguration('use_robot_state_pub')
     use_rviz = LaunchConfiguration('use_rviz')
     robots_file = LaunchConfiguration('robots_file')
-    headless = LaunchConfiguration('headless')
     mqtt_port = LaunchConfiguration('mqtt_port')
     mqtt_host = LaunchConfiguration('mqtt_host')
     
@@ -190,12 +189,6 @@ def generate_launch_description():
         description="Path to gz bridge configuration"
     )
 
-    declare_headless = DeclareLaunchArgument(
-        name='headless',
-        default_value='True',
-        description="Whether to run the LLM gui or not"
-    )
-
     declare_mqtt_port = DeclareLaunchArgument(
         name="mqtt_port",
         default_value='1883',
@@ -232,17 +225,7 @@ def generate_launch_description():
         cmd=['ros2', 'run', 'mf_simulation', 'json_client', mqtt_host, mqtt_port],
         name='mf_simulation_json_client',
         output='screen',
-        shell=False,
-        condition=IfCondition(headless)
-    )
-
-
-    start_interface = ExecuteProcess(
-        cmd=['ros2', 'run', 'mf_simulation', 'interface'],
-        name='mf_simulation_interface',
-        output='screen',
-        shell=False,
-        condition=UnlessCondition(headless)
+        shell=False
     )
 
     simulation_container = Node(
@@ -379,7 +362,6 @@ def generate_launch_description():
     ld.add_action(declare_rviz_config_file_cmd)
     ld.add_action(declare_use_robot_state_pub_cmd)
     ld.add_action(declare_robots_file)
-    ld.add_action(declare_headless)
     ld.add_action(declare_mqtt_port)
     ld.add_action(declare_mqtt_host)
     ld.add_action(set_env_vars_resources)

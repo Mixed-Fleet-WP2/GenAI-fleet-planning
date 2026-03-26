@@ -66,12 +66,19 @@ The simulation in this repository uses [ROS2 (Robot Operating System)](https://d
 
 7. Install the Python dependencies used by the project
     ```console
+    pip install paho-mqtt
+    pip install
+    pip install PyYAML
     pip install lark
     pip install empy
     pip install numpy
     pip install catkin_pkg
     pip install -r requirements.txt
     ```
+
+8. **Install an MQTT broker on your system**   
+    The system has been tested using the Echlipse Mosquitto MQTT broker. 
+    Instructions for installing and testing can be found from [link](https://github.com/eclipse-mosquitto/mosquitto)
 
 8. Before building the project, run the below command to ensure that all the ROS dependencies have been installed
     ```console
