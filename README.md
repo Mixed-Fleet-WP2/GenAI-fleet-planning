@@ -66,8 +66,8 @@ The simulation in this repository uses [ROS2 (Robot Operating System)](https://d
 
 7. Install the Python dependencies used by the project
     ```console
+    pip install pydantic
     pip install paho-mqtt
-    pip install
     pip install PyYAML
     pip install lark
     pip install empy

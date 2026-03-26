@@ -1,0 +1,192 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "action_plan_schema.json",
+  "title": "Action Plan",
+  "description": "A plan consisting of a sequence of robot actions with prerequisites and optional data flow between actions.",
+  "type": "object",
+  "required": ["actions"],
+  "properties": {
+    "actions": {
+      "type": "array",
+      "description": "Ordered list of actions to be executed by robots.",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/generic_action"
+      }
+    }
+  },
+  "$defs": {
+
+    "pose": {
+      "title": "Pose",
+      "description": "A 6-DOF pose in 3D space (position + orientation).",
+      "type": "object",
+      "properties": {
+        "x":     { "type": "number", "description": "X position in meters." },
+        "y":     { "type": "number", "description": "Y position in meters." },
+        "z":     { "type": "number", "description": "Z position in meters." },
+        "roll":  { "type": "number", "description": "Rotation around X axis in radians." },
+        "pitch": { "type": "number", "description": "Rotation around Y axis in radians." },
+        "yaw":   { "type": "number", "description": "Rotation around Z axis in radians." }
+      },
+      "additionalProperties": false
+    },
+
+    "base_action": {
+      "title": "Base Action",
+      "description": "Common fields shared by all action types.",
+      "type": "object",
+      "required": ["action_id", "executing_robot", "command", "command_arguments", "prerequisites"],
+      "properties": {
+        "action_id": {
+          "type": "integer",
+          "description": "Unique identifier for this action. Referenced by prerequisites and input_from_action_id.",
+          "minimum": 1
+        },
+        "executing_robot": {
+          "type": "string",
+          "description": "Identifier of the robot that will execute this action (e.g. 'drone_1', 'forklift_1').",
+          "minLength": 1
+        },
+        "command": {
+          "type": "string",
+          "description": "The command type to execute. Discriminates the action subtype."
+        },
+        "command_arguments": {
+          "type": "object",
+          "description": "Arguments specific to the command type."
+        },
+        "prerequisites": {
+          "type": "array",
+          "description": "List of action_ids that must complete before this action begins. Use an empty array for no prerequisites.",
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "uniqueItems": true
+        },
+        "input_from_action_id": {
+          "type": "integer",
+          "description": "Optional. The action_id whose runtime output is injected as input into this action. Must also appear in prerequisites.",
+          "minimum": 1
+        }
+      }
+    },
+
+    "search_action": {
+      "title": "Search Action",
+      "description": "Instructs a robot to search its environment and produce a result (e.g. a target location) for downstream actions.",
+      "allOf": [
+        { "$ref": "#/$defs/base_action" },
+        {
+          "properties": {
+            "command": { "const": "search" },
+            "command_arguments": {
+              "type": "object",
+              "description": "No arguments required for a basic search.",
+              "additionalProperties": false
+            }
+          }
+        }
+      ]
+    },
+
+    "move_action": {
+      "title": "Move Action",
+      "description": "Instructs a robot to move to a target pose. The destination may be provided statically or dynamically via input_from_action_id.",
+      "allOf": [
+        { "$ref": "#/$defs/base_action" },
+        {
+          "properties": {
+            "command": { "const": "move" },
+            "command_arguments": {
+              "type": "object",
+              "description": "Arguments for the move command.",
+              "properties": {
+                "destination": {
+                  "description": "Target pose. May be an empty object when the destination is resolved at runtime via input_from_action_id.",
+                  "oneOf": [
+                    { "$ref": "#/$defs/pose" },
+                    {
+                      "type": "object",
+                      "description": "Empty object — destination supplied dynamically via input_from_action_id.",
+                      "maxProperties": 0
+                    }
+                  ]
+                }
+              },
+              "required": ["destination"],
+              "additionalProperties": false
+            }
+          }
+        }
+      ]
+    },
+
+    "pick_up_action": {
+      "title": "Pick Up Action",
+      "description": "Instructs a robot to pick up a named object at its current location.",
+      "allOf": [
+        { "$ref": "#/$defs/base_action" },
+        {
+          "properties": {
+            "command": { "const": "pick_up" },
+            "command_arguments": {
+              "type": "object",
+              "description": "Arguments for the pick_up command.",
+              "properties": {
+                "object": {
+                  "type": "string",
+                  "description": "Identifier of the object to pick up.",
+                  "minLength": 1,
+                  "examples": ["euro_pallet_1"]
+                }
+              },
+              "required": ["object"],
+              "additionalProperties": false
+            }
+          }
+        }
+      ]
+    },
+
+    "drop_action": {
+      "title": "Drop Action",
+      "description": "Instructs a robot to drop a currently held object at its current location.",
+      "allOf": [
+        { "$ref": "#/$defs/base_action" },
+        {
+          "properties": {
+            "command": { "const": "drop" },
+            "command_arguments": {
+              "type": "object",
+              "description": "Arguments for the drop command.",
+              "properties": {
+                "object": {
+                  "type": "string",
+                  "description": "Identifier of the object to drop.",
+                  "minLength": 1,
+                  "examples": ["euro_pallet_1"]
+                }
+              },
+              "required": ["object"],
+              "additionalProperties": false
+            }
+          }
+        }
+      ]
+    },
+
+    "generic_action": {
+      "title": "Generic Action",
+      "description": "Discriminated union of all action subtypes, resolved by the 'command' field.",
+      "oneOf": [
+        { "$ref": "#/$defs/search_action" },
+        { "$ref": "#/$defs/move_action" },
+        { "$ref": "#/$defs/pick_up_action" },
+        { "$ref": "#/$defs/drop_action" }
+      ]
+    }
+
+  }
+}

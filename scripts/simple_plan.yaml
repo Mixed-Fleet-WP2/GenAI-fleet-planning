@@ -1,0 +1,13 @@
+actions:
+  - executing_robot: forklift_1
+    command: move
+    command_arguments:
+      destination:
+        x: 1.0
+        y: 2.0
+        z: 0.0
+        roll: 0.0
+        pitch: 0.0
+        yaw: 0.0
+    action_id: 1
+    prerequisites: []
