@@ -1,0 +1,90 @@
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name="plugins" params="namespace">
+
+    <gazebo>
+      <plugin
+        filename="gz-sim-diff-drive-system"
+        name="gz::sim::systems::DiffDrive">
+
+        <left_joint>left_wheel_joint</left_joint>
+        <left_joint>left_wheel_back_joint</left_joint>
+        <right_joint>right_wheel_joint</right_joint>
+        <right_joint>right_wheel_back_joint</right_joint>
+        <wheel_separation>0.890</wheel_separation>
+        <wheel_radius>0.25</wheel_radius>
+        <odom_publish_frequency>30</odom_publish_frequency>
+        <!-- <odom_topic>${namespace}/odom</odom_topic> -->
+        <frame_id>odom</frame_id>
+        <!-- <tf_topic>${namespace}/tf</tf_topic> -->
+        <topic>${namespace}/cmd_vel</topic>
+        <child_frame_id>base_link</child_frame_id>
+
+        <max_linear_acceleration>10</max_linear_acceleration>
+        <min_linear_acceleration>-10</min_linear_acceleration>
+        <max_angular_acceleration>20</max_angular_acceleration>
+        <min_angular_acceleration>-20</min_angular_acceleration>
+        <max_linear_velocity>6</max_linear_velocity>
+        <min_linear_velocity>-0.5</min_linear_velocity>
+        <max_angular_velocity>10</max_angular_velocity>
+        <min_angular_velocity>-10</min_angular_velocity>
+      </plugin>
+
+      <!--Ground truth odom instead of the "realistic" odom provided by diff drive-->
+      <plugin
+        filename="gz-sim-odometry-publisher-system"
+        name="gz::sim::systems::OdometryPublisher">
+        <dimensions>3</dimensions>
+        <odom_topic>$(arg namespace)/odom</odom_topic>
+        <tf_topic>$(arg namespace)/tf</tf_topic>
+        <robot_base_frame>base_link</robot_base_frame>
+        <!-- <gaussian_noise>0.5</gaussian_noise> -->
+        <odom_frame>odom</odom_frame>
+        <odom_publish_frequency>30</odom_publish_frequency>
+    </plugin>
+
+       <!-- <plugin filename="gz-sim-detachable-joint-system"
+              name="gz::sim::systems::DetachableJoint">
+       <parent_link>fork_1</parent_link>
+       <child_model>euro_pallet_2</child_model>
+       <child_link>link</child_link>
+       <detach_topic>/euro_pallet_2/detach</detach_topic>
+       <attach_topic>/${namespace}/euro_pallet_2/attach</attach_topic>
+       <output_topic>/euro_pallet_2/state</output_topic>
+      </plugin> -->
+
+      <plugin filename="gz-sim-detachable-joint-system"
+              name="gz::sim::systems::DetachableJoint">
+       <parent_link>fork_1</parent_link>
+       <child_model>euro_pallet_1</child_model>
+       <child_link>link</child_link>
+       <detach_topic>/euro_pallet_1/detach</detach_topic>
+       <attach_topic>/${namespace}/euro_pallet_1/attach</attach_topic>
+       <output_topic>/euro_pallet_1/state</output_topic>
+      </plugin>
+
+      <plugin filename="gz-sim-joint-state-publisher-system"
+        name="gz::sim::systems::JointStatePublisher">
+        <topic>${namespace}/joint_states</topic>
+      </plugin>
+
+
+      <plugin filename="gz-sim-joint-position-controller-system"
+        name="gz::sim::systems::JointPositionController">
+        <joint_name>fork_plate_joint</joint_name>
+        <initial_position>0.0</initial_position>
+        <topic>${namespace}/fork_control</topic>
+        <p_gain>40000</p_gain>
+        <i_gain>2000</i_gain>
+        <d_gain>5000</d_gain>
+        <i_min>-2000</i_min>
+        <i_max>2000</i_max>
+        <cmd_min>-80000</cmd_min>
+        <cmd_max>120000</cmd_max>
+      </plugin>
+
+
+    </gazebo>
+  </xacro:macro>
+
+</robot>

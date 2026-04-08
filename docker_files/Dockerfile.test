@@ -1,0 +1,59 @@
+ARG BASE_IMAGE=osrf/ros
+ARG BASE_TAG=jazzy-ros-base
+
+FROM ${BASE_IMAGE}:${BASE_TAG}
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+ARG DISTRO=jazzy
+ARG USERNAME=ros
+ARG USER_UID=1000
+ARG USER_GID=${USER_UID}
+ARG WORKSPACE=ws
+
+RUN apt-get update && apt-get install -y \
+    nano \
+    python3-pip \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN if ! id -u "${USERNAME}" >/dev/null 2>&1; then \
+        if ! getent group "${USERNAME}" >/dev/null 2>&1; then \
+            if getent group "${USER_GID}" >/dev/null 2>&1; then \
+                groupadd "${USERNAME}"; \
+            else \
+                groupadd --gid "${USER_GID}" "${USERNAME}"; \
+            fi; \
+        fi; \
+        if getent passwd "${USER_UID}" >/dev/null 2>&1; then \
+            useradd --gid "${USERNAME}" -m -s /bin/bash "${USERNAME}"; \
+        else \
+            useradd --uid "${USER_UID}" --gid "${USERNAME}" -m -s /bin/bash "${USERNAME}"; \
+        fi; \
+    fi
+
+USER ${USERNAME}
+
+ENV HOME=/home/${USERNAME}
+ENV USER=${USERNAME}
+
+WORKDIR /home/${USERNAME}/${WORKSPACE}
+
+COPY  ./src/test_pkg ./src/test_pkg
+
+RUN echo "source /opt/ros/${DISTRO}/setup.bash" >> ~/.bashrc
+
+# Install python dependencies for the test package
+RUN pip3 install --user --break-system-packages --no-cache-dir \
+    pydantic \
+    paho-mqtt \
+    PyYAML \
+    lark \
+    empy \
+    numpy \
+    catkin_pkg
+    
+RUN echo "if [ -f ~/${WORKSPACE}/install/setup.bash ]; then source ~/${WORKSPACE}/install/setup.bash; fi" >> ~/.bashrc
+
+ENTRYPOINT ["/ros_entrypoint.sh"]
+CMD ["bash"]
