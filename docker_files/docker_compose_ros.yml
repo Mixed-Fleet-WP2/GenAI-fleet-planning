@@ -3,7 +3,6 @@
 
 # Modifications for WSL2
 # https://github.com/gazebosim/gz-sim/issues/2595#issuecomment-3366197792
-# https://github.com/microsoft/wslg/blob/main/samples%2Fcontainer%2FContainers.md#containerizing-gui-applications-with-wslg
 
 version: '3.8'
 
@@ -23,9 +22,9 @@ services:
 
     environment:
       # This has to be explicitly set for WSL2 to use the D3D12
-      - LIBGL_ALWAYS_SOFTWARE=0
-      #- GALLIUM_DRIVER=d3d12
+      - GALLIUM_DRIVER=d3d12
       #- MESA_LOADER_DRIVER_OVERRIDE=d3d12
+      - LIBGL_ALWAYS_SOFTWARE=0
       - MESA_D3D12_DEFAULT_ADAPTER_NAME=NVIDIA
       # WSL2 display - uses both X11 and Wayland
       - DISPLAY=${DISPLAY}
@@ -67,19 +66,22 @@ services:
       - ~/.bash_history:/home/ros/.bash_history
       - ./docker_simulator:/home/ros/docker_simulation_ws
 
+      # GPU devices - WSL2 uses /dev/dxg instead of /dev/nvidia*
+      #- /dev/dri:/dev/dri
+
     devices:
       # WSL2 DirectX GPU device - replaces /dev/nvidia0 etc from bare Linux
       - /dev/dxg:/dev/dxg
 
-    privileged: true
-    runtime: nvidia
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities: [gpu]
+    #privileged: true
+    #runtime: nvidia
+    #deploy:
+      #resources:
+        #reservations:
+          #devices:
+            #- driver: nvidia
+              #count: all
+              #capabilities: [gpu]
 
     command: >
       bash -c "
