@@ -38,6 +38,9 @@ ARG WORKSPACE=docker_simulation_ws
 RUN apt-get update && apt-get install -y \
     ros-${DISTRO}-rmw-cyclonedds-cpp \
     mesa-utils \
+    #mesa-vulkan-drivers \
+    #mesa-opencl-icd \
+    #libgl1-mesa-dri \
     chrony \
     tmux \
     nano \
