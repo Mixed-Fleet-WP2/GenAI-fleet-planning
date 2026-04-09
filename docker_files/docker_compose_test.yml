@@ -8,12 +8,12 @@ services:
   test_robot:
     build:
       context: ..
-      dockerfile: docker_files/Dockerfile.test
-      args:
-        - BASE_IMAGE=osrf/ros
-        - BASE_TAG=jazzy-desktop-full
-        - DISTRO=jazzy
-        - WORKSPACE=docker_simulation_ws
+      dockerfile: docker_files/Dockerfile.multi_build.test
+      #args:
+        #- BASE_IMAGE=ros
+        #- BASE_TAG=jazzy-ros-base
+        #- DISTRO=jazzy
+        #- WORKSPACE=docker_simulation_ws
     container_name:  test_robot
     network_mode: host
     stdin_open: true
@@ -26,10 +26,3 @@ services:
 
     volumes:
       - ./docker_simulator:/home/ros/ws
-
-    command: >
-      bash -c "
-        source /opt/ros/jazzy/setup.bash &&
-        source /home/ros/ws/install/setup.bash &&
-        ros2 run my_package my_node
-      "

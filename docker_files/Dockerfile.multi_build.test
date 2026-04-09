@@ -1,15 +1,49 @@
+# First we have the build layer
 
+# Global args
 ARG BASE_IMAGE=ros
 ARG BASE_TAG=jazzy-ros-base
+ARG DISTRO=jazzy
 
-# The desktop image is osrf:/ros:jazzy-desktop-full, but it is quite large and we don't need all the desktop tools for testing
-# THe base image is ros:jazzy-ros-base
+FROM osrf/ros:jazzy-desktop-full AS builder
+ARG DISTRO
+ARG BUILD_DIR=/build_dir
+WORKDIR ${BUILD_DIR}
+COPY  ./src/test_pkg ./src/test_pkg
+
+# Write the source command to the .bashrc to ensure ROS environment is set up for the user
+RUN echo "source /opt/ros/${DISTRO}/setup.bash" >> ~/.bashrc
+
+RUN apt-get update && apt-get install -y \
+    python3-pip \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install python dependencies for the test package
+RUN pip3 install --user --break-system-packages --no-cache-dir \
+    pydantic \
+    paho-mqtt \
+    PyYAML \
+    lark \
+    empy \
+    numpy \
+    catkin_pkg
+
+SHELL ["/bin/bash", "-c"]
+
+RUN source /opt/ros/${DISTRO}/setup.bash && \
+    colcon build
 
 FROM ${BASE_IMAGE}:${BASE_TAG}
 
+# These have to be redeclared in the second stage to be used in this stage
+# https://stackoverflow.com/questions/53681522/share-variable-in-multi-stage-dockerfile-arg-before-from-not-substituted
+ARG BASE_IMAGE
+ARG BASE_TAG
+ARG DISTRO
+
 ENV DEBIAN_FRONTEND=noninteractive
 
-ARG DISTRO=jazzy
 ARG USERNAME=ros
 ARG USER_UID=1000
 ARG USER_GID=${USER_UID}
@@ -43,7 +77,7 @@ ENV USER=${USERNAME}
 
 WORKDIR /home/${USERNAME}/${WORKSPACE}
 RUN echo ${WORKSPACE}
-COPY  ./src/test_pkg ./src/test_pkg
+COPY  --from=builder /build_dir/install ./install
 
 # Write the source command to the .bashrc to ensure ROS environment is set up for the user
 RUN echo "source /opt/ros/${DISTRO}/setup.bash" >> ~/.bashrc
@@ -62,8 +96,7 @@ RUN pip3 install --user --break-system-packages --no-cache-dir \
 # because sh does not understand source
 SHELL ["/bin/bash", "-c"]
 
-RUN source /opt/ros/${DISTRO}/setup.bash && \
-    colcon build --symlink-install
+RUN source /opt/ros/${DISTRO}/setup.bash
 
 #RUN echo "if [ -f ~/${WORKSPACE}/install/setup.bash ]; then source ~/${WORKSPACE}/install/setup.bash; fi" >> ~/.bashrc
 
