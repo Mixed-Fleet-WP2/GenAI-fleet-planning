@@ -5,7 +5,7 @@ ARG BASE_IMAGE=ros
 ARG BASE_TAG=jazzy-ros-base
 ARG DISTRO=jazzy
 
-FROM osrf/ros:jazzy-desktop-full AS builder
+FROM osrf/ros:${DISTRO}-desktop-full AS builder
 ARG DISTRO
 ARG BUILD_DIR=/build_dir
 WORKDIR ${BUILD_DIR}
@@ -55,20 +55,17 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-RUN if ! id -u "${USERNAME}" >/dev/null 2>&1; then \
-        if ! getent group "${USERNAME}" >/dev/null 2>&1; then \
-            if getent group "${USER_GID}" >/dev/null 2>&1; then \
-                groupadd "${USERNAME}"; \
-            else \
-                groupadd --gid "${USER_GID}" "${USERNAME}"; \
-            fi; \
-        fi; \
-        if getent passwd "${USER_UID}" >/dev/null 2>&1; then \
-            useradd --gid "${USERNAME}" -m -s /bin/bash "${USERNAME}"; \
-        else \
-            useradd --uid "${USER_UID}" --gid "${USERNAME}" -m -s /bin/bash "${USERNAME}"; \
-        fi; \
-    fi
+# If the user already exists (e.g. by default in the base image), delete it and create new
+RUN if id -u ${USER_UID} ; then userdel `id -un ${USER_UID}` ; fi
+# Create a group named after the username
+RUN groupadd --gid ${USER_GID} ${USERNAME} 
+# Create user with USER_ID and add it to the group created above
+# also create home directory that is named after the user
+RUN useradd --uid ${USER_UID} --gid ${USER_GID} -m ${USERNAME} \
+    && apt-get update \
+    && apt-get install -y sudo \
+    && echo ${USERNAME} ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/${USERNAME} \
+    && chmod 0440 /etc/sudoers.d/${USERNAME}
 
 USER ${USERNAME}
 
@@ -82,7 +79,7 @@ COPY  --from=builder /build_dir/install ./install
 # Write the source command to the .bashrc to ensure ROS environment is set up for the user
 RUN echo "source /opt/ros/${DISTRO}/setup.bash" >> ~/.bashrc
 
-# Install python dependencies for the test package
+# Install python dependencies
 RUN pip3 install --user --break-system-packages --no-cache-dir \
     pydantic \
     paho-mqtt \
