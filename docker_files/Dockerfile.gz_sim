@@ -1,4 +1,5 @@
 ARG BASE_IMAGE=osrf/ros
+# The desktop image already comes with Gazebo, so we can use it as the base for the simulation image
 ARG BASE_TAG=jazzy-desktop-full
 
 FROM ${BASE_IMAGE}:${BASE_TAG}
@@ -10,7 +11,7 @@ ARG DISTRO=jazzy
 ARG USERNAME=ros
 ARG USER_UID=1000
 ARG USER_GID=${USER_UID}
-ARG WORKSPACE=docker_simulation_ws
+ARG WORKSPACE=gz_ws
 
 # Only what desktop-full doesn't already have
 RUN apt-get update && apt-get install -y \
@@ -23,34 +24,26 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Ensure requested non-root user exists
-RUN if ! id -u "${USERNAME}" >/dev/null 2>&1; then \
-        if ! getent group "${USERNAME}" >/dev/null 2>&1; then \
-            if getent group "${USER_GID}" >/dev/null 2>&1; then \
-                groupadd "${USERNAME}"; \
-            else \
-                groupadd --gid "${USER_GID}" "${USERNAME}"; \
-            fi; \
-        fi; \
-        if getent passwd "${USER_UID}" >/dev/null 2>&1; then \
-            useradd --gid "${USERNAME}" -m -s /bin/bash "${USERNAME}"; \
-        else \
-            useradd --uid "${USER_UID}" --gid "${USERNAME}" -m -s /bin/bash "${USERNAME}"; \
-        fi; \
-    fi
+# If the user already exists (e.g. by default in the base image), delete it and create new
+RUN if id -u ${USER_UID} ; then userdel `id -un ${USER_UID}` ; fi
+# Create a group named after the username
+RUN groupadd --gid ${USER_GID} ${USERNAME} 
+# Create user with USER_ID and add it to the group created above
+# also create home directory that is named after the user
+RUN useradd --uid ${USER_UID} --gid ${USER_GID} -m ${USERNAME} \
+    && apt-get update \
+    && apt-get install -y sudo \
+    # Allow sudo without password
+    && echo ${USERNAME} ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/${USERNAME} \
+    && chmod 0440 /etc/sudoers.d/${USERNAME}
 
 # Add the user to GPU-related groups.
 # Create groups named "render" and "avahi" if they don't exist, and add the user to "video", "render" and "avahi" groups.
 RUN groupadd -f render && groupadd -f avahi
-# Add privileges for video, render and avahi
+# Add privileges for video, render and avahi to the user, which are needed for containers to access the GPU
 RUN usermod -aG video,render,avahi ${USERNAME}
 
-# Allow sudo without password (optional but common in dev containers)
-RUN echo "${USERNAME} ALL=(root) NOPASSWD:ALL" > /etc/sudoers.d/${USERNAME} && \
-    chmod 0440 /etc/sudoers.d/${USERNAME}
-
 USER ${USERNAME}
-
 
 ENV HOME=/home/${USERNAME}
 ENV USER=${USERNAME}
@@ -59,6 +52,8 @@ WORKDIR /home/${USERNAME}/${WORKSPACE}
 
 # Shell setup
 RUN echo "source /opt/ros/${DISTRO}/setup.bash" >> ~/.bashrc && \
+    # If there is a setup.bash in the workspace, source it as well to overlay the workspace on top of the ROS installation
+    # (if the workspace is not built yet, the setup.bash will not exist yet)
     echo "if [ -f ~/${WORKSPACE}/install/setup.bash ]; then source ~/${WORKSPACE}/install/setup.bash; fi" >> ~/.bashrc && \
     echo "export GZ_SIM_SYSTEM_PLUGIN_PATH=/opt/ros/${DISTRO}/lib/" >> ~/.bashrc
 

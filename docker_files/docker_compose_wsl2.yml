@@ -9,6 +9,7 @@ services:
     stdin_open: true
     tty: true
     volumes:
+      # See link below for why these are neede
       - /tmp/.X11-unix:/tmp/.X11-unix
       - /mnt/wslg:/mnt/wslg
       - /usr/lib/wsl:/usr/lib/wsl
@@ -35,6 +36,18 @@ services:
       # and: https://github.com/microsoft/WSL/issues/12412
       # and: https://www.reddit.com/r/wsl2/comments/1ohnhqr/trying_to_accelerate_wsl_apps_like_gazebo_using/
       GALLIUM_DRIVER: d3d12
+    # gpus all deprecates runtime: nvidia but is effectively the same:
+    # https://github.com/NVIDIA/nvidia-docker#quickstart
     gpus: all
+    
+    # OR:
+
+    #deploy:
+      #resources:
+        #reservations:
+          #devices:
+            #- driver: nvidia
+              #count: all
+              #capabilities: [gpu]
     command: ["bash", "-c", "/usr/bin/glxinfo -B | grep renderer"]
     

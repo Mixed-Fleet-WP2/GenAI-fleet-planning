@@ -50,7 +50,8 @@ The simulation in this repository uses [ROS2 (Robot Operating System)](https://d
 5. **Install the Nav2 navigation stack**
     ```console
     sudo apt install ros-jazzy-navigation2
-    sudo apt install ros-jazy-nav2-bringup
+    sudo apt install ros-jazzy-nav2-bringup
+    sudo apt install  ros-jazzy-nav2-minimal-tb*
     ```
     You can verify successful install using the instructions
     from the [link](https://docs.nav2.org/getting_started/index.html#running-the-example)

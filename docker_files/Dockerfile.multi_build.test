@@ -34,6 +34,7 @@ SHELL ["/bin/bash", "-c"]
 RUN source /opt/ros/${DISTRO}/setup.bash && \
     colcon build
 
+# This is the runtime layer
 FROM ${BASE_IMAGE}:${BASE_TAG}
 
 # These have to be redeclared in the second stage to be used in this stage
@@ -75,9 +76,14 @@ ENV USER=${USERNAME}
 WORKDIR /home/${USERNAME}/${WORKSPACE}
 RUN echo ${WORKSPACE}
 COPY  --from=builder /build_dir/install ./install
+COPY --from=builder /build_dir/build ./build
+COPY --from=builder /build_dir/log ./log
 
 # Write the source command to the .bashrc to ensure ROS environment is set up for the user
 RUN echo "source /opt/ros/${DISTRO}/setup.bash" >> ~/.bashrc
+
+# Source the ros2 overlay
+RUN source /opt/ros/${DISTRO}/setup.bash
 
 # Install python dependencies
 RUN pip3 install --user --break-system-packages --no-cache-dir \
@@ -95,7 +101,10 @@ SHELL ["/bin/bash", "-c"]
 
 RUN source /opt/ros/${DISTRO}/setup.bash
 
-#RUN echo "if [ -f ~/${WORKSPACE}/install/setup.bash ]; then source ~/${WORKSPACE}/install/setup.bash; fi" >> ~/.bashrc
+# Source the overlay
+RUN echo "if [ -f ~/${WORKSPACE}/install/setup.bash ]; then source ~/${WORKSPACE}/install/setup.bash; fi" >> ~/.bashrc
 
-ENTRYPOINT ["bash"]
-#CMD ["bash"]
+#ENTRYPOINT ["ros2 launch test_pkg robot_launch.py"]
+
+# Bash used for testing
+ENTRYPOINT ["/bin/bash"]
