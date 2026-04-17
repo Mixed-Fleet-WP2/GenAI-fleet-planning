@@ -1,5 +1,6 @@
 
 
+
 # type: ignore
 import os
 
@@ -8,18 +9,12 @@ from launch import LaunchDescription
 from launch.actions import (
     AppendEnvironmentVariable,
     DeclareLaunchArgument,
-    IncludeLaunchDescription
 )
 
 from launch.substitutions.command import Command
 from launch_ros.parameter_descriptions import ParameterValue
-
 from launch.substitutions import LaunchConfiguration, TextSubstitution
-
-
 from launch_ros.actions import Node
-from launch.launch_description_sources import PythonLaunchDescriptionSource
-from nav2_common.launch import ReplaceString
 from ros_gz_bridge.actions import RosGzBridge
 
 
@@ -45,6 +40,12 @@ def generate_launch_description():
         name='use_gz',
         default_value='True',
         description='Wheter to use gz sim'
+    )
+
+    declare_use_namespace = DeclareLaunchArgument(
+        name='namespace',
+        default_value='',
+        description='Namespace for the robot'
     )
 
     declare_use_sim_time = DeclareLaunchArgument(
@@ -105,11 +106,11 @@ def generate_launch_description():
   
         # Fixes a bug with extra bridge params, see:
         # https://github.com/gazebosim/ros_gz/pull/775
-
-        extra_bridge_params=[ {
-                'expand_gz_topic_names': True,
-                'use_sim_time': True,
-            }]
+        
+        #bridge_params=[ {
+               # 'expand_gz_topic_names': True,
+                #'use_sim_time': True,
+            #}]
     )
 
     # This is so package:// and model:// is resolved in sdf files
@@ -123,31 +124,14 @@ def generate_launch_description():
 
     ld = LaunchDescription()
 
+    ld.add_action(declare_use_namespace)
     ld.add_action(declare_robot_sdf)
     ld.add_action(declare_use_gz)
-    ld.add_action(declare_robot_name)
     ld.add_action(declare_forklift_gz_bridge_path)
-    ld.add_action(declare_namespace)
     ld.add_action(declare_use_sim_time)
-    ld.add_action(declare_use_namespace)
-    ld.add_action(declare_slam)
-    ld.add_action(declare_nav_params_file)
-    ld.add_action(declare_autostart)
-    ld.add_action(declare_use_composition)
-    ld.add_action(declare_use_respawn)
-    ld.add_action(declare_map_yaml_file)
-
-
     ld.add_action(run_robot_state_publisher)
-    
     ld.add_action(set_env_vars_resources)
-
     ld.add_action(bridge)
-
-    ld.add_action(bringup_cmd)
-    ld.add_action(spawn_model)
-    ld.add_action(forklift_controller)
-    ld.add_action(declare_use_pure_odom)
 
     return ld
 

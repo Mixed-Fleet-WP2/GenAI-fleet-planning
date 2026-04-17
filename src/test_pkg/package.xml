@@ -5,7 +5,19 @@
   <version>0.0.0</version>
   <description>TODO: Package description</description>
   <maintainer email="elmeripeekoo@gmail.com">elmeripk</maintainer>
-  <license>TODO: License declaration</license>
+  <license>MIT</license>
+  
+  <!--Pip dependencies
+  Related rosdep keys can be seen in:
+  https://github.com/ros/rosdistro/blob/master/rosdep/python.yaml
+  -->
+  <exec_depend>python3-yaml</exec_depend>
+  <exec_depend>python3-paho-mqtt</exec_depend>
+  <exec_depend>python3-pydantic</exec_depend>
+  <exec_depend>ros_gz_bridge</exec_depend>
+  <exec_depend>ros_gz_sim</exec_depend>
+  <exec_depend>xacro</exec_depend>
+
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>

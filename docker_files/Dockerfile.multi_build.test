@@ -20,14 +20,14 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Install python dependencies for the test package
-RUN pip3 install --user --break-system-packages --no-cache-dir \
-    pydantic \
-    paho-mqtt \
-    PyYAML \
-    lark \
-    empy \
-    numpy \
-    catkin_pkg
+#RUN pip3 install --user --break-system-packages --no-cache-dir \
+    #pydantic \
+    #paho-mqtt \
+    #PyYAML \
+    #lark \
+    #empy \
+    #numpy \
+    #catkin_pkg
 
 SHELL ["/bin/bash", "-c"]
 
@@ -50,21 +50,34 @@ ARG USER_UID=1000
 ARG USER_GID=${USER_UID}
 ARG WORKSPACE=test_ws
 
+# Use bash as the default shell for subsequent commands
+# because sh does not understand commands like "source"
+SHELL ["/bin/bash", "-c"]
+
+# Copy the package.xml files to the runtime layer
+# (to the root's home directory!)
+COPY --from=builder /build_dir/src/test_pkg/package.xml ./src_meta/
+
 RUN apt-get update && apt-get install -y \
     nano \
     python3-pip \
+    sudo \
+    # # Install the nav2 dependencies and other ros dependencies with rosdep
+    # Depending on the base image, rosdep might already be initialized, so we ignore the error if it is already initialized
+    && (rosdep init || true) \
+    && rosdep update \
+    && rosdep install --from-paths ./src_meta --ignore-src -r -y \
+    && rm -rf ./src_meta \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# If the user already exists (e.g. by default in the base image), delete it and create new
-RUN if id -u ${USER_UID} ; then userdel `id -un ${USER_UID}` ; fi
-# Create a group named after the username
-RUN groupadd --gid ${USER_GID} ${USERNAME} 
-# Create user with USER_ID and add it to the group created above
-# also create home directory that is named after the user
-RUN useradd --uid ${USER_UID} --gid ${USER_GID} -m ${USERNAME} \
-    && apt-get update \
-    && apt-get install -y sudo \
+    # If the user already exists (e.g. by default in the base image), delete it and create new
+RUN if id -u ${USER_UID} ; then userdel `id -un ${USER_UID}` ; fi && \
+    # Create a group named after the username
+    groupadd --gid ${USER_GID} ${USERNAME} && \
+    # Create user with USER_ID and add it to the group created above
+    # also create home directory that is named after the user
+    useradd --uid ${USER_UID} --gid ${USER_GID} -m ${USERNAME} \
     && echo ${USERNAME} ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/${USERNAME} \
     && chmod 0440 /etc/sudoers.d/${USERNAME}
 
@@ -74,10 +87,12 @@ ENV HOME=/home/${USERNAME}
 ENV USER=${USERNAME}
 
 WORKDIR /home/${USERNAME}/${WORKSPACE}
-RUN echo ${WORKSPACE}
+
+# Copy the created binaries to the new user's workspace NOT ROOT's!
 COPY  --from=builder /build_dir/install ./install
-COPY --from=builder /build_dir/build ./build
-COPY --from=builder /build_dir/log ./log
+# For installing the dependencies with rosdep, we need the package.xml files
+# Copy them directly to the workspace
+
 
 # Write the source command to the .bashrc to ensure ROS environment is set up for the user
 RUN echo "source /opt/ros/${DISTRO}/setup.bash" >> ~/.bashrc
@@ -86,18 +101,14 @@ RUN echo "source /opt/ros/${DISTRO}/setup.bash" >> ~/.bashrc
 RUN source /opt/ros/${DISTRO}/setup.bash
 
 # Install python dependencies
-RUN pip3 install --user --break-system-packages --no-cache-dir \
-    pydantic \
-    paho-mqtt \
-    PyYAML \
-    lark \
-    empy \
-    numpy \
-    catkin_pkg
-
-# Use bash as the default shell for subsequent commands
-# because sh does not understand source
-SHELL ["/bin/bash", "-c"]
+#RUN pip3 install --user --break-system-packages --no-cache-dir \
+    #pydantic \
+    #paho-mqtt \
+    #PyYAML \
+    #lark \
+    #empy \
+    #numpy \
+    #catkin_pkg
 
 RUN source /opt/ros/${DISTRO}/setup.bash
 

@@ -47,3 +47,6 @@
   gz_type_name: "gz.msgs.Empty"
   ros_type_name: "std_msgs/msg/Empty"
   direction: ROS_TO_GZ
+
+expand_gz_topic_names: true
+use_sim_time: true
