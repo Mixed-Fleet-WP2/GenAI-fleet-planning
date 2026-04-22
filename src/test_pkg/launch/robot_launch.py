@@ -16,6 +16,7 @@ from launch_ros.parameter_descriptions import ParameterValue
 from launch.substitutions import LaunchConfiguration, TextSubstitution
 from launch_ros.actions import Node
 from ros_gz_bridge.actions import RosGzBridge
+from launch.actions import ExecuteProcess
 
 
 def generate_launch_description():
@@ -71,18 +72,27 @@ def generate_launch_description():
     # https://robotics.stackexchange.com/questions/85348/pass-parameters-to-xacro-from-launch-file-or-otherwise
     parsed_urdf = Command(['xacro', ' ', robot_sdf, ' namespace:=', namespace])
     
-    spawn_model = Node(
-        package='ros_gz_sim',
-        executable='create',
-        output='screen',
-        namespace=namespace,
-        parameters=[{'use_sim_time':True}],
-        arguments=[
-            '-name', namespace,
-            '-string', parsed_urdf,
-            '-x', pose['x'], '-y', pose['y'], '-z', pose['z'],
-            '-R', pose['roll'], '-P', pose['pitch'], '-Y', pose['yaw']
-            ]
+    # See: https://github.com/gazebosim/ros_gz/pull/380
+    spawn_model = ExecuteProcess(
+    cmd=[
+        'ros2',
+        'service',
+        'call',
+        '/world/empty/create',
+        'ros_gz_interfaces/srv/SpawnEntity',
+        [
+            '{',
+            'name: "', namespace, '", ',
+            'xml: "', parsed_urdf, '", ',
+            'allow_renaming: true, ',
+            'pose: {',
+            'position: {x: 0.0, y: 0.0, z: 0.0}, ',
+            'orientation: {x: 0.0, y: 0.0, z: 0.0, w: 1.0}',
+            '}',
+            '}'
+        ]
+        ],
+    output='screen'
     )
 
     run_robot_state_publisher = Node(
@@ -132,6 +142,7 @@ def generate_launch_description():
     ld.add_action(run_robot_state_publisher)
     ld.add_action(set_env_vars_resources)
     ld.add_action(bridge)
+    ld.add_action(spawn_model)
 
     return ld
 

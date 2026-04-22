@@ -13,6 +13,7 @@ services:
       - /tmp/.X11-unix:/tmp/.X11-unix
       - /mnt/wslg:/mnt/wslg
       - /usr/lib/wsl:/usr/lib/wsl
+      - ./fastdds.xml:/etc/fastdds.xml
     devices:
       - /dev/dxg:/dev/dxg
     environment:
@@ -28,9 +29,15 @@ services:
       MESA_D3D12_DEFAULT_ADAPTER_NAME: NVIDIA
       # Never use sofware rendering
       LIBGL_ALWAYS_SOFTWARE: 0
-      
+      ROS_DOMAIN_ID: 0
+      # If fast dds is used, the shared memory optimisation must be disabled
+      # https://github.com/eProsima/Fast-DDS/issues/1698#issuecomment-778039676
+      # https://robotics.stackexchange.com/a/98163
+      FASTRTPS_DEFAULT_PROFILES_FILE: /etc/fastdds.xml
+      RMW_IMPLEMENTATION: rmw_fastrtps_cpp
+      #RMW_IMPLEMENTATION: rmw_cyclonedds_cpp
       # This seems to also be WSL2-specific thing:
-      # Force Mesa to use the WSL wrapper instead of auto-detecting:
+      # Force Mesa to use the WSL wrapper instead of auto-detecting the graphics backend:
       # https://github.com/microsoft/wslg/issues/1332
       # https://robotics.stackexchange.com/questions/111677/gazebo-not-use-nvidia-gpu-when-i-installed-ros2-jazzy-by-using-docker-desktop-on
       # and: https://github.com/microsoft/WSL/issues/12412
@@ -49,5 +56,29 @@ services:
             #- driver: nvidia
               #count: all
               #capabilities: [gpu]
-    command: ["bash", "-c", "/usr/bin/glxinfo -B | grep renderer"]
+    #command: ["bash", "-c", "/usr/bin/glxinfo -B | grep renderer"]
+    entrypoint: ["/bin/bash"]
+  test_service:
+    build:
+      context: ..
+      dockerfile: docker_files/Dockerfile.multi_build.test
+    image: test_service:latest
+    container_name: test_service
+    network_mode: host
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./fastdds.xml:/etc/fastdds.xml
+    environment:
+      ROS_DOMAIN_ID: 0
+      #RMW_IMPLEMENTATION: rmw_cyclonedds_cpp
+      FASTRTPS_DEFAULT_PROFILES_FILE: /etc/fastdds.xml
+      RMW_IMPLEMENTATION: rmw_fastrtps_cpp
+
+    entrypoint: ["/bin/bash"]
+
+    # optional if you want startup ordering only
+    depends_on:
+      - gz_sim
+
     

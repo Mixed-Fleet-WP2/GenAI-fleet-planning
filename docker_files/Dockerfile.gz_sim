@@ -15,7 +15,12 @@ ARG WORKSPACE=gz_ws
 
 # Only what desktop-full doesn't already have
 RUN apt-get update && apt-get install -y \
-    #ros-${DISTRO}-rmw-cyclonedds-cpp \
+
+    # SWITHC OT CYCLONE DDS INSTEAD OF FAST DSS
+    # AS USING IT IS UNRELIABLE FOR CONTAINERS:
+    # https://robotics.stackexchange.com/questions/98161/ros2-foxy-nodes-cant-communicate-through-docker-container-border
+    # https://github.com/eProsima/Fast-DDS/issues/1698
+    ros-${DISTRO}-rmw-cyclonedds-cpp \
     #ros-${DISTRO}-rosbag2-storage-mcap \
     #chrony \
     mesa-utils \
@@ -58,7 +63,7 @@ RUN echo "source /opt/ros/${DISTRO}/setup.bash" >> ~/.bashrc && \
     echo "export GZ_SIM_SYSTEM_PLUGIN_PATH=/opt/ros/${DISTRO}/lib/" >> ~/.bashrc
 
 #ENTRYPOINT ["/ros_entrypoint.sh"]
-ENTRYPOINT [""]
+ENTRYPOINT ["/bin/bash"]
 
 # Can be replaced in docker-compose
-CMD ["bash", "-c", "source /opt/ros/${DISTRO}/setup.bash && gz sim empty.sdf -v 4"]
+#CMD ["bash", "-c", "source /opt/ros/${DISTRO}/setup.bash && gz sim empty.sdf -v 4"]

@@ -19,16 +19,6 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Install python dependencies for the test package
-#RUN pip3 install --user --break-system-packages --no-cache-dir \
-    #pydantic \
-    #paho-mqtt \
-    #PyYAML \
-    #lark \
-    #empy \
-    #numpy \
-    #catkin_pkg
-
 SHELL ["/bin/bash", "-c"]
 
 RUN source /opt/ros/${DISTRO}/setup.bash && \
@@ -61,6 +51,7 @@ COPY --from=builder /build_dir/src/test_pkg/package.xml ./src_meta/
 RUN apt-get update && apt-get install -y \
     nano \
     python3-pip \
+    ros-${DISTRO}-rmw-cyclonedds-cpp \
     sudo \
     # # Install the nav2 dependencies and other ros dependencies with rosdep
     # Depending on the base image, rosdep might already be initialized, so we ignore the error if it is already initialized
