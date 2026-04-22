@@ -110,3 +110,4 @@ RUN echo "if [ -f ~/${WORKSPACE}/install/setup.bash ]; then source ~/${WORKSPACE
 
 # Bash used for testing
 ENTRYPOINT ["/bin/bash"]
+#CMD ["ros2", "launch", "test_pkg", "robot_launch"]

@@ -1,8 +1,10 @@
 - service_name: "/world/empty/create"
-  gz_req_type_name: "gz.msgs.Pose"
-  gz_res_type_name: "gz.msgs.Boolean"
+  # Types for the request and responses
+  # https://gazebosim.org/api/gazebo/6/entity_creation.html
+  gz_req_type_name: "gz.msgs.EntityFactory"
+  gz_rep_type_name: "gz.msgs.Boolean"
   ros_type_name: "ros_gz_interfaces/srv/SpawnEntity"
-  direction: BIDIRECTIONAL
+  direction: ROS_TO_GZ
 
-expand_gz_topic_names: true
-use_sim_time: true
+# expand_gz_topic_names: true
+# use_sim_time: true

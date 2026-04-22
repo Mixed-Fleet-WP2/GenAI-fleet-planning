@@ -11,6 +11,7 @@ from launch.actions import (
     DeclareLaunchArgument,
 )
 
+from launch.actions import OpaqueFunction
 from launch.substitutions.command import Command
 from launch_ros.parameter_descriptions import ParameterValue
 from launch.substitutions import LaunchConfiguration, TextSubstitution
@@ -73,27 +74,34 @@ def generate_launch_description():
     parsed_urdf = Command(['xacro', ' ', robot_sdf, ' namespace:=', namespace])
     
     # See: https://github.com/gazebosim/ros_gz/pull/380
-    spawn_model = ExecuteProcess(
-    cmd=[
-        'ros2',
-        'service',
-        'call',
-        '/world/empty/create',
-        'ros_gz_interfaces/srv/SpawnEntity',
-        [
-            '{',
-            'name: "', namespace, '", ',
-            'xml: "', parsed_urdf, '", ',
-            'allow_renaming: true, ',
-            'pose: {',
-            'position: {x: 0.0, y: 0.0, z: 0.0}, ',
-            'orientation: {x: 0.0, y: 0.0, z: 0.0, w: 1.0}',
-            '}',
-            '}'
-        ]
-        ],
-    output='screen'
-    )
+
+    def spawn_robot(context, *args, **kwargs):
+        namespace_str = namespace.perform(context)
+        urdf_str = parsed_urdf.perform(context)
+        # Escape quotes inside the URDF for the shell command
+        urdf_escaped = urdf_str.replace('"', '\\"')
+
+        spawn = ExecuteProcess(
+            cmd=[
+                'ros2', 'service', 'call',
+                '/world/empty/create',
+                'ros_gz_interfaces/srv/SpawnEntity',
+                '{'
+                    'entity_factory: {'
+                    f'name: "{namespace_str}", '
+                    f'sdf: "{urdf_escaped}", '
+                    'allow_renaming: true, '
+                    'pose: {'
+                        'position: {x: 0.0, y: 0.0, z: 0.0}, '
+                        'orientation: {x: 0.0, y: 0.0, z: 0.0, w: 1.0}'
+                    '}'
+                    '}'
+                '}'
+            ],
+            output='screen'
+        )
+        return [spawn]
+
 
     run_robot_state_publisher = Node(
         package='robot_state_publisher',
@@ -109,31 +117,39 @@ def generate_launch_description():
     )
     
     bridge= RosGzBridge(
-        container_name="sim_env_container",
+       # container_name="sim_env_container",
         bridge_name=[namespace, "_bridge"],
         namespace=namespace,
         config_file=forklift_gz_bridge_config,
-  
+        use_composition=False,
         # Fixes a bug with extra bridge params, see:
         # https://github.com/gazebosim/ros_gz/pull/775
         
         #bridge_params=[ {
-               # 'expand_gz_topic_names': True,
+               #'expand_gz_topic_names': True,
                 #'use_sim_time': True,
             #}]
+
+         extra_bridge_params=[{"bridge_names": ["create_bridge"],
+        "bridges.create_bridge.service_name": "/world/warehouse/create",
+        "bridges.create_bridge.ros_type_name": "ros_gz_interfaces/srv/SpawnEntity",
+        "bridges.create_bridge.gz_req_type_name": "gz.msgs.EntityFactory",
+        "bridges.create_bridge.gz_rep_type_name": "gz.msgs.Boolean",
+        "bridges.create_bridge.direction": "BIDIRECTIONAL",
+        }]
     )
 
     # This is so package:// and model:// is resolved in sdf files
     # When urdf is converted to sdf, the package:// is replaced with model://
 
-    # Unlike resource finder that resolves the package:// to share/package_name
+    # Unlike ros' resource finder that resolves the package:// to share/package_name
     # gazebo uses model:// like a prefix to the path
     # This is why the path must be one higher
     set_env_vars_resources = AppendEnvironmentVariable(
         'GZ_SIM_RESOURCE_PATH', os.path.join(get_package_prefix('test_pkg'), 'share'))
 
     ld = LaunchDescription()
-
+    spawn_model = OpaqueFunction(function=spawn_robot)
     ld.add_action(declare_use_namespace)
     ld.add_action(declare_robot_sdf)
     ld.add_action(declare_use_gz)
@@ -142,7 +158,8 @@ def generate_launch_description():
     ld.add_action(run_robot_state_publisher)
     ld.add_action(set_env_vars_resources)
     ld.add_action(bridge)
-    ld.add_action(spawn_model)
+    #ld.add_action(spawn_model)
+    
 
     return ld
 

@@ -66,4 +66,4 @@ RUN echo "source /opt/ros/${DISTRO}/setup.bash" >> ~/.bashrc && \
 ENTRYPOINT ["/bin/bash"]
 
 # Can be replaced in docker-compose
-#CMD ["bash", "-c", "source /opt/ros/${DISTRO}/setup.bash && gz sim empty.sdf -v 4"]
+CMD ["bash", "-c", "source /opt/ros/${DISTRO}/setup.bash && gz sim empty.sdf -v 4"]
