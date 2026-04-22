@@ -1,9 +1,5 @@
-# Original template from
-# https://github.com/Cionix90/docker_simulator/blob/main/compose.yaml
 
-# Modifications for WSL2
-# https://github.com/gazebosim/gz-sim/issues/2595#issuecomment-3366197792
-
+# Modified from: https://github.com/Cionix90/docker_simulator/blob/main/compose.yaml
 version: '3.8'
 
 services:
@@ -21,67 +17,35 @@ services:
     tty: true
 
     environment:
-      # This has to be explicitly set for WSL2 to use the D3D12
-      - GALLIUM_DRIVER=d3d12
-      #- MESA_LOADER_DRIVER_OVERRIDE=d3d12
-      - LIBGL_ALWAYS_SOFTWARE=0
-      - MESA_D3D12_DEFAULT_ADAPTER_NAME=NVIDIA
-      # WSL2 display - uses both X11 and Wayland
       - DISPLAY=${DISPLAY}
-      - WAYLAND_DISPLAY=${WAYLAND_DISPLAY}
-      - XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR}
-      - LD_LIBRARY_PATH=/usr/lib/wsl/lib
-
-      # WSL2 audio
-      - PULSE_SERVER=${PULSE_SERVER}
-
-      # Qt settings
       - QT_X11_NO_MITSHM=1
-
-      # ROS 2
+      - XAUTHORITY=/tmp/.docker.xauth
       - ROS_DOMAIN_ID=0
       - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
       - RCUTILS_COLORIZED_OUTPUT=1
-
-      # Gazebo
       - GZ_VERSION=harmonic
-
-      # NVIDIA - WSL2 uses D3D12 translation layer
       - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=all,graphics,display,video,utility,compute
-
-      # Shell history
+      - __NV_PRIME_RENDER_OFFLOAD=1
+      - __GLX_VENDOR_LIBRARY_NAME=nvidia
       - HISTFILE=/home/ros/.bash_history
       - HISTFILESIZE=10000
 
     volumes:
-      # WSL2 display - needs both WSLg and X11 sockets
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
-      - /mnt/wslg:/mnt/wslg
-
-      # WSL2 GPU - Windows driver bridge
-      - /usr/lib/wsl:/usr/lib/wsl
-
-      # Your workspace
+      - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
       - ~/.bash_history:/home/ros/.bash_history
       - ./docker_simulator:/home/ros/docker_simulation_ws
+      - /dev/dri:/dev/dri
+      # Should be automatically injected by gpus: all
+      #- /dev/nvidia0:/dev/nvidia0
+      #- /dev/nvidiactl:/dev/nvidiactl
+      #- /dev/nvidia-modeset:/dev/nvidia-modeset
 
-      # GPU devices - WSL2 uses /dev/dxg instead of /dev/nvidia*
-      #- /dev/dri:/dev/dri
-
-    devices:
-      # WSL2 DirectX GPU device - replaces /dev/nvidia0 etc from bare Linux
-      - /dev/dxg:/dev/dxg
-
-    #privileged: true
-    #runtime: nvidia
-    #deploy:
-      #resources:
-        #reservations:
-          #devices:
-            #- driver: nvidia
-              #count: all
-              #capabilities: [gpu]
+    privileged: true
+    # Also handled by gpus: all, this is the legacy alternative
+    # runtime: nvidia
+    gpus: all
 
     command: >
       bash -c "

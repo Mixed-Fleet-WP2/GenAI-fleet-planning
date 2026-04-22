@@ -44,7 +44,8 @@ services:
       # and: https://www.reddit.com/r/wsl2/comments/1ohnhqr/trying_to_accelerate_wsl_apps_like_gazebo_using/
       GALLIUM_DRIVER: d3d12
     # gpus all deprecates runtime: nvidia but is effectively the same:
-    # https://github.com/NVIDIA/nvidia-docker#quickstart
+    # https://github.com/NVIDIA/nvidia-docker
+    # https://github.com/skypilot-org/skypilot/issues/3834
     gpus: all
     
     # OR:
