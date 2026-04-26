@@ -57,7 +57,7 @@ RUN apt-get update && apt-get install -y \
     # Depending on the base image, rosdep might already be initialized, so we ignore the error if it is already initialized
     && (rosdep init || true) \
     && rosdep update \
-    && rosdep install --from-paths ./src_meta --ignore-src -r -y \
+    && rosdep install --from-paths ./src_meta --ignore-src -r -y --skip-keys="gz_sim_vendor"\
     && rm -rf ./src_meta \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*

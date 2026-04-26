@@ -17,6 +17,7 @@ services:
     devices:
       - /dev/dxg:/dev/dxg
     environment:
+      GZ_PARTITION: my_sim
       # These are needed for WSL2 to properly use the GPU and display:
       # https://github.com/microsoft/wslg/blob/main/samples%2Fcontainer%2FContainers.md#containerizing-gui-applications-with-wslg
       DISPLAY: ${DISPLAY}
@@ -72,6 +73,7 @@ services:
     volumes:
       - ./fastdds.xml:/etc/fastdds.xml
     environment:
+      GZ_PARTITION: my_sim
       ROS_DOMAIN_ID: 0
       #RMW_IMPLEMENTATION: rmw_cyclonedds_cpp
       FASTRTPS_DEFAULT_PROFILES_FILE: /etc/fastdds.xml

@@ -11,13 +11,11 @@ from launch.actions import (
     DeclareLaunchArgument,
 )
 
-from launch.actions import OpaqueFunction
 from launch.substitutions.command import Command
 from launch_ros.parameter_descriptions import ParameterValue
 from launch.substitutions import LaunchConfiguration, TextSubstitution
 from launch_ros.actions import Node
 from ros_gz_bridge.actions import RosGzBridge
-from launch.actions import ExecuteProcess
 
 
 def generate_launch_description():
@@ -73,35 +71,19 @@ def generate_launch_description():
     # https://robotics.stackexchange.com/questions/85348/pass-parameters-to-xacro-from-launch-file-or-otherwise
     parsed_urdf = Command(['xacro', ' ', robot_sdf, ' namespace:=', namespace])
     
-    # See: https://github.com/gazebosim/ros_gz/pull/380
-
-    def spawn_robot(context, *args, **kwargs):
-        namespace_str = namespace.perform(context)
-        urdf_str = parsed_urdf.perform(context)
-        # Escape quotes inside the URDF for the shell command
-        urdf_escaped = urdf_str.replace('"', '\\"')
-
-        spawn = ExecuteProcess(
-            cmd=[
-                'ros2', 'service', 'call',
-                '/world/empty/create',
-                'ros_gz_interfaces/srv/SpawnEntity',
-                '{'
-                    'entity_factory: {'
-                    f'name: "{namespace_str}", '
-                    f'sdf: "{urdf_escaped}", '
-                    'allow_renaming: true, '
-                    'pose: {'
-                        'position: {x: 0.0, y: 0.0, z: 0.0}, '
-                        'orientation: {x: 0.0, y: 0.0, z: 0.0, w: 1.0}'
-                    '}'
-                    '}'
-                '}'
-            ],
-            output='screen'
-        )
-        return [spawn]
-
+    spawn_model = Node(
+        package='ros_gz_sim',
+        executable='create',
+        output='screen',
+        namespace=namespace,
+        parameters=[{'use_sim_time':True}],
+        arguments=[
+            '-name', namespace,
+            '-string', parsed_urdf,
+            '-x', pose['x'], '-y', pose['y'], '-z', pose['z'],
+            '-R', pose['roll'], '-P', pose['pitch'], '-Y', pose['yaw']
+            ]
+    )
 
     run_robot_state_publisher = Node(
         package='robot_state_publisher',
@@ -117,16 +99,16 @@ def generate_launch_description():
     )
     
     bridge= RosGzBridge(
-       # container_name="sim_env_container",
+        container_name="sim_env_container",
         bridge_name=[namespace, "_bridge"],
         namespace=namespace,
         config_file=forklift_gz_bridge_config,
-        use_composition=False,
+  
         # Fixes a bug with extra bridge params, see:
         # https://github.com/gazebosim/ros_gz/pull/775
         
         #bridge_params=[ {
-               #'expand_gz_topic_names': True,
+               # 'expand_gz_topic_names': True,
                 #'use_sim_time': True,
             #}]
     )
@@ -134,14 +116,14 @@ def generate_launch_description():
     # This is so package:// and model:// is resolved in sdf files
     # When urdf is converted to sdf, the package:// is replaced with model://
 
-    # Unlike ros' resource finder that resolves the package:// to share/package_name
+    # Unlike resource finder that resolves the package:// to share/package_name
     # gazebo uses model:// like a prefix to the path
     # This is why the path must be one higher
     set_env_vars_resources = AppendEnvironmentVariable(
         'GZ_SIM_RESOURCE_PATH', os.path.join(get_package_prefix('test_pkg'), 'share'))
 
     ld = LaunchDescription()
-    spawn_model = OpaqueFunction(function=spawn_robot)
+
     ld.add_action(declare_use_namespace)
     ld.add_action(declare_robot_sdf)
     ld.add_action(declare_use_gz)
@@ -150,11 +132,8 @@ def generate_launch_description():
     ld.add_action(run_robot_state_publisher)
     ld.add_action(set_env_vars_resources)
     ld.add_action(bridge)
-    #ld.add_action(spawn_model)
-    
 
     return ld
-
 
 
 

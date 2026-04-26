@@ -4,7 +4,7 @@
   gz_req_type_name: "gz.msgs.EntityFactory"
   gz_rep_type_name: "gz.msgs.Boolean"
   ros_type_name: "ros_gz_interfaces/srv/SpawnEntity"
-  direction: ROS_TO_GZ
+  #direction: ROS_TO_GZ
 
 # expand_gz_topic_names: true
 # use_sim_time: true
