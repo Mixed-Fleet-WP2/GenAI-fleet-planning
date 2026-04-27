@@ -26,7 +26,7 @@ find_package(std_msgs REQUIRED)
 gz_find_package(gflags REQUIRED PKGCONFIG gflags)
 
 # Install the python module for this package
-ament_python_install_package(${PROJECT_NAME})
+#ament_python_install_package(${PROJECT_NAME})
 
 # create
 add_executable(create src/create.cpp)

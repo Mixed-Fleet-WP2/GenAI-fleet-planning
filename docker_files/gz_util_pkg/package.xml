@@ -11,7 +11,7 @@
   <buildtool_depend>ament_cmake_python</buildtool_depend>
 
   <!--Might be able to be deprecated-->
-  <depend>gflags</depend>
+  <depend>libgflags-dev</depend>
   <depend>gz_math_vendor</depend>
   <depend>gz_msgs_vendor</depend>
   <depend>gz_transport_vendor</depend>

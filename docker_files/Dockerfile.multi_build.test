@@ -22,12 +22,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends\
 
 SHELL ["/bin/bash", "-c"]
 
-RUN source /opt/ros/${DISTRO}/setup.bash && \
-    colcon build --merge-install && \
-    mkdir -p /pkg_meta && \
+RUN apt-get update && \
+    source /opt/ros/${DISTRO}/setup.bash && \
+    (rosdep init || true) && \
+    rosdep update && \
+    rosdep install --from-paths ./src/test_pkg ./src/gz_util_pkg --ignore-src -r -y --skip-keys="ros_gz_sim" && \
+    source /opt/ros/${DISTRO}/setup.bash && \
+    colcon build --merge-install --cmake-args -DBUILD_TESTING=OFF && \
+    mkdir -p /pkg_meta/test_pkg /pkg_meta/gz_util_pkg && \
     cp ./src/test_pkg/package.xml /pkg_meta/test_pkg/ && \
     cp ./src/gz_util_pkg/package.xml /pkg_meta/gz_util_pkg/ && \
-    rm -rf build log src
+    rm -rf build log src /var/lib/apt/lists/*
 
 # This is the runtime layer
 # https://www.ros.org/reps/rep-2001.html#id95
@@ -81,13 +86,13 @@ COPY --from=builder /pkg_meta/gz_util_pkg/package.xml ./src_meta/gz_util_pkg/
 # Add a dummy gz-sim-vendor package to satisfy the dependency of ros-gz-sim
 
 # https://askubuntu.com/questions/18192/how-to-fake-a-package-version-installed
-RUN apt-get update && apt-get install -y --no-install-recommends equivs && \
-    printf 'Section: misc\nPriority: optional\nStandards-Version: 3.9.2\nPackage: ros-jazzy-gz-sim-vendor\nVersion: 99.0.0\nDescription: dummy\n' \
-      > /tmp/gz-sim-vendor.control && \
-    cd /tmp && \
-    equivs-build /tmp/gz-sim-vendor.control && \
-    dpkg -i /tmp/ros-jazzy-gz-sim-vendor_99.0.0_all.deb && \
-    apt-get install -y --no-install-recommends --fix-broken
+# RUN apt-get update && apt-get install -y --no-install-recommends equivs && \
+#     printf 'Section: misc\nPriority: optional\nStandards-Version: 3.9.2\nPackage: ros-jazzy-gz-sim-vendor\nVersion: 99.0.0\nDescription: dummy\n' \
+#       > /tmp/gz-sim-vendor.control && \
+#     cd /tmp && \
+#     equivs-build /tmp/gz-sim-vendor.control && \
+#     dpkg -i /tmp/ros-jazzy-gz-sim-vendor_99.0.0_all.deb && \
+#     apt-get install -y --no-install-recommends --fix-broken
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-pip \
@@ -97,7 +102,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     # Depending on the base image, rosdep might already be initialized, so we ignore the error if it is already initialized
     && (rosdep init || true) \
     && rosdep update \
-    && rosdep install --from-paths ./src_meta --ignore-src -r -y --dependency-types exec run --skip-keys="ros_gz_sim" \
+    && rosdep install --from-paths ./src_meta/gz_util_pkg ./src_meta/test_pkg --ignore-src -r -y --dependency-types exec run --skip-keys="ros_gz_sim" \
     && rm -rf ./src_meta \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
