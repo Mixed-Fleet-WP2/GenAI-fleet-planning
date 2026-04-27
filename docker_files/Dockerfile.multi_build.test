@@ -5,27 +5,33 @@ ARG BASE_IMAGE=ros
 ARG BASE_TAG=jazzy-ros-base
 ARG DISTRO=jazzy
 
-FROM osrf/ros:${DISTRO}-desktop-full AS builder
+FROM ${BASE_IMAGE}:${BASE_TAG} AS builder
 ARG DISTRO
 ARG BUILD_DIR=/build_dir
 WORKDIR ${BUILD_DIR}
 COPY  ./src/test_pkg ./src/test_pkg
+COPY ./docker_files/gz_util_pkg ./src/gz_util_pkg
 
 # Write the source command to the .bashrc to ensure ROS environment is set up for the user
 RUN echo "source /opt/ros/${DISTRO}/setup.bash" >> ~/.bashrc
 
-RUN apt-get update && apt-get install -y \
-    python3-pip \
+RUN apt-get update && apt-get install -y --no-install-recommends\
+    #python3-pip \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 SHELL ["/bin/bash", "-c"]
 
 RUN source /opt/ros/${DISTRO}/setup.bash && \
-    colcon build
+    colcon build --merge-install && \
+    mkdir -p /pkg_meta && \
+    cp ./src/test_pkg/package.xml /pkg_meta/test_pkg/ && \
+    cp ./src/gz_util_pkg/package.xml /pkg_meta/gz_util_pkg/ && \
+    rm -rf build log src
 
 # This is the runtime layer
-FROM ${BASE_IMAGE}:${BASE_TAG}
+# https://www.ros.org/reps/rep-2001.html#id95
+FROM ${BASE_IMAGE}:${BASE_TAG} AS runtime
 
 # These have to be redeclared in the second stage to be used in this stage
 # https://stackoverflow.com/questions/53681522/share-variable-in-multi-stage-dockerfile-arg-before-from-not-substituted
@@ -46,23 +52,57 @@ SHELL ["/bin/bash", "-c"]
 
 # Copy the package.xml files to the runtime layer
 # (to the root's home directory!)
-COPY --from=builder /build_dir/src/test_pkg/package.xml ./src_meta/
+COPY --from=builder /pkg_meta/test_pkg/package.xml ./src_meta/test_pkg/
+COPY --from=builder /pkg_meta/gz_util_pkg/package.xml ./src_meta/gz_util_pkg/
 
-RUN apt-get update && apt-get install -y \
-    nano \
+
+# The launch file depends on things in the ros_gz_sim ros package
+# but because we don't want the gz gui or the gz simulator to be installed
+# we install the dependencies manually instead of rosdep
+# and we ignore the gz-sim-vendor dependency because it provides
+# the gazebo simulator which we don't want to install in the runtime image
+# RUN apt-get update && \
+#     apt-get install -y --no-install-recommends \
+#         ros-jazzy-gz-math-vendor \
+#         ros-jazzy-gz-msgs-vendor \
+#         ros-jazzy-gz-transport-vendor \
+#         ros-jazzy-ros-gz-interfaces \
+#     && apt-get download ros-jazzy-ros-gz-sim \
+#     && dpkg --ignore-depends=ros-jazzy-gz-sim-vendor -i ./ros-jazzy-ros-gz-sim_*.deb \
+#     && rm ./ros-jazzy-ros-gz-sim_*.deb \
+#     && apt-get clean \
+#     && rm -rf /var/lib/apt/lists/*
+
+# https://github.com/ros-infrastructure/rosdep/issues/649
+# RUN echo "gz_sim_vendor:" > /etc/ros/rosdep/sources.list.d/99-ignore.yaml && \
+#     echo "  ubuntu: []" >> /etc/ros/rosdep/sources.list.d/99-ignore.yaml
+# RUN echo "yaml file:///etc/ros/rosdep/sources.list.d/99-ignore.yaml" >> /etc/ros/rosdep/sources.list.d/20-default.list
+
+# Add a dummy gz-sim-vendor package to satisfy the dependency of ros-gz-sim
+
+# https://askubuntu.com/questions/18192/how-to-fake-a-package-version-installed
+RUN apt-get update && apt-get install -y --no-install-recommends equivs && \
+    printf 'Section: misc\nPriority: optional\nStandards-Version: 3.9.2\nPackage: ros-jazzy-gz-sim-vendor\nVersion: 99.0.0\nDescription: dummy\n' \
+      > /tmp/gz-sim-vendor.control && \
+    cd /tmp && \
+    equivs-build /tmp/gz-sim-vendor.control && \
+    dpkg -i /tmp/ros-jazzy-gz-sim-vendor_99.0.0_all.deb && \
+    apt-get install -y --no-install-recommends --fix-broken
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-pip \
     ros-${DISTRO}-rmw-cyclonedds-cpp \
     sudo \
-    # # Install the nav2 dependencies and other ros dependencies with rosdep
+    # Install the ros dependencies with rosdep
     # Depending on the base image, rosdep might already be initialized, so we ignore the error if it is already initialized
     && (rosdep init || true) \
     && rosdep update \
-    && rosdep install --from-paths ./src_meta --ignore-src -r -y --skip-keys="gz_sim_vendor"\
+    && rosdep install --from-paths ./src_meta --ignore-src -r -y --dependency-types exec run --skip-keys="ros_gz_sim" \
     && rm -rf ./src_meta \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-    # If the user already exists (e.g. by default in the base image), delete it and create new
+# If the user already exists (e.g. by default in the base image), delete it and create new
 RUN if id -u ${USER_UID} ; then userdel `id -un ${USER_UID}` ; fi && \
     # Create a group named after the username
     groupadd --gid ${USER_GID} ${USERNAME} && \
@@ -88,23 +128,9 @@ COPY  --from=builder /build_dir/install ./install
 # Write the source command to the .bashrc to ensure ROS environment is set up for the user
 RUN echo "source /opt/ros/${DISTRO}/setup.bash" >> ~/.bashrc
 
-# Source the ros2 overlay
-RUN source /opt/ros/${DISTRO}/setup.bash
-
-# Install python dependencies
-#RUN pip3 install --user --break-system-packages --no-cache-dir \
-    #pydantic \
-    #paho-mqtt \
-    #PyYAML \
-    #lark \
-    #empy \
-    #numpy \
-    #catkin_pkg
-
-RUN source /opt/ros/${DISTRO}/setup.bash
 
 # Source the overlay
-RUN echo "if [ -f ~/${WORKSPACE}/install/setup.bash ]; then source ~/${WORKSPACE}/install/setup.bash; fi" >> ~/.bashrc
+RUN source ~/.bashrc && echo "if [ -f ~/${WORKSPACE}/install/setup.bash ]; then source ~/${WORKSPACE}/install/setup.bash; fi" >> ~/.bashrc
 
 #ENTRYPOINT ["ros2 launch test_pkg robot_launch.py"]
 
