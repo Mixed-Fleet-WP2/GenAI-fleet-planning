@@ -8,3 +8,9 @@
 
 # expand_gz_topic_names: true
 # use_sim_time: true
+
+- service_name: "/gz_ros/test/serviceclient/world_control"
+  ros_type_name: "ros_gz_interfaces/srv/ControlWorld"
+  gz_req_type_name: "gz.msgs.WorldControl"
+  gz_rep_type_name: "gz.msgs.Boolean"
+ 

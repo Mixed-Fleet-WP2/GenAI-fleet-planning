@@ -1,6 +1,9 @@
+# This file is modified from:
+# https://github.com/gazebosim/ros_gz/blob/jazzy/ros_gz_sim/src/create.cpp
+
 cmake_minimum_required(VERSION 3.5)
 
-project(gz_util_package)
+project(ros_gz_sim)
 
 # Default to C++14
 if(NOT CMAKE_CXX_STANDARD)

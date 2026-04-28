@@ -12,27 +12,29 @@ WORKDIR ${BUILD_DIR}
 COPY  ./src/test_pkg ./src/test_pkg
 COPY ./docker_files/gz_util_pkg ./src/gz_util_pkg
 
-# Write the source command to the .bashrc to ensure ROS environment is set up for the user
-RUN echo "source /opt/ros/${DISTRO}/setup.bash" >> ~/.bashrc
-
-RUN apt-get update && apt-get install -y --no-install-recommends\
-    #python3-pip \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
 SHELL ["/bin/bash", "-c"]
 
-RUN apt-get update && \
-    source /opt/ros/${DISTRO}/setup.bash && \
-    (rosdep init || true) && \
-    rosdep update && \
-    rosdep install --from-paths ./src/test_pkg ./src/gz_util_pkg --ignore-src -r -y --skip-keys="ros_gz_sim" && \
-    source /opt/ros/${DISTRO}/setup.bash && \
-    colcon build --merge-install --cmake-args -DBUILD_TESTING=OFF && \
-    mkdir -p /pkg_meta/test_pkg /pkg_meta/gz_util_pkg && \
-    cp ./src/test_pkg/package.xml /pkg_meta/test_pkg/ && \
-    cp ./src/gz_util_pkg/package.xml /pkg_meta/gz_util_pkg/ && \
-    rm -rf build log src /var/lib/apt/lists/*
+RUN apt-get update \
+    && source /opt/ros/${DISTRO}/setup.bash \
+    && (rosdep init || true) \
+    && rosdep update \
+    && rosdep install \
+        --from-paths ./src/test_pkg ./src/gz_util_pkg \
+        --ignore-src -r -y \
+        --skip-keys="ros_gz_sim" \
+    && source /opt/ros/${DISTRO}/setup.bash \
+    && colcon build \
+        --merge-install \
+        --cmake-args -DBUILD_TESTING=OFF \
+    && mkdir -p /pkg_meta/test_pkg /pkg_meta/gz_util_pkg \
+    && cp ./src/test_pkg/package.xml /pkg_meta/test_pkg/ \
+    && cp ./src/gz_util_pkg/package.xml /pkg_meta/gz_util_pkg/ \
+    && rm -rf build log src \
+    # Apt-get clean would probably be not necessary because ubuntu
+    # images do that automatically (ubuntu is base of the ros images), but we do it just in case
+    # https://docs.docker.com/build/building/best-practices/#apt-get
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # This is the runtime layer
 # https://www.ros.org/reps/rep-2001.html#id95
@@ -57,45 +59,11 @@ SHELL ["/bin/bash", "-c"]
 
 # Copy the package.xml files to the runtime layer
 # (to the root's home directory!)
+# For installing the dependencies with rosdep
 COPY --from=builder /pkg_meta/test_pkg/package.xml ./src_meta/test_pkg/
 COPY --from=builder /pkg_meta/gz_util_pkg/package.xml ./src_meta/gz_util_pkg/
 
-
-# The launch file depends on things in the ros_gz_sim ros package
-# but because we don't want the gz gui or the gz simulator to be installed
-# we install the dependencies manually instead of rosdep
-# and we ignore the gz-sim-vendor dependency because it provides
-# the gazebo simulator which we don't want to install in the runtime image
-# RUN apt-get update && \
-#     apt-get install -y --no-install-recommends \
-#         ros-jazzy-gz-math-vendor \
-#         ros-jazzy-gz-msgs-vendor \
-#         ros-jazzy-gz-transport-vendor \
-#         ros-jazzy-ros-gz-interfaces \
-#     && apt-get download ros-jazzy-ros-gz-sim \
-#     && dpkg --ignore-depends=ros-jazzy-gz-sim-vendor -i ./ros-jazzy-ros-gz-sim_*.deb \
-#     && rm ./ros-jazzy-ros-gz-sim_*.deb \
-#     && apt-get clean \
-#     && rm -rf /var/lib/apt/lists/*
-
-# https://github.com/ros-infrastructure/rosdep/issues/649
-# RUN echo "gz_sim_vendor:" > /etc/ros/rosdep/sources.list.d/99-ignore.yaml && \
-#     echo "  ubuntu: []" >> /etc/ros/rosdep/sources.list.d/99-ignore.yaml
-# RUN echo "yaml file:///etc/ros/rosdep/sources.list.d/99-ignore.yaml" >> /etc/ros/rosdep/sources.list.d/20-default.list
-
-# Add a dummy gz-sim-vendor package to satisfy the dependency of ros-gz-sim
-
-# https://askubuntu.com/questions/18192/how-to-fake-a-package-version-installed
-# RUN apt-get update && apt-get install -y --no-install-recommends equivs && \
-#     printf 'Section: misc\nPriority: optional\nStandards-Version: 3.9.2\nPackage: ros-jazzy-gz-sim-vendor\nVersion: 99.0.0\nDescription: dummy\n' \
-#       > /tmp/gz-sim-vendor.control && \
-#     cd /tmp && \
-#     equivs-build /tmp/gz-sim-vendor.control && \
-#     dpkg -i /tmp/ros-jazzy-gz-sim-vendor_99.0.0_all.deb && \
-#     apt-get install -y --no-install-recommends --fix-broken
-
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    python3-pip \
     ros-${DISTRO}-rmw-cyclonedds-cpp \
     sudo \
     # Install the ros dependencies with rosdep
@@ -126,13 +94,9 @@ WORKDIR /home/${USERNAME}/${WORKSPACE}
 
 # Copy the created binaries to the new user's workspace NOT ROOT's!
 COPY  --from=builder /build_dir/install ./install
-# For installing the dependencies with rosdep, we need the package.xml files
-# Copy them directly to the workspace
-
 
 # Write the source command to the .bashrc to ensure ROS environment is set up for the user
 RUN echo "source /opt/ros/${DISTRO}/setup.bash" >> ~/.bashrc
-
 
 # Source the overlay
 RUN source ~/.bashrc && echo "if [ -f ~/${WORKSPACE}/install/setup.bash ]; then source ~/${WORKSPACE}/install/setup.bash; fi" >> ~/.bashrc

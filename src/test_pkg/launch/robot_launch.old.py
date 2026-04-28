@@ -99,7 +99,7 @@ def generate_launch_description():
     )
     
     bridge= RosGzBridge(
-        container_name="sim_env_container",
+        #container_name="sim_env_container",
         bridge_name=[namespace, "_bridge"],
         namespace=namespace,
         config_file=forklift_gz_bridge_config,
