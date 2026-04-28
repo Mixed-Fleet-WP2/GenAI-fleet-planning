@@ -70,7 +70,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     # Depending on the base image, rosdep might already be initialized, so we ignore the error if it is already initialized
     && (rosdep init || true) \
     && rosdep update \
-    && rosdep install --from-paths ./src_meta/gz_util_pkg ./src_meta/test_pkg --ignore-src -r -y --dependency-types exec runDo \
+    && rosdep install --from-paths ./src_meta/gz_util_pkg ./src_meta/test_pkg --ignore-src -r -y --dependency-types exec run --skip-keys="ros_gz_sim" \
     && rm -rf ./src_meta \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*

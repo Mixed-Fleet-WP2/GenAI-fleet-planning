@@ -3,7 +3,7 @@
 
 cmake_minimum_required(VERSION 3.5)
 
-project(ros_gz_sim2)
+project(ros_gz_sim)
 
 # Default to C++14
 if(NOT CMAKE_CXX_STANDARD)
