@@ -2,7 +2,7 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <!-- Match package name to the real ros_gz_sim-->
-  <name>ros_gz_sim</name>
+  <name>ros_gz_sim2</name>
   <version>0.0.0</version>
   <description>ROS interface for spawning entities into Gazebo.</description>
   <maintainer email="you@example.com">Your Name</maintainer>

@@ -98,20 +98,25 @@ def generate_launch_description():
         remappings=remappings,
     )
     
-    bridge= RosGzBridge(
-        #container_name="sim_env_container",
-        bridge_name=[namespace, "_bridge"],
-        namespace=namespace,
-        config_file=forklift_gz_bridge_config,
-  
+    # The node internally loads itself to the specified container so no need to make it below
         # Fixes a bug with extra bridge params, see:
         # https://github.com/gazebosim/ros_gz/pull/775
-        
-        #bridge_params=[ {
-               # 'expand_gz_topic_names': True,
-                #'use_sim_time': True,
-            #}]
+
+        # In addition, allows us to start a service bridge by passing
+        # extra params, because services cannot yet be defined with yaml
+        # although ros_gz_bridge itself supports launching them
+
+    bridge = RosGzBridge(
+        bridge_name="global_gz_bridge",
+        config_file=forklift_gz_bridge_config,
     )
+
+    bridge2 = Node(
+        package="ros_gz_bridge", 
+        executable="parameter_bridge", 
+        name="service_bridge", 
+        output="screen", 
+        parameters=[ { "config_file": forklift_gz_bridge_config} ], )
 
     # This is so package:// and model:// is resolved in sdf files
     # When urdf is converted to sdf, the package:// is replaced with model://
@@ -132,6 +137,7 @@ def generate_launch_description():
     ld.add_action(run_robot_state_publisher)
     ld.add_action(set_env_vars_resources)
     ld.add_action(bridge)
+    #ld.add_action(bridge2)
 
     return ld
 
