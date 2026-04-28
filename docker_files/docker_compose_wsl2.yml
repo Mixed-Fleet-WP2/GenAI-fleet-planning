@@ -59,8 +59,6 @@ services:
               #count: all
               #capabilities: [gpu]
     #command: ["bash", "-c", "/usr/bin/glxinfo -B | grep renderer"]
-    entrypoint: ["/bin/bash", "-c"]
-    command: ["source /opt/ros/jazzy/setup.bash && gz sim empty.sdf -v 4"]
   test_service:
     build:
       context: ..
@@ -79,9 +77,6 @@ services:
       FASTRTPS_DEFAULT_PROFILES_FILE: /etc/fastdds.xml
       RMW_IMPLEMENTATION: rmw_fastrtps_cpp
       GZ_IP: 172.17.0.1
-
-    entrypoint: ["/bin/bash"]
-
     # optional if you want startup ordering only
     depends_on:
       - gz_sim
