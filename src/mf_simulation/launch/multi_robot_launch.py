@@ -50,12 +50,9 @@ def create_robot_instances(context, *args, **kwargs):
         start_pos = robot.get("starting_position", [3.0, -1.0, 0.0])
         start_orient = robot.get("starting_orientation", [0.0, 0.0, 0.0])
 
-        print("odom from file:", robot["use_pure_odom"], flush=True)
-
         use_pure_odom = robot.get("use_pure_odom", False)
-        
         pkg = get_package_share_directory(robot_package)
-        print("odom use is:", use_pure_odom, flush=True)
+  
         nav2_params_file = os.path.join(pkg, 'config', nav2_config)
         
         group = GroupAction([  

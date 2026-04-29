@@ -228,7 +228,9 @@ def generate_launch_description():
     )
     
     bridge= RosGzBridge(
-        container_name="sim_env_container",
+        # Containers do not work for docker containers
+        # because memory is not shared
+        #container_name="sim_env_container",
         bridge_name=[namespace, "_bridge"],
         namespace=namespace,
         config_file=forklift_gz_bridge_config,
@@ -260,12 +262,17 @@ def generate_launch_description():
         remappings=remappings
     )
 
+    # DO NOT DELETE THE COMMENT HERE, IT IS IMPORTANT.
+
     # This is so package:// and model:// is resolved in sdf files
     # When urdf is converted to sdf, the package:// is replaced with model://
 
     # Unlike resource finder that resolves the package:// to share/package_name
     # gazebo uses model:// like a prefix to the path
     # This is why the path must be one higher
+    # than what we would get with get_package_share_directory, which points to the share/package_name
+    # If we were to use that, the path would end up like model://share/package_name/package_name/
+    # and not model://share/package_name/ which is what we want
     set_env_vars_resources = AppendEnvironmentVariable(
         'GZ_SIM_RESOURCE_PATH', os.path.join(get_package_prefix('forklift_cpp'), 'share'))
 
