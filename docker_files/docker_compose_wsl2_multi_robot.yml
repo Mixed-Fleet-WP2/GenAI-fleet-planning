@@ -1,0 +1,113 @@
+services:
+  gz_sim:
+    build:
+      context: .
+      dockerfile: Dockerfile.gz_sim
+    image: gz_sim:latest
+    container_name: gz_sim
+    network_mode: host
+    stdin_open: true
+    tty: true
+    volumes:
+      # See link below for why these are neede
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - /mnt/wslg:/mnt/wslg
+      - /usr/lib/wsl:/usr/lib/wsl
+      - ./fastdds.xml:/etc/fastdds.xml
+      - gz_models:/data:ro
+    devices:
+      - /dev/dxg:/dev/dxg
+    environment:
+      GZ_PARTITION: my_sim
+      # These are needed for WSL2 to properly use the GPU and display:
+      # https://github.com/microsoft/wslg/blob/main/samples%2Fcontainer%2FContainers.md#containerizing-gui-applications-with-wslg
+      DISPLAY: ${DISPLAY}
+      WAYLAND_DISPLAY: ${WAYLAND_DISPLAY}
+      XDG_RUNTIME_DIR: ${XDG_RUNTIME_DIR}
+      PULSE_SERVER: ${PULSE_SERVER}
+      LD_LIBRARY_PATH: /usr/lib/wsl/lib:${LD_LIBRARY_PATH}
+      # Laptops with hybrid graphics may need this to ensure the NVIDIA GPU is used instead of integrated graphics:
+      # https://github.com/microsoft/wslg/wiki/GPU-selection-in-WSLg
+      MESA_D3D12_DEFAULT_ADAPTER_NAME: NVIDIA
+      # Never use sofware rendering
+      LIBGL_ALWAYS_SOFTWARE: 0
+      ROS_DOMAIN_ID: 0
+      # If fast dds is used, the shared memory optimisation must be disabled
+      # https://github.com/eProsima/Fast-DDS/issues/1698#issuecomment-778039676
+      # https://robotics.stackexchange.com/a/98163
+      FASTRTPS_DEFAULT_PROFILES_FILE: /etc/fastdds.xml
+      RMW_IMPLEMENTATION: rmw_fastrtps_cpp
+      #RMW_IMPLEMENTATION: rmw_cyclonedds_cpp
+      # This seems to also be WSL2-specific thing:
+      # Force Mesa to use the WSL wrapper instead of auto-detecting the graphics backend:
+      # https://github.com/microsoft/wslg/issues/1332
+      # https://robotics.stackexchange.com/questions/111677/gazebo-not-use-nvidia-gpu-when-i-installed-ros2-jazzy-by-using-docker-desktop-on
+      # and: https://github.com/microsoft/WSL/issues/12412
+      # and: https://www.reddit.com/r/wsl2/comments/1ohnhqr/trying_to_accelerate_wsl_apps_like_gazebo_using/
+      GALLIUM_DRIVER: d3d12
+      # This tells gazebo where to find the models, so it should
+      # be set to the same path that is mounted as a volume to the gazebo container
+      GZ_SIM_RESOURCE_PATH: /gz_models
+    # gpus all deprecates runtime: nvidia but is effectively the same:
+    # https://github.com/NVIDIA/nvidia-docker
+    # https://github.com/skypilot-org/skypilot/issues/3834
+      
+    gpus: all
+    command: >
+      bash -c "
+      echo 'waiting for file...';
+      until [ -f /data/test_service_output.txt ]; do sleep 1; done;
+      cat /data/test_service_output.txt;
+      sleep 3600
+      "
+    depends_on:
+      - test_service
+    
+  test_service:
+    build:
+      context: ..
+      dockerfile: docker_files/Dockerfile.robot
+      args:
+        - PKG_NAME=forklift_cpp
+    container_name: drone_1
+    image: forklift_cpp:latest
+    network_mode: host
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./fastdds.xml:/etc/fastdds.xml
+      # The models file copied to this folder need to be of the format!
+      # /gz_models/<pkg_name>/models/...
+      - gz_models:/data
+    environment:
+      GZ_PARTITION: my_sim
+      ROS_DOMAIN_ID: 0
+      #RMW_IMPLEMENTATION: rmw_cyclonedds_cpp
+      FASTRTPS_DEFAULT_PROFILES_FILE: /etc/fastdds.xml
+      RMW_IMPLEMENTATION: rmw_fastrtps_cpp
+      GZ_IP: 172.17.0.1
+      LAUNCH_FILE_NAME: forklift_launch.py
+      ROS_PKG_NAME: forklift_cpp
+      NAMESPACE: forklift_1
+    #entrypoint: ["/bin/bash", "-c"]
+    # The entrypoint is bash -c as seen in the image, so we can just pass the ros2 launch command here 
+    # https://stackoverflow.com/questions/40447029/docker-compose-environment-variable-for-command
+    # Use the exec form because entrypoint is already bash -c as defined in the Dockerfile
+    #command: ["source /opt/ros/$$ROS_DISTRO/setup.bash && ros2 launch $$ROS_PKG_NAME $$LAUNCH_FILE_NAME --ros-args -p namespace:=$$NAMESPACE"]
+    # command: >
+    #   bash -c "
+    #   cp -r /models_staging/* /gz_models/ &&
+    #   source /opt/ros/$$ROS_DISTRO/setup.bash && 
+    #   ros2 launch $$ROS_PKG_NAME $$LAUNCH_FILE_NAME --ros-args -p namespace:=$$NAMESPACE
+    #   "
+    entrypoint: ["/bin/bash", "-c"]
+    command: ["echo 'hello' > /data/test.txt && sleep infinity"]
+    # command: >
+    #   bash -c "echo 'hello from test_service' > /data/test_service_output.txt && sleep infinity"
+    # optional if you want startup ordering only
+    # depends_on:
+    # - gz_sim
+volumes:
+  gz_models:
+
+    

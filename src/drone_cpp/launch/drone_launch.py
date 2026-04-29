@@ -329,9 +329,6 @@ def generate_launch_description():
 
     ld.add_action(declare_use_gz)
     ld.add_action(declare_drone_name)
-
-    #ld.add_action(handler)
-
     ld.add_action(declare_robot_sdf)
     ld.add_action(declare_namespace)
     ld.add_action(declare_use_sim_time)

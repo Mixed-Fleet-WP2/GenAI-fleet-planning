@@ -19,6 +19,7 @@
   <depend>sdformat_urdf</depend>
   <depend>sensor_msgs</depend>
   <depend>mf_utils</depend>
+  <depend>ros_gz_sim</depend>
   
 
   <export>

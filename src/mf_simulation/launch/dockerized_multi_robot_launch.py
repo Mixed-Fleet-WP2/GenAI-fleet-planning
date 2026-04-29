@@ -154,8 +154,8 @@ def generate_launch_description():
         output='both',
     )
 
-    # Headless — no GUI client started here.
-    # Start `gz sim -g` on the host if you need the GUI.
+    # A separate client for processing
+    # MQTT messages because there is no gui launched
     gazebo_headless_client = ExecuteProcess(
         cmd=['ros2', 'run', 'mf_simulation', 'json_client', mqtt_host, mqtt_port],
         name='mf_simulation_json_client',

@@ -1,9 +1,0 @@
-# Global stuff
-Section: misc
-Priority: optional
-Standards-Version: 3.9.2
-
-# Package specific stuff
-Package: ros-jazzy-gz-sim-vendor
-Description: dummy package to prevent installation of heavy gz sim
-
