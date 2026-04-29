@@ -1,16 +1,23 @@
+
 # First we have the build layer
 
 # Global args
-ARG BASE_IMAGE=ros
-ARG BASE_TAG=jazzy-ros-base
+ARG BUILD_IMAGE=ros
+ARG BUILD_TAG=jazzy-ros-base
+ARG RUNTIME_BASE_IMAGE=osrf/ros
+ARG RUNTIME_BASE_TAG=jazzy-desktop-full
 ARG DISTRO=jazzy
+ARG PKG_NAME
 
-FROM ${BASE_IMAGE}:${BASE_TAG} AS builder
+
+FROM ${BUILD_IMAGE}:${BUILD_TAG} AS builder
 ARG DISTRO
 ARG BUILD_DIR=/build_dir
+# Redeclare the PKG_NAME arg in this stage to be able to use it in this stage
+ARG PKG_NAME
 WORKDIR ${BUILD_DIR}
-COPY  ./src/test_pkg ./src/test_pkg
-COPY ./docker_files/gz_util_pkg ./src/gz_util_pkg
+# Since this is a monoloithic image, we copy the whole src directory to the builder stage, not just the package we want to build, because the packages have dependencies on each other
+COPY  ./src ./src
 
 SHELL ["/bin/bash", "-c"]
 
@@ -19,16 +26,25 @@ RUN apt-get update \
     && (rosdep init || true) \
     && rosdep update \
     && rosdep install \
-        --from-paths ./src/test_pkg ./src/gz_util_pkg \
+        --from-paths ./src \
         --ignore-src -r -y \
-        --skip-keys="ros_gz_sim" \
     && source /opt/ros/${DISTRO}/setup.bash \
     && colcon build \
         --merge-install \
-        --cmake-args -DBUILD_TESTING=OFF \
-    && mkdir -p /pkg_meta/test_pkg /pkg_meta/gz_util_pkg \
-    && cp ./src/test_pkg/package.xml /pkg_meta/test_pkg/ \
-    && cp ./src/gz_util_pkg/package.xml /pkg_meta/gz_util_pkg/ \
+        --cmake-args -DBUILD_TESTING=OFF \ 
+    && mkdir -p /pkg_meta \ 
+    # We need to create a directory for each package, because rosdep needs the package.xml files to be in a directory named after the package
+    && for dir in ./src/*; do \
+    # If the item is not a directory, skip it 
+    # (e.g. if there are files in the src directory), otherwise create a directory in /pkg_meta with the same name as the package
+      [ -d "$dir" ] || continue; \
+      mkdir -p "/pkg_meta/$(basename "$dir")"; \
+    done \
+    # Then the same way copy the package.xml files to the corresponding directories in /pkg_meta
+    && for dir in ./src/*; do \
+      [ -d "$dir" ] || continue; \
+      cp "$dir/package.xml" "/pkg_meta/$(basename "$dir")/"; \
+    done \
     && rm -rf build log src \
     # Apt-get clean would probably be not necessary because ubuntu
     # images do that automatically (ubuntu is base of the ros images), but we do it just in case
@@ -38,20 +54,21 @@ RUN apt-get update \
 
 # This is the runtime layer
 # https://www.ros.org/reps/rep-2001.html#id95
-FROM ${BASE_IMAGE}:${BASE_TAG} AS runtime
+FROM ${RUNTIME_BASE_IMAGE}:${RUNTIME_BASE_TAG} AS runtime
 
 # These have to be redeclared in the second stage to be used in this stage
 # https://stackoverflow.com/questions/53681522/share-variable-in-multi-stage-dockerfile-arg-before-from-not-substituted
-ARG BASE_IMAGE
-ARG BASE_TAG
+ARG RUNTIME_BASE_IMAGE
+ARG RUNTIME_BASE_TAG
 ARG DISTRO
+ARG PKG_NAME
 
 ENV DEBIAN_FRONTEND=noninteractive
 
 ARG USERNAME=ros
 ARG USER_UID=1000
 ARG USER_GID=${USER_UID}
-ARG WORKSPACE=test_ws
+ARG WORKSPACE=ws
 
 # Use bash as the default shell for subsequent commands
 # because sh does not understand commands like "source"
@@ -60,18 +77,21 @@ SHELL ["/bin/bash", "-c"]
 # Copy the package.xml files to the runtime layer
 # (to the root's home directory!)
 # For installing the dependencies with rosdep
-COPY --from=builder /pkg_meta/test_pkg/package.xml ./src_meta/test_pkg/
-COPY --from=builder /pkg_meta/gz_util_pkg/package.xml ./src_meta/gz_util_pkg/
+COPY --from=builder /pkg_meta ./src_meta
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ros-${DISTRO}-rmw-cyclonedds-cpp \
-    sudo \
+    python3-pip \
+    sudo \ 
+    # Different Paho version is needed than apt
+    && pip3 install --no-cache-dir paho-mqtt==2.1.0 "pydantic>=2,<3" --break-system-packages \
     # Install the ros dependencies with rosdep
     # Depending on the base image, rosdep might already be initialized, so we ignore the error if it is already initialized
     && (rosdep init || true) \
     && rosdep update \
-    && rosdep install --from-paths ./src_meta/gz_util_pkg ./src_meta/test_pkg --ignore-src -r -y --dependency-types exec run --skip-keys="ros_gz_sim" \
-    && rm -rf ./src_meta \
+    # --dependency-types exec run
+    && rosdep install --from-paths ./src_meta --ignore-src -r -y  \
+    #&& rm -rf ./src_meta \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -84,6 +104,7 @@ RUN if id -u ${USER_UID} ; then userdel `id -un ${USER_UID}` ; fi && \
     useradd --uid ${USER_UID} --gid ${USER_GID} -m ${USERNAME} \
     && echo ${USERNAME} ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/${USERNAME} \
     && chmod 0440 /etc/sudoers.d/${USERNAME}
+
 
 USER ${USERNAME}
 
@@ -101,8 +122,4 @@ RUN echo "source /opt/ros/${DISTRO}/setup.bash" >> ~/.bashrc
 # Source the overlay
 RUN source ~/.bashrc && echo "if [ -f ~/${WORKSPACE}/install/setup.bash ]; then source ~/${WORKSPACE}/install/setup.bash; fi" >> ~/.bashrc
 
-#ENTRYPOINT ["ros2 launch test_pkg robot_launch.py"]
-
-# Bash used for testing
 ENTRYPOINT ["/bin/bash"]
-#CMD ["ros2", "launch", "test_pkg", "robot_launch"]

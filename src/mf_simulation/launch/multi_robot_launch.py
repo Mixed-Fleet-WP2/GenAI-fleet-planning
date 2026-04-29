@@ -263,27 +263,27 @@ def generate_launch_description():
         # extra params, because services cannot yet be defined with yaml
         # although ros_gz_bridge itself supports launching them
 
-        extra_bridge_params=[{"bridge_names": ["service_bridge", "create_bridge", "delete_bridge"],
-        "bridges.service_bridge.service_name": "/world/warehouse/set_pose",
-        "bridges.service_bridge.ros_type_name": "ros_gz_interfaces/srv/SetEntityPose",
-        "bridges.service_bridge.gz_req_type_name": "gz.msgs.Pose",
-        "bridges.service_bridge.gz_rep_type_name": "gz.msgs.Boolean",
-        "bridges.service_bridge.direction": "BIDIRECTIONAL",
+        extra_bridge_params={
+            'bridge_names': ['service_bridge', 'create_bridge', 'delete_bridge'],
 
-        "bridges.create_bridge.service_name": "/world/warehouse/create",
-        "bridges.create_bridge.ros_type_name": "ros_gz_interfaces/srv/SpawnEntity",
-        "bridges.create_bridge.gz_req_type_name": "gz.msgs.EntityFactory",
-        "bridges.create_bridge.gz_rep_type_name": "gz.msgs.Boolean",
-        "bridges.create_bridge.direction": "BIDIRECTIONAL",
+            'bridges.service_bridge.service_name':    '/world/warehouse/set_pose',
+            'bridges.service_bridge.ros_type_name':   'ros_gz_interfaces/srv/SetEntityPose',
+            'bridges.service_bridge.gz_req_type_name':'gz.msgs.Pose',
+            'bridges.service_bridge.gz_rep_type_name':'gz.msgs.Boolean',
+            'bridges.service_bridge.direction':        'BIDIRECTIONAL',
 
-        "bridges.delete_bridge.service_name": "/world/warehouse/remove",
-        "bridges.delete_bridge.ros_type_name": "ros_gz_interfaces/srv/DeleteEntity",
-        "bridges.delete_bridge.gz_req_type_name": "gz.msgs.Entity",
-        "bridges.delete_bridge.gz_rep_type_name": "gz.msgs.Boolean",
-        "bridges.delete_bridge.direction": "BIDIRECTIONAL",
+            'bridges.create_bridge.service_name':     '/world/warehouse/create',
+            'bridges.create_bridge.ros_type_name':    'ros_gz_interfaces/srv/SpawnEntity',
+            'bridges.create_bridge.gz_req_type_name': 'gz.msgs.EntityFactory',
+            'bridges.create_bridge.gz_rep_type_name': 'gz.msgs.Boolean',
+            'bridges.create_bridge.direction':         'BIDIRECTIONAL',
 
-
-        }]
+            'bridges.delete_bridge.service_name':     '/world/warehouse/remove',
+            'bridges.delete_bridge.ros_type_name':    'ros_gz_interfaces/srv/DeleteEntity',
+            'bridges.delete_bridge.gz_req_type_name': 'gz.msgs.Entity',
+            'bridges.delete_bridge.gz_rep_type_name': 'gz.msgs.Boolean',
+            'bridges.delete_bridge.direction':         'BIDIRECTIONAL',
+        },
     )
 
     # Unused for now in favor of RosGzBridge- action
@@ -314,13 +314,13 @@ def generate_launch_description():
     load_composable_nodes = LoadComposableNodes(
         target_container='sim_env_container',
         composable_node_descriptions=[
-            ComposableNode(
-                package='mqtt_client',
-                plugin='mqtt_client::MqttClient',
-                name='global_mqtt_client',
-                parameters=[global_mqtt_config_file],
-                extra_arguments=[{'use_intra_process_comms': True}],
-             ),
+            # ComposableNode(
+            #     package='mqtt_client',
+            #     plugin='mqtt_client::MqttClient',
+            #     name='global_mqtt_client',
+            #     parameters=[global_mqtt_config_file],
+            #     extra_arguments=[{'use_intra_process_comms': True}],
+            #  ),
             ComposableNode(
                 package='state_bridge',
                 plugin='state_bridge::StateBridge',
@@ -367,13 +367,13 @@ def generate_launch_description():
  
     ld.add_action(load_composable_nodes)
 
-    #ld.add_action(gz_bridge)
+    ld.add_action(gz_bridge)
     ld.add_action(gazebo_server)
     ld.add_action(gazebo_client)
-    ld.add_action(start_interface)
+    #ld.add_action(start_interface)
     ld.add_action(start_headless_client)
     #ld.add_action(service_bridge)
-    ld.add_action(gz_bridge)
+
     
     #ld.add_action(standalone_state_bridge)
     

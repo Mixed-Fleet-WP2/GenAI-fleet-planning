@@ -1,10 +1,10 @@
 services:
-  gz_sim:
+  meteor_sim:
     build:
-      context: .
-      dockerfile: Dockerfile.gz_sim
-    image: gz_sim:latest
-    container_name: gz_sim
+      context: ..
+      dockerfile: ./docker_files/Dockerfile.monolithic
+    image: meteor_sim:latest
+    container_name: meteor_sim
     network_mode: host
     stdin_open: true
     tty: true
@@ -49,36 +49,5 @@ services:
     # https://github.com/skypilot-org/skypilot/issues/3834
     gpus: all
     
-    # OR:
-
-    #deploy:
-      #resources:
-        #reservations:
-          #devices:
-            #- driver: nvidia
-              #count: all
-              #capabilities: [gpu]
-    #command: ["bash", "-c", "/usr/bin/glxinfo -B | grep renderer"]
-  test_service:
-    build:
-      context: ..
-      dockerfile: docker_files/Dockerfile.multi_build.test
-    image: test_service:latest
-    container_name: test_service
-    network_mode: host
-    stdin_open: true
-    tty: true
-    volumes:
-      - ./fastdds.xml:/etc/fastdds.xml
-    environment:
-      GZ_PARTITION: my_sim
-      ROS_DOMAIN_ID: 0
-      #RMW_IMPLEMENTATION: rmw_cyclonedds_cpp
-      FASTRTPS_DEFAULT_PROFILES_FILE: /etc/fastdds.xml
-      RMW_IMPLEMENTATION: rmw_fastrtps_cpp
-      GZ_IP: 172.17.0.1
-    # optional if you want startup ordering only
-    depends_on:
-      - gz_sim
 
     
