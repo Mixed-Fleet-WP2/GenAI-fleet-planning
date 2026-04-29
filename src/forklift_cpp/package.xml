@@ -16,6 +16,9 @@
   <depend>tf2_ros</depend>
   <depend>ros_gz_interfaces</depend>
   <depend>mqtt_client</depend>
+  <depend>nav2_common</depend>
+  <depend>nav2_launch</depend>
+  <depend>ros_gz_bridge</depend>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 

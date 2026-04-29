@@ -14,7 +14,7 @@ services:
       - /mnt/wslg:/mnt/wslg
       - /usr/lib/wsl:/usr/lib/wsl
       - ./fastdds.xml:/etc/fastdds.xml
-      - gz_models:/data:ro
+      - gz_models:/gz_models
     devices:
       - /dev/dxg:/dev/dxg
     environment:
@@ -53,13 +53,13 @@ services:
     # https://github.com/skypilot-org/skypilot/issues/3834
       
     gpus: all
+    entrypoint: ["/bin/bash", "-c"]
+    # Docker compose does not wrap the command in a shell by default
     command: >
-      bash -c "
-      echo 'waiting for file...';
-      until [ -f /data/test_service_output.txt ]; do sleep 1; done;
-      cat /data/test_service_output.txt;
-      sleep 3600
-      "
+        "
+        source /opt/ros/$$ROS_DISTRO/setup.bash &&
+        echo 'Gazebo sim ready' &&
+        gz sim empty.sdf -v 4"
     depends_on:
       - test_service
     
@@ -69,7 +69,7 @@ services:
       dockerfile: docker_files/Dockerfile.robot
       args:
         - PKG_NAME=forklift_cpp
-    container_name: drone_1
+    container_name: forklift_1
     image: forklift_cpp:latest
     network_mode: host
     stdin_open: true
@@ -78,7 +78,7 @@ services:
       - ./fastdds.xml:/etc/fastdds.xml
       # The models file copied to this folder need to be of the format!
       # /gz_models/<pkg_name>/models/...
-      - gz_models:/data
+      - gz_models:/gz_models
     environment:
       GZ_PARTITION: my_sim
       ROS_DOMAIN_ID: 0
@@ -89,21 +89,18 @@ services:
       LAUNCH_FILE_NAME: forklift_launch.py
       ROS_PKG_NAME: forklift_cpp
       NAMESPACE: forklift_1
-    #entrypoint: ["/bin/bash", "-c"]
-    # The entrypoint is bash -c as seen in the image, so we can just pass the ros2 launch command here 
     # https://stackoverflow.com/questions/40447029/docker-compose-environment-variable-for-command
     # Use the exec form because entrypoint is already bash -c as defined in the Dockerfile
     #command: ["source /opt/ros/$$ROS_DISTRO/setup.bash && ros2 launch $$ROS_PKG_NAME $$LAUNCH_FILE_NAME --ros-args -p namespace:=$$NAMESPACE"]
-    # command: >
-    #   bash -c "
-    #   cp -r /models_staging/* /gz_models/ &&
-    #   source /opt/ros/$$ROS_DISTRO/setup.bash && 
-    #   ros2 launch $$ROS_PKG_NAME $$LAUNCH_FILE_NAME --ros-args -p namespace:=$$NAMESPACE
-    #   "
     entrypoint: ["/bin/bash", "-c"]
-    command: ["echo 'hello' > /data/test.txt && sleep infinity"]
-    # command: >
-    #   bash -c "echo 'hello from test_service' > /data/test_service_output.txt && sleep infinity"
+    # TODO: make an entrypoint script to avoid this mess and also to ensure the ROS environment is properly set up for any command
+    command: >
+      "
+      source /opt/ros/$ROS_DISTRO/setup.bash &&
+      source /home/ros/ws/install/setup.bash &&
+      cp -r /models_staging/* /gz_models/ &&
+      ros2 launch $$ROS_PKG_NAME $$LAUNCH_FILE_NAME namespace:=$$NAMESPACE
+      "
     # optional if you want startup ordering only
     # depends_on:
     # - gz_sim

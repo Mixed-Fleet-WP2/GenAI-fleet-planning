@@ -17,8 +17,10 @@ COPY  ./src/${PKG_NAME} ./src/${PKG_NAME}
 COPY ./docker_files/gz_util_pkg ./src/gz_util_pkg
 # mf_utils contains shared types etc. that are used by both the
 # forklift and the drone package, so we also need to copy it to the builder stage
+# We also need nav2_launch and attach_interfaces for the forklift package, so we copy them as well
 COPY  ./src/mf_utils ./src/mf_utils
 COPY ./src/attach_interfaces ./src/attach_interfaces
+COPY ./src/nav2_launch ./src/nav2_launch
 
 SHELL ["/bin/bash", "-c"]
 
@@ -27,18 +29,19 @@ RUN apt-get update \
     && (rosdep init || true) \
     && rosdep update \
     && rosdep install \
-        --from-paths ./src/${PKG_NAME} ./src/gz_util_pkg ./src/mf_utils ./src/attach_interfaces\
+        --from-paths ./src/${PKG_NAME} ./src/gz_util_pkg ./src/mf_utils ./src/attach_interfaces ./src/nav2_launch \
         --ignore-src -r -y \
         --skip-keys="ros_gz_sim" \
     && source /opt/ros/${DISTRO}/setup.bash \
     && colcon build \
         --merge-install \
         --cmake-args -DBUILD_TESTING=OFF \
-    && mkdir -p /pkg_meta/${PKG_NAME} /pkg_meta/gz_util_pkg /pkg_meta/mf_utils /pkg_meta/attach_interfaces \
+    && mkdir -p /pkg_meta/${PKG_NAME} /pkg_meta/gz_util_pkg /pkg_meta/mf_utils /pkg_meta/attach_interfaces /pkg_meta/nav2_launch \
     && cp ./src/${PKG_NAME}/package.xml /pkg_meta/${PKG_NAME}/ \
     && cp ./src/gz_util_pkg/package.xml /pkg_meta/gz_util_pkg/ \
     && cp ./src/mf_utils/package.xml /pkg_meta/mf_utils/ \
     && cp ./src/attach_interfaces/package.xml /pkg_meta/attach_interfaces/ \
+    && cp ./src/nav2_launch/package.xml /pkg_meta/nav2_launch/ \
     && rm -rf build log src \
     # Apt-get clean would probably be not necessary because ubuntu
     # images do that automatically (ubuntu is base of the ros images), but we do it just in case
@@ -62,7 +65,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 ARG USERNAME=ros
 ARG USER_UID=1000
 ARG USER_GID=${USER_UID}
-ARG WORKSPACE=test_ws
+ARG WORKSPACE=ws
 
 # Use bash as the default shell for subsequent commands
 # because sh does not understand commands like "source"
@@ -75,7 +78,7 @@ COPY --from=builder /pkg_meta/${PKG_NAME}/package.xml ./src_meta/${PKG_NAME}/
 COPY --from=builder /pkg_meta/gz_util_pkg/package.xml ./src_meta/gz_util_pkg/
 COPY --from=builder /pkg_meta/mf_utils/package.xml ./src_meta/mf_utils/
 COPY --from=builder /pkg_meta/attach_interfaces/package.xml ./src_meta/attach_interfaces/
-
+COPY --from=builder /pkg_meta/nav2_launch/package.xml ./src_meta/nav2_launch/
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ros-${DISTRO}-rmw-cyclonedds-cpp \
     sudo \
@@ -83,7 +86,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     # Depending on the base image, rosdep might already be initialized, so we ignore the error if it is already initialized
     && (rosdep init || true) \
     && rosdep update \
-    && rosdep install --from-paths ./src_meta/gz_util_pkg ./src_meta/${PKG_NAME} ./src_meta/mf_utils ./src_meta/attach_interfaces --ignore-src -r -y --dependency-types exec run \
+    && rosdep install --from-paths ./src_meta/gz_util_pkg ./src_meta/${PKG_NAME} ./src_meta/mf_utils ./src_meta/attach_interfaces ./src_meta/nav2_launch --ignore-src -r -y --dependency-types exec run \
     && rm -rf ./src_meta \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
@@ -99,10 +102,11 @@ RUN if id -u ${USER_UID} ; then userdel `id -un ${USER_UID}` ; fi && \
     && chmod 0440 /etc/sudoers.d/${USERNAME}
 
 # Create the directory first
-RUN mkdir -p /data
+RUN mkdir -p /gz_models
 # Set ownership to your non-root user
-# (same in all images)
-RUN chown -R 1000:1000 /data
+# (same in all images) so the container
+# can write to the directory
+RUN chown -R 1000:1000 /gz_models
 
 USER ${USERNAME}
 
