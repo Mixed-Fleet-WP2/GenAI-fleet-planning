@@ -61,7 +61,9 @@ The simulation in this repository uses [ROS2 (Robot Operating System)](https://d
 
 7. Before building the project, run the below command to ensure that all the ROS dependencies have been installed
     ```console
-    rosdep install -i --from-path src --rosdistro jazzy -y
+    sudo rosdep init
+    rosdep update
+    rosdep install --from-paths src -r -y --skip-keys="nav2_launch"
     ```
 8. Build the project by entering the the following command while inside the project directory/workspace
     ```console
@@ -71,7 +73,12 @@ The simulation in this repository uses [ROS2 (Robot Operating System)](https://d
     ```console
     source install/setup.bash
     ```
-10. **Run the simulation with one forklift (forklift_1) and one drone (drone_1**)
+10. If the machine does not have GPU available, use software rendering by setting the following variable:
+    ```
+    export LIBGL_ALWAYS_SOFTWARE=1
+    ```
+
+11. **Run the simulation with one forklift (forklift_1) and one drone (drone_1**)
     ```console
     ros2 launch mf_simulation multi_robot_launch.py
     ```

@@ -1,3 +1,11 @@
 paho-mqtt==2.1.0
 pydantic>=2,<3
 PyYAML
+setuptools
+# Due to virtual env, these packages need to be 
+# installed separately
+# https://github.com/colcon/colcon-ros/issues/118
+catkin_pkg
+empy==3.3.4
+lark
+numpy

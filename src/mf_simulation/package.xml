@@ -16,7 +16,6 @@
   <depend>sdformat_urdf</depend>
   <exec_depend>mf_utils</exec_depend>
   <build_depend>mf_utils</build_depend>
-  <depend>nav2_launch</depend>
   <depend>forklift_cpp</depend>
   <depend>drone_cpp</depend>
   <depend>nav2_common</depend>
