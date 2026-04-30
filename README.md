@@ -28,17 +28,12 @@ The simulation in this repository uses [ROS2 (Robot Operating System)](https://d
     
     You can verify successful install using the instructions from this [link](https://docs.ros.org/en/jazzy/Installation/Ubuntu-Install-Debs.html#try-some-examples)
 
-2. **Install Gazebo Harmonic and the ROS2 integration packages**
-    ```console
-    sudo apt-get install ros-jazzy-ros-gz
-    ```
-
-3. **Clone the project repository and enter the project directory**: 
+2. **Clone the project repository and enter the project directory**: 
     ```console
     git clone -b meteor_sim_env git@github.com:Mixed-Fleet-WP2/GenAI-fleet-planning.git && cd GenAI-fleet-planning.git
     ```
 
-4. **Source the underlying ROS2 environment** (this has to be done everytime ROS2 commands are used and is not specific to the project):
+3. **Source the underlying ROS2 environment** (this has to be done everytime ROS2 commands are used and is not specific to the project):
     ```console
     source /opt/ros/jazzy/setup.bash
     ```
@@ -47,16 +42,7 @@ The simulation in this repository uses [ROS2 (Robot Operating System)](https://d
     echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc
     ```
 
-5. **Install the Nav2 navigation stack**
-    ```console
-    sudo apt install ros-jazzy-navigation2
-    sudo apt install ros-jazy-nav2-bringup
-    ```
-    You can verify successful install using the instructions
-    from the [link](https://docs.nav2.org/getting_started/index.html#running-the-example)
-
-
-6. **Create a new Python virtual environment and activate it** (e.g to the project directory):
+4. **Create a new Python virtual environment and activate it** (e.g to the project directory). Make sure that step 4 is done first, otherwise the virtual environment does not inherit the ros2   packages!:
     ```console
     python3 -m venv .ros_venv 
     source .ros_venv/bin/activate
@@ -64,35 +50,28 @@ The simulation in this repository uses [ROS2 (Robot Operating System)](https://d
     This virtual environment is for installing dependencies that 
     the ROS2 installation does not install globally
 
-7. Install the Python dependencies used by the project
+5. Install the Python dependencies used by the project
     ```console
-    pip install pydantic
-    pip install paho-mqtt
-    pip install PyYAML
-    pip install lark
-    pip install empy
-    pip install numpy
-    pip install catkin_pkg
     pip install -r requirements.txt
     ```
 
-8. **Install an MQTT broker on your system**   
+6. **Install an MQTT broker on your system**   
     The system has been tested using the Echlipse Mosquitto MQTT broker. 
     Instructions for installing and testing can be found from [link](https://github.com/eclipse-mosquitto/mosquitto)
 
-8. Before building the project, run the below command to ensure that all the ROS dependencies have been installed
+7. Before building the project, run the below command to ensure that all the ROS dependencies have been installed
     ```console
     rosdep install -i --from-path src --rosdistro jazzy -y
     ```
-9. Build the project by entering the the following command while inside the project directory/workspace
+8. Build the project by entering the the following command while inside the project directory/workspace
     ```console
     colcon build
     ```
-10. **_In a new terminal_, navigate to the project directory and source the built setup files** (remember to activate the virtual environment again)
+9. **_In a new terminal_, navigate to the project directory and source the built setup files** (remember to activate the virtual environment again)
     ```console
     source install/setup.bash
     ```
-11. **Run the simulation with one forklift (forklift_1) and one drone (drone_1**)
+10. **Run the simulation with one forklift (forklift_1) and one drone (drone_1**)
     ```console
     ros2 launch mf_simulation multi_robot_launch.py
     ```

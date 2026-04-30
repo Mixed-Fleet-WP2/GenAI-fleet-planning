@@ -20,6 +20,8 @@
   <depend>forklift_cpp</depend>
   <depend>drone_cpp</depend>
   <depend>nav2_common</depend>
+  <!-- This is what provides Gazebo-->
+  <depend>ros_gz</depend>
 
 
   <export>
