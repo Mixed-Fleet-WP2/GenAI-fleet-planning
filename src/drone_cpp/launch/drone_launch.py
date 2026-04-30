@@ -246,33 +246,38 @@ def generate_launch_description():
         remappings=remappings,
     )
 
-    bridge = Node(
-        package='ros_gz_bridge',
-        executable='parameter_bridge',
-        namespace=namespace,
-        parameters=[
-            {
-                'config_file': drone_gz_bridge_config,
-                'expand_gz_topic_names': True,
-                'use_sim_time': True,
-            }
-        ],
-        output='screen',
-    )
+    # Use RosGZBridge action in favor of this
+    # bridge = Node(
+    #     package='ros_gz_bridge',
+    #     executable='parameter_bridge',
+    #     namespace=namespace,
+    #     parameters=[
+    #         {
+    #             'config_file': drone_gz_bridge_config,
+    #             'expand_gz_topic_names': True,
+    #             'use_sim_time': True,
+    #         }
+    #     ],
+    #     output='screen',
+    # )
 
     bridge= RosGzBridge(
         bridge_name=[namespace, "_bridge_name"],
         config_file=drone_gz_bridge_config,
-        #container_name="sim_env_container",
+        container_name="sim_env_container",
         namespace=namespace,
   
-        # Fixes a bug with extra bridge params, see:
-        # https://github.com/gazebosim/ros_gz/pull/775
-
-        extra_bridge_params=[ {
+       
+        bridge_params={
                 'expand_gz_topic_names': True,
                 'use_sim_time': True,
-            }]
+            }
+         # Fixes a bug with extra bridge params, see:
+        # https://github.com/gazebosim/ros_gz/pull/775
+        # extra_bridge_params={
+        #         'expand_gz_topic_names': True,
+        #         'use_sim_time': True,
+        #     }
     )
 
     mqtt_bridge = Node(
@@ -323,8 +328,6 @@ def generate_launch_description():
 
     ld.add_action(declare_use_gz)
     ld.add_action(declare_drone_name)
-
-    #ld.add_action(handler)
 
     ld.add_action(declare_robot_sdf)
     ld.add_action(declare_namespace)

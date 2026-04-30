@@ -30,8 +30,6 @@ from launch_ros.actions import LoadComposableNodes, SetParameter
 from launch_ros.actions import Node
 from launch_ros.descriptions import ComposableNode, ParameterFile
 from nav2_common.launch import RewrittenYaml
-from mf_simulation.utils import launch_print
-
 
 def generate_launch_description():
     # Get the launch directory

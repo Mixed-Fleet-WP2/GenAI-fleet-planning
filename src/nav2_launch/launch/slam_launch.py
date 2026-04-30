@@ -24,8 +24,6 @@ from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node, SetParameter, SetRemap
 from launch_ros.descriptions import ParameterFile
 from nav2_common.launch import HasNodeParams, RewrittenYaml
-from mf_simulation.utils import launch_print
-
 
 def generate_launch_description():
     # Input parameters declaration
@@ -158,6 +156,5 @@ def generate_launch_description():
 
     # Running SLAM Toolbox (Only one of them will be run)
     ld.add_action(start_slam_toolbox_cmd)
-    launch_print("THE SLAM PARAM IS: ", params_file, launch_description=ld)
 
     return ld

@@ -38,8 +38,6 @@ from launch_ros.actions import Node
 from launch_ros.actions import PushROSNamespace
 from launch_ros.descriptions import ParameterFile
 from nav2_common.launch import ReplaceString, RewrittenYaml
-from mf_simulation.utils import launch_print
-
 
 def generate_launch_description():
     # Get the launch directory

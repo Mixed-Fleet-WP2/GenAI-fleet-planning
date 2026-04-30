@@ -34,8 +34,6 @@ from launch_ros.actions import LoadComposableNodes, SetParameter
 from launch_ros.actions import Node
 from launch_ros.descriptions import ComposableNode, ParameterFile
 from nav2_common.launch import RewrittenYaml
-from mf_simulation.utils import launch_print
-
 
 def generate_launch_description():
     # Get the launch directory
@@ -302,6 +300,5 @@ def generate_launch_description():
     # Add the actions to launch all of the localiztion nodes
     ld.add_action(load_nodes)
     ld.add_action(load_composable_nodes)
-    launch_print("AMCL USE CONDITION:", use_amcl, launch_description=ld)
-    
+
     return ld
