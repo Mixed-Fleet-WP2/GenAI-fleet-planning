@@ -175,7 +175,7 @@ def generate_launch_description():
 
     declare_mqtt_port = DeclareLaunchArgument(
         name="mqtt_port",
-        default_value='1883',
+        default_value='2883',
         description="Port for the MQTT broker"
     )
 
@@ -271,11 +271,13 @@ def generate_launch_description():
        # works
        # For Jazzy, bridge_params is type of SomeSubstutionsType
        # and not Optional[ParametersDict], which causes problems
+
         # bridge_params={
         #         'expand_gz_topic_names': True,
         #         'use_sim_time': True,
         #     }
-         # Fixes a bug with extra bridge params, see:
+        
+        # Fixes a bug with extra bridge params, see:
         # https://github.com/gazebosim/ros_gz/pull/775
         extra_bridge_params={
                  'expand_gz_topic_names': True,

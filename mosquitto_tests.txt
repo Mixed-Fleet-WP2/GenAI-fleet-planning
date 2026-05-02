@@ -1,0 +1,4 @@
+# Subscribe to a topic
+mosquitto_sub -h localhost -p 2883 -t /test
+# Send a message on topic
+mosquitto_pub -d -h localhost -p 2883 -t /test -m "Hello"
