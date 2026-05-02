@@ -49,7 +49,7 @@ The simulation in this repository uses [ROS2 (Robot Operating System)](https://d
     If you are using WSL2, run the command _ip addr show eth0_
     and use the IP there as mqtt_host. Otherwise custom IP or localhost by default.
     ```console
-    docker exec -it meteor_sim bash -ic "ros2 launch mf_simulation multi_robot_launch.py mqtt_host:=172.26.16.119 mqtt_port=1883"
+    docker exec -it meteor_sim bash -ic "ros2 launch mf_simulation multi_robot_launch.py mqtt_host:=172.26.16.119 mqtt_port:=1883"
     ```
 11. **Sending an action**
     To test if the system works correctly, you can execute the following command
