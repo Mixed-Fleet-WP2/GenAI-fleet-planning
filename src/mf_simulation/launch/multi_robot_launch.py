@@ -26,6 +26,13 @@ from launch.conditions import IfCondition, UnlessCondition
 from nav2_common.launch import ReplaceString, RewrittenYaml
 from launch_ros.descriptions import ParameterFile
 
+# SEE THE EXAMPLE:
+# https://github.com/ros-navigation/navigation2/blob/main/nav2_bringup/launch/tb4_loopback_simulation_launch.py#L118
+
+# https://github.com/ros-navigation/navigation2/issues/5233
+# For parameters it should be True, and for launch_arguments
+# it should be 'True' (as a string)
+
 def create_robot_instances(context, *args, **kwargs):
     """Function to create robot instances based on the robots YAML file"""
     
@@ -50,12 +57,12 @@ def create_robot_instances(context, *args, **kwargs):
         start_pos = robot.get("starting_position", [3.0, -1.0, 0.0])
         start_orient = robot.get("starting_orientation", [0.0, 0.0, 0.0])
 
-        print("odom from file:", robot["use_pure_odom"], flush=True)
+        #print("odom from file:", robot["use_pure_odom"], flush=True)
 
         use_pure_odom = robot.get("use_pure_odom", False)
         
         pkg = get_package_share_directory(robot_package)
-        print("odom use is:", use_pure_odom, flush=True)
+        #print("odom use is:", use_pure_odom, flush=True)
         nav2_params_file = os.path.join(pkg, 'config', nav2_config)
         
         group = GroupAction([  
@@ -64,8 +71,8 @@ def create_robot_instances(context, *args, **kwargs):
                 condition=IfCondition(use_rviz),
                 launch_arguments={
                     'namespace': robot_name,
-                    'use_sim_time': 'true',
-                    'use_namespace': 'true',
+                    'use_sim_time': 'True',
+                    'use_namespace': 'True',
                     'rviz_config': rviz_config_file,
                 }.items(),
             ),
@@ -76,9 +83,9 @@ def create_robot_instances(context, *args, **kwargs):
                 ),
                 launch_arguments={
                     'namespace': robot_name,
-                    'use_namespace': 'true',
+                    'use_namespace': 'True',
                     'map': map_yaml_file,
-                    'use_sim_time': 'true',
+                    'use_sim_time': 'True',
                     'params_file': nav2_params_file,
                     'autostart': autostart,
                     'x_pose': TextSubstitution(text=str(start_pos[0])),

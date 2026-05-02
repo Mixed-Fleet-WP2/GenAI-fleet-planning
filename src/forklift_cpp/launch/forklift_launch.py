@@ -232,17 +232,24 @@ def generate_launch_description():
         bridge_name=[namespace, "_bridge"],
         namespace=namespace,
         config_file=forklift_gz_bridge_config,
+        
+        # From Kilted onwards, passing the extra params as bridge_params
+        # works
+        # For Jazzy, bridge_params is type of SomeSubstutionsType
+        # and not Optional[ParametersDict], which causes problems
 
-        bridge_params={
+        # bridge_params={
+        #     'expand_gz_topic_names': True,
+        #     'use_sim_time': True,
+        # }
+
+
+        # Fixes a bug with extra bridge params, see:
+        # https://github.com/gazebosim/ros_gz/pull/775
+        extra_bridge_params={
             'expand_gz_topic_names': True,
             'use_sim_time': True,
         }
-        # Fixes a bug with extra bridge params, see:
-        # https://github.com/gazebosim/ros_gz/pull/775
-        # extra_bridge_params={
-        #         'expand_gz_topic_names': True,
-        #         'use_sim_time': True,
-        #     }
     )
 
     mqtt_bridge = Node(
