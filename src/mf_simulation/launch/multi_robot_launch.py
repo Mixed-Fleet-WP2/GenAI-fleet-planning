@@ -200,7 +200,7 @@ def generate_launch_description():
 
     declare_mqtt_port = DeclareLaunchArgument(
         name="mqtt_port",
-        default_value='2883',
+        default_value='1883',
         description="Port for the MQTT broker"
     )
 

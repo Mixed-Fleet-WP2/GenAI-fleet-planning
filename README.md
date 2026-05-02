@@ -86,6 +86,13 @@ too low for the environment to work properly
     ```console
     ros2 launch mf_simulation multi_robot_launch.py
     ```
+12. **Sending an action**
+To test if the system works correctly, you can execute the following command
+```
+bash test_command.bash <host> <port>
+```
+The command assumes that there is a robot named drone_1 in the environment (by default there is). The command uses localhost and port 1883 by default.
+
 ## Customization
 
 ### Changing the number of robots
@@ -95,7 +102,7 @@ should be rebuilt after changing the file.
 
 ### Changing default MQTT broker
 
-If your broker does not run on port 2883 and/or localhost, you can change
+If your broker does not run on port 1883 and/or localhost, you can change
 the port and host used by the system by passing additional ros2 parameters to the 
 launch command:
 ```
