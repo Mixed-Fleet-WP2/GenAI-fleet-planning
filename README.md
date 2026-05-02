@@ -83,11 +83,11 @@ too low for the environment to work properly
     ros2 launch mf_simulation multi_robot_launch.py
     ```
 11. **Sending an action**
-To test if the system works correctly, you can execute the following command
-```
-bash test_command.bash <host> <port>
-```
-The command assumes that there is a robot named drone_1 in the environment (by default there is). The command uses localhost and port 1883 by default.
+    To test if the system works correctly, you can execute the following command
+    ```
+    bash test_command.bash <host> <port>
+    ```
+    The command assumes that there is a robot named drone_1 in the environment (by default there is). The command uses localhost and port 1883 by default.
 
 ## Customization
 
