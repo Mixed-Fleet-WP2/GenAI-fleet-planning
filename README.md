@@ -84,7 +84,7 @@ too low for the environment to work properly
     ```
 11. **Sending an action**
     To test if the system works correctly, you can execute the following command
-    ```
+    ```console
     bash test_command.bash <host> <port>
     ```
     The command assumes that there is a robot named drone_1 in the environment (by default there is). The command uses localhost and port 1883 by default.
