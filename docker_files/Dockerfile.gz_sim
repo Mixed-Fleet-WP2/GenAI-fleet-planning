@@ -1,0 +1,70 @@
+ARG BASE_IMAGE=osrf/ros
+# The desktop image already comes with Gazebo, so we can use it as the base for the simulation image
+ARG BASE_TAG=jazzy-desktop-full
+
+FROM ${BASE_IMAGE}:${BASE_TAG}
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV GZ_VERSION=harmonic
+
+ARG DISTRO=jazzy
+ENV DISTRO=${DISTRO}
+ARG USERNAME=ros
+ARG USER_UID=1000
+ARG USER_GID=${USER_UID}
+ARG WORKSPACE=gz_ws
+
+# Only what desktop-full doesn't already have
+RUN apt-get update && apt-get install -y \
+
+    # SWITHC OT CYCLONE DDS INSTEAD OF FAST DSS
+    # AS USING IT IS UNRELIABLE FOR CONTAINERS:
+    # https://robotics.stackexchange.com/questions/98161/ros2-foxy-nodes-cant-communicate-through-docker-container-border
+    # https://github.com/eProsima/Fast-DDS/issues/1698
+    ros-${DISTRO}-rmw-cyclonedds-cpp \
+    #ros-${DISTRO}-rosbag2-storage-mcap \
+    #chrony \
+    mesa-utils \
+    nano \
+    sudo \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# If the user already exists (e.g. by default in the base image), delete it and create new
+RUN if id -u ${USER_UID} ; then userdel `id -un ${USER_UID}` ; fi
+# Create a group named after the username
+RUN groupadd --gid ${USER_GID} ${USERNAME} 
+# Create user with USER_ID and add it to the group created above
+# also create home directory that is named after the user
+RUN useradd --uid ${USER_UID} --gid ${USER_GID} -m ${USERNAME} \
+    && apt-get update \
+    && apt-get install -y sudo \
+    # Allow sudo without password
+    && echo ${USERNAME} ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/${USERNAME} \
+    && chmod 0440 /etc/sudoers.d/${USERNAME}
+
+# Add the user to GPU-related groups.
+# Create groups named "render" and "avahi" if they don't exist, and add the user to "video", "render" and "avahi" groups.
+RUN groupadd -f render && groupadd -f avahi
+# Add privileges for video, render and avahi to the user, which are needed for containers to access the GPU
+RUN usermod -aG video,render,avahi ${USERNAME}
+
+USER ${USERNAME}
+
+ENV HOME=/home/${USERNAME}
+ENV USER=${USERNAME}
+
+WORKDIR /home/${USERNAME}/${WORKSPACE}
+
+# Shell setup
+RUN echo "source /opt/ros/${DISTRO}/setup.bash" >> ~/.bashrc && \
+    # If there is a setup.bash in the workspace, source it as well to overlay the workspace on top of the ROS installation
+    # (if the workspace is not built yet, the setup.bash will not exist yet)
+    echo "if [ -f ~/${WORKSPACE}/install/setup.bash ]; then source ~/${WORKSPACE}/install/setup.bash; fi" >> ~/.bashrc && \
+    echo "export GZ_SIM_SYSTEM_PLUGIN_PATH=/opt/ros/${DISTRO}/lib/" >> ~/.bashrc
+
+#ENTRYPOINT ["/ros_entrypoint.sh"]
+ENTRYPOINT ["/bin/bash", "-c"]
+
+# Can be replaced in docker-compose
+CMD ["source /opt/ros/$DISTRO/setup.bash && gz sim"]

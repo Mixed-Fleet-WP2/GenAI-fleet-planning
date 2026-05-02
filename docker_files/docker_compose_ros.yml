@@ -1,0 +1,56 @@
+
+# Modified from: https://github.com/Cionix90/docker_simulator/blob/main/compose.yaml
+version: '3.8'
+
+services:
+  ros2_gazebo:
+    build:
+      context: .
+      args:
+        - BASE_IMAGE=osrf/ros
+        - BASE_TAG=jazzy-desktop-full
+        - DISTRO=jazzy
+        - WORKSPACE=docker_simulation_ws
+    container_name: ros2_gazebo_sim
+    network_mode: host
+    stdin_open: true
+    tty: true
+
+    environment:
+      - DISPLAY=${DISPLAY}
+      - QT_X11_NO_MITSHM=1
+      - XAUTHORITY=/tmp/.docker.xauth
+      - ROS_DOMAIN_ID=0
+      - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+      - RCUTILS_COLORIZED_OUTPUT=1
+      - GZ_VERSION=harmonic
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=all,graphics,display,video,utility,compute
+      - __NV_PRIME_RENDER_OFFLOAD=1
+      - __GLX_VENDOR_LIBRARY_NAME=nvidia
+      - HISTFILE=/home/ros/.bash_history
+      - HISTFILESIZE=10000
+
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
+      - ~/.bash_history:/home/ros/.bash_history
+      - ./docker_simulator:/home/ros/docker_simulation_ws
+      - /dev/dri:/dev/dri
+      # Should be automatically injected by gpus: all
+      #- /dev/nvidia0:/dev/nvidia0
+      #- /dev/nvidiactl:/dev/nvidiactl
+      #- /dev/nvidia-modeset:/dev/nvidia-modeset
+
+    privileged: true
+    # Also handled by gpus: all, this is the legacy alternative
+    # runtime: nvidia
+    gpus: all
+
+    command: >
+      bash -c "
+        source /opt/ros/jazzy/setup.bash &&
+        source /home/ros/docker_simulation_ws/install/setup.bash 2>/dev/null || true &&
+        echo 'ROS 2 Jazzy + Gazebo Harmonic ready' &&
+        gz sim empty.sdf -v 4
+      "

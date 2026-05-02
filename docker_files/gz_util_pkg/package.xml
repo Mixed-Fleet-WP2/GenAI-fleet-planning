@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <!-- Match package name to the real ros_gz_sim
+  so there is no need to modify the source code
+  -->
+  <name>ros_gz_sim</name>
+  <version>0.0.0</version>
+  <description>ROS interface for spawning entities into Gazebo.</description>
+  <maintainer email="you@example.com">Your Name</maintainer>
+  <license>Apache-2.0</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>ament_cmake_python</buildtool_depend>
+
+  <!--Might be able to be deprecated-->
+  <depend>libgflags-dev</depend>
+  <depend>gz_math_vendor</depend>
+  <depend>gz_msgs_vendor</depend>
+  <depend>gz_transport_vendor</depend>
+  <depend>rcpputils</depend>
+  <depend>rclcpp</depend>
+  <depend>std_msgs</depend>
+
+  <!-- Normally this would come from gz_sim_vendor which ros_gz_sim depends on
+   but because this is minimal, use taht-->
+  <build_depend>gz_cmake_vendor</build_depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+  <test_depend>ament_cmake_gtest</test_depend>
+  <test_depend>launch_testing_ament_cmake</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

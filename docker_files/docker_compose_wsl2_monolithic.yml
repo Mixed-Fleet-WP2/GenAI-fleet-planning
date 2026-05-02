@@ -1,0 +1,53 @@
+services:
+  meteor_sim:
+    build:
+      context: ..
+      dockerfile: ./docker_files/Dockerfile.monolithic
+    image: meteor_sim:latest
+    container_name: meteor_sim
+    network_mode: host
+    stdin_open: true
+    tty: true
+    volumes:
+      # See link below for why these are neede
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - /mnt/wslg:/mnt/wslg
+      - /usr/lib/wsl:/usr/lib/wsl
+      - ./fastdds.xml:/etc/fastdds.xml
+    devices:
+      - /dev/dxg:/dev/dxg
+    environment:
+      GZ_PARTITION: my_sim
+      # These are needed for WSL2 to properly use the GPU and display:
+      # https://github.com/microsoft/wslg/blob/main/samples%2Fcontainer%2FContainers.md#containerizing-gui-applications-with-wslg
+      DISPLAY: ${DISPLAY}
+      WAYLAND_DISPLAY: ${WAYLAND_DISPLAY}
+      XDG_RUNTIME_DIR: ${XDG_RUNTIME_DIR}
+      PULSE_SERVER: ${PULSE_SERVER}
+      LD_LIBRARY_PATH: /usr/lib/wsl/lib:${LD_LIBRARY_PATH}
+      # Laptops with hybrid graphics may need this to ensure the NVIDIA GPU is used instead of integrated graphics:
+      # https://github.com/microsoft/wslg/wiki/GPU-selection-in-WSLg
+      MESA_D3D12_DEFAULT_ADAPTER_NAME: NVIDIA
+      # Never use sofware rendering
+      LIBGL_ALWAYS_SOFTWARE: 0
+      ROS_DOMAIN_ID: 0
+      # If fast dds is used, the shared memory optimisation must be disabled
+      # https://github.com/eProsima/Fast-DDS/issues/1698#issuecomment-778039676
+      # https://robotics.stackexchange.com/a/98163
+      FASTRTPS_DEFAULT_PROFILES_FILE: /etc/fastdds.xml
+      RMW_IMPLEMENTATION: rmw_fastrtps_cpp
+      #RMW_IMPLEMENTATION: rmw_cyclonedds_cpp
+      # This seems to also be WSL2-specific thing:
+      # Force Mesa to use the WSL wrapper instead of auto-detecting the graphics backend:
+      # https://github.com/microsoft/wslg/issues/1332
+      # https://robotics.stackexchange.com/questions/111677/gazebo-not-use-nvidia-gpu-when-i-installed-ros2-jazzy-by-using-docker-desktop-on
+      # and: https://github.com/microsoft/WSL/issues/12412
+      # and: https://www.reddit.com/r/wsl2/comments/1ohnhqr/trying_to_accelerate_wsl_apps_like_gazebo_using/
+      GALLIUM_DRIVER: d3d12
+    # gpus all deprecates runtime: nvidia but is effectively the same:
+    # https://github.com/NVIDIA/nvidia-docker
+    # https://github.com/skypilot-org/skypilot/issues/3834
+    gpus: all
+    
+
+    
