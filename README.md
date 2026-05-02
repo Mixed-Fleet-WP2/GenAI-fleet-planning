@@ -78,16 +78,11 @@ too low for the environment to work properly
     source .ros_venv/bin/activate
     source install/setup.bash
     ```
-10. If the machine does not have GPU available, use software rendering by setting the following variable:
-    ```
-    export LIBGL_ALWAYS_SOFTWARE=1
-    ```
-
-11. **Run the simulation with one forklift (forklift_1) and one drone (drone_1**)
+10. **Run the simulation with one forklift (forklift_1) and one drone (drone_1**)
     ```console
     ros2 launch mf_simulation multi_robot_launch.py
     ```
-12. **Sending an action**
+11. **Sending an action**
 To test if the system works correctly, you can execute the following command
 ```
 bash test_command.bash <host> <port>
