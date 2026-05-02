@@ -95,7 +95,9 @@ def create_robot_instances(context, *args, **kwargs):
                     'pitch': TextSubstitution(text=str(start_orient[1])),
                     'yaw': TextSubstitution(text=str(start_orient[2])),
                     'robot_name': TextSubstitution(text=robot_name),
-                    'use_pure_odom': TextSubstitution(text=str(use_pure_odom))
+                    'use_pure_odom': TextSubstitution(text=str(use_pure_odom)),
+                    'mqtt_port': LaunchConfiguration('mqtt_port'),
+                    'mqtt_host': LaunchConfiguration('mqtt_host'),
                 }.items(),
             ),  
                 # Only publish static map->odom transform if the odom is ground truth and amcl is not used

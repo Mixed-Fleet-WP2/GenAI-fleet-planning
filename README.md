@@ -22,7 +22,10 @@ The simulation in this repository uses [ROS2 (Robot Operating System)](https://d
 - **Ubuntu 24.04 Noble Numbat** (has been successfully ran on WSL2)
 - Python 3 (tested with 3.12 which is the default Noble install)
 - C/C++ compiler supporting C++17
+- RTX 5070 TI 16gb
 
+If the system has no GPU available, the real-time-factor of the simulation is most likely
+too low for the environment to work properly
 
 1. **Install ROS2 following the instructions from: https://docs.ros.org/en/jazzy/Installation/Ubuntu-Install-Debs.html.** Make sure to use the version given in the link and also install the development tools and the Desktop Install.
     
@@ -83,6 +86,59 @@ The simulation in this repository uses [ROS2 (Robot Operating System)](https://d
     ```console
     ros2 launch mf_simulation multi_robot_launch.py
     ```
+## Customization
 
-MQTT COMMAND INSTRUCTIONS HERE
+### Changing the number of robots
+
+The package _mf_simulation_ contains a file __robot_default.yml__ which has an example of the default state of the simulation (1 forklift and 1 drone). By changing the file's contents, the number of robots can be changed. The default scenario is used in the METEOR scenario. The workspace
+should be rebuilt after changing the file.
+
+### Changing default MQTT broker
+
+If your broker does not run on port 2883 and/or localhost, you can change
+the port and host used by the system by passing additional ros2 parameters to the 
+launch command:
+```
+ros2 launch mf_simulation multi_robot_launch.py mqtt_host:=<host> mqtt_port:=<port>
+```
+
+## Notes to WSL2 users
+
+If you are running the simulation using WSL2, you must export the following
+environment variable in order to utilise the GPU:
+```console
+export GALLIUM_DRIVER=d3d12
+```
+See the related [issue](https://github.com/microsoft/WSL/issues/12584#issuecomment-2658951125)
+
+In addition, if you have a laptop with integrated graphics, export the following environment variable (example uses NVIDIA GPU):
+```console
+export MESA_D3D12_DEFAULT_ADAPTER_NAME=NVIDIA
+```
+See related [documentation](https://github.com/microsoft/wslg/wiki/GPU-selection-in-WSLg)
+
+To check if the GPU is utilised, install the mesa-utils and run the command:
+```
+sudo apt install mesa-utils
+glxinfo -B
+```
+
+The output should be something like the following:
+```console
+name of display: :0
+display: :0  screen: 0
+direct rendering: Yes
+Extended renderer info (GLX_MESA_query_renderer):
+    Vendor: Microsoft Corporation (0xffffffff)
+    Device: D3D12 (NVIDIA GeForce RTX 5070 Ti) (0xffffffff)
+    Version: 25.2.8
+    Accelerated: yes
+    Video memory: 32341MB
+    Unified memory: no
+    ...
+```
+
+If Device: D3D12 show something like __(Intel(R) Iris(R) Xe Graphics)__ or __llvmpipe__,
+the GPU is not being utilised.
+
 
