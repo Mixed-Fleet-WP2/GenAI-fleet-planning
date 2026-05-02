@@ -8,8 +8,11 @@ services:
     network_mode: host
     stdin_open: true
     tty: true
+    # Not needed with network_mode: host
+    # ports:
+    #   - "1883:1883" # MQTT port
     volumes:
-      # See link below for why these are neede
+      # See link below for why these are needed
       - /tmp/.X11-unix:/tmp/.X11-unix
       - /mnt/wslg:/mnt/wslg
       - /usr/lib/wsl:/usr/lib/wsl
@@ -31,11 +34,7 @@ services:
       # Never use sofware rendering
       LIBGL_ALWAYS_SOFTWARE: 0
       ROS_DOMAIN_ID: 0
-      # If fast dds is used, the shared memory optimisation must be disabled
-      # https://github.com/eProsima/Fast-DDS/issues/1698#issuecomment-778039676
-      # https://robotics.stackexchange.com/a/98163
-      FASTRTPS_DEFAULT_PROFILES_FILE: /etc/fastdds.xml
-      RMW_IMPLEMENTATION: rmw_fastrtps_cpp
+      #RMW_IMPLEMENTATION: rmw_fastrtps_cpp
       #RMW_IMPLEMENTATION: rmw_cyclonedds_cpp
       # This seems to also be WSL2-specific thing:
       # Force Mesa to use the WSL wrapper instead of auto-detecting the graphics backend:
@@ -47,7 +46,13 @@ services:
     # gpus all deprecates runtime: nvidia but is effectively the same:
     # https://github.com/NVIDIA/nvidia-docker
     # https://github.com/skypilot-org/skypilot/issues/3834
-    gpus: all
+    deploy:
+        resources:
+          reservations:
+            devices:
+              - driver: nvidia
+                count: all
+                capabilities: [gpu]
     
 
     

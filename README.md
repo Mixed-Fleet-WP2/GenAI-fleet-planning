@@ -13,74 +13,43 @@ with **Work Package 2: Programming Multi-Machine Fleets (WP2)** of the project w
 Instructions are provided for native install. Docker install is work in progress
 under branch *meteor_sim_env_dockerized*
 
-### Installing natively
+### Prerequisites
+
+- A GPU powerful enough to run the simulation environment. If the system has no GPU available, the real-time-factor of the simulation is most likely
+too low for the environment to work properly
+- Docker installed (v.19.03 onwards)
+- Nvidia-container-toolkit installed following instructions from [link](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html)
 
 The simulation in this repository uses [ROS2 (Robot Operating System)](https://docs.ros.org/en/jazzy/index.html) and the open-source robotics simulator [Gazebo](https://gazebosim.org/home). The used environment is as follows:
 
-- ROS2 version Jazzy Jalisco
-- Gazebo version Harmonic
-- Nav2 navigation stack
-- **Ubuntu 24.04 Noble Numbat** (has been successfully ran on WSL2)
-- Python 3 (tested with 3.12 which is the default Noble install)
-- C/C++ compiler supporting C++17
-- RTX 5070 TI 16gb
 
-If the system has no GPU available, the real-time-factor of the simulation is most likely
-too low for the environment to work properly
-
-1. **Install ROS2 following the instructions from: https://docs.ros.org/en/jazzy/Installation/Ubuntu-Install-Debs.html.** Make sure to use the version given in the link and also install the development tools and the Desktop Install.
-    
-    You can verify successful install using the instructions from this [link](https://docs.ros.org/en/jazzy/Installation/Ubuntu-Install-Debs.html#try-some-examples)
-
-2. **Clone the project repository and enter the project directory**: 
+1. **Clone the project repository and enter the project directory**: 
     ```console
-    git clone -b meteor_sim_env git@github.com:Mixed-Fleet-WP2/GenAI-fleet-planning.git && cd GenAI-fleet-planning.git
+    git clone -b meteor_sim_env_dockerized_monolithic git@github.com:Mixed-Fleet-WP2/GenAI-fleet-planning.git && cd GenAI-fleet-planning.git
     ```
-
-3. **Source the underlying ROS2 environment** (this has to be done everytime ROS2 commands are used and is not specific to the project):
-    ```console
-    source /opt/ros/jazzy/setup.bash
+    1.1 **Generate XAuthority file (if using native Linux)**
     ```
-    If you want to do this automatically, add sourcing to your bash profile. For example:
-    ```console
-    echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc
+    touch /tmp/.docker.xauth
+    xauth nlist $DISPLAY | sed -e 's/^..../ffff/' | xauth -f /tmp/.docker.xauth nmerge -
     ```
-
-4. **Create a new Python virtual environment and activate it** (e.g to the project directory). Make sure that step 4 is done first, otherwise the virtual environment does not inherit the ros2   packages!:
-    ```console
-    python3 -m venv .ros_venv 
-    source .ros_venv/bin/activate
-    ```
-    This virtual environment is for installing dependencies that 
-    the ROS2 installation does not install globally
-
-5. Install the Python dependencies used by the project
-    ```console
-    pip install -r requirements.txt
-    ```
-
-6. **Install an MQTT broker on your system**   
+2. **Install an MQTT broker on your system**   
     The system has been tested using the Echlipse Mosquitto MQTT broker. 
     Instructions for installing and testing can be found from [link](https://github.com/eclipse-mosquitto/mosquitto)
 
-7. Before building the project, run the below command to ensure that all the ROS dependencies have been installed
-    ```console
-    sudo rosdep init
-    rosdep update
-    rosdep install --from-paths src -r -y --skip-keys="nav2_launch"
+3. **Start the project using docker**
     ```
-8. Build the project by entering the the following command while inside the project directory/workspace
-    ```console
-    colcon build
+    docker compose -f docker_files/docker_compose_linux_monolithic.yml up
     ```
-9. **_In a new terminal_, navigate to the project directory and source the built setup files** (remember to activate the virtual environment again)
-    ```console
-    source .ros_venv/bin/activate
-    source install/setup.bash
+    OR, if using WSL2:
     ```
+    docker compose -f docker_files/docker_compose_wsl2_monolithic.yml up
+    ```
+
 10. **Run the simulation with one forklift (forklift_1) and one drone (drone_1**)
+    If you are using WSL2, run the command _ip addr show eth0_
+    and use the IP there as mqtt_host. Otherwise custom IP or localhost by default.
     ```console
-    ros2 launch mf_simulation multi_robot_launch.py
+    docker exec -it meteor_sim bash -ic "ros2 launch mf_simulation multi_robot_launch.py mqtt_host:=172.26.16.119 mqtt_port=1883"
     ```
 11. **Sending an action**
     To test if the system works correctly, you can execute the following command

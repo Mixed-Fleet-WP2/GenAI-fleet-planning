@@ -105,6 +105,8 @@ RUN if id -u ${USER_UID} ; then userdel `id -un ${USER_UID}` ; fi && \
     && echo ${USERNAME} ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/${USERNAME} \
     && chmod 0440 /etc/sudoers.d/${USERNAME}
 
+COPY ./docker_files/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 USER ${USERNAME}
 
@@ -116,10 +118,12 @@ WORKDIR /home/${USERNAME}/${WORKSPACE}
 # Copy the created binaries to the new user's workspace NOT ROOT's!
 COPY  --from=builder /build_dir/install ./install
 
+
 # Write the source command to the .bashrc to ensure ROS environment is set up for the user
 RUN echo "source /opt/ros/${DISTRO}/setup.bash" >> ~/.bashrc
 
 # Source the overlay
 RUN source ~/.bashrc && echo "if [ -f ~/${WORKSPACE}/install/setup.bash ]; then source ~/${WORKSPACE}/install/setup.bash; fi" >> ~/.bashrc
 
-ENTRYPOINT ["/bin/bash"]
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["bash"]

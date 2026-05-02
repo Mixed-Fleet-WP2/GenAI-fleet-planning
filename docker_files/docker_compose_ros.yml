@@ -37,6 +37,7 @@ services:
       - ~/.bash_history:/home/ros/.bash_history
       - ./docker_simulator:/home/ros/docker_simulation_ws
       - /dev/dri:/dev/dri
+      - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
       # Should be automatically injected by gpus: all
       #- /dev/nvidia0:/dev/nvidia0
       #- /dev/nvidiactl:/dev/nvidiactl
