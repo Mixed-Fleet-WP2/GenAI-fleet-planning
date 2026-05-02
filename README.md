@@ -121,7 +121,7 @@ export MESA_D3D12_DEFAULT_ADAPTER_NAME=NVIDIA
 See related [documentation](https://github.com/microsoft/wslg/wiki/GPU-selection-in-WSLg)
 
 To check if the GPU is utilised, install the mesa-utils and run the command:
-```
+```console
 sudo apt install mesa-utils
 glxinfo -B
 ```
