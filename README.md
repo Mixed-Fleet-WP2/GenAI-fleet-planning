@@ -10,7 +10,8 @@ with **Work Package 2: Programming Multi-Machine Fleets (WP2)** of the project w
 
 ## Running the Meteor simulation
 
-Instructions are provided for native install as well as through Docker
+Instructions are provided for native install. Docker install is work in progress
+under branch *meteor_sim_env_dockerized*
 
 ### Installing natively
 
