@@ -71,6 +71,7 @@ The simulation in this repository uses [ROS2 (Robot Operating System)](https://d
     ```
 9. **_In a new terminal_, navigate to the project directory and source the built setup files** (remember to activate the virtual environment again)
     ```console
+    source .ros_venv/bin/activate
     source install/setup.bash
     ```
 10. If the machine does not have GPU available, use software rendering by setting the following variable:

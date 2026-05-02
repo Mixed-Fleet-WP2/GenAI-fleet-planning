@@ -64,8 +64,8 @@ def create_robot_instances(context, *args, **kwargs):
                 condition=IfCondition(use_rviz),
                 launch_arguments={
                     'namespace': robot_name,
-                    'use_sim_time': 'True',
-                    'use_namespace': 'True',
+                    'use_sim_time': 'true',
+                    'use_namespace': 'true',
                     'rviz_config': rviz_config_file,
                 }.items(),
             ),
@@ -76,9 +76,9 @@ def create_robot_instances(context, *args, **kwargs):
                 ),
                 launch_arguments={
                     'namespace': robot_name,
-                    'use_namespace': 'True',
+                    'use_namespace': 'true',
                     'map': map_yaml_file,
-                    'use_sim_time': 'True',
+                    'use_sim_time': 'true',
                     'params_file': nav2_params_file,
                     'autostart': autostart,
                     'x_pose': TextSubstitution(text=str(start_pos[0])),
@@ -266,7 +266,7 @@ def generate_launch_description():
         # extra params, because services cannot yet be defined with yaml
         # although ros_gz_bridge itself supports launching them
 
-        extra_bridge_params=[{"bridge_names": ["service_bridge", "create_bridge", "delete_bridge"],
+        extra_bridge_params={"bridge_names": ["service_bridge", "create_bridge", "delete_bridge"],
         "bridges.service_bridge.service_name": "/world/warehouse/set_pose",
         "bridges.service_bridge.ros_type_name": "ros_gz_interfaces/srv/SetEntityPose",
         "bridges.service_bridge.gz_req_type_name": "gz.msgs.Pose",
@@ -285,8 +285,7 @@ def generate_launch_description():
         "bridges.delete_bridge.gz_rep_type_name": "gz.msgs.Boolean",
         "bridges.delete_bridge.direction": "BIDIRECTIONAL",
 
-
-        }]
+        }
     )
 
     # Unused for now in favor of RosGzBridge- action
@@ -373,8 +372,7 @@ def generate_launch_description():
     #ld.add_action(gz_bridge)
     ld.add_action(gazebo_server)
     ld.add_action(gazebo_client)
-    ld.add_action(start_interface)
-    ld.add_action(start_headless_client)
+    #ld.add_action(start_headless_client)
     #ld.add_action(service_bridge)
     ld.add_action(gz_bridge)
     
